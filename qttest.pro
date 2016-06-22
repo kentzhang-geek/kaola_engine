@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     kaola_engine/shader_manager.cpp \
     kaola_engine/tiny_obj_loader.cc \
     kaola_engine/mopenglview.cpp \
-    moc_mainwindow.cpp \
     kaola_engine/Program.cpp \
     kaola_engine/Shader.cpp
 
