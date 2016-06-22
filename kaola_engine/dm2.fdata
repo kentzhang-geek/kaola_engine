@@ -1,0 +1,146 @@
+#version 100
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+varying float df;
+varying float sf;
+varying float cam_pos_distance;
+varying vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
+
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
+
+// light
+uniform float shininess;
+uniform float param_x;
+varying vec3 eye_to_pos;
+varying vec3 l_normal;
+varying vec3 in_light;
+
+// shadow
+#define EPSILON 0.0002
+varying vec4 vPos;
+uniform mat4 s_mtx;
+uniform mat4 transmtx;
+
+// reflection
+uniform float alpha;
+
+// from rgb to hsi color space , hsi has cos(h),s,i
+vec3 rgb2hsi(vec3 rgb) {
+    if(length(rgb) == 0.0) {
+        return vec3(0.0);
+    }
+    // 注意如果rgb为白色的话会发生除以0错误出现奇葩情况
+    if ((rgb.r == rgb.g) && (rgb.g == rgb.b))
+        return vec3(0.0, 0.0, (rgb.r + rgb.g + rgb.b)/3.0);
+    vec3 hsi;
+    
+    // H
+    if ((rgb.r >= rgb.g) && (rgb.r >= rgb.b)) { // R Max
+        hsi.x = radians(60.0) * (rgb.g - rgb.b) / (rgb.r - min(rgb.g, rgb.b));
+    }
+    else if ((rgb.g >= rgb.r) && (rgb.g >= rgb.b)) { // G Max
+        hsi.x = radians(60.0) * (rgb.b - rgb.r) / (rgb.g - min(rgb.r, rgb.b));
+        hsi.x += radians(120.0);
+    }
+    else if ((rgb.b >= rgb.g) && (rgb.b >= rgb.r)) { // B Max
+        hsi.x = radians(60.0) * (rgb.r - rgb.g) / (rgb.b - min(rgb.r, rgb.g));
+        hsi.x += radians(240.0);
+    } 
+    if (hsi.x < 0.0) {
+        hsi.x += radians(360.0);
+    }
+
+    // S
+    float s = 1.0 - 3.0 / (rgb.r + rgb.g + rgb.b) * min(min(rgb.r, rgb.b), rgb.g);
+    hsi.y = s;
+    
+    // I
+    float i = (rgb.r + rgb.g + rgb.b)/3.0;
+    hsi.z = i;
+    
+    return hsi;
+}
+
+vec3 hsi2rgb(vec3 hsi) {
+    if(length(hsi) == 0.0) {
+        return vec3(0.0);
+    }
+    vec3 rgb;
+    // h < 120'
+    if (hsi.x < radians(120.0)) {
+        rgb.b = hsi.z * (1.0 - hsi.y);
+        rgb.r = hsi.z * (1.0 + (hsi.y * cos(hsi.x) / cos(radians(60.0) - hsi.x)));
+        rgb.g = 3.0 * hsi.z - rgb.r - rgb.b;
+    }
+    // h < 240'
+    else if (hsi.x < radians(240.0)) {
+        hsi.x -= radians(120.0);
+        rgb.r = hsi.z * (1.0 - hsi.y);
+        rgb.g = hsi.z * (1.0 + (hsi.y * cos(hsi.x) / cos(radians(60.0) - hsi.x)));
+        rgb.b = 3.0 * hsi.z - rgb.r - rgb.g;
+    }
+    // h < 360'
+    else {
+        hsi.x -= radians(240.0);
+        rgb.g = hsi.z * (1.0 - hsi.y);
+        rgb.b = hsi.z * (1.0 + (hsi.y * cos(hsi.x) / cos(radians(60.0) - hsi.x)));
+        rgb.r = 3.0 * hsi.z - rgb.g - rgb.b;
+    }
+    
+    return rgb;
+}
+
+void main() {
+#if 1 // for test
+    vec4 vShadowCoord = s_mtx * vPos;
+    
+    // 计算自然色
+    vec4 ambclr = gl3d_t_ambient_enable ? (texture2D(gl3d_texture_ambient, text_coord) + mtlAmbientColor) :
+    mtlAmbientColor;
+    gl_FragColor = ambclr;
+    
+    // 计算散射色
+    vec4 difclr = gl3d_t_diffuse_enable ? shininess * (texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor):
+    mtlDiffuseColor * shininess;
+    gl_FragColor += difclr * (0.3 + (0.7 * df));
+    
+    // 计算镜面色
+    vec3 out_light = reflect(in_light, l_normal);   // 获取出射光
+    out_light = normalize(-out_light);
+    float spf = max(0.0, dot(normalize(eye_to_pos), out_light));
+    vec4 spcclr = gl3d_t_specular_enable ? vec4(pow(spf/2.0, 3.0)) + normalize((texture2D(gl3d_texture_specular, text_coord) + mtlSpecularColor)) :
+    normalize(mtlSpecularColor) + vec4(pow(spf/2.0, 3.0));
+    gl_FragColor += spcclr;
+    
+    gl_FragColor = gl_FragColor * (500.0 - cam_pos_distance) / 500.0;
+    
+    // 这行很神奇的让很多地方都有了金属质感？
+    // gl_FragColor = min(vec4(1.0), gl_FragColor);
+    gl_FragColor += 0.4 * vec4(pow(max(0.0, spf-0.1), 7.0));
+    // gl_FragColor = min(vec4(1.0), gl_FragColor);
+    
+    // 尝试增强色度
+    vec3 hsi = rgb2hsi(gl_FragColor.xyz);
+    hsi.y *= 1.1;
+    hsi.y = min(1.0, hsi.y);
+    hsi.z *= 0.7;
+    hsi.z = min(1.0, hsi.z);
+    
+    gl_FragColor = gl_FragColor - vec4(0.2);
+    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+    gl_FragColor.w = alpha;
+#endif
+}

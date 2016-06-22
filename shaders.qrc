@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>kaola_engine/default.fdata</file>
+        <file>kaola_engine/default.vdata</file>
+        <file>kaola_engine/dm.fdata</file>
+        <file>kaola_engine/dm.vdata</file>
+        <file>kaola_engine/dm2.fdata</file>
+        <file>kaola_engine/dm2.vdata</file>
+        <file>kaola_engine/image.fdata</file>
+        <file>kaola_engine/image.vdata</file>
+        <file>kaola_engine/multiple_text_vector_shadow.fdata</file>
+        <file>kaola_engine/multiple_text_vector_shadow.vdata</file>
+        <file>kaola_engine/multiple_text_vector.fdata</file>
+        <file>kaola_engine/multiple_text_vector.vdata</file>
+        <file>kaola_engine/multiple_text.fdata</file>
+        <file>kaola_engine/multiple_text.vdata</file>
+        <file>kaola_engine/picking_mask.fdata</file>
+        <file>kaola_engine/picking_mask.vdata</file>
+        <file>kaola_engine/shadow_mask.fdata</file>
+        <file>kaola_engine/shadow_mask.vdata</file>
+        <file>kaola_engine/skybox.fdata</file>
+        <file>kaola_engine/skybox.vdata</file>
+        <file>kaola_engine/text_vector_light.fdata</file>
+        <file>kaola_engine/text_vector_light.vdata</file>
+        <file>kaola_engine/vector_light_toon.fdata</file>
+        <file>kaola_engine/vector_light_toon.vdata</file>
+        <file>kaola_engine/vector_light.fdata</file>
+        <file>kaola_engine/vector_light.vdata</file>
+    </qresource>
+</RCC>

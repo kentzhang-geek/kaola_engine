@@ -1,0 +1,67 @@
+#version 100
+precision highp float;
+
+varying vec4 color;
+varying vec3 normal;
+varying vec3 point_pos;
+varying vec3 view_vec;
+
+struct directional_light {
+    vec3 direction;
+    vec3 halfplane;
+    vec3 ambient_color;
+    vec4 diffuse_color;
+    vec4 specular_color;
+    vec3 light_position;
+    float luminorm;
+    float luminorm_diffuse;
+    float diffuse_exponent;
+    float specular_exponent;
+    float cutoff_angle;
+};
+
+struct material_properties {
+    vec4 ambient_color;
+    vec4 diffuse_color;
+    vec4 specular_color;
+    float specular_exponent;
+};
+
+const float c_zero = 0.0;
+const float c_one = 1.0;
+
+uniform material_properties material;
+uniform directional_light light;
+uniform vec3 eye_pos;
+uniform sampler2D mText;
+
+vec2 sphere_map(vec3 pos, vec3 nrom) {
+    vec3 refle = reflect(pos, nrom);
+    float m = 2.0 * sqrt(refle.x * refle.x +
+                         refle.y * refle.y +
+                         (refle.z + 1.0) * (refle.z + 1.0));
+    return vec2((refle.x/m + 0.5), (refle.y/m + 0.5));
+}
+
+vec3 cube_map(vec3 pos, vec3 nrom) {
+    return reflect(pos, nrom);
+}
+
+void main() {
+    // gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // TEST Static Color
+    gl_FragColor = vec4(0.0, 0.2, 1.0, 1.0);                     // TEST origin Color
+//    gl_FragColor = color;
+    
+#if 0
+    vec3 in_light = point_pos - light.light_position;
+    vec3 eyeview = eye_pos - point_pos;
+    vec3 out_light = reflect(in_light, normal);
+    float lambert = dot(normalize(eyeview), normalize(out_light));
+    float distce = length(in_light) + length(eyeview);
+    float luminorm = 1.0 / pow((distce), light.specular_exponent) * light.luminorm;
+    // specular
+    gl_FragColor = vec4(color, 1.0) * light.specular_color * luminorm * lambert;
+    // diffuse
+    gl_FragColor += vec4(color, 1.0) * light.diffuse_color * light.diffuse_color[3];
+#endif
+}
