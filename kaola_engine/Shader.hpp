@@ -9,14 +9,16 @@
 #ifndef Shader_hpp
 #define Shader_hpp
 
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
+#include <OpenGL.h>
+#include <OpenGLAvailability.h>
 
 #include <string>
 #include <stdexcept>
 #include <cassert>
 #include <fstream>
 #include <sstream>
+
+#include "gl3d_out_headers.h"
 
 namespace gl3d{
     

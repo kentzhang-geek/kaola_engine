@@ -22,7 +22,7 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "mopenglview.h"
+#include "kaola_engine/mopenglview.h"
 
 QT_BEGIN_NAMESPACE
 

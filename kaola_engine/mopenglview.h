@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
+#include <QGLWidget>
 #include <QOpenGLWidget>
 #include <iostream>
 #include <OpenGL/glu.h>
@@ -16,21 +17,32 @@
 #include <queue>
 #include <QOpenGLContext>
 #include <QTimer>
-#include <oglplus/all.hpp>
 #include <QOpenGLFunctions_4_1_Core>
 #include <QGLWidget>
+#include <QResource>
+#include <QFile>
+
+// gl3d
+#include "gl3d.hpp"
+
+using namespace std;
 
 class MOpenGLView : public QGLWidget
 {
-    oglplus::VertexShader * vt;
+    Q_OBJECT
+
 public:
-    void setCon(bool s);
+    gl3d::scene * main_scene;
+    void do_init();
+    void create_scene();
     MOpenGLView();
     MOpenGLView(QWidget * x);
     void paintGL();
     void initializeGL();
     float time_factor;
     GLfloat angle;
+private:
+    string res_path;
     QTimer * timer;
 };
 

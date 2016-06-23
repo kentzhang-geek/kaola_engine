@@ -92,7 +92,7 @@ void normal::render() {
 }
 
 void normal::after_render() {
-    has_drawed = true;
+    has_drawed = false;
 }
 
 class moving : public render_process {

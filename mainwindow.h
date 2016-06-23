@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QShowEvent>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,9 @@ signals:
 
 private:
     Ui::MainWindow *ui;
+
+protected:
+    void showEvent(QShowEvent *ev);
 };
 
 #endif // MAINWINDOW_H

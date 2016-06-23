@@ -10,6 +10,9 @@
 #define gl3d_out_headers_h
 
 #include <stdio.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/gltypes.h>
+#include <OpenGL/glext.h>
 #include <OpenGL.h>
 #include <string>
 #include <map>

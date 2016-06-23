@@ -23,7 +23,7 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
         // create a color buffer that has same size as frame buffer
         glGenRenderbuffers(1, &this->color_obj);
         glBindRenderbuffer(GL_RENDERBUFFER, this->color_obj);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, width, height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, this->color_obj);
     }
     
@@ -32,7 +32,7 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
         // create depth & stencil packed buffer
         glGenRenderbuffers(1, &this->stenc_depth_obj);
         glBindRenderbuffer(GL_RENDERBUFFER, this->stenc_depth_obj);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
+//        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->stenc_depth_obj);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this->stenc_depth_obj);
     }
@@ -41,7 +41,7 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
         // Create a stencil buffer that has the same size as the frame buffer.
         glGenRenderbuffers(1, &this->stenc_depth_obj);
         glBindRenderbuffer(GL_RENDERBUFFER, this->stenc_depth_obj);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, width, height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->stenc_depth_obj);
     }
     // 只有深度缓冲区时

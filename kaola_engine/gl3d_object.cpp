@@ -34,7 +34,7 @@ void object::init() {
     // 注意默认绘制权限为普通+阴影+倒影。天空盒与地面是特殊绘制
     this->this_property.draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
     // gen vao
-    glGenVertexArraysOES(1, &this->vao);
+    glGenVertexArrays(1, &this->vao);
 }
 
 object::object() {
@@ -61,7 +61,7 @@ object::~object() {
     }
     
     // delete vao
-    glDeleteVertexArraysOES(1, &this->vao);
+    glDeleteVertexArrays(1, &this->vao);
 }
 
 object::object(char * path_to_obj_file) {
@@ -129,7 +129,7 @@ bool object::init(char * filename) {
     this->number_of_meshes = scene->mNumMeshes;
     
     // process meshes
-    glBindVertexArrayOES(this->vao);
+    glBindVertexArray(this->vao);
     for (i = 0; i < scene->mNumMeshes; i++) {
         this->meshes.push_back(new gl3d::mesh((void *)scene->mMeshes[i]));
     }
@@ -151,7 +151,7 @@ bool object::init(char * filename) {
         this->mtls.insert(pair<unsigned int, gl3d_material *>(i, new gl3d_material(mtl)));
     }
 
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
 
     return true;
 }
@@ -161,9 +161,9 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only on mesh for test
-    glBindVertexArrayOES(this->vao);
+    glBindVertexArray(this->vao);
     this->meshes.push_back(new mesh(pts, number_of_points, idx_in, num_of_indecis));
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
     
     return true;
 }
@@ -174,9 +174,9 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only one mesh for test
-    glBindVertexArrayOES(this->vao);
+    glBindVertexArray(this->vao);
     this->meshes.push_back(new mesh(pts, number_of_points, indecis, num_of_indecis, txtr, number_of_textures));
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
     
     return true;
 }
@@ -197,7 +197,7 @@ void object::buffer_data() {
     }
     
     // bind vao
-    glBindVertexArrayOES(this->vao);
+    glBindVertexArray(this->vao);
 
     gl3d::mesh * p_mesh;
     auto iter = this->meshes.begin();
@@ -207,7 +207,7 @@ void object::buffer_data() {
         iter++;
     }
     
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
     
     data_buffered = true;
 }

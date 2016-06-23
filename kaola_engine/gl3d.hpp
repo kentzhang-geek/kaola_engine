@@ -15,6 +15,9 @@
  *  System Headers
  */
 #include <stdio.h>
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
+#include <OpenGL/gltypes.h>
 #include <OpenGL.h>
 #include <vector>
 #include <iterator>
@@ -553,6 +556,9 @@ namespace gl3d {
          *
          *  下面都是私有数据
          */
+        GLfloat width;
+        GLfloat height;
+
     private:
         void init();
         void set_attribute(GLuint pro);
@@ -561,8 +567,6 @@ namespace gl3d {
         std::map<int,gl3d::object *> * objects;
         scene_property this_property;
         light_property lights[4];
-        GLfloat width;
-        GLfloat height;
 //        GLuint shadow_text;
         gl3d_general_texture * shadow_text;
     };

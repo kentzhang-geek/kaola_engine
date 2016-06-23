@@ -8,6 +8,8 @@
 
 #include "Program.hpp"
 
+using namespace std;
+
 gl3d::Program::Program(const std::string &vertexShader, const std::string &fragmentShader){
     programID = glCreateProgram();
     if(programID == 0){
@@ -29,6 +31,7 @@ gl3d::Program::Program(const std::string &vertexShader, const std::string &fragm
         delete [] info;
         
         glDeleteProgram(programID);
+        cout << msg << endl;
         throw std::runtime_error(msg);
     }
 }

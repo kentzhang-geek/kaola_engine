@@ -246,7 +246,7 @@ bool scene::draw(bool use_global_shader) {
             iter_objs = this->objects->erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
     }
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
     
     return true;
 }
@@ -340,7 +340,7 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
 
 void scene::draw_object(gl3d::object *obj, GLuint pro) {
     // set vao
-    glBindVertexArrayOES(obj->vao);
+    glBindVertexArray(obj->vao);
     this->set_attribute(pro);
     
     // TODO : set matrix
@@ -422,7 +422,7 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArrayOES(0);
+    glBindVertexArray(0);
 }
 
 bool scene::set_property(scene_property * property) {
@@ -548,7 +548,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
 #define TEXTURE_HEIGHT 2048
 void scene::gen_shadow_texture() {
     this->shadow_text = new gl3d_general_texture(gl3d_general_texture::GL3D_DEPTH_COMPONENT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-//    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_OES, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+//    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 }
 
 void scene::delete_shadow_texture() {
@@ -570,6 +570,7 @@ void scene::draw_shadow_mask() {
     frame->attach_depth_text(this->shadow_text->get_gl_obj());
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_SHADOW;
     this->this_property.global_shader = string("shadow_mask");
+    frame->use_this_frame();
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
     glDisable(GL_BLEND);
