@@ -15,15 +15,15 @@
  *  System Headers
  */
 #include <stdio.h>
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
-#include <OpenGL/gltypes.h>
-#include <OpenGL.h>
 #include <vector>
 #include <iterator>
 #include <string>
 #include <map>
 #include <iostream>
+
+// OpenGL in windows should use GLEW
+#include <gl/glew.h>
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"

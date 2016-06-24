@@ -10,10 +10,6 @@
 #define gl3d_out_headers_h
 
 #include <stdio.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/gltypes.h>
-#include <OpenGL/glext.h>
-#include <OpenGL.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -21,6 +17,11 @@
 #include <iterator>
 #include <stdexcept>
 #include <iostream>
+
+// OpenGL in Windows should use GLEW
+#include <gl/glew.h>
+
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"

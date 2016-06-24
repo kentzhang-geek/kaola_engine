@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <GL/glew.h>
-#include <GLUT/glut.h>
 
 int main(int argc, char *argv[])
 {

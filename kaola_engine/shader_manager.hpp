@@ -27,6 +27,7 @@ using namespace gl3d;
 
 
 // 这条宏由于给shader管理器加入相关shader加载所需的信息
+
 #define GL3D_LOAD_SHADER(name, vertex, frag) const shader_loader __shader_loader_##name( \
 string(#name), #vertex, #frag);
 
@@ -37,6 +38,7 @@ string(#name), #vertex, #frag);
 #define GL3D_GET_PARAM(name) (::gl3d::shader_manager::sharedInstance()->get_param(string(name)))
 
 // 这条宏根据shader名字去获取其参数类
+
 #define GL3D_SHADER_PARAM_CLASS_NAME(name) ::gl3d::__gl3d_shader_param_##name
 
 // 这条宏根据shader名字定义其参数类名
@@ -67,6 +69,7 @@ namespace gl3d {
     public:
         string name;
         // use char * seems should be ok
+
         char * vertex;
         char * frag;
         shader_loader(string shaderName, char * vertexShader, char * fragShader);

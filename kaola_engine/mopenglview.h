@@ -7,7 +7,10 @@
 #include <QGLWidget>
 #include <QOpenGLWidget>
 #include <iostream>
-#include <OpenGL/glu.h>
+
+// OpenGL in Win
+#include <gl/glew.h>
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <iostream>

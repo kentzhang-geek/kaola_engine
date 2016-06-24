@@ -9,7 +9,6 @@
 #ifndef gl3d_image_h
 #define gl3d_image_h
 
-#include <OpenGL.h>
 #include "gl3d_out_headers.h"
 #include <string>
 #include <QtCore>
