@@ -7,7 +7,7 @@
 //
 
 // glms
-#import "glm/glm.hpp"
+#include "glm/glm.hpp"
 
 // engine
 #include "mopenglview.h"

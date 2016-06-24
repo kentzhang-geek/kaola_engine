@@ -51,7 +51,8 @@ HEADERS  += mainwindow.h \
     ui_mainwindow.h \
     kaola_engine/Program.hpp \
     kaola_engine/Shader.hpp \
-    kaola_engine/mopenglview.h
+    kaola_engine/mopenglview.h \
+    kaola_engine/glheaders.h
 
 FORMS    += mainwindow.ui
 
@@ -63,21 +64,8 @@ FORMS    += mainwindow.ui
 #mac: LIBS += -framework GLUT -L/usr/local/lib/ -lassimp
 #else:unix|win32: LIBS += -lGLUT
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/release/ -lGLEW
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/debug/ -lGLEW
-#else:unix: LIBS += -L$$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/ -lGLEW
-
-# INCLUDEPATH += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/include
-# DEPENDPATH += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/include
-
 INCLUDEPATH += D:\User\Desktop\KLM\LIBS\assimp-3.2\include
 INCLUDEPATH += D:\User\Desktop\KLM\LIBS\glm_build
-
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/release/libGLEW.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/debug/libGLEW.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/release/GLEW.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/debug/GLEW.lib
-#else:unix: PRE_TARGETDEPS += $$PWD/../../../../usr/local/Cellar/glew/1.11.0/lib/libGLEW.a
 
 RESOURCES +=
 
@@ -128,15 +116,10 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/..
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../LIBS/assimp_build/code/debug/assimp-vc130-mtd.lib
 else:unix: PRE_TARGETDEPS += $$PWD/../LIBS/assimp_build/code/libassimp-vc130-mtd.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/ -lglew32
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/ -lglew32
-else:unix: LIBS += -L$$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/ -lglew32
+win32: LIBS += -L$$PWD/../LIBS/glew-1.13.0/lib/Release/x64/ -lglew32
 
 INCLUDEPATH += $$PWD/../LIBS/glew-1.13.0/include
 DEPENDPATH += $$PWD/../LIBS/glew-1.13.0/include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/libglew32.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/libglew32.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/glew32.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/glew32.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/Win32/libglew32.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/x64/glew32.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../LIBS/glew-1.13.0/lib/Release/x64/libglew32.a

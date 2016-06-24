@@ -10,8 +10,7 @@
 #define Shader_hpp
 
 // OpenGL in windows should use GLEW
-#include <gl/glew.h>
-
+#include "glheaders.h"
 
 #include <string>
 #include <stdexcept>

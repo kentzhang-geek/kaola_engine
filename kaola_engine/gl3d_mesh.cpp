@@ -12,7 +12,7 @@
 using namespace gl3d;
 
 void gl3d::mesh::init() {
-    bzero(this, sizeof(gl3d::mesh::mesh));
+//    memset(this, 0, sizeof(gl3d::mesh::mesh));
     // gen vbo
     glGenBuffers(1, &this->vbo);
     glGenBuffers(1, &this->idx);
@@ -85,7 +85,7 @@ gl3d::mesh::mesh(void * in_p) {
     
     // construct indecis
     this->indecis = (GLushort *)malloc(sizeof(GLushort) * 3 * as_mesh->mNumFaces);
-    bzero(this->indecis, sizeof(GLushort) * 3 * as_mesh->mNumFaces);
+    memset(this->indecis, 0, sizeof(GLushort) * 3 * as_mesh->mNumFaces);
     this->num_idx = as_mesh->mNumFaces * 3;
     for (i = 0; i < as_mesh->mNumFaces; i++) {
         this->indecis[3 * i + 0] = as_mesh->mFaces[i].mIndices[0];

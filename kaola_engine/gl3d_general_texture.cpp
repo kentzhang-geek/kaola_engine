@@ -9,7 +9,7 @@
 #include "gl3d_general_texture.hpp"
 
 void gl3d_general_texture::init() {
-    bzero(this, sizeof(gl3d_general_texture));
+    memset(this, 0, sizeof(gl3d_general_texture));
 }
 
 gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type set_type, GLuint x, GLuint y) {

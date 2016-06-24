@@ -13,7 +13,7 @@ using namespace std;
 using namespace gl3d;
 
 void gl3d_texture::init() {
-    bzero(this, sizeof(gl3d_texture));
+    memset(this, 0, sizeof(gl3d_texture));
 }
 
 void gl3d_texture::set_parami(bool repeat) {

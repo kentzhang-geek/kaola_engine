@@ -5,7 +5,6 @@
 //  Created by Kent Zhang on 16/3/16.
 //  Copyright © 2016年 Kent. All rights reserved.
 //
-
 #include "gl3d_material.hpp"
 #include "log.h"
 #include "shader_manager.hpp"

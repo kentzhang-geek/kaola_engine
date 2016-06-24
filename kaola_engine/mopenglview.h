@@ -1,15 +1,15 @@
 #ifndef MOPENGLVIEW_H
 #define MOPENGLVIEW_H
 
+// OpenGL in Win
+#include "glheaders.h"
+
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
 #include <QGLWidget>
 #include <QOpenGLWidget>
 #include <iostream>
-
-// OpenGL in Win
-#include <gl/glew.h>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>

@@ -2,7 +2,7 @@
 #include <iostream>
 #include "ui_mainwindow.h"
 #include "kaola_engine/gl3d.hpp"
-#import "kaola_engine/kaola_engine.h"
+#include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
 #include "kaola_engine/gl3d_obj_authority.h"
 

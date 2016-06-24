@@ -29,7 +29,7 @@ using namespace gl3d;
 // 这条宏由于给shader管理器加入相关shader加载所需的信息
 
 #define GL3D_LOAD_SHADER(name, vertex, frag) const shader_loader __shader_loader_##name( \
-string(#name), #vertex, #frag);
+string(#name), (char *)#vertex, (char *)#frag);
 
 // 这条宏根据shader的名字去获取program
 #define GL3D_GET_SHADER(name) (::gl3d::shader_manager::sharedInstance()->get_program(string(name)))

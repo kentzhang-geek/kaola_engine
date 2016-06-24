@@ -14,7 +14,7 @@ using namespace std;
 static model_manager * global_model_manager = NULL;
 
 model_manager::model_manager() {
-    bzero(this, sizeof(model_manager));
+//    bzero(this, sizeof(model_manager));
     models.clear();
     global_model_manager = this;
 }
