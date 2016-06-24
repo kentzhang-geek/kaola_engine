@@ -7,9 +7,9 @@
 //#include "GL/glew.h"
 
 #include <QtOpenGL>
-#include <QOpenGLFunctions_3_0>
+#include <QOpenGLFunctions_4_1_Core>
 
-extern QOpenGLFunctions_3_0 * gl3d_win_gl_functions;
+extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;
 
 
 // 直接用宏去替换用到的function
@@ -70,7 +70,6 @@ extern QOpenGLFunctions_3_0 * gl3d_win_gl_functions;
 #define glBindTexture(...) gl3d_win_gl_functions->glBindTexture(__VA_ARGS__)
 #define glTexImage2D(...) gl3d_win_gl_functions->glTexImage2D(__VA_ARGS__)
 #define glDeleteTextures(...) gl3d_win_gl_functions->glDeleteTextures(__VA_ARGS__)
-
 #define glDepthMask(...) gl3d_win_gl_functions->glDepthMask(__VA_ARGS__)
 #define glViewport(...) gl3d_win_gl_functions->glViewport(__VA_ARGS__)
 #define glClear(...) gl3d_win_gl_functions->glClear(__VA_ARGS__)

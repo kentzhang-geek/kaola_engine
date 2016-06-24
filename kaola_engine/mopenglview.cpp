@@ -4,7 +4,7 @@
 using namespace std;
 
 // 全局OpenGL Functions
-QOpenGLFunctions_3_0 * gl3d_win_gl_functions = NULL;
+QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions = NULL;
 
 void MOpenGLView::do_init() {
     // set OPENGL context
@@ -12,7 +12,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "/Users/kent/Work/qt_opengl_engine/kaola_engine";
+    this->res_path = "D:\\User\\Desktop\\KLM\\shaders";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal);
@@ -34,8 +34,8 @@ void MOpenGLView::create_scene() {
     Program * prog;
     auto load_iter = shader_mgr->loaders.begin();
     for (; load_iter != shader_mgr->loaders.end(); load_iter++) {
-        string vert = this->res_path + "/" + (*load_iter).second->vertex;
-        string frag = this->res_path + "/" + (*load_iter).second->frag;
+        string vert = this->res_path + "\\" + (*load_iter).second->vertex;
+        string frag = this->res_path + "\\" + (*load_iter).second->frag;
         cout << "Load Vertex Shader " << vert << endl;
         cout << "Load Fragment Shader " << frag << endl;
 #if 0

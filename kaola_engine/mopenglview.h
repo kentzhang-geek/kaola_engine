@@ -30,7 +30,7 @@
 
 using namespace std;
 
-class MOpenGLView : public QGLWidget, QOpenGLFunctions_3_0
+class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
 {
     Q_OBJECT
 
