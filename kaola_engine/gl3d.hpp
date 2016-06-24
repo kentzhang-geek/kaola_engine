@@ -21,9 +21,6 @@
 #include <map>
 #include <iostream>
 
-// OpenGL in windows should use GLEW
-#include "glheaders.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -35,6 +32,9 @@
 #include "gl3d_obj_authority.h"
 #include "gl3d_general_texture.hpp"
 #include "gl3d_render_process.hpp"
+
+// OpenGL in windows should use GLEW
+#include "glheaders.h"
 
 namespace gl3d {
     enum error {

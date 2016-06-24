@@ -9,9 +9,6 @@
 #ifndef Shader_hpp
 #define Shader_hpp
 
-// OpenGL in windows should use GLEW
-#include "glheaders.h"
-
 #include <string>
 #include <stdexcept>
 #include <cassert>
@@ -19,6 +16,9 @@
 #include <sstream>
 
 #include "gl3d_out_headers.h"
+
+// OpenGL in windows should use GLEW
+#include "glheaders.h"
 
 namespace gl3d{
     

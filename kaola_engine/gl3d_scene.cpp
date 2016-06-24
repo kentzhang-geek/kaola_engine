@@ -51,8 +51,8 @@ using namespace gl3d;
  */
 void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
-    bzero(&this->this_property, sizeof(scene_property));
-    bzero(&this->lights, sizeof(light_property) * 4);
+    memset(&this->this_property, 0, sizeof(scene_property));
+    memset(&this->lights, 0, sizeof(light_property) * 4);
     this->objects = new std::map<int,gl3d::object *>();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;

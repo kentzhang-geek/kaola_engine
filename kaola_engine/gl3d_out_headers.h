@@ -18,9 +18,6 @@
 #include <stdexcept>
 #include <iostream>
 
-// OpenGL in Windows should use GLEW
-#include "glheaders.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -37,5 +34,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+// OpenGL in Windows should use GLEW
+#include "glheaders.h"
 
 #endif /* gl3d_out_headers_h */

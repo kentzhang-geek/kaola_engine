@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->openGLWidget->setParent(this);
     connect(this, SIGNAL(sig1()), this, SLOT(on_sig1()));
 }
 

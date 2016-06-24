@@ -14,8 +14,8 @@
 #include <vector>
 #include <map>
 
-#include "Shader.hpp"
 #include "Program.hpp"
+#include "Shader.hpp"
 
 // 检测头文件的包含
 #ifndef gl3d_hpp
@@ -61,7 +61,7 @@ public: \
 bool set_param(); \
 __gl3d_shader_param_##name(char * s_name) : ::shader_param::shader_param(s_name) {} \
 }; } \
-const __gl3d_shader_param_##name GL3D_SHADER_PARAM_CLASS_NAME_##name##_instance = __gl3d_shader_param_##name(#name); \
+const __gl3d_shader_param_##name GL3D_SHADER_PARAM_CLASS_NAME_##name##_instance = __gl3d_shader_param_##name((char *)#name); \
 bool ::gl3d::__gl3d_shader_param_##name::set_param()
 
 namespace gl3d {

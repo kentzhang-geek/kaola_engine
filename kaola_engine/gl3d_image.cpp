@@ -24,7 +24,7 @@ static inline unsigned long long resize_pixel(unsigned long long x) {
 }
 
 void gl3d_image::init() {
-    bzero(this, sizeof(gl3d_image));
+    memset(this, 0, sizeof(gl3d_image));
 }
 
 gl3d_image::~gl3d_image() {

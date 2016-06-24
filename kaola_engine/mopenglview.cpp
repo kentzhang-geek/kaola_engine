@@ -3,6 +3,9 @@
 
 using namespace std;
 
+// 全局OpenGL Functions
+QOpenGLFunctions_3_0 * gl3d_win_gl_functions = NULL;
+
 void MOpenGLView::do_init() {
     // set OPENGL context
     timer = new QTimer(this);
@@ -96,6 +99,9 @@ void MOpenGLView::paintGL() {
 
 void MOpenGLView::initializeGL() {
     QGLWidget::initializeGL();
+
+    this->initializeOpenGLFunctions();
+    gl3d_win_gl_functions = this;
 
     const GLubyte* OpenGLVersion = glGetString(GL_VERSION);
     string glv((char *)OpenGLVersion);

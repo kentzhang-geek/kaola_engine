@@ -1,9 +1,6 @@
 #ifndef MOPENGLVIEW_H
 #define MOPENGLVIEW_H
 
-// OpenGL in Win
-#include "glheaders.h"
-
 #include <QMainWindow>
 #include <QObject>
 #include <QWidget>
@@ -25,12 +22,15 @@
 #include <QResource>
 #include <QFile>
 
+// OpenGL in Win
+#include "glheaders.h"
+
 // gl3d
 #include "gl3d.hpp"
 
 using namespace std;
 
-class MOpenGLView : public QGLWidget
+class MOpenGLView : public QGLWidget, QOpenGLFunctions_3_0
 {
     Q_OBJECT
 

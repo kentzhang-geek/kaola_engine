@@ -9,11 +9,11 @@
 #ifndef gl3d_image_h
 #define gl3d_image_h
 
-#include "gl3d_out_headers.h"
 #include <string>
 #include <QtCore>
 #include <QtGui>
 #include <QImage>
+#include "gl3d_out_headers.h"
 
 namespace gl3d {
     class gl3d_image {

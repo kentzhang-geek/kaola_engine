@@ -148,7 +148,7 @@ void gl3d_material::use_this(GLuint pro) {
 }
 
 void gl3d_material::init() {
-    bzero(this, sizeof(gl3d_material));
+    memset(this, 0, sizeof(gl3d_material));
     this->colors.clear();
     this->textures.clear();
 }
