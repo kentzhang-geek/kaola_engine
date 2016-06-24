@@ -23,7 +23,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     QMainWindow::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("/Volumes/RamDisk/sandbox_test");
+    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\models");
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数
@@ -50,7 +50,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 //    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
 //    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
 //    this->ui->openGLWidget->main_scene->add_obj(std::pair<int, gl3d::object *>(1234, obj));
-//    GL3D_SET_CURRENT_RENDER_PROCESS(moving);
+    GL3D_SET_CURRENT_RENDER_PROCESS(moving);
 }
 
 MainWindow::~MainWindow()

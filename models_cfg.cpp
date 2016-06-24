@@ -9,7 +9,14 @@
 #include <stdio.h>
 #include "kaola_engine/model_manager.hpp"
 
-#if 1
+GL3D_MODEL_PARAM(144, "skybox.obj") {
+    this->obj->set_repeat(false);
+    this->obj->get_property()->scale_range = 10.0f;
+    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_MOVE | GL3D_OBJ_ENABLE_ROTATE;
+    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SKYBOX;
+}
+
+#if 0
 GL3D_MODEL_PARAM(144, "skybox.obj") {
     this->obj->set_repeat(false);
     this->obj->get_property()->scale_range = 10.0f;

@@ -40,7 +40,7 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
     this->available_id = 0;
     gl3d::object * obj_tmp;
     for (; iter != this->models.end(); iter++) {
-        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "/" + (*iter)->file_name).c_str());
+        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "\\" + (*iter)->file_name).c_str());
         (*iter)->obj = obj_tmp;
         (*iter)->set_param();
         this->available_id =
@@ -66,7 +66,7 @@ model_param::model_param() : id(-1), file_name(string("")), obj(NULL) {
 
 void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm::vec2 coord) {
     // 新建obj
-    gl3d::object * obj = new object((char *)(gl3d_sandbox_path + "/" + obj_filename).c_str());
+    gl3d::object * obj = new object((char *)(gl3d_sandbox_path + "\\" + obj_filename).c_str());
     // 设置位置
     obj->get_property()->position = glm::vec3(coord, 0.0);
     obj->get_property()->scale_range = 0.005;  // KENT TODO : 这里默认缩放比例是否需要可调?

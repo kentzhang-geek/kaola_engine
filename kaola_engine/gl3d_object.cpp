@@ -20,7 +20,7 @@ using namespace std;
  *  Object相关的接口
  */
 void object::init() {
-    memset(this, 0, sizeof(object));
+//    memset(this, 0, sizeof(object));
     this->this_property.position = glm::vec3(0.0);
     this->this_property.rotate_mat = glm::mat4(1.0);
     this->this_property.bounding_value_max = glm::vec3(0.0f);
