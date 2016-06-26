@@ -23,7 +23,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     QMainWindow::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\models");
+    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo");
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数

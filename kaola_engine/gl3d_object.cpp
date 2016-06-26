@@ -252,7 +252,7 @@ void object::merge_meshes() {
     int _vert_num = 0;
     int _idx_num = 0;
     
-    auto iter = this->meshes.begin();
+    vector<mesh *>::iterator iter = this->meshes.begin();
     while (this->meshes.size()> 0) {
         // 初始化当次遍历
         _vert_num = 0;
@@ -260,7 +260,7 @@ void object::merge_meshes() {
 
         // 遍历每个mesh去提取
         mtl_idx = this->meshes[0]->material_index;
-        for (iter = this->meshes.begin(); iter != this->meshes.end();) {
+        for (; iter != this->meshes.end();) {
             // 提取材质相同的mesh
             if ((*iter)->material_index == mtl_idx) {
                 // 检测是否超出每个mesh的最大顶点数量
@@ -278,10 +278,13 @@ void object::merge_meshes() {
                 _idx_num += (*iter)->num_idx;
 
                 // 删除原顶点组
-                this->meshes.erase(iter);
+                // fuck,这里居然出了问题？
+                auto need_del = iter;
+                ++iter;
+                this->meshes.erase(need_del);
             }
             else {
-                iter++;
+                ++iter;
             }
         }
         
