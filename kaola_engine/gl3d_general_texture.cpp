@@ -34,7 +34,7 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
                          y,
                          0,
                          GL_DEPTH_COMPONENT,
-                         GL_UNSIGNED_INT,
+                         GL_UNSIGNED_BYTE,
                          NULL);
 //            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_UNSIGNED_INT_24_8_OES, x, y);
             break;

@@ -87,6 +87,7 @@ void gl3d_framebuffer::attach_color_text(GLuint text) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, text, 0);
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error("framebuffer attach_color_text failed");
         log_c("Framebuffer status: %x", (int)status);
     }
 }
@@ -97,6 +98,7 @@ void gl3d_framebuffer::attach_depth_text(GLuint text) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, text, 0);
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error("framebuffer attach_depth_text failed");
         log_c("Framebuffer status: %x", (int)status);
     }
 }

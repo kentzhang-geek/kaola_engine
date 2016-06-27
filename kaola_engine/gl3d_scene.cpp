@@ -577,6 +577,13 @@ void scene::draw_shadow_mask() {
     this->draw(true);
     glEnable(GL_BLEND);
 
+//    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+//    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
+//    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
+//    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\test.png")) {
+//        throw std::runtime_error("save failed");
+//    }
+
     frame->unbind_this_frame();
     delete frame;
     
