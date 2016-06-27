@@ -44,9 +44,15 @@ public:
     void initializeGL();
     float time_factor;
     GLfloat angle;
+    void keyPressEvent(QKeyEvent *event);
+public slots:
+    void view_change();
 private:
     string res_path;
     QTimer * timer;
+    QTimer * keyTimer;
+
+    char key_press;
 };
 
 #endif // MOPENGLVIEW_H

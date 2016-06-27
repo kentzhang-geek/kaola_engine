@@ -99,7 +99,7 @@
   <customwidget>
    <class>MOpenGLView</class>
    <extends>QOpenGLWidget</extends>
-   <header>mopenglview.h</header>
+   <header>kaola_engine/mopenglview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

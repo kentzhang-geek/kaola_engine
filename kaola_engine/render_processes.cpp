@@ -133,3 +133,21 @@ void moving::render() {
     current_shader_param->user_data.erase(string("scene"));
     return;
 }
+
+class test : public render_process {
+public:
+    void render() {
+        gl3d::scene * one_scene = (gl3d::scene * )this->get_user_object(string("scene"));
+        // 输入阴影贴图的参数，然后绘制主图像
+        gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("default");
+        current_shader_param->user_data.insert(pair<string, void *>(string("scene"), one_scene));
+        // 选择全局渲染器
+        one_scene->get_property()->global_shader = string("default");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_SKYBOX);
+        one_scene->prepare_canvas(false);
+        glDisable(GL_CULL_FACE);
+        one_scene->draw(true);
+        current_shader_param->user_data.erase(string("scene"));
+    }
+};
+GL3D_ADD_RENDER_PROCESS(test);

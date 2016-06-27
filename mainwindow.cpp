@@ -32,8 +32,8 @@ void MainWindow::showEvent(QShowEvent * ev) {
     cout << this->ui->openGLWidget->width() << "vs scene" << this->ui->openGLWidget->main_scene->width << endl;
     cout << this->ui->openGLWidget->height() << "vs scene" << this->ui->openGLWidget->main_scene->height << endl;
     this->ui->openGLWidget->main_scene->init(&config);
-    this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(-31.467377, -5.839324, 7.000000));
-    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.605763, -3.747789, -0.777228));
+    this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(24.0, 12.0, 7.0));
+    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.0, 4.0, -1.2));
     this->ui->openGLWidget->main_scene->watcher->headto(glm::vec3(0.0, 0.0, 1.0));
 
     // 加载所有要加载的模型
@@ -43,14 +43,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 
     this->ui->openGLWidget->main_scene->prepare_buffer();
 
-//    string tmppath = gl3d_sandbox_path + "/LivingRoomCarpet.3ds";
-//    gl3d::object * obj = new gl3d::object((char *)tmppath.c_str());
-//    obj->get_property()->position = *this->ui->openGLWidget->main_scene->watcher->get_position() +
-//            3 * *this->ui->openGLWidget->main_scene->watcher->get_lookat();
-//    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
-//    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
-//    this->ui->openGLWidget->main_scene->add_obj(std::pair<int, gl3d::object *>(1234, obj));
-    GL3D_SET_CURRENT_RENDER_PROCESS(normal);
+    GL3D_SET_CURRENT_RENDER_PROCESS(moving);
 }
 
 MainWindow::~MainWindow()

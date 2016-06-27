@@ -1,10 +1,15 @@
 #version 100
 precision highp float;
 
-varying vec4 color;
-varying vec3 normal;
-varying vec3 point_pos;
-varying vec3 view_vec;
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+varying float df;
+varying float sf;
+varying float distance_factor;
 
 struct directional_light {
     vec3 direction;
@@ -49,7 +54,7 @@ vec3 cube_map(vec3 pos, vec3 nrom) {
 
 void main() {
     // gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // TEST Static Color
-    gl_FragColor = vec4(0.0, 0.2, 1.0, 1.0);                     // TEST origin Color
+    gl_FragColor = vec4(0.0, 0.2, 1.0, 1.0) * (0.3 + 0.7 * df);                     // TEST origin Color
 //    gl_FragColor = color;
     
 #if 0

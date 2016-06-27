@@ -109,7 +109,42 @@ void MOpenGLView::initializeGL() {
 
     this->do_init();
 
+    this->setFocusPolicy(Qt::StrongFocus);
+    this->keyTimer = new QTimer();
+    this->keyTimer->start(100);
+
     this->connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    this->connect(keyTimer, SIGNAL(timeout()), this, SLOT(view_change()));
+}
+
+void MOpenGLView::view_change() {
+    if (this->key_press == 'w') {
+        this->main_scene->watcher->go_raise(2.0);
+    }
+    if (this->key_press == 'a') {
+        this->main_scene->watcher->go_rotate(-2.0);
+    }
+    if (this->key_press == 's') {
+        this->main_scene->watcher->go_raise(-2.0);
+    }
+    if (this->key_press == 'd') {
+        this->main_scene->watcher->go_rotate(2.0);
+    }
+
+    this->main_scene->watcher->headto(glm::vec3(0.0, 0.0, 1.0));
+
+    this->key_press = 0;
+}
+
+void MOpenGLView::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_W)
+        this->key_press = 'w';
+    if (event->key() == Qt::Key_A)
+        this->key_press = 'a';
+    if (event->key() == Qt::Key_S)
+        this->key_press = 's';
+    if (event->key() == Qt::Key_D)
+        this->key_press = 'd';
 }
 
 MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {

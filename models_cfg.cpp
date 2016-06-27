@@ -18,37 +18,7 @@ GL3D_MODEL_PARAM(144, "skybox.obj") {
 }
 
 // KENT WARN : 注意地面的阴影贴图必须得有！！
-GL3D_MODEL_PARAM(168, "floor-1.3ds") {
-    this->obj->get_property()->scale_range = 0.005;
-    auto obj_pro = this->obj->get_property();
-    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING;
-    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND;
-    float * alpha = new float;
-    (*alpha) = 0.90;
-    this->obj->user_data.clear();
-    this->obj->user_data.insert(pair<string, void *>(string("alpha"), alpha));
-}
-GL3D_MODEL_PARAM(169, "floor-2.3ds") {
-    this->obj->get_property()->scale_range = 0.005;
-    auto obj_pro = this->obj->get_property();
-    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING;
-    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND;
-    float * alpha = new float;
-    (*alpha) = 0.90;
-    this->obj->user_data.clear();
-    this->obj->user_data.insert(pair<string, void *>(string("alpha"), alpha));
-}
-GL3D_MODEL_PARAM(170, "floor-3.3ds") {
-    this->obj->get_property()->scale_range = 0.005;
-    auto obj_pro = this->obj->get_property();
-    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING;
-    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND  ;
-    float * alpha = new float;
-    (*alpha) = 0.90;
-    this->obj->user_data.clear();
-    this->obj->user_data.insert(pair<string, void *>(string("alpha"), alpha));
-}
-GL3D_MODEL_PARAM(171, "floor-4.3ds") {
+GL3D_MODEL_PARAM(168, "floor.3ds") {
     this->obj->get_property()->scale_range = 0.005;
     auto obj_pro = this->obj->get_property();
     this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING;
@@ -59,29 +29,52 @@ GL3D_MODEL_PARAM(171, "floor-4.3ds") {
     this->obj->user_data.insert(pair<string, void *>(string("alpha"), alpha));
 }
 
-GL3D_MODEL_PARAM(172, "diningroomfloor.3ds") {
+GL3D_MODEL_PARAM(1, "wall-01.3ds") {
     this->obj->get_property()->scale_range = 0.005;
-    auto obj_pro = this->obj->get_property();
-    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING;
-    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND  ;
-    float * alpha = new float;
-    (*alpha) = 0.90;
-    this->obj->user_data.clear();
-    this->obj->user_data.insert(pair<string, void *>(string("alpha"), alpha));
-}
-
-GL3D_MODEL_PARAM(10, "main.3ds") {
-    this->obj->get_property()->scale_range = 0.005;
+//    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
     this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
     this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
     this->obj->merge_meshes();  // 合并mesh
 }
-GL3D_MODEL_PARAM(11, "livingroomwall.3ds") {
+GL3D_MODEL_PARAM(2, "wall-02.3ds") {
     this->obj->get_property()->scale_range = 0.005;
-    //    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
+//    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
     this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
     this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
     this->obj->merge_meshes();  // 合并mesh
 }
+GL3D_MODEL_PARAM(3, "wall-03.3ds") {
+    this->obj->get_property()->scale_range = 0.005;
+//    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
+    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
+    this->obj->merge_meshes();  // 合并mesh
+}
+GL3D_MODEL_PARAM(4, "wood.3ds") {
+    this->obj->get_property()->scale_range = 0.005;
+//    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
+    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
+    this->obj->merge_meshes();  // 合并mesh
+}
+//GL3D_MODEL_PARAM(5, "ceiling.3ds") {
+//    this->obj->get_property()->scale_range = 0.005;
+//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
+//    this->obj->merge_meshes();  // 合并mesh
+//}
 
+//GL3D_MODEL_PARAM(10, "main.3ds") {
+//    this->obj->get_property()->scale_range = 0.005;
+//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
+//    this->obj->merge_meshes();  // 合并mesh
+//}
+//GL3D_MODEL_PARAM(11, "furniturecombination.3ds") {
+//    this->obj->get_property()->scale_range = 0.005;
+//    //    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
+//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
+//    this->obj->merge_meshes();  // 合并mesh
+//}
 #endif
