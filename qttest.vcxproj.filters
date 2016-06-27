@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Distribution Files">
+      <UniqueIdentifier>{B83CAF91-C7BF-462F-B76C-EA11631F866C}</UniqueIdentifier>
+      <Extensions>*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Distribution Files">
+      <UniqueIdentifier>{B83CAF91-C7BF-462F-B76C-EA11631F866C}</UniqueIdentifier>
+      <Extensions>*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kaola_engine\Program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\default_shader_param.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_general_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_render_process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\gl3d_viewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\model_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models_cfg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\mopenglview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\render_processes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\shader_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kaola_engine\shader_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="kaola_engine\Program.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\Shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_framebuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_general_texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_image.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_obj_authority.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_out_headers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_render_process.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\gl3d_texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\glheaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\kaola_engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kaola_engine\log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <CustomBuild Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <ClInclude Include="kaola_engine\model_manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <CustomBuild Include="kaola_engine\mopenglview.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <ClInclude Include="kaola_engine\shader_manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mopenglview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mopenglview.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClInclude Include="ui_mainwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kaola_engine\default.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\default.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\dm.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\dm.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\dm2.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\dm2.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\image.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\image.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text_vector.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text_vector.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text_vector_shadow.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\multiple_text_vector_shadow.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\picking_mask.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\picking_mask.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\shadow_mask.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\shadow_mask.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\skybox.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\skybox.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\text_vector_light.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\text_vector_light.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\vector_light.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\vector_light.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\vector_light_toon.fdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+    <None Include="kaola_engine\vector_light_toon.vdata">
+      <Filter>Distribution Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

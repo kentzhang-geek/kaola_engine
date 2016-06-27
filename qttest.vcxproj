@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{819F37C9-BF32-34A6-AF0E-0C3D673749AF}</ProjectGuid>
+    <RootNamespace>qttest</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;" Label="Configuration">
+    <PlatformToolSet>v140</PlatformToolSet>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>qttest</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;" Label="Configuration">
+    <PlatformToolSet>v140</PlatformToolSet>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>qttest</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" />
+  </ImportGroup>
+  <ImportGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\</OutDir>
+    <IntDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\</IntDir>
+    <TargetName Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">qttest</TargetName>
+    <IgnoreImportLibrary Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">false</LinkIncremental>
+    <OutDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\</OutDir>
+    <IntDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\</IntDir>
+    <TargetName Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">qttest</TargetName>
+    <IgnoreImportLibrary Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;..\LIBS\assimp-3.2\include;..\LIBS\glm_build;..\LIBS\assimp-3.2\include;..\LIBS\glew-1.13.0\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;release;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>release\</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName></ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmain.lib;shell32.lib;assimp-vc130-mtd.lib;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64\glew32.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGL.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgets.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Gui.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\release;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <OutputFile>$(OutDir)\qttest.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;..\LIBS\assimp-3.2\include;..\LIBS\glm_build;..\LIBS\assimp-3.2\include;..\LIBS\glew-1.13.0\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;debug;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>debug\</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmaind.lib;shell32.lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\debug\assimp-vc130-mtd.lib;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64\glew32.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGLd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgetsd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Guid.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\debug;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <OutputFile>$(OutDir)\qttest.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="kaola_engine\Program.cpp" />
+    <ClCompile Include="kaola_engine\Shader.cpp" />
+    <ClCompile Include="kaola_engine\default_shader_param.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_framebuffer.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_general_texture.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_image.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_material.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_mesh.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_object.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_render_process.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_scene.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_texture.cpp" />
+    <ClCompile Include="kaola_engine\gl3d_viewer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="kaola_engine\model_manager.cpp" />
+    <ClCompile Include="models_cfg.cpp" />
+    <ClCompile Include="kaola_engine\mopenglview.cpp" />
+    <ClCompile Include="kaola_engine\render_processes.cpp" />
+    <ClCompile Include="kaola_engine\shader_list.cpp" />
+    <ClCompile Include="kaola_engine\shader_manager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="kaola_engine\Program.hpp" />
+    <ClInclude Include="kaola_engine\Shader.hpp" />
+    <ClInclude Include="kaola_engine\gl3d.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_framebuffer.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_general_texture.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_image.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_material.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_obj_authority.h" />
+    <ClInclude Include="kaola_engine\gl3d_out_headers.h" />
+    <ClInclude Include="kaola_engine\gl3d_render_process.hpp" />
+    <ClInclude Include="kaola_engine\gl3d_texture.hpp" />
+    <ClInclude Include="kaola_engine\glheaders.h" />
+    <ClInclude Include="kaola_engine\kaola_engine.h" />
+    <ClInclude Include="kaola_engine\log.h" />
+    <CustomBuild Include="mainwindow.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore mainwindow.h -o release\moc_mainwindow.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC mainwindow.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_mainwindow.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore mainwindow.h -o debug\moc_mainwindow.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC mainwindow.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_mainwindow.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="kaola_engine\model_manager.hpp" />
+    <CustomBuild Include="kaola_engine\mopenglview.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore kaola_engine\mopenglview.h -o release\moc_mopenglview.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC kaola_engine/mopenglview.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_mopenglview.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore kaola_engine\mopenglview.h -o debug\moc_mopenglview.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC kaola_engine/mopenglview.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_mopenglview.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="kaola_engine\shader_manager.hpp" />
+    <ClInclude Include="ui_mainwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_mopenglview.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_mopenglview.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClInclude Include="ui_mainwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="mainwindow.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">mainwindow.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe mainwindow.ui -o ui_mainwindow.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">UIC mainwindow.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">ui_mainwindow.h;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">mainwindow.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe mainwindow.ui -o ui_mainwindow.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">UIC mainwindow.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">ui_mainwindow.h;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kaola_engine\default.fdata" />
+    <None Include="kaola_engine\default.vdata" />
+    <None Include="kaola_engine\dm.fdata" />
+    <None Include="kaola_engine\dm.vdata" />
+    <None Include="kaola_engine\dm2.fdata" />
+    <None Include="kaola_engine\dm2.vdata" />
+    <None Include="kaola_engine\image.fdata" />
+    <None Include="kaola_engine\image.vdata" />
+    <None Include="kaola_engine\multiple_text.fdata" />
+    <None Include="kaola_engine\multiple_text.vdata" />
+    <None Include="kaola_engine\multiple_text_vector.fdata" />
+    <None Include="kaola_engine\multiple_text_vector.vdata" />
+    <None Include="kaola_engine\multiple_text_vector_shadow.fdata" />
+    <None Include="kaola_engine\multiple_text_vector_shadow.vdata" />
+    <None Include="kaola_engine\picking_mask.fdata" />
+    <None Include="kaola_engine\picking_mask.vdata" />
+    <None Include="kaola_engine\shadow_mask.fdata" />
+    <None Include="kaola_engine\shadow_mask.vdata" />
+    <None Include="kaola_engine\skybox.fdata" />
+    <None Include="kaola_engine\skybox.vdata" />
+    <None Include="kaola_engine\text_vector_light.fdata" />
+    <None Include="kaola_engine\text_vector_light.vdata" />
+    <None Include="kaola_engine\vector_light.fdata" />
+    <None Include="kaola_engine\vector_light.vdata" />
+    <None Include="kaola_engine\vector_light_toon.fdata" />
+    <None Include="kaola_engine\vector_light_toon.vdata" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
