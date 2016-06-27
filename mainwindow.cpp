@@ -10,6 +10,8 @@ using namespace std;
 
 extern MOpenGLView * one_view;
 
+QTextEdit * qtout = NULL;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->openGLWidget->setParent(this);
     connect(this, SIGNAL(sig1()), this, SLOT(on_sig1()));
+
+    qtout = this->ui->tout;
 }
 
 void MainWindow::showEvent(QShowEvent * ev) {

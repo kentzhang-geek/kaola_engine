@@ -31,13 +31,19 @@ gl3d_image::~gl3d_image() {
     free(this->data);
 }
 
+#include <QTextEdit>
+
+extern QTextEdit * qtout;
+
 gl3d_image::gl3d_image(char * f) {
     this->init();
-
-    std::cout << "Load image : " << f << std::endl;
     
     QString filename(f);
     QImage img(filename);
+
+    QString log("Load Image : ");
+    log.append(filename);
+    qtout->setText(qtout->toPlainText() + log + "\n");
 
     if (img.isNull()) {
         log_c("Failed to load image %s", f);
