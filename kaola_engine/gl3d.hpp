@@ -15,11 +15,13 @@
  *  System Headers
  */
 #include <stdio.h>
-#include <vector>
 #include <iterator>
 #include <string>
 #include <map>
 #include <iostream>
+
+// Qt Headers
+#include <QVector>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -94,7 +96,7 @@ namespace gl3d {
         mesh(void * as_mesh);
         
         // 多个mesh合并成一个mesh
-        mesh(vector<mesh *>& meshes);
+        mesh(QVector<mesh *>& meshes);
         
         // 测试用的加mesh构造函数
         mesh(obj_points * pts, int number_of_points,
@@ -269,7 +271,7 @@ namespace gl3d {
         void buffer_data();
         obj_property this_property;
         bool data_buffered;
-        vector<mesh *> meshes;
+        QVector<mesh *> meshes;
         unsigned long long number_of_meshes;
         GLuint vao;
     };

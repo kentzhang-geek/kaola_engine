@@ -9,13 +9,6 @@
 #include <stdio.h>
 #include "kaola_engine/model_manager.hpp"
 
-//GL3D_MODEL_PARAM(144, "skybox.obj") {
-//    this->obj->set_repeat(false);
-//    this->obj->get_property()->scale_range = 10.0f;
-//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_MOVE | GL3D_OBJ_ENABLE_ROTATE;
-//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-//}
-
 #if 1
 GL3D_MODEL_PARAM(144, "skybox.obj") {
     this->obj->set_repeat(false);
@@ -79,7 +72,6 @@ GL3D_MODEL_PARAM(172, "diningroomfloor.3ds") {
 
 GL3D_MODEL_PARAM(10, "main.3ds") {
     this->obj->get_property()->scale_range = 0.005;
-//    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
     this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
     this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
     this->obj->merge_meshes();  // 合并mesh
@@ -92,22 +84,4 @@ GL3D_MODEL_PARAM(11, "livingroomwall.3ds") {
     this->obj->merge_meshes();  // 合并mesh
 }
 
-
-//GL3D_MODEL_PARAM(11, "furniturecombination.3ds") {
-//    this->obj->get_property()->scale_range = 0.005;
-//    //    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
-//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
-//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
-//    this->obj->merge_meshes();  // 合并mesh
-//}
 #endif
-
-// 测试
-//GL3D_MODEL_PARAM(21, "oushi.3ds") {
-//    this->obj->get_property()->scale_range = 0.005;
-////    this->obj->get_property()->position = glm::vec3(0.0, 0.0, 0.2);
-////    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_PICKING | GL3D_OBJ_ENABLE_ROTATE | GL3D_OBJ_ENABLE_MOVE | GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_CULLING;
-//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_CULLING;
-//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
-//    this->obj->merge_meshes();  // 合并mesh
-//}

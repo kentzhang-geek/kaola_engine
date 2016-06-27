@@ -132,7 +132,7 @@ void gl3d::mesh::buffer_data() {
 }
 
 // KENT TODO : 测试mesh的合并算法
-gl3d::mesh::mesh(vector<mesh *>& meshes) {
+gl3d::mesh::mesh(QVector<mesh *> &meshes) {
     this->init();
 
     int _num_of_vert = 0;
