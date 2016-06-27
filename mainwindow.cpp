@@ -47,7 +47,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 
     this->ui->openGLWidget->main_scene->prepare_buffer();
 
-    GL3D_SET_CURRENT_RENDER_PROCESS(moving);
+    GL3D_SET_CURRENT_RENDER_PROCESS(normal);
 }
 
 MainWindow::~MainWindow()

@@ -34,8 +34,8 @@ void MOpenGLView::create_scene() {
     Program * prog;
     auto load_iter = shader_mgr->loaders.begin();
     for (; load_iter != shader_mgr->loaders.end(); load_iter++) {
-        string vert = this->res_path + "\\" + (*load_iter).second->vertex;
-        string frag = this->res_path + "\\" + (*load_iter).second->frag;
+        string vert = this->res_path + "\\" + load_iter.value()->vertex;
+        string frag = this->res_path + "\\" + load_iter.value()->frag;
         cout << "Load Vertex Shader " << vert << endl;
         cout << "Load Fragment Shader " << frag << endl;
 #if 0
@@ -66,7 +66,7 @@ void MOpenGLView::create_scene() {
 
         // create program
         prog = new Program(tmp_vert, tmp_frag);
-        shader_mgr->shaders.insert(std::pair<string, Program *>((*load_iter).first, prog));
+        shader_mgr->shaders.insert(load_iter.key(), prog);
     }
 
     return ;

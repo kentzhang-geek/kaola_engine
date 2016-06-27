@@ -10,7 +10,7 @@
 #define model_manager_hpp
 
 #include "gl3d.hpp"
-#include <vector>
+#include <QVector>
 #include <string>
 
 using namespace std;
@@ -32,7 +32,7 @@ namespace gl3d {
         void init_objs(gl3d::scene * main_scene);
         void release_loaders();
         void add_obj_to_scene(gl3d::scene * scene, char * obj_filename, glm::vec2 coord);
-        vector<model_param *> models;
+        QVector<model_param *> models;
     private:
         int available_id;
         model_manager();

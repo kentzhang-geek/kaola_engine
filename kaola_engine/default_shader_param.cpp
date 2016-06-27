@@ -103,8 +103,8 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
+    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
     shadow_center.z = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
@@ -125,7 +125,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
         glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.at(string("alpha"));
+        float alpha = *(float *)obj->user_data.value(string("alpha"));
         glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
         glDepthMask(GL_FALSE);
     }
@@ -186,8 +186,8 @@ GL3D_SHADER_PARAM(shadow_mask) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
+    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
     shadow_center.z = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
@@ -238,8 +238,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
+    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
     shadow_center.z = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
@@ -255,7 +255,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
 
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
-    GLuint shadow_txt = ((gl3d::scene *)this->user_data.at(string("scene")))->get_shadow_texture();
+    GLuint shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, shadow_txt);
     gl3d_texture::set_parami(false);
@@ -271,7 +271,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
         glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.at(string("alpha"));
+        float alpha = *(float *)obj->user_data.value(string("alpha"));
         glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
         glDepthMask(GL_FALSE);
     }
@@ -286,7 +286,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
 GL3D_SHADER_PARAM(image) {
     GLuint pro = GL3D_GET_SHADER("image")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    gl3d::scene * scene = (gl3d::scene *)this->user_data.at(string("scene"));
+    gl3d::scene * scene = (gl3d::scene *)this->user_data.value(string("scene"));
     glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
     
@@ -384,8 +384,8 @@ GL3D_SHADER_PARAM(dm) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
+    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
     shadow_center.z = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
@@ -401,7 +401,7 @@ GL3D_SHADER_PARAM(dm) {
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
-    GLuint shadow_txt = ((gl3d::scene *)this->user_data.at(string("scene")))->get_shadow_texture();
+    GLuint shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
     glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_2D, shadow_txt);
     gl3d_texture::set_parami(false);
@@ -417,7 +417,7 @@ GL3D_SHADER_PARAM(dm) {
         glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.at(string("alpha"));
+        float alpha = *(float *)obj->user_data.value(string("alpha"));
         glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
         glDepthMask(GL_FALSE);
     }
@@ -459,8 +459,8 @@ GL3D_SHADER_PARAM(dm2) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.at(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
+    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
     shadow_center.z = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
@@ -481,7 +481,7 @@ GL3D_SHADER_PARAM(dm2) {
         glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.at(string("alpha"));
+        float alpha = *(float *)obj->user_data.value(string("alpha"));
         glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
         glDepthMask(GL_FALSE);
     }

@@ -10,10 +10,10 @@
 #define gl3d_texture_hpp
 
 #include <stdio.h>
-#include <vector>
-#include <map>
 #include <string>
 #include "gl3d_image.hpp"
+#include <QVector>
+#include <QMap>
 
 namespace gl3d {
     class gl3d_texture{

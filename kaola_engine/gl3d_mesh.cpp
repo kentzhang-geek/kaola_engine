@@ -12,7 +12,7 @@
 using namespace gl3d;
 
 void gl3d::mesh::init() {
-//    memset(this, 0, sizeof(gl3d::mesh::mesh));
+    memset(this, 0, sizeof(gl3d::mesh));
     // gen vbo
     glGenBuffers(1, &this->vbo);
     glGenBuffers(1, &this->idx);

@@ -19,11 +19,11 @@ render_process::~render_process() {
 }
 
 void * render_process::get_user_object(string key) {
-    return user_objs.at(key);
+    return user_objs.value(key);
 }
 
 void render_process::add_user_object(string key, void *obj) {
-    this->user_objs.insert(pair<string, void *>(key, obj));
+    this->user_objs.insert(key, obj);
     return;
 }
 
@@ -48,12 +48,12 @@ render_process_manager * render_process_manager::get_shared_instance(){
 }
 
 void render_process_manager::add_render_process(string key, gl3d::render_process *render) {
-    this->render_processes.insert(pair<string, gl3d::render_process *>(key, render));
+    this->render_processes.insert(key, render);
     return;
 }
 
 render_process * render_process_manager::get_render_process(string key) {
-    return this->render_processes.at(key);
+    return this->render_processes.value(key);
 }
 
 string render_process_manager::get_current_process_name() {

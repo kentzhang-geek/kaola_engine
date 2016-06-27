@@ -53,7 +53,7 @@ void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
     memset(&this->this_property, 0, sizeof(scene_property));
     memset(&this->lights, 0, sizeof(light_property) * 4);
-    this->objects = new std::map<int,gl3d::object *>();
+    this->objects = new QMap<int,gl3d::object *>();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
     using namespace Assimp;
@@ -89,8 +89,8 @@ bool scene::init(scene_property * property) {
     return true;
 }
 
-bool scene::add_obj(std::pair<int,gl3d::object *> obj_key_pair) {
-    this->objects->insert(obj_key_pair);
+bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
+    this->objects->insert(obj_key_pair.first, obj_key_pair.second);
     obj_key_pair.second->this_property.id = (GLuint) obj_key_pair.first;
     return true;
 }
@@ -98,7 +98,7 @@ bool scene::add_obj(std::pair<int,gl3d::object *> obj_key_pair) {
 bool scene::delete_obj(int key) {
     object * obj = this->get_obj(key);
     if (obj->this_property.authority & GL3D_OBJ_ENABLE_DEL) {
-        this->objects->erase(key);
+        this->objects->erase(this->objects->find(key));
         delete obj;
         return true;
     }
@@ -107,14 +107,14 @@ bool scene::delete_obj(int key) {
 }
 
 gl3d::object * scene::get_obj(int key) {
-    return this->objects->at(key);
+    return this->objects->value(key);
 }
 
 bool scene::prepare_buffer() {
     auto itera = this->objects->begin();
     gl3d::object * obj = NULL;
     for (; itera != this->objects->end(); itera++) {
-        obj = (*itera).second;
+        obj = itera.value();
         // buffer data
         obj->buffer_data();
     }
@@ -211,8 +211,8 @@ bool scene::draw(bool use_global_shader) {
     // 遍历object去渲染物体
     auto iter_objs = this->objects->begin();     // 遍历所有object
     while (iter_objs != this->objects->end()) {
-        current_obj = (*iter_objs).second;
-        int cuid_tmp = (*iter_objs).first;
+        current_obj = iter_objs.value();
+        int cuid_tmp = iter_objs.key();
         //        cout << "current obj id " << (*iter_objs).first << endl;
         if (use_global_shader) {
             use_shader = GL3D_GET_SHADER(this->this_property.global_shader.c_str());
@@ -231,17 +231,17 @@ bool scene::draw(bool use_global_shader) {
             if (current_obj->get_property()->draw_authority & this->this_property.current_draw_authority) {
                 if (NULL != param) {
                     // set object to user data before set param
-                    param->user_data.insert(pair<string, void *>(string("object"), (void *)current_obj));
+                    param->user_data.insert(string("object"), (void *)current_obj);
                     param->set_param();
                     // then delete param
-                    param->user_data.erase(string("object"));
+                    param->user_data.erase(param->user_data.find(string("object")));
                 }
                 this->draw_object(current_obj, use_shader->getProgramID());
             }
             iter_objs++;
         }
         else {
-            log_c("object id %d use shader %s not found\n", (*iter_objs).first, current_obj->use_shader.c_str());
+            log_c("object id %d use shader %s not found\n", iter_objs.key(), current_obj->use_shader.c_str());
             // TODO : 这里删除的话会报错
             iter_objs = this->objects->erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
@@ -406,7 +406,7 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
         if ((check_bouding(p_mesh->bounding_value_max, p_mesh->bounding_value_min, pvm) == true) || !(obj->this_property.authority & GL3D_OBJ_ENABLE_CULLING)) {
             // 多重纹理的绑定与绘制
             try {
-                obj->mtls.at(p_mesh->material_index)->use_this(pro);
+                obj->mtls.value(p_mesh->material_index)->use_this(pro);
                 gl3d_texture::set_parami(p_mesh->texture_repeat);
             } catch (std::out_of_range & not_used_smth) {
                 //log_c("material_index is %d and out of range", p_mesh->material_index);
@@ -470,7 +470,7 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (!(this->objects->at(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+        if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
             obj_id = -1;
         }
     }

@@ -17,11 +17,11 @@
 #include <stdio.h>
 #include <iterator>
 #include <string>
-#include <map>
 #include <iostream>
 
 // Qt Headers
 #include <QVector>
+#include <QMap>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -207,14 +207,14 @@ namespace gl3d {
          *
          *  自己创建map时，可以指定各种数据
          */
-        map<string, void *> user_data;
+        QMap<string, void *> user_data;
         
         /**
          *  @author Kent, 16-03-16 16:03:55
          *
          *  各种材质对对应index的映射表
          */
-        map<unsigned int, gl3d_material *> mtls;
+        QMap<unsigned int, gl3d_material *> mtls;
         
         /**
          *  @author Kent, 16-03-21 13:03:37
@@ -365,7 +365,7 @@ namespace gl3d {
          *
          *  @return 是否加入成功
          */
-        bool add_obj(std::pair<int,gl3d::object *> obj_key_pair);
+        bool add_obj(QPair<int, object *> obj_key_pair);
 
         /**
          *  @author Kent, 16-02-17 21:02:11
@@ -566,7 +566,7 @@ namespace gl3d {
         void set_attribute(GLuint pro);
         void draw_object(gl3d::object *obj, GLuint pro);
         shader_manager * shaders;
-        std::map<int,gl3d::object *> * objects;
+        QMap<int,gl3d::object *> * objects;
         scene_property this_property;
         light_property lights[4];
 //        GLuint shadow_text;

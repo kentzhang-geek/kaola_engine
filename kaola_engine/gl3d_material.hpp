@@ -9,9 +9,9 @@
 #ifndef gl3d_material_hpp
 #define gl3d_material_hpp
 
-#include <map>
+#include <QMap>
 #include <string>
-#include <vector>
+#include <QVector>
 
 #include "gl3d_texture.hpp"
 
@@ -29,8 +29,8 @@ namespace gl3d {
             specular
         };
         
-        map<material_type, gl3d_texture *> textures;
-        map<material_type, ::glm::vec3> colors;
+        QMap<material_type, gl3d_texture *> textures;
+        QMap<material_type, ::glm::vec3> colors;
         
         gl3d_material(aiMaterial * mtls);
         gl3d_material(string file_name);

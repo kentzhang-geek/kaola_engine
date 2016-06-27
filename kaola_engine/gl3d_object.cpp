@@ -54,7 +54,7 @@ object::~object() {
     if (0 != mtls.size()) {
         auto iter2 = mtls.begin();
         while (iter2 != mtls.end()) {
-            delete (*iter2).second;
+            delete iter2.value();
             iter2++;
         }
         mtls.clear();
@@ -148,7 +148,7 @@ bool object::init(char * filename) {
     aiMaterial *mtl;
     for (i = 0; i < tex_cnt; i++) {
         mtl = scene->mMaterials[i];
-        this->mtls.insert(pair<unsigned int, gl3d_material *>(i, new gl3d_material(mtl)));
+        this->mtls.insert(i, new gl3d_material(mtl));
     }
 
     glBindVertexArray(0);
@@ -223,8 +223,8 @@ bool object::rotate(glm::vec3 axis, GLfloat angle) {
 bool object::use_mtl(string file_name, int mtl_id) {
     if (this->this_property.authority & GL3D_OBJ_ENABLE_CHANGEMTL) {
         gl3d_material * mtl = new gl3d_material(file_name);
-        this->mtls.erase(mtl_id);
-        this->mtls.insert(pair<int, gl3d::gl3d_material *>(mtl_id, mtl));
+        this->mtls.erase(this->mtls.find(mtl_id));
+        this->mtls.insert(mtl_id, mtl);
         auto iter = this->meshes.begin();
         for (; iter != this->meshes.end(); iter++) {
             (*iter)->material_index = mtl_id;

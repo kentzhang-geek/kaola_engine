@@ -11,8 +11,8 @@
 
 #include <stdio.h>
 #include <string>
-#include <vector>
-#include <map>
+#include <QVector>
+#include <QMap>
 
 #include "Program.hpp"
 #include "Shader.hpp"
@@ -79,7 +79,7 @@ namespace gl3d {
     class shader_param {
     public:
         string shader_name;
-        map<string, void *> user_data;  // 用户自己的参数表
+        QMap<string, void *> user_data;  // 用户自己的参数表
         shader_param() : shader_name(string("")) {}
         shader_param(char * name);
         ~shader_param();
@@ -99,16 +99,16 @@ namespace gl3d {
         shader_manager();
     public:
         static shader_manager * sharedInstance();
-        map<string, gl3d::Program *> shaders;
-        map<string, shader_loader *> loaders;
-        map<string, shader_param *> params;
+        QMap<string, gl3d::Program *> shaders;
+        QMap<string, shader_loader *> loaders;
+        QMap<string, shader_param *> params;
         gl3d::Program * get_program(string name);
         gl3d::shader_param * get_param(string name);
     };
 }
 
 // 工具宏
-#define GL3D_GET_OBJ() (gl3d::object *)(this->user_data.at(string("object")))
+#define GL3D_GET_OBJ() (gl3d::object *)(this->user_data.value(string("object")))
 
 #define GL3D_SET_MAT4(matrixName, matrixValue, program) \
 glUniformMatrix4fv \

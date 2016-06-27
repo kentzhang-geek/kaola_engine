@@ -10,7 +10,8 @@
 #define gl3d_render_process_hpp
 
 #include <stdio.h>
-#include <vector>
+#include <QVector>
+#include <QMap>
 #include "gl3d_out_headers.h"
 
 using namespace std;
@@ -27,7 +28,7 @@ namespace gl3d {
         void add_user_object(string key, void * obj);
         virtual void invoke() {};
     private:
-        map<string, void *> user_objs;
+        QMap<string, void *> user_objs;
     };
     
     class render_process_manager {
@@ -40,7 +41,7 @@ namespace gl3d {
         
     private:
         string current_process;
-        map<string, render_process *> render_processes;
+        QMap<string, render_process *> render_processes;
         render_process_manager();
         ~render_process_manager();
     };

@@ -13,7 +13,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <map>
+#include <QMap>
 #include <queue>
 #include <QOpenGLContext>
 #include <QTimer>

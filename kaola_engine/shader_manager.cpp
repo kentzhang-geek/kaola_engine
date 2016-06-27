@@ -23,7 +23,7 @@ shader_loader::shader_loader(string shaderName, char * vertexShader, char * frag
     this->vertex = vertexShader;
     this->frag = fragShader;
     this->name = shaderName;
-    ::shader_manager::sharedInstance()->loaders.insert(std::pair<string, shader_loader *>(shaderName, this));
+    ::shader_manager::sharedInstance()->loaders.insert(shaderName, this);
 }
 
 shader_manager::shader_manager() {
@@ -36,11 +36,12 @@ shader_manager::shader_manager() {
 
 shader_param::shader_param(char * name) : shader_name(string("")) {
     this->shader_name = string(name);
-    ::shader_manager::sharedInstance()->params.insert(pair<string, shader_param *>(string(name), this));
+    ::shader_manager::sharedInstance()->params.insert(string(name), this);
 }
 
 shader_param::~shader_param() {
-    ::shader_manager::sharedInstance()->params.erase(this->shader_name);
+    ::shader_manager::sharedInstance()->params.erase(
+                ::shader_manager::sharedInstance()->params.find(this->shader_name));
 }
 
 // single instance mod
@@ -54,7 +55,7 @@ shader_manager * shader_manager::sharedInstance() {
 
 gl3d::Program * shader_manager::get_program(string name) {
     try {
-        return this->shaders.at(name);
+        return this->shaders.value(name);
     } catch (std::out_of_range & oe) {
         log_c("Does Not Found Shader Program %s", name.c_str());
         return NULL;
@@ -63,7 +64,7 @@ gl3d::Program * shader_manager::get_program(string name) {
 
 gl3d::shader_param * shader_manager::get_param(string name) {
     try {
-        return this->params.at(name);
+        return this->params.value(name);
     } catch (std::out_of_range & oe) {
         log_c("Does Not Found Shader Parameter %s", name.c_str());
         return NULL;
