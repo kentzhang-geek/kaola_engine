@@ -37,7 +37,7 @@ namespace gl3d {
         GLuint frame_obj;
         GLuint color_obj;
         GLuint depth_obj;
-        GLuint stenc_depth_obj;
+        GLuint stenc_obj;
         gl3d_frame_config config;
         GLuint width;
         GLuint height;

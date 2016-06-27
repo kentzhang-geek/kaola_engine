@@ -564,7 +564,7 @@ void scene::draw_shadow_mask() {
     this->shadow_text->clean_data();
     
     // create a frame for draw shadow
-    gl3d_framebuffer * frame = new gl3d_framebuffer(GL3D_FRAME_HAS_COLOR_BUF, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     
     // 绘制阴影贴图
     frame->attach_depth_text(this->shadow_text->get_gl_obj());
@@ -577,12 +577,14 @@ void scene::draw_shadow_mask() {
     this->draw(true);
     glEnable(GL_BLEND);
 
-//    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+    this->shadow_text->bind(GL_TEXTURE0);
+    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENTS, GL_UNSIGNED_INT, test_data);
 //    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
-//    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
-//    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\test.png")) {
-//        throw std::runtime_error("save failed");
-//    }
+    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
+    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\test.png")) {
+        throw std::runtime_error("save failed");
+    }
 
     frame->unbind_this_frame();
     delete frame;

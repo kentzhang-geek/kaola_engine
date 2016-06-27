@@ -15,7 +15,7 @@ void gl3d_general_texture::init() {
 gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type set_type, GLuint x, GLuint y) {
     this->init();
     
-    this->type = type;
+    this->type = set_type;
     this->size_x = x;
     this->size_y = y;
     
@@ -24,7 +24,7 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
     glBindTexture(GL_TEXTURE_2D, this->text_obj);
     
     // 设置贴图格式
-    switch (type) {
+    switch (set_type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
             glTexImage2D(GL_TEXTURE_2D,
@@ -34,7 +34,7 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
                          y,
                          0,
                          GL_DEPTH_COMPONENT,
-                         GL_UNSIGNED_BYTE,
+                         GL_UNSIGNED_INT,
                          NULL);
 //            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_UNSIGNED_INT_24_8_OES, x, y);
             break;
@@ -64,7 +64,8 @@ void gl3d_general_texture::clean_data() {
         case GL3D_DEPTH_COMPONENT:
             glBindTexture(GL_TEXTURE_2D, this->text_obj);
             this->set_parami(false);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+            glTexImage2D(GL_TEXTURE_2D, 0,
+                         GL_DEPTH_COMPONENT,
                          size_x,
                          size_y,
                          0,
