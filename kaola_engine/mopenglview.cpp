@@ -134,6 +134,7 @@ void MOpenGLView::view_change() {
     this->main_scene->watcher->headto(glm::vec3(0.0, 0.0, 1.0));
 
     this->key_press = 0;
+    GL3D_GET_CURRENT_RENDER_PROCESS()->invoke();
 }
 
 void MOpenGLView::keyPressEvent(QKeyEvent *event) {

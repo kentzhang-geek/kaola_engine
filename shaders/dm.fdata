@@ -29,10 +29,14 @@ varying vec3 l_normal;
 varying vec3 in_light;
 
 // shadow
-#define EPSILON 0.02
+#define EPSILON 0.0002
 varying vec4 vPos;
 uniform mat4 s_mtx;
+uniform sampler2D gl3d_texture_shadow;
+varying float test;
+uniform vec3 shadow_center_input;
 uniform mat4 transmtx;
+uniform vec2 shadow_map_size;
 
 // reflection
 uniform float alpha;
@@ -106,6 +110,33 @@ vec3 hsi2rgb(vec3 hsi) {
 void main() {
 #if 1 // for test
     vec4 vShadowCoord = s_mtx * vPos;
+    vec4 s_pixel = vec4(0.0);
+    float shadow_weaken = 1.0;;
+    // 裁剪过远的阴影似乎是好了？
+    float distance_shandow_center = length(shadow_center_input -
+                                           vec3(transmtx * vPos));
+    if (distance_shandow_center < 30.0) {
+        vec2 offset = vec2(1.0/shadow_map_size.x, 1.0/shadow_map_size.y);
+        vec4 shadowMapPosition = vShadowCoord/vShadowCoord.w;
+        // trans -1~1 to 0~1
+        shadowMapPosition = shadowMapPosition * 0.5 + 0.5;
+        // shadowMapPosition.x = shadowMapPosition.x * 0.5 + 0.5;
+        // shadowMapPosition.y = shadowMapPosition.y * 0.5 + 0.5;
+        // shadowMapPosition.z = shadowMapPosition.z * 10.0;
+        for (float y = -2.0 ; y <= 2.0 ; y++) {
+            for (float x = -2.0 ; x <= 2.0 ; x++) {
+                // get shadow depth pixel
+                s_pixel = texture2D(gl3d_texture_shadow, 
+                    vec2(shadowMapPosition.x + x*offset.x, 
+                        shadowMapPosition.y + y*offset.y));
+                if ((s_pixel.z + EPSILON) > shadowMapPosition.z) {
+                    shadow_weaken += 5.0 - abs(x) - abs(y);
+                }
+            }
+        }
+        // shadow_weaken = (shadow_weaken/25.0);
+        shadow_weaken = (shadow_weaken/65.0);
+    }
     
     // 计算自然色
     vec4 ambclr = gl3d_t_ambient_enable ? (texture2D(gl3d_texture_ambient, text_coord) + mtlAmbientColor) :
@@ -136,11 +167,26 @@ void main() {
     vec3 hsi = rgb2hsi(gl_FragColor.xyz);
     hsi.y *= 1.1;
     hsi.y = min(1.0, hsi.y);
-    hsi.z *= 0.7;
-    hsi.z = min(1.0, hsi.z);
+
+    // 阴影与背光调整
+    // float weak_factor = max(min(test, shadow_weaken), 0.0);
+    hsi.z *= max(0.5, 0.3 + 0.7 * shadow_weaken);
+    gl_FragColor = vec4(hsi2rgb(hsi), gl_FragColor.w);
+
     
     gl_FragColor = gl_FragColor - vec4(0.2);
     gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
     gl_FragColor.w = alpha;
+    // + texture2D(gl3d_texture_diffuse, text_coord);
+#endif
+    
+#if 0  // test
+    gl_FragColor = texture2D(gl3d_texture_diffuse, text_coord);
+    // texture2D(gl3d_texture_diffuse, text_coord)
+    // texture2D(gl3d_texture_specular, text_coord)
+    // mtlAmbientColor
+    // mtlDiffuseColor
+    // mtlSpecularColor
+    gl_FragColor.w = 1.0;
 #endif
 }

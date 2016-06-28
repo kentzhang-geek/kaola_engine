@@ -1,0 +1,11 @@
+#version 100
+precision highp float;
+
+varying vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_picking_mask;
+
+void main() {
+    gl_FragColor = texture2D(gl3d_texture_picking_mask, text_coord);
+}

@@ -29,7 +29,7 @@ varying vec3 l_normal;
 varying vec3 in_light;
 
 // shadow
-#define EPSILON 0.02
+#define EPSILON 0.0002
 varying vec4 vPos;
 uniform mat4 s_mtx;
 uniform sampler2D gl3d_texture_shadow;

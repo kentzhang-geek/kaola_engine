@@ -1,0 +1,24 @@
+#version 100
+precision highp float;
+precision highp int;
+
+attribute vec3 vertex_pos;
+attribute vec3 vertex_normal;
+attribute vec4 vertex_color;
+attribute vec2 vertex_tex_coord;
+attribute float vertex_tex_id;
+
+varying float depth;
+
+// mvp matrix
+uniform mat4 pvmMatrix;
+uniform mat4 s_mtx;
+uniform mat4 translationMatrix;
+
+void main() {
+	vec4 pos = s_mtx * vec4(vertex_pos, 1.0);
+	// depth = (pos.z/pos.w + 1.0) / 2.0;
+	depth = (pos.z/pos.w + 1.0) / 2.0;
+    gl_Position = s_mtx * vec4(vertex_pos, 1.0);
+    gl_Position = gl_Position/gl_Position.w;
+}

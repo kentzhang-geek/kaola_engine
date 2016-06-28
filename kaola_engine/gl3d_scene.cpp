@@ -562,6 +562,16 @@ GLuint scene::get_shadow_texture() {
 void scene::draw_shadow_mask() {
     // clean shadow text data
     this->shadow_text->clean_data();
+
+//    this->shadow_text->bind(GL_TEXTURE0);
+//    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+//    memset(test_data, 0, 4 * 2048 * 2048);
+//    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+////    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
+//    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
+//    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
+//        throw std::runtime_error("save failed");
+//    }
     
     // create a frame for draw shadow
     gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -577,14 +587,15 @@ void scene::draw_shadow_mask() {
     this->draw(true);
     glEnable(GL_BLEND);
 
-    this->shadow_text->bind(GL_TEXTURE0);
-    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
-    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENTS, GL_UNSIGNED_INT, test_data);
-//    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
-    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
-    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\test.png")) {
-        throw std::runtime_error("save failed");
-    }
+//    this->shadow_text->bind(GL_TEXTURE0);
+//    memset(test_data, 0, 4 * 2048 * 2048);
+//    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+////    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
+//    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
+//    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
+//        throw std::runtime_error("save failed");
+//    }
+//    free(test_data);
 
     frame->unbind_this_frame();
     delete frame;

@@ -69,33 +69,7 @@ INCLUDEPATH += D:\User\Desktop\KLM\LIBS\glm_build
 
 RESOURCES +=
 
-DISTFILES += \
-    kaola_engine/dm.fdata \
-    kaola_engine/dm2.fdata \
-    kaola_engine/multiple_text_vector_shadow.fdata \
-    kaola_engine/multiple_text_vector.fdata \
-    kaola_engine/picking_mask.fdata \
-    kaola_engine/picking_mask.vdata \
-    kaola_engine/shadow_mask.fdata \
-    kaola_engine/shadow_mask.vdata \
-    kaola_engine/text_vector_light.fdata \
-    kaola_engine/vector_light_toon.fdata \
-    kaola_engine/vector_light.fdata \
-    kaola_engine/default.fdata \
-    kaola_engine/default.vdata \
-    kaola_engine/dm.vdata \
-    kaola_engine/dm2.vdata \
-    kaola_engine/image.fdata \
-    kaola_engine/image.vdata \
-    kaola_engine/multiple_text_vector_shadow.vdata \
-    kaola_engine/multiple_text_vector.vdata \
-    kaola_engine/multiple_text.fdata \
-    kaola_engine/multiple_text.vdata \
-    kaola_engine/skybox.fdata \
-    kaola_engine/skybox.vdata \
-    kaola_engine/text_vector_light.vdata \
-    kaola_engine/vector_light_toon.vdata \
-    kaola_engine/vector_light.vdata
+DISTFILES +=
 
 target.files += $$[DISTFILES]
 target.path = ./

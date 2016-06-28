@@ -1,0 +1,36 @@
+#version 100
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+varying float df;
+varying float sf;
+varying float distance_factor;
+varying vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
+
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
+
+// light
+uniform float shininess;
+uniform float param_x;
+
+void main() {
+#if 0 // for test
+#endif
+    
+    gl_FragColor = texture2D(gl3d_texture_ambient, text_coord) +
+    texture2D(gl3d_texture_diffuse, text_coord)  +
+    texture2D(gl3d_texture_specular, text_coord) ;
+    gl_FragColor.w = 1.0;
+}
