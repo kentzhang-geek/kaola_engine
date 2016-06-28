@@ -121,9 +121,7 @@ void main() {
                                            vec3(transmtx * vPos));
     if (distance_shandow_center < 30.0) {
         vec2 offset = vec2(1.0/shadow_map_size.x, 1.0/shadow_map_size.y);
-        // offset *= 2.0;
         vec4 shadowMapPosition = vShadowCoord/vShadowCoord.w;
-        // shadowMapPosition = 0.5 * (shadowMapPosition + 1.0);
         shadowMapPosition.z -= EPSILON;
         // if (textureProj(gl3d_texture_shadow, vShadowCoord) < 1.0) {
         //     // Shadow, so darken the shape color to simulate shadow.
@@ -131,7 +129,7 @@ void main() {
         // }
         for (float y = -2.0 ; y <= 2.0 ; y++) {
             for (float x = -2.0 ; x <= 2.0 ; x++) {
-                vec4 tmpcoord = vShadowCoord;
+                vec4 tmpcoord = shadowMapPosition;
                 tmpcoord.x += x*offset.x;
                 tmpcoord.y += y*offset.y;
                 if (textureProj(gl3d_texture_shadow, tmpcoord) < 1.0) {

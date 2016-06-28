@@ -584,10 +584,10 @@ void scene::draw_shadow_mask() {
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
     glDisable(GL_BLEND);
-    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
-    glEnable(GL_POLYGON_OFFSET_FILL);
+//    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
+//    glEnable(GL_POLYGON_OFFSET_FILL);
     this->draw(true);
-    glDisable(GL_POLYGON_OFFSET_FILL);
+//    glDisable(GL_POLYGON_OFFSET_FILL);
     glEnable(GL_BLEND);
 
 //    this->shadow_text->bind(GL_TEXTURE0);
