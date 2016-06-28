@@ -555,8 +555,8 @@ void scene::delete_shadow_texture() {
     delete this->shadow_text;
 }
 
-GLuint scene::get_shadow_texture() {
-    return this->shadow_text->get_gl_obj();
+gl3d_general_texture *scene::get_shadow_texture() {
+    return this->shadow_text;
 }
 
 void scene::draw_shadow_mask() {
@@ -566,8 +566,8 @@ void scene::draw_shadow_mask() {
 //    this->shadow_text->bind(GL_TEXTURE0);
 //    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
 //    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-////    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
+//    gl3d_win_gl_functions->glGetTexImage
+//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
 //    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
 //    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
 //        throw std::runtime_error("save failed");
@@ -584,13 +584,16 @@ void scene::draw_shadow_mask() {
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
     glDisable(GL_BLEND);
+    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
+    glEnable(GL_POLYGON_OFFSET_FILL);
     this->draw(true);
+    glDisable(GL_POLYGON_OFFSET_FILL);
     glEnable(GL_BLEND);
 
 //    this->shadow_text->bind(GL_TEXTURE0);
 //    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-////    glReadPixels(0, 0, 2048, 2048, GL_RGBA, GL_UNSIGNED_BYTE, test_data);
+//    gl3d_win_gl_functions->glGetTexImage
+//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
 //    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
 //    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
 //        throw std::runtime_error("save failed");

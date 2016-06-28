@@ -34,9 +34,11 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
                          y,
                          0,
                          GL_DEPTH_COMPONENT,
-                         GL_UNSIGNED_INT,
+                         GL_UNSIGNED_BYTE,
                          NULL);
-//            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_UNSIGNED_INT_24_8_OES, x, y);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+//            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_UNSIGNED_BYTE_24_8_OES, x, y);
             break;
         case GL3D_RGBA:
             glTexImage2D(GL_TEXTURE_2D,
@@ -70,8 +72,10 @@ void gl3d_general_texture::clean_data() {
                          size_y,
                          0,
                          GL_DEPTH_COMPONENT,
-                         GL_UNSIGNED_INT,
+                         GL_UNSIGNED_BYTE,
                          NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
             glBindTexture(GL_TEXTURE_2D, 0);
             break;
         case GL3D_RGBA:
@@ -93,17 +97,21 @@ void gl3d_general_texture::clean_data() {
 
 void gl3d_general_texture::bind(GLenum text_unit) {
     glActiveTexture(text_unit);
+    glBindTexture(GL_TEXTURE_2D, this->text_obj);
     switch (type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
             break;
         case GL3D_RGBA:
+            this->set_parami(true);
             break;
         default:
             throw std::invalid_argument("invalid general texture type");
             break;
     }
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
+
 }
 
 void gl3d_general_texture::buffer_data(GLvoid *data) {
@@ -117,8 +125,10 @@ void gl3d_general_texture::buffer_data(GLvoid *data) {
                          size_y,
                          0,
                          GL_DEPTH_COMPONENT,
-                         GL_UNSIGNED_INT,
+                         GL_UNSIGNED_BYTE,
                          data);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
             break;
         case GL3D_RGBA:
             glTexImage2D(GL_TEXTURE_2D,

@@ -544,7 +544,7 @@ namespace gl3d {
          *
          *  @return 阴影贴图句柄
          */
-        GLuint get_shadow_texture();
+        gl3d_general_texture * get_shadow_texture();
         
         /**
          *  @author Kent, 16-04-01 15:04:40

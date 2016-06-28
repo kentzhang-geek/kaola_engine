@@ -255,10 +255,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
 
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
-    GLuint shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, shadow_txt);
-    gl3d_texture::set_parami(false);
+    gl3d_general_texture * shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
+    shadow_txt->bind(GL_TEXTURE4);
     glUniform1i(glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
     
     // 阴影贴图大小
@@ -401,10 +399,8 @@ GL3D_SHADER_PARAM(dm) {
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
-    GLuint shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, shadow_txt);
-    gl3d_texture::set_parami(false);
+    gl3d_general_texture * shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
+    shadow_txt->bind(GL_TEXTURE4);
     glUniform1i(glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
     
     // 阴影贴图大小
