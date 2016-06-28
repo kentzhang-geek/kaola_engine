@@ -121,14 +121,29 @@ void main() {
                                            vec3(transmtx * vPos));
     if (distance_shandow_center < 30.0) {
         vec2 offset = vec2(1.0/shadow_map_size.x, 1.0/shadow_map_size.y);
+        // offset *= 2.0;
         vec4 shadowMapPosition = vShadowCoord/vShadowCoord.w;
         // shadowMapPosition = 0.5 * (shadowMapPosition + 1.0);
         shadowMapPosition.z -= EPSILON;
         // if (textureProj(gl3d_texture_shadow, vShadowCoord) < 1.0) {
         //     // Shadow, so darken the shape color to simulate shadow.
-        //     shadow_weaken = 0.5;
+        //     shadow_weaken += 0.5;
         // }
-        shadow_weaken = textureProj(gl3d_texture_shadow, shadowMapPosition);
+        for (float y = -2.0 ; y <= 2.0 ; y++) {
+            for (float x = -2.0 ; x <= 2.0 ; x++) {
+                vec4 tmpcoord = vShadowCoord;
+                tmpcoord.x += x*offset.x;
+                tmpcoord.y += y*offset.y;
+                if (textureProj(gl3d_texture_shadow, tmpcoord) < 1.0) {
+                    // Shadow, so darken the shape color to simulate shadow.
+                    shadow_weaken += 0.5;
+                }
+                else {
+                    shadow_weaken += 1.0;
+                }
+            }
+        }
+        shadow_weaken = (shadow_weaken/25.0);
     }
     
     // 计算自然色
@@ -170,9 +185,6 @@ void main() {
     out_color = out_color - vec4(0.2);
     out_color = clamp(out_color, 0.0, 1.0);
     out_color.w = alpha;
-    out_color = vec4(shadow_weaken);
-    out_color.w = 1.0;
-    // + texture2D(gl3d_texture_diffuse, text_coord);
 #endif
     
 #if 0  // test
