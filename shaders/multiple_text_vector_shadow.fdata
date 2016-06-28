@@ -1,4 +1,4 @@
-#version 100
+#version 150
 precision highp float;
 
 // light property
@@ -7,10 +7,10 @@ uniform vec4 mtlDiffuseColor;
 uniform vec4 mtlSpecularColor;
 uniform float mtlSpecularExponent;
 
-varying float df;
-varying float sf;
-varying float cam_pos_distance;
-varying vec2 text_coord;
+in float df;
+in float sf;
+in float cam_pos_distance;
+in vec2 text_coord;
 
 // for texture
 uniform sampler2D gl3d_texture_ambient;
@@ -24,16 +24,16 @@ uniform bool gl3d_t_specular_enable;
 // light
 uniform float shininess;
 uniform float param_x;
-varying vec3 eye_to_pos;
-varying vec3 l_normal;
-varying vec3 in_light;
+in vec3 eye_to_pos;
+in vec3 l_normal;
+in vec3 in_light;
 
 // shadow
 #define EPSILON 0.0002
-varying vec4 vPos;
+in vec4 vPos;
 uniform mat4 s_mtx;
-uniform sampler2D gl3d_texture_shadow;
-varying float test;
+uniform sampler2DShadow gl3d_texture_shadow;
+in float test;
 uniform vec3 shadow_center_input;
 uniform mat4 transmtx;
 uniform bool shadow_enable;
@@ -44,6 +44,9 @@ uniform float alpha;
 
 // frag unproject
 uniform mat4 unpvm;
+
+// out color
+out vec4 out_color;
 
 // from rgb to hsi color space , hsi has cos(h),s,i
 vec3 rgb2hsi(vec3 rgb) {
@@ -152,7 +155,8 @@ float unpack(vec4 depth) {
 void main() {
 #if 1 // for test
     // vec4 vPos = unpvm * gl_FragCoord;
-    vec4 vShadowCoord = s_mtx * vPos;
+    mat4 bias = mat4(0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0);
+    vec4 vShadowCoord = bias * s_mtx * vPos;
     vec4 s_pixel = vec4(0.0);
     float shadow_weaken = 1.0;;
     // 裁剪过远的阴影似乎是好了？
@@ -161,35 +165,33 @@ void main() {
     if (distance_shandow_center < 30.0) {
         vec2 offset = vec2(1.0/shadow_map_size.x, 1.0/shadow_map_size.y);
         vec4 shadowMapPosition = vShadowCoord/vShadowCoord.w;
-        // trans -1~1 to 0~1
-        shadowMapPosition = shadowMapPosition * 0.5 + 0.5;
-        // shadowMapPosition.x = shadowMapPosition.x * 0.5 + 0.5;
-        // shadowMapPosition.y = shadowMapPosition.y * 0.5 + 0.5;
-        // shadowMapPosition.z = shadowMapPosition.z * 10.0;
+        shadowMapPosition.z -= EPSILON;
         for (float y = -2.0 ; y <= 2.0 ; y++) {
             for (float x = -2.0 ; x <= 2.0 ; x++) {
-                // get shadow depth pixel
-                s_pixel = texture2D(gl3d_texture_shadow, 
-                    vec2(shadowMapPosition.x + x*offset.x, 
-                        shadowMapPosition.y + y*offset.y));
-                float distanceFromLight = unpack(s_pixel);
-                if ((s_pixel.z + EPSILON) > shadowMapPosition.z) {
-                    shadow_weaken += 5.0 - abs(x) - abs(y);
+                vec4 tmpcoord = shadowMapPosition;
+                tmpcoord.x += x*offset.x;
+                tmpcoord.y += y*offset.y;
+                if (textureProj(gl3d_texture_shadow, tmpcoord) < 1.0) {
+                    // Shadow, so darken the shape color to simulate shadow.
+                    shadow_weaken += 0.5;
+                }
+                else {
+                    shadow_weaken += 1.0;
                 }
             }
         }
-        shadow_weaken = (shadow_weaken/65.0);
+        shadow_weaken = (shadow_weaken/25.0);
     }
     
     // 计算自然色
     vec4 ambclr = gl3d_t_ambient_enable ? (texture2D(gl3d_texture_ambient, text_coord) + mtlAmbientColor) :
     mtlAmbientColor;
-    gl_FragColor = ambclr;
+    out_color = ambclr;
     
     // 计算散射色
     vec4 difclr = gl3d_t_diffuse_enable ? shininess * (texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor):
     mtlDiffuseColor * shininess;
-    gl_FragColor += difclr * (0.2 + (0.8 * df)) - 0.1;
+    out_color += difclr * (0.2 + (0.8 * df)) - 0.1;
     
     // 计算镜面色
     vec3 out_light = reflect(in_light, l_normal);   // 获取出射光
@@ -203,20 +205,20 @@ void main() {
     spchsi.z += pow(spf/2.0, 3.0);
     spchsi.z = min(1.0, spchsi.z);
     spcclr = vec4(hsi2rgb(spchsi), spcclr.w);
-    gl_FragColor += spcclr;
+    out_color += spcclr;
     
     // if (shadow_enable)
     //     if (test > 0.5)
-    //         gl_FragColor = gl_FragColor * shadow_weaken;
-    gl_FragColor = gl_FragColor * (500.0 - cam_pos_distance) / 500.0;
+    //         out_color = out_color * shadow_weaken;
+    out_color = out_color * (500.0 - cam_pos_distance) / 500.0;
     
     // 这行很神奇的让很多地方都有了金属质感？
-    // gl_FragColor = min(vec4(1.0), gl_FragColor);
-    // gl_FragColor += 0.4 * vec4(pow(max(0.0, spf-0.1), 7.0));
-    // gl_FragColor = min(vec4(1.0), gl_FragColor);
+    // out_color = min(vec4(1.0), out_color);
+    // out_color += 0.4 * vec4(pow(max(0.0, spf-0.1), 7.0));
+    // out_color = min(vec4(1.0), out_color);
     
     // 尝试增强色度
-    vec3 hsi = rgb2hsi(gl_FragColor.xyz);
+    vec3 hsi = rgb2hsi(out_color.xyz);
     hsi.y *= 1.1;
     hsi.y = min(1.0, hsi.y);
 
@@ -224,33 +226,33 @@ void main() {
     // float weak_factor = max(min(test, shadow_weaken), 0.0);
     if (shadow_enable)
         hsi.z *= max(0.5, 0.3 + 0.7 * shadow_weaken);
-    gl_FragColor = vec4(hsi2rgb(hsi), gl_FragColor.w);
+    out_color = vec4(hsi2rgb(hsi), out_color.w);
 
     // for picking
-    gl_FragColor = gl_FragColor/param_x;
+    out_color = out_color/param_x;
 
     // clamp values
-    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-    gl_FragColor.w = alpha;
+    out_color = clamp(out_color, 0.0, 1.0);
+    out_color.w = alpha;
     // + texture2D(gl3d_texture_diffuse, text_coord);
 #endif
 
     // if (tmphsi.x < (2.0/3.0*M_PI))
-    //      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    //      out_color = vec4(1.0, 0.0, 0.0, 1.0);
     // else if (tmphsi.x < (4.0/3.0*M_PI))
-    //      gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    //      out_color = vec4(0.0, 1.0, 0.0, 1.0);
     // else
-    //      gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
-    // gl_FragColor = vec4(hsi2rgb(tmphsi), 1.0);
+    //      out_color = vec4(0.0, 0.0, 1.0, 1.0);
+    // out_color = vec4(hsi2rgb(tmphsi), 1.0);
     // texture2D(gl3d_texture_ambient, text_coord)
     // texture2D(gl3d_texture_diffuse, text_coord)
     // texture2D(gl3d_texture_specular, text_coord)
     // mtlAmbientColor
     // mtlDiffuseColor
     // mtlSpecularColor
-    // gl_FragColor.w = 1.0;
-    // gl_FragColor = vec4(0.0);
+    // out_color.w = 1.0;
+    // out_color = vec4(0.0);
     // if (s_pixel.z > 0.0) {
-    //     gl_FragColor = vec4(1.0);
+    //     out_color = vec4(1.0);
     // }
 }
