@@ -110,6 +110,6 @@ bool viewer::go_rotate(GLfloat angle) {
 void viewer::calculate_mat() {
 //    log_c("look at %f %f %f", this->look_direction.x, this->look_direction.y, this->look_direction.z);
     this->viewing_matrix = ::glm::lookAt(this->current_position, this->current_position + this->look_direction, this->head_direction);
-    this->projection_matrix = glm::perspective(45.0f, (float)(this->width/this->height), 1.0f, 1000.0f);
+    this->projection_matrix = glm::perspective(glm::radians(40.0f), (float)(this->width/this->height), 1.0f, 1000.0f);
 }
 

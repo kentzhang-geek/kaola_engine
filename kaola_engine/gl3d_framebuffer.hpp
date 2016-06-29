@@ -33,6 +33,7 @@ namespace gl3d {
         void attach_color_text(GLuint text);
         void attach_depth_text(GLuint text);
         GLuint get_frame_obj();
+        bool is_complete();
     private:
         GLuint frame_obj;
         GLuint color_obj;

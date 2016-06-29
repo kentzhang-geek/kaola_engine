@@ -42,11 +42,16 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
         glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX, width, height);
         glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->stenc_obj);
     }
-    
+}
+
+bool gl3d_framebuffer::is_complete() {
     GLenum status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         log_c("Framebuffer status: %x", (int)status);
+        return false;
     }
+
+    return true;
 }
 
 gl3d_framebuffer::~gl3d_framebuffer() {
