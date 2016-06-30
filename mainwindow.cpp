@@ -5,6 +5,7 @@
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
 #include "kaola_engine/gl3d_obj_authority.h"
+#include <QThread>
 
 using namespace std;
 
@@ -66,8 +67,16 @@ void MainWindow::on_sig1() {
     ui->lcdn->display(ui->lcdn->intValue() + 1);
 }
 
+class ray_thread : public QThread {
+public:
+    void run() {
+        GL3D_GET_RENDER_PROCESS(ray_tracer)->render();
+
+    }
+};
+
 void MainWindow::on_qqq_clicked()
 {
-    this->ui->openGLWidget->main_scene->watcher->go_rotate(2.0);
-    GL3D_GET_CURRENT_RENDER_PROCESS()->invoke();
+    ray_thread * ray = new ray_thread();
+    ray->start();
 }

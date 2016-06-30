@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     kaola_engine/Program.cpp \
     kaola_engine/Shader.cpp \
     kaola_engine/gl3d_image.cpp \
-    models_cfg.cpp
+    models_cfg.cpp \
+    ray_tracer.cpp
 
 HEADERS  += mainwindow.h \
     kaola_engine/gl3d.hpp \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     kaola_engine/Program.hpp \
     kaola_engine/Shader.hpp \
     kaola_engine/mopenglview.h \
-    kaola_engine/glheaders.h
+    kaola_engine/glheaders.h \
+    ray_tracer.h
 
 FORMS    += mainwindow.ui
 
