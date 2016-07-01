@@ -43,6 +43,9 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
         obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "\\" + (*iter)->file_name).c_str());
         (*iter)->obj = obj_tmp;
         (*iter)->set_param();
+        // 合并顶点重算法向量
+        obj_tmp->merge_meshes();
+        obj_tmp->recalculate_normals();
         this->available_id =
         ((*iter)->id > this->available_id) ?
         ((*iter)->id) : this->available_id;

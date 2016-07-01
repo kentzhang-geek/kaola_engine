@@ -130,6 +130,18 @@ void MOpenGLView::view_change() {
     if (this->key_press == 'd') {
         this->main_scene->watcher->go_rotate(2.0);
     }
+    if (this->key_press == 'j') {
+        this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0));
+    }
+    if (this->key_press == 'k') {
+        this->main_scene->watcher->change_position(glm::vec3(0.0, -1.0, 0.0));
+    }
+    if (this->key_press == 'l') {
+        this->main_scene->watcher->change_position(glm::vec3(1.0, 0.0, 0.0));
+    }
+    if (this->key_press == 'i') {
+        this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0));
+    }
 
     this->main_scene->watcher->headto(glm::vec3(0.0, 0.0, 1.0));
 
@@ -146,6 +158,14 @@ void MOpenGLView::keyPressEvent(QKeyEvent *event) {
         this->key_press = 's';
     if (event->key() == Qt::Key_D)
         this->key_press = 'd';
+    if (event->key() == Qt::Key_K)
+        this->key_press = 'k';
+    if (event->key() == Qt::Key_J)
+        this->key_press = 'j';
+    if (event->key() == Qt::Key_L)
+        this->key_press = 'l';
+    if (event->key() == Qt::Key_I)
+        this->key_press = 'i';
 }
 
 MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {

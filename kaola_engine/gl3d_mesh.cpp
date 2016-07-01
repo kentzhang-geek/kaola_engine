@@ -199,3 +199,62 @@ gl3d::mesh::mesh(QVector<mesh *> &meshes) {
 //    log_c("now merge output %d points and %d indecis", this->num_pts, this->num_idx);
     return;
 }
+
+// 重新计算法向量
+void gl3d::mesh::recalculate_normals(float cos_angle) {
+//    QVector<float> tmpvector;
+    // only support triangles
+    Q_ASSERT(this->num_idx%3 == 0);
+
+    // 创建新点云集缓冲区
+    obj_points * new_points = (obj_points *)malloc(sizeof(obj_points) * this->num_idx);
+    // 创建新索引缓冲区
+    GLushort * new_indecis = (GLushort *)malloc(sizeof(GLushort) * this->num_idx);
+
+    for (int i = 0; i < (this->num_idx/3); i++) {
+        // get 3 vertexs of a triangle
+        obj_points * point_a = this->points_data + this->indecis[i * 3 + 0];
+        obj_points * point_b = this->points_data + this->indecis[i * 3 + 1];
+        obj_points * point_c = this->points_data + this->indecis[i * 3 + 2];
+        glm::vec3 p1(point_a->vertex_x,
+                point_a->vertex_y,
+                point_a->vertex_z);
+        glm::vec3 p2(point_b->vertex_x,
+                point_b->vertex_y,
+                point_b->vertex_z);
+        glm::vec3 p3(point_c->vertex_x,
+                point_c->vertex_y,
+                point_c->vertex_z);
+        // recalculate its normal
+        glm::vec3 normal = glm::cross((p2 - p1), (p3 - p1));
+        normal = glm::normalize(normal);
+        // set new vertexs
+        memcpy(new_points + i * 3 + 0, point_a, sizeof(obj_points));
+        memcpy(new_points + i * 3 + 1, point_b, sizeof(obj_points));
+        memcpy(new_points + i * 3 + 2, point_c, sizeof(obj_points));
+        for (int j = 0; j < 3; j++) {
+            // 判断是否需要新法线
+            glm::vec3 ori_normal = glm::vec3(new_points[i * 3 + j].normal_x,
+                    new_points[i * 3 + j].normal_y,
+                    new_points[i * 3 + j].normal_z);
+            ori_normal = glm::normalize(ori_normal);
+            // 需要则设置新法线
+//            tmpvector.push_back(glm::dot(ori_normal, normal));
+            if (glm::dot(ori_normal, normal) < 0.17) {
+                new_points[i * 3 + j].normal_x = normal.x;
+                new_points[i * 3 + j].normal_y = normal.y;
+                new_points[i * 3 + j].normal_z = normal.z;
+            }
+            new_indecis[i * 3 + j] = i * 3 + j;
+        }
+    }
+
+    // 释放旧数据
+    free(this->indecis);
+    free(this->points_data);
+
+    // 调整数量
+    this->points_data = new_points;
+    this->indecis = new_indecis;
+    this->num_pts = this->num_idx;
+}

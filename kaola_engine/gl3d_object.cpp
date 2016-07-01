@@ -9,6 +9,7 @@
 #include "gl3d.hpp"
 #include "gl3d_out_headers.h"
 #include "gl3d_material.hpp"
+#include <QVector>
 
 using namespace gl3d;
 using namespace Assimp;
@@ -94,7 +95,7 @@ bool object::init(char * filename) {
     // 设置最多每个mesh最多65000个点, 法线平滑角度80度
     importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 65000);
     importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, 20000);
-    importer.SetPropertyInteger(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 80);
+//    importer.SetPropertyInteger(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 30);
     // 读取文件
     const aiScene* scene = importer.ReadFile
     (pFile,
@@ -104,7 +105,7 @@ bool object::init(char * filename) {
      aiProcess_Triangulate |
 //     aiProcess_GenNormals |
      aiProcess_GenSmoothNormals |
-     aiProcess_JoinIdenticalVertices | // 合并相同的顶点，降低内存压力约30M
+//     aiProcess_JoinIdenticalVertices | // 合并相同的顶点，降低内存压力约30M
      aiProcess_SplitLargeMeshes | // 把过大的mesh分割成小mesh
      aiProcess_FlipUVs
      );
@@ -298,4 +299,12 @@ void object::merge_meshes() {
     this->meshes = _new_meshes;
     this->number_of_meshes = _new_meshes.size();
     return;
+}
+
+// 重新计算法向量
+void object::recalculate_normals(float cos_angle) {
+    auto iter = this->meshes.begin();
+    for (; iter != this->meshes.end(); iter++) {
+        (*iter)->recalculate_normals(cos_angle);
+    }
 }

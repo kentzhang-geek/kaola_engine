@@ -97,6 +97,9 @@ namespace gl3d {
         
         // 多个mesh合并成一个mesh
         mesh(QVector<mesh *>& meshes);
+
+        // 重新计算法向量，使得每个面都为平滑面
+        void recalculate_normals(float cos_angle);
         
         // 测试用的加mesh构造函数
         mesh(obj_points * pts, int number_of_points,
@@ -256,6 +259,10 @@ namespace gl3d {
          */
         void merge_meshes();
 
+        // 重新计算法向量，使得每个面都为平滑面，输入参数为允许平滑的夹角，
+        // 当原法向量与平滑法向量夹角的余弦大于给定值时，使用平滑法向量
+        // 小于给定值时，使用重算法向量，默认给定值为cos(45)~0.707
+        void recalculate_normals(float cos_angle = 0.707);
         
         /**
          *  @author Kent, 16-02-17 20:02:41
