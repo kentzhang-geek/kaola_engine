@@ -12,6 +12,7 @@ using namespace gl3d;
 
 render_process::render_process() {
     this->user_objs.clear();
+    this->attached_scene = NULL;
 }
 
 render_process::~render_process() {
@@ -25,6 +26,14 @@ void * render_process::get_user_object(string key) {
 void render_process::add_user_object(string key, void *obj) {
     this->user_objs.insert(key, obj);
     return;
+}
+
+void render_process::attach_scene(scene *s) {
+    this->attached_scene = s;
+}
+
+gl3d::scene * render_process::get_attached_scene() {
+    return this->attached_scene;
 }
 
 //template <typename T>
@@ -61,7 +70,13 @@ string render_process_manager::get_current_process_name() {
 }
 
 void render_process_manager::set_current_process(string name) {
+    if (this->current_process.length() > 0) {
+        // tear down last render process
+        this->render_processes.value(this->current_process)->env_down();
+    }
     this->current_process = name;
+    // up new render process
+    this->render_processes.value(this->current_process)->env_up();
 }
 
 

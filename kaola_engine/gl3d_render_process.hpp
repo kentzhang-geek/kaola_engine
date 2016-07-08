@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <QVector>
 #include <QMap>
+#include "gl3d.hpp"
 #include "gl3d_out_headers.h"
 
 using namespace std;
@@ -24,10 +25,15 @@ namespace gl3d {
         virtual void pre_render() {};
         virtual void render() = 0;
         virtual void after_render() {};
+        virtual void env_up() {};
+        virtual void env_down() {};
         void * get_user_object(string key);
         void add_user_object(string key, void * obj);
         virtual void invoke() {};
+        void attach_scene(gl3d::scene * sc);
+        gl3d::scene * get_attached_scene();
     private:
+        gl3d::scene * attached_scene;
         QMap<string, void *> user_objs;
     };
     
@@ -57,9 +63,11 @@ namespace gl3d {
 }
 
 #define GL3D_GET_RENDER_PROCESS(name) (gl3d::render_process_manager::get_shared_instance()->get_render_process(string(#name)))
-#define GL3D_ADD_RENDER_PROCESS(name) const gl3d::render_process_factory<name> __tag_##render_process_##name(string(#name));
-#define GL3D_SET_CURRENT_RENDER_PROCESS(name) (gl3d::render_process_manager::get_shared_instance()->set_current_process(string(#name)));
 #define GL3D_GET_CURRENT_RENDER_PROCESS() (gl3d::render_process_manager::get_shared_instance()->get_render_process((gl3d::render_process_manager::get_shared_instance()->get_current_process_name())))
 
+#define GL3D_SET_CURRENT_RENDER_PROCESS(name, input_scene) \
+    GL3D_GET_RENDER_PROCESS(name)->attach_scene(input_scene); \
+    (gl3d::render_process_manager::get_shared_instance()->set_current_process(string(#name)));
+#define GL3D_ADD_RENDER_PROCESS(name) const gl3d::render_process_factory<name> __tag_##render_process_##name(string(#name));
 
 #endif /* gl3d_render_process_hpp */

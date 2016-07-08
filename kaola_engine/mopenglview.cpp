@@ -1,5 +1,6 @@
 #include "kaola_engine/mopenglview.h"
 #include "gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ void MOpenGLView::do_init() {
     this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
 
     this->create_scene();
-    GL3D_SET_CURRENT_RENDER_PROCESS(normal);
+    GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
 
     this->main_scene->prepare_buffer();
     this->main_scene->gen_shadow_texture();

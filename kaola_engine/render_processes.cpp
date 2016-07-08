@@ -32,7 +32,7 @@ void normal::pre_render() {
     if (has_drawed)
         return;
     // 先绘制阴影贴图，给阴影贴图shader添加一下参数
-    gl3d::scene * one_scene = (gl3d::scene * )this->get_user_object(string("scene"));
+    gl3d::scene * one_scene = this->get_attached_scene();
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("shadow_mask");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->draw_shadow_mask();
@@ -42,7 +42,7 @@ void normal::pre_render() {
 void normal::render() {
     if (has_drawed)
         return;
-    gl3d::scene * one_scene = (gl3d::scene * )this->get_user_object(string("scene"));
+    gl3d::scene * one_scene = this->get_attached_scene();
     // 输入阴影贴图的参数，然后绘制主图像
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector_shadow");
     current_shader_param->user_data.insert(string("scene"), one_scene);
@@ -102,7 +102,7 @@ public:
 GL3D_ADD_RENDER_PROCESS(moving);
 
 void moving::render() {
-    gl3d::scene * one_scene = (gl3d::scene * )this->get_user_object(string("scene"));
+    gl3d::scene * one_scene = this->get_attached_scene();
     // 输入阴影贴图的参数，然后绘制主图像
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
     current_shader_param->user_data.insert(string("scene"), one_scene);
@@ -137,7 +137,7 @@ void moving::render() {
 class test : public render_process {
 public:
     void render() {
-        gl3d::scene * one_scene = (gl3d::scene * )this->get_user_object(string("scene"));
+        gl3d::scene * one_scene = this->get_attached_scene();
         // 输入阴影贴图的参数，然后绘制主图像
         gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("default");
         current_shader_param->user_data.insert(string("scene"), one_scene);
@@ -151,3 +151,49 @@ public:
     }
 };
 GL3D_ADD_RENDER_PROCESS(test);
+
+class editing : public render_process {
+public:
+    void render() {
+        gl3d::scene * one_scene = this->get_attached_scene();
+        // 输入阴影贴图的参数，然后绘制主图像
+        gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        // 选择全局渲染器
+        one_scene->get_property()->global_shader = string("multiple_text_vector");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
+        one_scene->prepare_canvas(false);
+        glDisable(GL_CULL_FACE);
+        one_scene->draw(true);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+        current_shader_param = GL3D_GET_PARAM("dm2");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        // 选择全局渲染器
+        one_scene->get_property()->global_shader = string("dm2");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
+        glDisable(GL_CULL_FACE);
+        one_scene->draw(true);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+        current_shader_param = GL3D_GET_PARAM("skybox");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        // 选择全局渲染器
+        one_scene->get_property()->global_shader = string("skybox");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
+        glDisable(GL_CULL_FACE);
+        one_scene->draw(true);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+        return;
+    }
+
+    void env_up() {
+        this->get_attached_scene()->watcher->set_top_view();
+    }
+
+    void env_down() {
+        this->get_attached_scene()->watcher->set_normal_view();
+    }
+};
+GL3D_ADD_RENDER_PROCESS(editing);

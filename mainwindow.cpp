@@ -4,6 +4,7 @@
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
+#include "kaola_engine/gl3d_render_process.hpp"
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 
@@ -48,7 +49,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 
     this->ui->openGLWidget->main_scene->prepare_buffer();
 
-    GL3D_SET_CURRENT_RENDER_PROCESS(normal);
+    GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->ui->openGLWidget->main_scene);
 }
 
 MainWindow::~MainWindow()
@@ -77,6 +78,12 @@ public:
 
 void MainWindow::on_qqq_clicked()
 {
-    ray_thread * ray = new ray_thread();
-    ray->start();
+    static bool flag_edit = false;
+    flag_edit = !flag_edit;
+    if (flag_edit) {
+        GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->openGLWidget->main_scene);
+    }
+    else {
+        GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->ui->openGLWidget->main_scene);
+    }
 }

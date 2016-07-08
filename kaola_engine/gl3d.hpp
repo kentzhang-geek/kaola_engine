@@ -33,7 +33,7 @@
 #include "gl3d_material.hpp"
 #include "gl3d_obj_authority.h"
 #include "gl3d_general_texture.hpp"
-#include "gl3d_render_process.hpp"
+//#include "gl3d_render_process.hpp"
 
 // OpenGL in windows should use GLEW
 #include "glheaders.h"
@@ -286,6 +286,14 @@ namespace gl3d {
     // 一个场景会有一个观察者
     class viewer {
     public:
+        enum _view_mode {
+            normal_view = 0,
+            top_view
+        };
+        // 设置普通视角
+        void set_normal_view();
+        // 设置顶视图
+        void set_top_view();
         // 创建对象
         viewer(GLfloat height, GLfloat width);
         // 销毁对象
@@ -318,6 +326,7 @@ namespace gl3d {
         ::glm::mat4 projection_matrix; // for test
         
     private:
+        _view_mode view_mode;
         ::glm::vec3 look_direction;
         ::glm::vec3 head_direction;
         ::glm::vec3 current_position;
