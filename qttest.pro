@@ -11,56 +11,61 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qttest
 TEMPLATE = app
 
-
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    kaola_engine/default_shader_param.cpp \
-    kaola_engine/gl3d_framebuffer.cpp \
-    kaola_engine/gl3d_general_texture.cpp \
-    kaola_engine/gl3d_material.cpp \
-    kaola_engine/gl3d_mesh.cpp \
-    kaola_engine/gl3d_object.cpp \
-    kaola_engine/gl3d_render_process.cpp \
-    kaola_engine/gl3d_scene.cpp \
-    kaola_engine/gl3d_texture.cpp \
-    kaola_engine/gl3d_viewer.cpp \
-    kaola_engine/model_manager.cpp \
-    kaola_engine/render_processes.cpp \
-    kaola_engine/shader_list.cpp \
-    kaola_engine/shader_manager.cpp \
-    kaola_engine/mopenglview.cpp \
-    kaola_engine/Program.cpp \
-    kaola_engine/Shader.cpp \
-    kaola_engine/gl3d_image.cpp \
-    models_cfg.cpp \
-    ray_tracer.cpp
+SOURCES += \
+    src/Qt_tests/main.cpp \
+    src/Qt_tests/mainwindow.cpp \
+    src/Qt_tests/models_cfg.cpp \
+    src/Qt_tests/ray_tracer.cpp \
+    src/render/default_shader_param.cpp \
+    src/render/gl3d_framebuffer.cpp \
+    src/render/gl3d_general_texture.cpp \
+    src/render/gl3d_image.cpp \
+    src/render/gl3d_material.cpp \
+    src/render/gl3d_mesh.cpp \
+    src/render/gl3d_object.cpp \
+    src/render/gl3d_render_process.cpp \
+    src/render/gl3d_scene.cpp \
+    src/render/gl3d_texture.cpp \
+    src/render/gl3d_viewer.cpp \
+    src/render/model_manager.cpp \
+    src/render/mopenglview.cpp \
+    src/render/Program.cpp \
+    src/render/render_processes.cpp \
+    src/render/Shader.cpp \
+    src/render/shader_list.cpp \
+    src/render/shader_manager.cpp
 
 HEADERS  += mainwindow.h \
-    kaola_engine/gl3d.hpp \
-    kaola_engine/gl3d_framebuffer.hpp \
-    kaola_engine/gl3d_general_texture.hpp \
-    kaola_engine/gl3d_image.hpp \
-    kaola_engine/gl3d_material.hpp \
-    kaola_engine/gl3d_obj_authority.h \
-    kaola_engine/gl3d_out_headers.h \
-    kaola_engine/gl3d_render_process.hpp \
-    kaola_engine/gl3d_texture.hpp \
-    kaola_engine/kaola_engine.h \
-    kaola_engine/log.h \
-    kaola_engine/model_manager.hpp \
-    kaola_engine/shader_manager.hpp \
     ui_mainwindow.h \
-    kaola_engine/Program.hpp \
-    kaola_engine/Shader.hpp \
-    kaola_engine/mopenglview.h \
-    kaola_engine/glheaders.h \
     ray_tracer.h \
-    kaola_engine/gl3d_mesh.h \
-    kaola_engine/gl3d_object.h \
-    kaola_engine/gl3d_viewer.h \
-    kaola_engine/gl3d_scene.h
+    include/kaola_engine/gl3d.hpp \
+    include/kaola_engine/gl3d_framebuffer.hpp \
+    include/kaola_engine/gl3d_general_texture.hpp \
+    include/kaola_engine/gl3d_image.hpp \
+    include/kaola_engine/gl3d_material.hpp \
+    include/kaola_engine/gl3d_mesh.h \
+    include/kaola_engine/gl3d_obj_authority.h \
+    include/kaola_engine/gl3d_object.h \
+    include/kaola_engine/gl3d_out_headers.h \
+    include/kaola_engine/gl3d_render_process.hpp \
+    include/kaola_engine/gl3d_scene.h \
+    include/kaola_engine/gl3d_texture.hpp \
+    include/kaola_engine/gl3d_viewer.h \
+    include/kaola_engine/glheaders.h \
+    include/kaola_engine/kaola_engine.h \
+    include/kaola_engine/log.h \
+    include/kaola_engine/model_manager.hpp \
+    include/kaola_engine/mopenglview.h \
+    include/kaola_engine/Program.hpp \
+    include/kaola_engine/Shader.hpp \
+    include/kaola_engine/shader_manager.hpp \
+    src/Qt_tests/mainwindow.h \
+    src/Qt_tests/ray_tracer.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    src/Qt_tests/mainwindow.ui
+
+win32:INCLUDEPATH += D:\User\Desktop\KLM\qt_opengl_engine\include
 
 #INCLUDEPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
 #DEPENDPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
