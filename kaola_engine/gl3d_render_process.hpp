@@ -12,8 +12,15 @@
 #include <stdio.h>
 #include <QVector>
 #include <QMap>
-#include "gl3d.hpp"
 #include "gl3d_out_headers.h"
+#include "gl3d_viewer.h"
+#include "gl3d_mesh.h"
+#include "gl3d_material.hpp"
+#include "gl3d_object.h"
+#include "gl3d_general_texture.hpp"
+#include "gl3d_viewer.h"
+#include "shader_manager.hpp"
+#include "gl3d_scene.h"
 
 using namespace std;
 

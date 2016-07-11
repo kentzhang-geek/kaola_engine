@@ -54,7 +54,11 @@ HEADERS  += mainwindow.h \
     kaola_engine/Shader.hpp \
     kaola_engine/mopenglview.h \
     kaola_engine/glheaders.h \
-    ray_tracer.h
+    ray_tracer.h \
+    kaola_engine/gl3d_mesh.h \
+    kaola_engine/gl3d_object.h \
+    kaola_engine/gl3d_viewer.h \
+    kaola_engine/gl3d_scene.h
 
 FORMS    += mainwindow.ui
 
