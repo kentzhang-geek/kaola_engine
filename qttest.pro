@@ -33,7 +33,9 @@ SOURCES += \
     src/render/render_processes.cpp \
     src/render/Shader.cpp \
     src/render/shader_list.cpp \
-    src/render/shader_manager.cpp
+    src/render/shader_manager.cpp \
+    src/utils/gl3d_scale.cpp \
+    src/utils/gl3d_global_param.cpp
 
 HEADERS  += mainwindow.h \
     ui_mainwindow.h \
@@ -60,7 +62,9 @@ HEADERS  += mainwindow.h \
     include/kaola_engine/Shader.hpp \
     include/kaola_engine/shader_manager.hpp \
     src/Qt_tests/mainwindow.h \
-    src/Qt_tests/ray_tracer.h
+    src/Qt_tests/ray_tracer.h \
+    include/utils/gl3d_scale.h \
+    include/utils/gl3d_global_param.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui

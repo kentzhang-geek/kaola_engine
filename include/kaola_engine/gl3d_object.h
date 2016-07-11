@@ -9,6 +9,10 @@
 #error "you should include gl3d_material.h before include this"
 #endif
 
+#ifndef GL3D_SCALE_H
+#error "you should include gl3d_scale.h before include this"
+#endif
+
 #include <stdio.h>
 #include <iterator>
 #include <string>
@@ -32,9 +36,7 @@ namespace gl3d {
      */
     typedef struct obj_property {
         glm::vec3 position;
-//        glm::vec3 rotate_axis;
-//        GLfloat rotate_angle;
-        GLfloat scale_range;
+        gl3d::scale::length_unit scale_unit;
         GLuint id;
         glm::mat4 rotate_mat;
         GLuint64 authority;     //64种控制权限，在gl3d_obj_authority.h中查看

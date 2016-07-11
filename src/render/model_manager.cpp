@@ -56,7 +56,7 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
 void model_param::set_param() {
     ::gl3d::obj_property * obj_pro = this->obj->get_property();
     // 默认缩放1倍，旋转90度
-    obj_pro->scale_range = 1.0;
+    obj_pro->scale_unit = gl3d::scale::mm;
     this->obj->rotate(glm::vec3(1.0, 0.0, 0.0), 90);
 }
 
@@ -72,7 +72,7 @@ void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm
     gl3d::object * obj = new object((char *)(gl3d_sandbox_path + "\\" + obj_filename).c_str());
     // 设置位置
     obj->get_property()->position = glm::vec3(coord, 0.0);
-    obj->get_property()->scale_range = 0.005;  // KENT TODO : 这里默认缩放比例是否需要可调?
+    obj->get_property()->scale_unit = gl3d::scale::mm;  // KENT TODO : 这里默认缩放比例是否需要可调?
     // 缓存数据
     obj->get_property()->draw_authority |=  GL3D_OBJ_ENABLE_CULLING;
     obj->buffer_data();

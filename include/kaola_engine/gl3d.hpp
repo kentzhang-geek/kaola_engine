@@ -39,6 +39,8 @@
 #include "kaola_engine/glheaders.h"
 
 // kaolaengine components
+#include "utils/gl3d_scale.h"
+#include "utils/gl3d_global_param.h"
 #include "kaola_engine/gl3d_mesh.h"
 #include "kaola_engine/gl3d_object.h"
 #include "kaola_engine/gl3d_viewer.h"

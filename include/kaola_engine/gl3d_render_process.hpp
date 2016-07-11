@@ -16,6 +16,7 @@
 #include "gl3d_viewer.h"
 #include "gl3d_mesh.h"
 #include "gl3d_material.hpp"
+#include "utils/gl3d_scale.h"
 #include "gl3d_object.h"
 #include "gl3d_general_texture.hpp"
 #include "gl3d_viewer.h"

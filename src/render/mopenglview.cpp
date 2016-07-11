@@ -1,6 +1,7 @@
 #include "kaola_engine/mopenglview.h"
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
 
 using namespace std;
 
@@ -28,6 +29,8 @@ void MOpenGLView::do_init() {
 #define MAX_FILE_SIZE 10000
 void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
+    gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
+    gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
 //    this->main_scene->width = this->width();
 //    this->main_scene->height = this->height();
 

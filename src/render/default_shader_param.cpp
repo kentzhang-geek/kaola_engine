@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "kaola_engine/gl3d.hpp"
+#include "utils/gl3d_global_param.h"
 
 // test param configuration
 using namespace gl3d;
@@ -92,12 +93,9 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     trans = ::glm::scale(trans, glm::vec3(s_range));
@@ -177,12 +175,9 @@ GL3D_SHADER_PARAM(shadow_mask) {
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
@@ -227,12 +222,9 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     trans = ::glm::scale(trans, glm::vec3(s_range));
@@ -313,13 +305,9 @@ GL3D_SHADER_PARAM(image) {
     ::glm::mat4 norMtx;
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
     //    norMtx = this->watcher->viewing_matrix * trans;
     norMtx = trans;	
@@ -370,13 +358,9 @@ GL3D_SHADER_PARAM(dm) {
     
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
-    GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     trans = ::glm::scale(trans, glm::vec3(s_range));
@@ -443,13 +427,9 @@ GL3D_SHADER_PARAM(dm2) {
     
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
-    GLfloat s_range = 0.0;
-    if (0.0 >= obj->get_property()->scale_range) {  // 缩放参数不应该比0小
-        s_range = 1.0;
-    }
-    else {
-        s_range = obj->get_property()->scale_range;
-    }
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                obj->get_property()->scale_unit,
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     trans = ::glm::scale(trans, glm::vec3(s_range));
