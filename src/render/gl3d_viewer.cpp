@@ -18,7 +18,7 @@ using namespace gl3d;
 viewer::viewer(GLfloat h, GLfloat w) {
     // init with directions
     this->look_direction = ::glm::vec3(1.0, 0.0, 0.0);
-    this->head_direction = ::glm::vec3(0.0, 0.0, 1.0);
+    this->head_direction = ::glm::vec3(0.0, 1.0, 0.0);
     this->current_position = ::glm::vec3(0.0, 0.0, 0.0);
     this->projection_matrix = ::glm::mat4(0.0);
     this->viewing_matrix = ::glm::mat4(0.0);
@@ -70,9 +70,9 @@ bool viewer::position(::glm::vec3 position) {
 bool viewer::change_position(::glm::vec3 val) {
     if (this->view_mode == viewer::normal_view) {
         // 前进值
-        ::glm::vec3 f = val.y * ::glm::normalize(::glm::vec3(this->look_direction.x, this->look_direction.y, 0.0));
+        ::glm::vec3 f = val.y * ::glm::normalize(::glm::vec3(this->look_direction.x, 0.0, this->look_direction.z));
         // 平移值
-        ::glm::vec3 r = glm::normalize(::glm::cross(::glm::vec3(this->look_direction.x, this->look_direction.y, 0.0), glm::vec3(0.0, 0.0, 1.0))) * val.x;
+        ::glm::vec3 r = glm::normalize(::glm::cross(::glm::vec3(this->look_direction.x, 0.0, this->look_direction.z), glm::vec3(0.0, 1.0, 0.0))) * val.x;
         this->current_position += (f + r);
     }
     if (this->view_mode == viewer::top_view) {
@@ -89,10 +89,11 @@ bool viewer::go_raise(GLfloat angle) {
     glm::mat4 tmp_rotate_mat = glm::rotate(glm::mat4(1.0), glm::radians(-angle), tmp);
     glm::vec4 lookvec4 = glm::vec4(this->look_direction, 1.0);
     lookvec4 = lookvec4 * tmp_rotate_mat;
+    lookvec4 = lookvec4 / lookvec4.w;
     this->look_direction = glm::vec3(lookvec4);
-    lookvec4 = glm::vec4(this->head_direction, 1.0);
-    lookvec4 = lookvec4 * tmp_rotate_mat;
-    this->head_direction = glm::vec3(lookvec4);
+//    lookvec4 = glm::vec4(this->head_direction, 1.0);
+//    lookvec4 = lookvec4 * tmp_rotate_mat;
+    this->head_direction = glm::vec3(0.0, 1.0, 0.0);
     
     this->calculate_mat();
     return true;

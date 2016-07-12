@@ -103,13 +103,13 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     // 计算阴影中心位置
     glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
     shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
-    shadow_center.z = 0.0;
+    shadow_center.y = 0.0;
     
-    glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
+    glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
     glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
     //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 0, 1.0));
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
     
@@ -183,16 +183,16 @@ GL3D_SHADER_PARAM(shadow_mask) {
     // 计算阴影中心位置
     glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
     shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
-    shadow_center.z = 0.0;
+    shadow_center.y = 0.0;
 
-    glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
+    glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
     glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-//    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 0, 1.0));
+    //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-    
+
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
@@ -232,16 +232,15 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     // 计算阴影中心位置
     glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
     shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
-    shadow_center.z = 0.0;
-    
-    glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
+    shadow_center.y = 0.0;
+
+    glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
     glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-//    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 0, 1.0));
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-    
+
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
@@ -290,13 +289,8 @@ GL3D_SHADER_PARAM(image) {
     
     ::glm::mat4 pvm = scene->watcher->projection_matrix;
     glm::vec3 currentpos = *scene->watcher->get_position();
-//    currentpos.z = -currentpos.z;
-//    currentpos.x = -currentpos.x;
     glm::vec3 lookat = *scene->watcher->get_lookat();
-//    lookat.z = -lookat.z;
-//    lookat.x = -lookat.x;
     glm::vec3 headto = *scene->watcher->get_headto();
-//    headto.z = -headto.z;
     pvm = pvm * ::glm::lookAt(currentpos, currentpos + lookat, headto);
 
     // set model matrix
@@ -313,7 +307,7 @@ GL3D_SHADER_PARAM(image) {
     norMtx = trans;	
     trans = ::glm::scale(trans, glm::vec3(s_range));
     // KENT WARN : 这里要注意是z轴向上还是y轴向上
-    trans = ::glm::scale(trans, glm::vec3(1.0, 1.0, -1.0));
+    trans = ::glm::scale(trans, glm::vec3(1.0, -1.0, 1.0));
     pvm *= trans;    // final MVP
     
     GL3D_SET_MAT4(pvmImageMatrix, pvm, pro);
@@ -368,16 +362,15 @@ GL3D_SHADER_PARAM(dm) {
     // 计算阴影中心位置
     glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
     shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
-    shadow_center.z = 0.0;
-    
-    glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
+    shadow_center.y = 0.0;
+
+    glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
     glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-    //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 0, 1.0));
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-    
+
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
@@ -437,16 +430,15 @@ GL3D_SHADER_PARAM(dm2) {
     // 计算阴影中心位置
     glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
     shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
-    shadow_center.z = 0.0;
-    
-    glm::vec3 lightInvDir = glm::vec3(0, -15.0f, 15.0f);
+    shadow_center.y = 0.0;
+
+    glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
     glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-    //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
-    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 0, 1.0));
+    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-    
+
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
     glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));

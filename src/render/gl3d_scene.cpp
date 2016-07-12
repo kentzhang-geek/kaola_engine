@@ -499,19 +499,19 @@ void scene::coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out, GLfloat high
     txxx = glm::normalize(txxx);
     glm::vec3 reallazer = txxx;  // 真实射线向量计算OK
     
-    GLfloat param = (hight - near_pt.z) / reallazer.z;
+    GLfloat param = (hight - near_pt.y) / reallazer.y;
     glm::vec3 tgt = near_pt + param * reallazer;
     //    log_c("we have tgt \n %f \n %f \n %f ", tgt.x, tgt.y, tgt.z);
-    coord_out = glm::vec2(tgt);
+    coord_out = glm::vec2(tgt.x, tgt.z);
     
     return;
 }
 
 void scene::coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out) {
     this->coord_ground(coord_in, coord_out, 0.0);
-    GLfloat depth = 0.0;
-    glReadPixels(coord_in.x, coord_in.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    //    log_c("Get Depth %f", depth);
+//    GLfloat depth = 0.0;
+//    glReadPixels(coord_in.x, coord_in.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+//    log_c("Get Depth %f", depth);
 }
 
 GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
@@ -527,15 +527,15 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
     
     glm::vec3 c_to_o = obj_coord - cam_coord;
     glm::vec3 c_to_g = glm::vec3(grd_coord, 0.0) - cam_coord;
-    c_to_o.z = 0.0;
-    c_to_g.z = 0.0;
+    c_to_o.y = 0.0;
+    c_to_g.y = 0.0;
     
     GLfloat prop = glm::dot(glm::normalize(c_to_g), c_to_o);
     prop = (glm::length(c_to_g) - prop)/glm::length(c_to_g);
     
-    log_c("get param %f and hight %f", prop, cam_coord.z * prop);
+    log_c("get param %f and hight %f", prop, cam_coord.y * prop);
     
-    return cam_coord.z * prop;
+    return cam_coord.y * prop;
 }
 
 // KENT WARN

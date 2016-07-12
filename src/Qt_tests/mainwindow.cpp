@@ -38,9 +38,9 @@ void MainWindow::showEvent(QShowEvent * ev) {
     cout << this->ui->openGLWidget->width() << "vs scene" << this->ui->openGLWidget->main_scene->width << endl;
     cout << this->ui->openGLWidget->height() << "vs scene" << this->ui->openGLWidget->main_scene->height << endl;
     this->ui->openGLWidget->main_scene->init(&config);
-    this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(24.0, 12.0, 7.0));
-    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.0, 4.0, -1.2));
-    this->ui->openGLWidget->main_scene->watcher->headto(glm::vec3(0.0, 0.0, 1.0));
+    this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(24.0, 7.0, 12.0));
+    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.0, -1.2, 4.0));
+    this->ui->openGLWidget->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(this->ui->openGLWidget->main_scene);
@@ -72,7 +72,6 @@ class ray_thread : public QThread {
 public:
     void run() {
         GL3D_GET_RENDER_PROCESS(ray_tracer)->render();
-
     }
 };
 

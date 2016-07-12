@@ -33,11 +33,11 @@ in vec3 in_light;
 in vec4 vPos;
 uniform mat4 s_mtx;
 uniform sampler2DShadow gl3d_texture_shadow;
-in float test;
 uniform vec3 shadow_center_input;
 uniform mat4 transmtx;
 uniform bool shadow_enable;
 uniform vec2 shadow_map_size;
+in float test;
 
 // reflection
 uniform float alpha;
@@ -57,7 +57,7 @@ vec3 rgb2hsi(vec3 rgb) {
     if ((rgb.r == rgb.g) && (rgb.g == rgb.b))
         return vec3(0.0, 0.0, (rgb.r + rgb.g + rgb.b)/3.0);
     vec3 hsi;
-    
+
     // H
     if ((rgb.r >= rgb.g) && (rgb.r >= rgb.b)) { // R Max
         hsi.x = radians(60.0) * (rgb.g - rgb.b) / (rgb.r - min(rgb.g, rgb.b));
@@ -69,7 +69,7 @@ vec3 rgb2hsi(vec3 rgb) {
     else if ((rgb.b >= rgb.g) && (rgb.b >= rgb.r)) { // B Max
         hsi.x = radians(60.0) * (rgb.r - rgb.g) / (rgb.b - min(rgb.r, rgb.g));
         hsi.x += radians(240.0);
-    } 
+    }
     if (hsi.x < 0.0) {
         hsi.x += radians(360.0);
     }
@@ -77,11 +77,11 @@ vec3 rgb2hsi(vec3 rgb) {
     // S
     float s = 1.0 - 3.0 / (rgb.r + rgb.g + rgb.b) * min(min(rgb.r, rgb.b), rgb.g);
     hsi.y = s;
-    
+
     // I
     float i = (rgb.r + rgb.g + rgb.b)/3.0;
     hsi.z = i;
-    
+
     return hsi;
 }
 
@@ -110,7 +110,7 @@ vec3 hsi2rgb(vec3 hsi) {
         rgb.b = hsi.z * (1.0 + (hsi.y * cos(hsi.x) / cos(radians(60.0) - hsi.x)));
         rgb.r = 3.0 * hsi.z - rgb.g - rgb.b;
     }
-    
+
     return rgb;
 }
 
@@ -182,17 +182,17 @@ void main() {
         }
         shadow_weaken = (shadow_weaken/25.0);
     }
-    
+
     // 计算自然色
     vec4 ambclr = gl3d_t_ambient_enable ? (texture2D(gl3d_texture_ambient, text_coord) + mtlAmbientColor) :
     mtlAmbientColor;
     out_color = ambclr;
-    
+
     // 计算散射色
     vec4 difclr = gl3d_t_diffuse_enable ? shininess * (texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor):
     mtlDiffuseColor * shininess;
-    out_color += difclr * (0.2 + (0.8 * df)) - 0.1;
-    
+    out_color += difclr * (0.2 + (0.7 * df));
+
     // 计算镜面色
     vec3 out_light = reflect(in_light, l_normal);   // 获取出射光
     out_light = normalize(-out_light);
@@ -206,25 +206,22 @@ void main() {
     spchsi.z = min(1.0, spchsi.z);
     spcclr = vec4(hsi2rgb(spchsi), spcclr.w);
     out_color += spcclr;
-    
+
     // if (shadow_enable)
-    //     if (test > 0.5)
-    //         out_color = out_color * shadow_weaken;
     out_color = out_color * (500.0 - cam_pos_distance) / 500.0;
-    
+
     // 这行很神奇的让很多地方都有了金属质感？
     // out_color = min(vec4(1.0), out_color);
     // out_color += 0.4 * vec4(pow(max(0.0, spf-0.1), 7.0));
     // out_color = min(vec4(1.0), out_color);
-    
+
     // 尝试增强色度
     vec3 hsi = rgb2hsi(out_color.xyz);
     hsi.y *= 1.1;
     hsi.y = min(1.0, hsi.y);
 
     // 阴影与背光调整
-    // float weak_factor = max(min(test, shadow_weaken), 0.0);
-    if (shadow_enable)
+    if ((shadow_enable) && (test > 0.0))
         hsi.z *= max(0.5, 0.3 + 0.7 * shadow_weaken);
     out_color = vec4(hsi2rgb(hsi), out_color.w);
 

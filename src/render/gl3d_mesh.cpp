@@ -258,3 +258,12 @@ void gl3d::mesh::recalculate_normals(float cos_angle) {
     this->indecis = new_indecis;
     this->num_pts = this->num_idx;
 }
+
+void mesh::convert_left_hand_to_right_hand() {
+    obj_points * pt = this->points_data;
+    for (int i = 0; i < this->num_pts; i++) {
+        auto tmp = pt[i].vertex_z;
+        pt[i].vertex_z = pt[i].vertex_y;
+        pt[i].vertex_y = tmp;
+    }
+}

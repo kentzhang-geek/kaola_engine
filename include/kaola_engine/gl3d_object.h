@@ -179,6 +179,9 @@ namespace gl3d {
         // 小于给定值时，使用重算法向量，默认给定值为cos(45)~0.707
         void recalculate_normals(float cos_angle = 0.707);
 
+        // 从左手系转换到右手系
+        void convert_left_hand_to_right_hand();
+
         /**
          *  @author Kent, 16-02-17 20:02:41
          *

@@ -14,7 +14,6 @@ using namespace std;
 static model_manager * global_model_manager = NULL;
 
 model_manager::model_manager() {
-//    memset(this, 0, sizeof(model_manager));
     models.clear();
     global_model_manager = this;
 }
@@ -42,10 +41,14 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
     for (; iter != this->models.end(); iter++) {
         obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "\\" + (*iter)->file_name).c_str());
         (*iter)->obj = obj_tmp;
+        // 默认参数
+        ::gl3d::obj_property * obj_pro = obj_tmp->get_property();
+        obj_pro->scale_unit = gl3d::scale::mm;
         (*iter)->set_param();
         // 合并顶点重算法向量
         obj_tmp->merge_meshes();
         obj_tmp->recalculate_normals();
+        obj_tmp->convert_left_hand_to_right_hand();
         this->available_id =
         ((*iter)->id > this->available_id) ?
         ((*iter)->id) : this->available_id;
@@ -54,10 +57,10 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
 }
 
 void model_param::set_param() {
-    ::gl3d::obj_property * obj_pro = this->obj->get_property();
-    // 默认缩放1倍，旋转90度
-    obj_pro->scale_unit = gl3d::scale::mm;
-    this->obj->rotate(glm::vec3(1.0, 0.0, 0.0), 90);
+//    ::gl3d::obj_property * obj_pro = this->obj->get_property();
+//    // 默认缩放1倍
+//    obj_pro->scale_unit = gl3d::scale::mm;
+//    this->obj->rotate(glm::vec3(0.0, 0.0, 1.0), 90);
 }
 
 model_param::model_param(int i, string fn) : id(i), file_name(fn) , obj(NULL) {

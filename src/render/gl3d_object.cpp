@@ -308,3 +308,10 @@ void object::recalculate_normals(float cos_angle) {
         (*iter)->recalculate_normals(cos_angle);
     }
 }
+
+void object::convert_left_hand_to_right_hand() {
+    auto iter = this->meshes.begin();
+    for (; iter != this->meshes.end(); iter++) {
+        (*iter)->convert_left_hand_to_right_hand();
+    }
+}
