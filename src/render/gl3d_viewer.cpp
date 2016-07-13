@@ -76,7 +76,9 @@ bool viewer::change_position(::glm::vec3 val) {
         this->current_position += (f + r);
     }
     if (this->view_mode == viewer::top_view) {
-        val.z = 0.0;
+        val.x = -val.x;
+        val.z = val.y;
+        val.y = 0.0;
         this->current_position += val;
     }
     this->calculate_mat();
@@ -122,10 +124,10 @@ void viewer::calculate_mat() {
     }
     if (this->view_mode == viewer::top_view) {
         ::glm::vec3 cp = this->current_position;
-        cp.y = 20.0;
+        cp.y = 10.0;
         auto lp = cp;
         lp.y = 0.0;
-        this->viewing_matrix = ::glm::lookAt(cp, lp, glm::vec3(0.0, 1.0, 0.0));
+        this->viewing_matrix = ::glm::lookAt(cp, lp, glm::vec3(0.0, 0.0, 1.0));
         this->projection_matrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
     }
 }
