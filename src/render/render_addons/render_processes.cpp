@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/gl3d_render_process.hpp"
+#include "kaola_engine/gl3d_post_process.h"
 
 using namespace std;
 using namespace gl3d;
@@ -92,6 +93,10 @@ void normal::render() {
 }
 
 void normal::after_render() {
+    gl3d::scene * one_scene = this->get_attached_scene();
+    QVector<string> cmd;
+    cmd.push_back(string("testpp"));
+    gl3d_post_process_set::shared_instance()->process(cmd, one_scene);
     has_drawed = true;
 }
 

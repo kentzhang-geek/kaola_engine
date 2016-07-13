@@ -122,9 +122,9 @@ void viewer::calculate_mat() {
     }
     if (this->view_mode == viewer::top_view) {
         ::glm::vec3 cp = this->current_position;
-        cp.z = 20.0;
+        cp.y = 20.0;
         auto lp = cp;
-        lp.z = 0.0;
+        lp.y = 0.0;
         this->viewing_matrix = ::glm::lookAt(cp, lp, glm::vec3(0.0, 1.0, 0.0));
         this->projection_matrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
     }

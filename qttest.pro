@@ -16,7 +16,7 @@ SOURCES += \
     src/Qt_tests/mainwindow.cpp \
     src/Qt_tests/models_cfg.cpp \
     src/Qt_tests/ray_tracer.cpp \
-    src/render/default_shader_param.cpp \
+    src/render/render_addons/default_shader_param.cpp \
     src/render/gl3d_framebuffer.cpp \
     src/render/gl3d_general_texture.cpp \
     src/render/gl3d_image.cpp \
@@ -30,12 +30,14 @@ SOURCES += \
     src/render/model_manager.cpp \
     src/render/mopenglview.cpp \
     src/render/Program.cpp \
-    src/render/render_processes.cpp \
+    src/render/render_addons/render_processes.cpp \
     src/render/Shader.cpp \
-    src/render/shader_list.cpp \
+    src/render/render_addons/shader_list.cpp \
     src/render/shader_manager.cpp \
     src/utils/gl3d_scale.cpp \
-    src/utils/gl3d_global_param.cpp
+    src/utils/gl3d_global_param.cpp \
+    src/render/gl3d_post_process.cpp \
+    src/render/render_addons/post_processer_1.cpp
 
 HEADERS  += mainwindow.h \
     ui_mainwindow.h \
@@ -64,7 +66,9 @@ HEADERS  += mainwindow.h \
     src/Qt_tests/mainwindow.h \
     src/Qt_tests/ray_tracer.h \
     include/utils/gl3d_scale.h \
-    include/utils/gl3d_global_param.h
+    include/utils/gl3d_global_param.h \
+    include/kaola_engine/gl3d_post_process.h \
+    include/utils/gl3d_utils.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui

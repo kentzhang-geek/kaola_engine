@@ -14,6 +14,7 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
     this->width = x;
     this->height = y;
     this->config = config_in;
+    this->is_generated_by_object = false;
     
     glGenFramebuffers(1, &this->frame_obj);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->frame_obj);
@@ -42,6 +43,13 @@ gl3d_framebuffer::gl3d_framebuffer(gl3d_frame_config config_in, GLuint x, GLuint
         glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX, width, height);
         glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->stenc_obj);
     }
+}
+
+gl3d_framebuffer::gl3d_framebuffer(GLuint buffer_object, glm::vec2 size) {
+    this->frame_obj = buffer_object;
+    this->is_generated_by_object = true;
+    this->width = size.x;
+    this->height = size.y;
 }
 
 bool gl3d_framebuffer::is_complete() {
@@ -100,4 +108,8 @@ void gl3d_framebuffer::attach_depth_text(GLuint text) {
 
 GLuint gl3d_framebuffer::get_frame_obj() {
     return this->frame_obj;
+}
+
+bool gl3d_framebuffer::generated_by_object() {
+    return this->is_generated_by_object;
 }
