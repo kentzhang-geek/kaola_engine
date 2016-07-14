@@ -23,6 +23,8 @@ private slots:
 
     void on_sig1();
 
+    void on_pushButton_2_clicked();
+
 signals:
     void sig1();
 

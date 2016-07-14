@@ -53,7 +53,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 
     this->ui->openGLWidget->main_scene->prepare_buffer();
 
-    GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->ui->openGLWidget->main_scene);
+    GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->openGLWidget->main_scene);
 }
 
 MainWindow::~MainWindow()
@@ -87,6 +87,12 @@ void MainWindow::on_qqq_clicked()
         GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->openGLWidget->main_scene);
     }
     else {
-        GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->ui->openGLWidget->main_scene);
+        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->openGLWidget->main_scene);
     }
+}
+
+extern bool test_flag_global;
+void MainWindow::on_pushButton_2_clicked()
+{
+    test_flag_global = false;
 }

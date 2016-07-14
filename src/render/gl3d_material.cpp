@@ -153,9 +153,14 @@ void gl3d_material::init() {
     this->is_empty = false;
 }
 
+// 特殊用途的材质贴图
 gl3d_material::gl3d_material(gl3d_general_texture * gtext) {
     this->init();
-    throw QString("Unimplement now");
+
+    this->textures.insert(diffuse, gtext);
+    this->colors.insert(ambient, glm::vec3(0.0));
+    this->colors.insert(diffuse, glm::vec3(0.0));
+    this->colors.insert(specular, glm::vec3(0.0));
 }
 
 gl3d_material::gl3d_material(string file_name) {

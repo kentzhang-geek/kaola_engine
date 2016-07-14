@@ -16,6 +16,8 @@
 using namespace std;
 using namespace gl3d;
 
+bool test_flag_global;
+
 class normal : public render_process {
 public:
     void pre_render() ;
@@ -226,15 +228,33 @@ public:
 GL3D_ADD_RENDER_PROCESS(has_post);
 
 void has_post::pre_render() {
+    if (test_flag_global)
+        return;
     this->rend_shadow();
-//    this->canvas = new gl3d::gl3d_general_texture();
-}
-
-void has_post::render() {
+    // create color framebuffer
+    this->canvas = new gl3d::gl3d_general_texture(
+                gl3d_general_texture::GL3D_RGBA,
+                this->get_attached_scene()->get_width(),
+                this->get_attached_scene()->get_height());
+    gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
+                        this->get_attached_scene()->get_width(),
+                        this->get_attached_scene()->get_height());
+    fb.attach_color_text(this->canvas->get_text_obj());
+    fb.use_this_frame();
     this->rend_main_scene();
 }
 
+void has_post::render() {
+    if (test_flag_global)
+        return;
+    this->rend_result();
+}
+
 void has_post::after_render() {
+    if (test_flag_global)
+        return;
+    test_flag_global = true;
+//    delete this->canvas;
 }
 
 void has_post::rend_shadow() {
@@ -326,6 +346,6 @@ object *has_post::build_rect() {
 }
 
 gl3d_material * has_post::build_material() {
-//    gl3d_material * ret = new gl3d_material();
-    return NULL;
+    gl3d_material * ret = new gl3d_material(this->canvas);
+    return ret;
 }

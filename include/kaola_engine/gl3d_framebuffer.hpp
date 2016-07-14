@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "gl3d_out_headers.h"
 #include "log.h"
+#include "utils/gl3d_utils.h"
 
 using namespace std;
 
@@ -40,7 +41,7 @@ namespace gl3d {
         GLuint frame_obj;
         GLuint color_obj;
         GLuint depth_obj;
-        GLuint stenc_obj;
+        GLuint stenc_depth_obj;
         gl3d_frame_config config;
         GLuint width;
         GLuint height;

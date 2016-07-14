@@ -26,4 +26,5 @@
 
 #define GL3D_UTILS_ERROR(...) throw QString::asprintf(__VA_ARGS__);
 
+#define GL3D_UTILS_WARN(...) std::cout <<  QString::asprintf(__VA_ARGS__).toStdString() << std::endl;
 #endif // GL3D_UTILS_H
