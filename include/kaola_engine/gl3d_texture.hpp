@@ -12,18 +12,17 @@
 #include <stdio.h>
 #include <string>
 #include "gl3d_image.hpp"
+#include "gl3d_general_texture.hpp"
 #include <QVector>
 #include <QMap>
 
 namespace gl3d {
-    class gl3d_texture{
+    class gl3d_texture : public gl3d_general_texture{
     public:
-        GLuint text_obj;
         std::string texture_name;
         gl3d_image * img;
         gl3d_texture(char * filename);
         ~gl3d_texture();
-        void bind(GLenum text_unit);
         static void set_parami(bool repeat);
     private:
         void init();

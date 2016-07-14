@@ -573,7 +573,7 @@ void scene::draw_shadow_mask() {
     gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     
     // 绘制阴影贴图
-    frame->attach_depth_text(this->shadow_text->get_gl_obj());
+    frame->attach_depth_text(this->shadow_text->get_text_obj());
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_SHADOW;
     this->this_property.global_shader = string("shadow_mask");
     frame->use_this_frame();

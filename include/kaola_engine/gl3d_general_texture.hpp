@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "gl3d_out_headers.h"
+#include "utils/gl3d_utils.h"
 
 using namespace std;
 
@@ -25,18 +26,21 @@ namespace gl3d {
             GL3D_LUMINANCE,
             GL3D_LUMINANCE_ALPHA
         };
+        gl3d_general_texture() {};
         gl3d_general_texture(texture_type type, GLuint x, GLuint y);
         ~gl3d_general_texture();
         void bind(GLenum text_unit);
         void buffer_data(GLvoid * data);
         void clean_data();
-        GLuint get_gl_obj();
         static void set_parami(bool repeat);
+
+        // Properties
+        GL3D_UTILS_PROPERTY(text_obj, GLuint);
+        GL3D_UTILS_PROPERTY(size_x, GLuint);
+        GL3D_UTILS_PROPERTY(size_y, GLuint);
+        GL3D_UTILS_PROPERTY(type, texture_type);
+
     private:
-        texture_type type;
-        GLuint size_x, size_y;
-        GLuint text_obj;
-        gl3d_general_texture() {};
         void init();
     };
 };

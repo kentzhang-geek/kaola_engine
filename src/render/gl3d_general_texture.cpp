@@ -9,7 +9,6 @@
 #include "kaola_engine/gl3d_general_texture.hpp"
 
 void gl3d_general_texture::init() {
-    memset(this, 0, sizeof(gl3d_general_texture));
 }
 
 gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type set_type, GLuint x, GLuint y) {
@@ -115,6 +114,7 @@ void gl3d_general_texture::bind(GLenum text_unit) {
 }
 
 void gl3d_general_texture::buffer_data(GLvoid *data) {
+    glBindTexture(GL_TEXTURE_2D, this->text_obj);
     switch (type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
@@ -145,10 +145,6 @@ void gl3d_general_texture::buffer_data(GLvoid *data) {
             throw std::invalid_argument("invalid general texture type");
             break;
     }
-}
-
-GLuint gl3d_general_texture::get_gl_obj() {
-    return this->text_obj;
 }
 
 gl3d_general_texture::~gl3d_general_texture() {

@@ -13,7 +13,7 @@ using namespace std;
 using namespace gl3d;
 
 void gl3d_texture::init() {
-    memset(this, 0, sizeof(gl3d_texture));
+//    memset(this, 0, sizeof(gl3d_texture));
 }
 
 void gl3d_texture::set_parami(bool repeat) {
@@ -38,36 +38,28 @@ void gl3d_texture::set_parami(bool repeat) {
     }
 }
 
-gl3d_texture::gl3d_texture(char * filename) {
+gl3d_texture::gl3d_texture(char * filename) : gl3d_general_texture(
+                                                  gl3d_general_texture::GL3D_RGBA, 10, 10) {
     this->init();
-    
+
     // create image
     this->img = new gl3d_image(filename);
     this->texture_name = string(filename);
 
-    // buffer texture
-    glGenTextures(1, &this->text_obj);
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
-//    this->set_parami(false);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 this->img->width,
-                 this->img->height,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 this->img->data);
+//    gl3d_texture::gl3d_general_texture(
+//                gl3d_general_texture::GL3D_RGBA,
+//                this->img->width, this->img->height);
+    this->set_size_x(this->img->width);
+    this->set_size_y(this->img->height);
+    GLuint ooo = this->get_text_obj();
+    this->buffer_data(this->img->data);
     
     // 贴图缓存好之后就删除通用内存中的图片数据
     delete this->img;
     this->img = NULL;
 }
 
-// 绑定texture到对应的单元
-void gl3d_texture::bind(GLenum text_unit) {
-    glActiveTexture(text_unit);
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
-}
-
 gl3d_texture::~gl3d_texture() {
-    glDeleteTextures(1, &this->text_obj);
     delete this->img;
     
     return;

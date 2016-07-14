@@ -30,7 +30,7 @@ namespace gl3d {
             specular
         };
         
-        QMap<material_type, gl3d_texture *> textures;
+        QMap<material_type, gl3d_general_texture *> textures;
         QMap<material_type, ::glm::vec3> colors;
         
         gl3d_material(aiMaterial * mtls);
