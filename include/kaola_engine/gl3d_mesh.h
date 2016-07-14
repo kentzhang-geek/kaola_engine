@@ -14,6 +14,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+// utils
+#include "utils/gl3d_utils.h"
+
 namespace gl3d {
     /**
      *  @author Kent, 16-02-17 20:02:29
@@ -52,6 +55,12 @@ namespace gl3d {
     public:
         friend class object;
         friend class scene;
+
+        // properties
+        GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
+        GL3D_UTILS_PROPERTY(bounding_value_min, glm::vec3);
+        GL3D_UTILS_PROPERTY(material_index, int);
+
     private:
         obj_points * points_data;
         GLushort * indecis;
@@ -60,10 +69,7 @@ namespace gl3d {
         bool data_buffered;
         GLuint vbo;
         GLuint idx;
-        int material_index;
         bool texture_repeat;
-        glm::vec3 bounding_value_max;
-        glm::vec3 bounding_value_min;
 
         mesh(void * as_mesh);
 

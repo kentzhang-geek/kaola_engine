@@ -148,10 +148,14 @@ void gl3d_material::use_this(GLuint pro) {
 }
 
 void gl3d_material::init() {
-//    memset(this, 0, sizeof(gl3d_material));
     this->colors.clear();
     this->textures.clear();
     this->is_empty = false;
+}
+
+gl3d_material::gl3d_material(gl3d_general_texture * gtext) {
+    this->init();
+    throw QString("Unimplement now");
 }
 
 gl3d_material::gl3d_material(string file_name) {

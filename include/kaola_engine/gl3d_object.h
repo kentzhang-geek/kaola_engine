@@ -26,6 +26,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+// utils
+#include "utils/gl3d_utils.h"
+
 using namespace std;
 
 namespace gl3d {
@@ -191,12 +194,14 @@ namespace gl3d {
         friend class model_manager;
         GLfloat param_x;
 
+        // Properties
+        GL3D_UTILS_PROPERTY_GET_POINTER(meshes, QVector<mesh *>);
+
     private:
         void init();
         void buffer_data();
         obj_property this_property;
         bool data_buffered;
-        QVector<mesh *> meshes;
         unsigned long long number_of_meshes;
         GLuint vao;
     };

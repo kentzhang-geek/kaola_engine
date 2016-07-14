@@ -10,6 +10,8 @@
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "kaola_engine/gl3d_post_process.h"
+#include "kaola_engine/gl3d_general_texture.hpp"
+#include "kaola_engine/gl3d_material.hpp"
 
 using namespace std;
 using namespace gl3d;
@@ -93,10 +95,6 @@ void normal::render() {
 }
 
 void normal::after_render() {
-    gl3d::scene * one_scene = this->get_attached_scene();
-    QVector<string> cmd;
-    cmd.push_back(string("testpp"));
-    gl3d_post_process_set::shared_instance()->process(cmd, one_scene);
     has_drawed = true;
 }
 
@@ -202,3 +200,132 @@ public:
     }
 };
 GL3D_ADD_RENDER_PROCESS(editing);
+
+class has_post : public render_process {
+public:
+    void pre_render();
+    void render() ;
+    void after_render();
+
+    // internel calls
+    void rend_shadow();
+    void rend_main_scene();
+
+    // result
+    void rend_result();
+
+    // set a rect
+    object * build_rect();
+
+    // set a material
+    gl3d_material * build_material();
+
+    // color canvas to present
+    gl3d_general_texture * canvas;
+};
+GL3D_ADD_RENDER_PROCESS(has_post);
+
+void has_post::pre_render() {
+    this->rend_shadow();
+//    this->canvas = new gl3d::gl3d_general_texture();
+}
+
+void has_post::render() {
+    this->rend_main_scene();
+}
+
+void has_post::after_render() {
+}
+
+void has_post::rend_shadow() {
+    // 先绘制阴影贴图，给阴影贴图shader添加一下参数
+    gl3d::scene * one_scene = this->get_attached_scene();
+    gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("shadow_mask");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->draw_shadow_mask();
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+}
+
+void has_post::rend_main_scene() {
+    gl3d::scene * one_scene = this->get_attached_scene();
+    // 输入阴影贴图的参数，然后绘制主图像
+    gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector_shadow");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    one_scene->prepare_canvas(false);
+    glDisable(GL_CULL_FACE);
+    one_scene->draw(false);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    // 绘制地面蒙版
+    current_shader_param = GL3D_GET_PARAM("multiple_text");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    glDisable(GL_CULL_FACE);
+    one_scene->draw_stencil();
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    // 在有模板的情况下绘制地面倒影
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 1, 0xffffffff);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    current_shader_param = GL3D_GET_PARAM("image");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
+    one_scene->get_property()->global_shader = string("image");
+    one_scene->draw(true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    glDisable(GL_STENCIL_TEST);
+
+    // 绘制地面
+    current_shader_param = GL3D_GET_PARAM("dm");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
+    one_scene->get_property()->global_shader = string("dm");
+    glDisable(GL_CULL_FACE);
+    one_scene->draw(true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    // 最后绘制天空盒
+    current_shader_param = GL3D_GET_PARAM("skybox");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
+    one_scene->get_property()->global_shader = string("skybox");
+    one_scene->draw(true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+}
+
+void has_post::rend_result() {
+    object * rect = this->build_rect();
+}
+
+object *has_post::build_rect() {
+    obj_points rect[4];
+    memset(rect, 0, sizeof(obj_points) * 4);
+    rect[0].vertex_x = -1.0f; // left up
+    rect[0].vertex_y = 1.0f;
+    rect[1].vertex_x = -1.0f; // left down
+    rect[1].vertex_y = -1.0f;
+    rect[2].vertex_x = 1.0f; // right up
+    rect[2].vertex_y = 1.0f;
+    rect[3].vertex_x = 1.0f; // right down
+    rect[3].vertex_y = -1.0f;
+
+    GLushort indexes[6] = {
+        0, 2, 1,
+        1, 2, 3,
+    };
+
+    object * ret = new object(rect, 4, indexes, 6);
+    ret->get_meshes()->at(0)->set_bounding_value_max(glm::vec3(1.0, 1.0, 0.0));
+    ret->get_meshes()->at(0)->set_bounding_value_min(glm::vec3(-1.0, -1.0, 0.0));
+    ret->get_meshes()->at(0)->set_material_index(0);
+
+    return ret;
+}
+
+gl3d_material * has_post::build_material() {
+//    gl3d_material * ret = new gl3d_material();
+    return NULL;
+}

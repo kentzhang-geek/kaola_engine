@@ -14,6 +14,7 @@
 #include <QVector>
 
 #include "gl3d_texture.hpp"
+#include "gl3d_general_texture.hpp"
 
 #include "gl3d_out_headers.h"
 
@@ -34,6 +35,7 @@ namespace gl3d {
         
         gl3d_material(aiMaterial * mtls);
         gl3d_material(string file_name);
+        gl3d_material(gl3d_general_texture * gtext);
         ~gl3d_material();
         void use_this(GLuint pro);
         bool is_empty;
@@ -41,6 +43,5 @@ namespace gl3d {
         void init();
     };
 }
-
 
 #endif /* gl3d_material_hpp */

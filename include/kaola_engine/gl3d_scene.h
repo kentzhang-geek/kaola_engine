@@ -30,6 +30,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+// utils
+#include "utils/gl3d_utils.h"
+
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
     class scene {
@@ -261,13 +264,9 @@ namespace gl3d {
          */
         void draw_stencil();
 
-        /**
-         *  @author Kent, 16-02-17 21:02:42
-         *
-         *  下面都是私有数据
-         */
-        GLfloat width;
-        GLfloat height;
+        // 屏幕长宽
+        GL3D_UTILS_PROPERTY(width, GLfloat);
+        GL3D_UTILS_PROPERTY(height, GLfloat);
 
     private:
         void init();

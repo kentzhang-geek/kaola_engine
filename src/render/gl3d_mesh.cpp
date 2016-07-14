@@ -104,10 +104,25 @@ gl3d::mesh::mesh(void * in_p) {
     return;
 }
 
-// 测试用的加mesh构造函数
+// 特殊用途的mesh构造函数，仅仅一个材质
 gl3d::mesh::mesh(obj_points * pts, int number_of_points,
                  unsigned short * idx_in, int num_of_indecis) {
     this->init();
+
+    // set data
+    this->points_data = (obj_points *) malloc(sizeof(obj_points) * number_of_points);
+    memcpy(this->points_data, pts, sizeof(obj_points) * number_of_points);
+    this->indecis = (GLushort *)malloc(sizeof(GLushort) * num_of_indecis);
+    memcpy(this->indecis, idx_in, sizeof(GLushort) * num_of_indecis);
+
+    this->num_pts = number_of_points;
+    this->num_idx = num_of_indecis;
+
+    // default only one material
+    this->material_index = 0;
+    this->texture_repeat = false;
+
+    return;
 }
 
 // 测试用的加mesh构造函数
@@ -115,6 +130,7 @@ gl3d::mesh::mesh(obj_points * pts, int number_of_points,
      unsigned short * indecis, int num_of_indecis,
                  obj_texture * txtr, int number_of_textures) {
     this->init();
+    throw QString::asprintf("should not call mesh constructor at %s : %d", __FILE__, __LINE__);
 }
 
 void gl3d::mesh::buffer_data() {
