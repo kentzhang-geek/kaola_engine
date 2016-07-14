@@ -2,9 +2,9 @@
 
 class copy_only : public gl3d_post_processer {
 public:
-    void process(gl3d_framebuffer *dest, gl3d_framebuffer *src, scene *scene) {
-//        cout << "has complete " << dest->is_complete() << src->is_complete() << " and scene " << scene << endl;
-        return;
+    gl3d_framebuffer * process(gl3d_framebuffer *src, scene *scene) {
+        return src;
     }
+    void deel_with_src(gl3d::gl3d_framebuffer * src) {};
 };
 GL3D_ADD_POST_PROCESSER(copy_only);

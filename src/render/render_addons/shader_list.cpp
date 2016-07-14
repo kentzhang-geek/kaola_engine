@@ -36,3 +36,7 @@ GL3D_LOAD_SHADER(skybox, skybox.vdata, skybox.fdata);
 GL3D_LOAD_SHADER(dm, dm.vdata, dm.fdata);
 
 GL3D_LOAD_SHADER(dm2, dm2.vdata, dm2.fdata);
+
+GL3D_LOAD_SHADER(post_process_result,
+                 post_process_result.vdata,
+                 post_process_result.fdata);

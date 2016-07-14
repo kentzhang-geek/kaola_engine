@@ -96,10 +96,11 @@ bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
 }
 
 bool scene::delete_obj(int key) {
+    if (!this->objects->contains(key))
+        return true;
     object * obj = this->get_obj(key);
     if (obj->this_property.authority & GL3D_OBJ_ENABLE_DEL) {
         this->objects->erase(this->objects->find(key));
-        delete obj;
         return true;
     }
     
@@ -125,7 +126,7 @@ bool scene::prepare_buffer() {
 bool scene::prepare_canvas(bool use_global_shader) {
     // clear and set scene
     if (use_global_shader) {
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(1.0, 0.0, 0.0, 1.0);
     }
     else {
         glClearColor
@@ -241,7 +242,7 @@ bool scene::draw(bool use_global_shader) {
             iter_objs++;
         }
         else {
-            log_c("object id %d use shader %s not found\n", iter_objs.key(), current_obj->use_shader.c_str());
+            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), current_obj->use_shader.c_str());
             // TODO : 这里删除的话会报错
             iter_objs = this->objects->erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }

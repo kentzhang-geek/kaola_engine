@@ -242,6 +242,11 @@ void has_post::pre_render() {
     fb.attach_color_text(this->canvas->get_text_obj());
     fb.use_this_frame();
     this->rend_main_scene();
+
+    QVector<string> cmd;
+    cmd.clear();
+    cmd.push_back(string("copy_only"));
+    gl3d_framebuffer * pre_fb = gl3d::gl3d_post_process_set::shared_instance()->process(cmd, this->get_attached_scene(), &fb);
 }
 
 void has_post::render() {
@@ -251,10 +256,8 @@ void has_post::render() {
 }
 
 void has_post::after_render() {
-    if (test_flag_global)
-        return;
     test_flag_global = true;
-//    delete this->canvas;
+    this->canvas = NULL;
 }
 
 void has_post::rend_shadow() {
@@ -317,7 +320,26 @@ void has_post::rend_main_scene() {
 }
 
 void has_post::rend_result() {
-    object * rect = this->build_rect();
+    gl3d::scene * one_scene = this->get_attached_scene();
+//    object * rect = this->build_rect();
+
+//    rect->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
+//    rect->get_meshes()->at(0)->set_material_index(0);
+//    rect->get_mtls()->insert(0, this->build_material());
+//    rect->get_property()->draw_authority |= GL3D_SCENE_DRAW_RESULT;
+
+//    gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("post_process_result");
+//    current_shader_param->user_data.insert(string("scene"), one_scene);
+//    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
+//    one_scene->get_property()->global_shader = string("post_process_result");
+//    one_scene->add_obj(QPair<int, object *>(222, rect));
+    one_scene->prepare_canvas(true);
+//    glDisable(GL_CULL_FACE);
+//    one_scene->draw(true);
+//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+//    one_scene->delete_obj(222);
+//    delete rect;
 }
 
 object *has_post::build_rect() {
@@ -325,12 +347,20 @@ object *has_post::build_rect() {
     memset(rect, 0, sizeof(obj_points) * 4);
     rect[0].vertex_x = -1.0f; // left up
     rect[0].vertex_y = 1.0f;
+    rect[0].texture_x = 0.0f;
+    rect[0].texture_y = 1.0f;
     rect[1].vertex_x = -1.0f; // left down
     rect[1].vertex_y = -1.0f;
+    rect[1].texture_x = 0.0f;
+    rect[1].texture_y = 0.0f;
     rect[2].vertex_x = 1.0f; // right up
     rect[2].vertex_y = 1.0f;
+    rect[2].texture_x = 1.0f;
+    rect[2].texture_y = 1.0f;
     rect[3].vertex_x = 1.0f; // right down
     rect[3].vertex_y = -1.0f;
+    rect[3].texture_x = 1.0f;
+    rect[3].texture_y = 0.0f;
 
     GLushort indexes[6] = {
         0, 2, 1,

@@ -18,28 +18,25 @@ gl3d_post_process_set::gl3d_post_process_set() {
     this->processer_set.clear();
 }
 
-gl3d_framebuffer * gl3d_post_process_set::process(QVector<string> commands, scene * scene) {
-    gl3d_framebuffer * dst = new gl3d_framebuffer(0,
-                                                  scene->get_property()->screen_width,
-                                                  scene->get_property()->screen_height);
-    gl3d_framebuffer * src = new gl3d_framebuffer(0,
-                                                  scene->get_property()->screen_width,
-                                                  scene->get_property()->screen_height);
+gl3d_framebuffer * gl3d_post_process_set::process(
+        QVector<string> commands,
+        scene * scene,
+        gl3d_framebuffer * src) {
+    gl3d_framebuffer * dst;
+
     auto it = commands.begin();
     for (; it != commands.end(); it++) {
         if (this->processer_set.contains(*it)) {
             gl3d_post_processer * prcer =
                     this->processer_set.value(*it);
-            prcer->process(dst, src, scene);
+            dst = prcer->process(src, scene);
+            prcer->deel_with_src(src);
             // swap dst to src
-            gl3d_framebuffer * tmp = dst;
-            dst = src;
-            src = tmp;
+            src = dst;
         }
     }
 
     // now return framebuffer
-    delete dst;
     return src;
 }
 

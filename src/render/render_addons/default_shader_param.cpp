@@ -460,3 +460,21 @@ GL3D_SHADER_PARAM(dm2) {
     
     return true;
 }
+
+
+GL3D_SHADER_PARAM(post_process_result) {
+    GLuint pro = GL3D_GET_SHADER("post_process_result")->getProgramID();
+    gl3d::object * obj = GL3D_GET_OBJ();
+    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
+
+    // 原色，散射与镜面分别是0，1，2
+    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+
+    glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
+    GL3D_SET_VEC3(light_vector, light, pro);
+
+    return true;
+}

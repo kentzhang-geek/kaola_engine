@@ -1,0 +1,54 @@
+#version 150
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+in float df;
+in float sf;
+in float cam_pos_distance;
+in vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
+
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
+
+// light
+uniform float shininess;
+uniform float param_x;
+in vec3 eye_to_pos;
+in vec3 l_normal;
+in vec3 in_light;
+
+// shadow
+#define EPSILON 0.0002
+in vec4 vPos;
+uniform mat4 s_mtx;
+uniform sampler2DShadow gl3d_texture_shadow;
+uniform vec3 shadow_center_input;
+uniform mat4 transmtx;
+uniform bool shadow_enable;
+uniform vec2 shadow_map_size;
+in float test;
+
+// reflection
+uniform float alpha;
+
+// frag unproject
+uniform mat4 unpvm;
+
+// out color
+out vec4 out_color;
+
+void main() {
+    out_color = texture2D(gl3d_texture_diffuse, text_coord);
+    out_color = vec4(1.0);
+}

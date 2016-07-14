@@ -131,13 +131,6 @@ namespace gl3d {
         QMap<string, void *> user_data;
 
         /**
-         *  @author Kent, 16-03-16 16:03:55
-         *
-         *  各种材质对对应index的映射表
-         */
-        QMap<unsigned int, gl3d_material *> mtls;
-
-        /**
          *  @author Kent, 16-03-21 13:03:37
          *
          *  旋转当前物品
@@ -196,6 +189,7 @@ namespace gl3d {
 
         // Properties
         GL3D_UTILS_PROPERTY_GET_POINTER(meshes, QVector<mesh *>);
+        GL3D_UTILS_PROPERTY_GET_POINTER(mtls, QMap<unsigned int, gl3d_material *> );
 
     private:
         void init();
