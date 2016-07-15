@@ -10,6 +10,7 @@ public:
     static gl3d_global_param * shared_instance();
     float canvas_width;
     float canvas_height;
+    unsigned int framebuffer;
 
 private:
     gl3d_global_param();

@@ -228,17 +228,17 @@ public:
 GL3D_ADD_RENDER_PROCESS(has_post);
 
 void has_post::pre_render() {
-    if (test_flag_global)
-        return;
+//    if (test_flag_global)
+//        return;
     this->rend_shadow();
     // create color framebuffer
     this->canvas = new gl3d::gl3d_general_texture(
                 gl3d_general_texture::GL3D_RGBA,
-                this->get_attached_scene()->get_width(),
-                this->get_attached_scene()->get_height());
+                2.0 * this->get_attached_scene()->get_width(),
+                2.0 * this->get_attached_scene()->get_height());
     gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
-                        this->get_attached_scene()->get_width(),
-                        this->get_attached_scene()->get_height());
+                        2.0 * this->get_attached_scene()->get_width(),
+                        2.0 * this->get_attached_scene()->get_height());
     fb.attach_color_text(this->canvas->get_text_obj());
     fb.use_this_frame();
     this->rend_main_scene();
@@ -250,8 +250,8 @@ void has_post::pre_render() {
 }
 
 void has_post::render() {
-    if (test_flag_global)
-        return;
+//    if (test_flag_global)
+//        return;
     this->rend_result();
 }
 
@@ -321,25 +321,25 @@ void has_post::rend_main_scene() {
 
 void has_post::rend_result() {
     gl3d::scene * one_scene = this->get_attached_scene();
-//    object * rect = this->build_rect();
+    object * rect = this->build_rect();
 
-//    rect->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
-//    rect->get_meshes()->at(0)->set_material_index(0);
-//    rect->get_mtls()->insert(0, this->build_material());
-//    rect->get_property()->draw_authority |= GL3D_SCENE_DRAW_RESULT;
+    rect->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
+    rect->get_meshes()->at(0)->set_material_index(0);
+    rect->get_mtls()->insert(0, this->build_material());
+    rect->get_property()->draw_authority = GL3D_SCENE_DRAW_RESULT;
 
-//    gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("post_process_result");
-//    current_shader_param->user_data.insert(string("scene"), one_scene);
-//    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
-//    one_scene->get_property()->global_shader = string("post_process_result");
-//    one_scene->add_obj(QPair<int, object *>(222, rect));
+    gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("post_process_result");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
+    one_scene->get_property()->global_shader = string("post_process_result");
+    one_scene->add_obj(QPair<int, object *>(222, rect));
     one_scene->prepare_canvas(true);
-//    glDisable(GL_CULL_FACE);
-//    one_scene->draw(true);
-//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    glDisable(GL_CULL_FACE);
+    one_scene->draw(true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
-//    one_scene->delete_obj(222);
-//    delete rect;
+    one_scene->delete_obj(222);
+    delete rect;
 }
 
 object *has_post::build_rect() {

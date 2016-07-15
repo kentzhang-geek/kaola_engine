@@ -60,12 +60,12 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
         GL3D_UTILS_PROPERTY(bounding_value_min, glm::vec3);
         GL3D_UTILS_PROPERTY(material_index, int);
+        GL3D_UTILS_PROPERTY(points_data, obj_points * );
+        GL3D_UTILS_PROPERTY(indecis, GLushort * );
+        GL3D_UTILS_PROPERTY(num_idx, unsigned int );
+        GL3D_UTILS_PROPERTY(num_pts, unsigned int );
 
     private:
-        obj_points * points_data;
-        GLushort * indecis;
-        unsigned int num_idx;
-        unsigned int num_pts;
         bool data_buffered;
         GLuint vbo;
         GLuint idx;

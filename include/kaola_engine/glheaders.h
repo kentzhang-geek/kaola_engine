@@ -11,6 +11,7 @@
 
 extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;
 
+#define GL3D_GL() gl3d_win_gl_functions
 
 // 直接用宏去替换用到的function
 #define glActiveTexture(...) gl3d_win_gl_functions->glActiveTexture(__VA_ARGS__)

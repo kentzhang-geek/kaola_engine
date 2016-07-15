@@ -90,7 +90,8 @@ void MOpenGLView::paintGL() {
 
     // KENT HINT : 用这个接口重新绑定默认渲染目标等等
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
-    glBindFramebuffer(GL_FRAMEBUFFER, this->context()->contextHandle()->defaultFramebufferObject());
+    gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
+    glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     // KENT TODO : 这里 为啥要乘以2？
 //    cout << "fbo is " << this->context()->contextHandle()->defaultFramebufferObject() << endl;
     glViewport(0, 0, this->width() * 2, this->height() * 2);

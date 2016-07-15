@@ -92,6 +92,7 @@ bool scene::init(scene_property * property) {
 bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
     this->objects->insert(obj_key_pair.first, obj_key_pair.second);
     obj_key_pair.second->this_property.id = (GLuint) obj_key_pair.first;
+    obj_key_pair.second->buffer_data();
     return true;
 }
 
@@ -126,7 +127,7 @@ bool scene::prepare_buffer() {
 bool scene::prepare_canvas(bool use_global_shader) {
     // clear and set scene
     if (use_global_shader) {
-        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClearColor(0.0, 0.0, 0.0, 1.0);
     }
     else {
         glClearColor
