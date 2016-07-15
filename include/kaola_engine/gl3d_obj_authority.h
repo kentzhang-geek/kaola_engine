@@ -26,5 +26,6 @@
 #define GL3D_SCENE_DRAW_GROUND (0x01UL << 3)
 #define GL3D_SCENE_DRAW_SKYBOX (0x01UL << 4)
 #define GL3D_SCENE_DRAW_RESULT (0x01UL << 5)
+#define GL3D_SCENE_DRAW_SPECIAL (0x01UL << 6)
 
 #endif /* gl3d_obj_authority_h */

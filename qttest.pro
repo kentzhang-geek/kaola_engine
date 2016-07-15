@@ -68,7 +68,8 @@ HEADERS  += mainwindow.h \
     include/utils/gl3d_scale.h \
     include/utils/gl3d_global_param.h \
     include/kaola_engine/gl3d_post_process.h \
-    include/utils/gl3d_utils.h
+    include/utils/gl3d_utils.h \
+    include/utils/gl3d_post_process_template.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui
