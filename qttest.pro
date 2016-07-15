@@ -37,7 +37,8 @@ SOURCES += \
     src/utils/gl3d_scale.cpp \
     src/utils/gl3d_global_param.cpp \
     src/render/gl3d_post_process.cpp \
-    src/render/render_addons/post_processer_1.cpp
+    src/render/render_addons/post_processer_1.cpp \
+    src/render/render_addons/gl3d_post_process_template.cpp
 
 HEADERS  += mainwindow.h \
     ui_mainwindow.h \
