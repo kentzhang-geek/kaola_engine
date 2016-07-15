@@ -18,11 +18,11 @@ gl3d_post_process_set::gl3d_post_process_set() {
     this->processer_set.clear();
 }
 
-gl3d_framebuffer * gl3d_post_process_set::process(
+gl3d_general_texture * gl3d_post_process_set::process(
         QVector<string> commands,
         scene * scene,
-        gl3d_framebuffer * src) {
-    gl3d_framebuffer * dst;
+        gl3d_general_texture * src) {
+    gl3d_general_texture * dst;
 
     auto it = commands.begin();
     for (; it != commands.end(); it++) {

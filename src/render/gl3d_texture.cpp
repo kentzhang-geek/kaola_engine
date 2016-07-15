@@ -46,9 +46,6 @@ gl3d_texture::gl3d_texture(char * filename) : gl3d_general_texture(
     this->img = new gl3d_image(filename);
     this->texture_name = string(filename);
 
-//    gl3d_texture::gl3d_general_texture(
-//                gl3d_general_texture::GL3D_RGBA,
-//                this->img->width, this->img->height);
     this->set_size_x(this->img->width);
     this->set_size_y(this->img->height);
     GLuint ooo = this->get_text_obj();

@@ -31,18 +31,18 @@ public:
     GL3D_UTILS_PROPERTY(textures, QMap<string, gl3d::gl3d_general_texture *> );
     GL3D_UTILS_PROPERTY(name, string);
 
-    virtual gl3d::gl3d_framebuffer * process(
-            gl3d::gl3d_framebuffer * src,
+    virtual gl3d::gl3d_general_texture * process(
+            gl3d::gl3d_general_texture * src,
             gl3d::scene * scene) = 0;
-    virtual void deel_with_src(gl3d::gl3d_framebuffer * src) = 0;
+    virtual void deel_with_src(gl3d::gl3d_general_texture * src) = 0;
 };
 
 class gl3d_post_process_set {
 public:
     static gl3d_post_process_set * shared_instance();
-    gl3d::gl3d_framebuffer * process(QVector<string> commands,
+    gl3d_general_texture * process(QVector<string> commands,
                                      scene *scene,
-                                     gl3d_framebuffer *src);
+                                     gl3d_general_texture *src);
     void add_post_processer(string name, gl3d_post_processer * p);
 
     GL3D_UTILS_PROPERTY(processer_set,  QMap<string, gl3d_post_processer *> );

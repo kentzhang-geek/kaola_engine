@@ -246,7 +246,7 @@ void has_post::pre_render() {
     QVector<string> cmd;
     cmd.clear();
     cmd.push_back(string("copy_only"));
-    gl3d_framebuffer * pre_fb = gl3d::gl3d_post_process_set::shared_instance()->process(cmd, this->get_attached_scene(), &fb);
+    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd, this->get_attached_scene(), this->canvas);
 }
 
 void has_post::render() {
