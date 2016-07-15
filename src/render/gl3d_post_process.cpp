@@ -34,6 +34,9 @@ gl3d_general_texture * gl3d_post_process_set::process(
             // swap dst to src
             src = dst;
         }
+        else {
+            GL3D_UTILS_WARN("processers not found ");
+        }
     }
 
     // now return framebuffer

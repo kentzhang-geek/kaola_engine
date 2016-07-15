@@ -1,7 +1,7 @@
 #include "utils/gl3d_post_process_template.h"
 
 GL3D_POST_PROCESS_IMPLEMENT(post_process_gauss);
-
+GL3D_POST_PROCESS_IMPLEMENT(hdr_test);
 
 //#include "kaola_engine/gl3d_post_process.h"
 //#include "kaola_engine/gl3d.hpp"
