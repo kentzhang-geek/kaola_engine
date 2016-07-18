@@ -32,6 +32,7 @@
 
 // utils
 #include "utils/gl3d_utils.h"
+#include "kaola_engine/gl3d_general_light_source.h"
 
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
@@ -267,6 +268,9 @@ namespace gl3d {
         // 屏幕长宽
         GL3D_UTILS_PROPERTY(width, GLfloat);
         GL3D_UTILS_PROPERTY(height, GLfloat);
+
+        // 场景光源
+        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, general_light_source *);
 
     private:
         void init();

@@ -38,7 +38,8 @@ SOURCES += \
     src/utils/gl3d_global_param.cpp \
     src/render/gl3d_post_process.cpp \
     src/render/render_addons/post_processer_1.cpp \
-    src/render/render_addons/gl3d_post_process_template.cpp
+    src/render/render_addons/gl3d_post_process_template.cpp \
+    src/render/gl3d_general_light_source.cpp
 
 HEADERS  += mainwindow.h \
     ui_mainwindow.h \
@@ -70,7 +71,8 @@ HEADERS  += mainwindow.h \
     include/utils/gl3d_global_param.h \
     include/kaola_engine/gl3d_post_process.h \
     include/utils/gl3d_utils.h \
-    include/utils/gl3d_post_process_template.h
+    include/utils/gl3d_post_process_template.h \
+    include/kaola_engine/gl3d_general_light_source.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui
