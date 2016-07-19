@@ -44,9 +44,12 @@ uniform float alpha;
 // frag unproject
 uniform mat4 unpvm;
 
+// bounds
+uniform vec2 canvas_size;
+
 // out color
 out vec4 out_color;
-#define EPSILON 0.002
+#define EPSILON 0.005
 
 void main() {
 		vec4 sample[25];
@@ -58,6 +61,8 @@ void main() {
 						tmpcoord.x += x * EPSILON;
 						tmpcoord.y += y * EPSILON;
 						sample[i] = texture2D(gl3d_texture_diffuse, tmpcoord);
+						sample[i] = sample[i] - 0.8;
+						sample[i] = clamp(sample[i], vec4(0.0), vec4(1.0));
 						i++;
 				}
 		}
@@ -79,9 +84,6 @@ void main() {
 			) / 273.0;
 
 		out_color = texture2D(gl3d_texture_diffuse, text_coord);
-		hdr_color = min(vec4(1.0), hdr_color);
-		hdr_color = hdr_color - 0.9;
-		hdr_color = max(vec4(0.0), hdr_color);
 		out_color += hdr_color;
 		out_color = min(vec4(1.0), out_color);
 }

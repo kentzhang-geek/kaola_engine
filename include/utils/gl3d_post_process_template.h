@@ -54,6 +54,8 @@ GL3D_SHADER_PARAM(name) { \
     glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2); \
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0); \
     GL3D_SET_VEC3(light_vector, light, pro); \
+    glm::vec2 canvas_size(2.0 * gl3d_global_param::shared_instance()->canvas_width, 2.0 * gl3d_global_param::shared_instance()->canvas_height); \
+    glUniform2fv(glGetUniformLocation(pro, "canvas_size"), 1, glm::value_ptr(canvas_size)); \
     return true; \
 }
 
