@@ -51,16 +51,26 @@ uniform vec2 canvas_size;
 out vec4 out_color;
 #define EPSILON 0.005
 
+float get_lum(vec4 clr) {
+	return 0.27 * clr.r + 0.67 * clr.g + 0.06 * clr.b;
+}
+
 void main() {
 		vec4 sample[25];
 
 		int i = 0;
+		float lum_min = 0.0;
+		float lum_max = 0.0;
+		float lum = 0.0;
 		for (float y = -2.0 ; y <= 2.0 ; y++) {
 				for (float x = -2.0 ; x <= 2.0 ; x++) {
 						vec2 tmpcoord = text_coord;
 						tmpcoord.x += x * EPSILON;
 						tmpcoord.y += y * EPSILON;
 						sample[i] = texture2D(gl3d_texture_diffuse, tmpcoord);
+						lum = get_lum(sample[i]);
+						lum_max = max(lum, lum_max);
+						lum_min = min(lum, lum_min);
 						sample[i] = sample[i] - 0.8;
 						sample[i] = clamp(sample[i], vec4(0.0), vec4(1.0));
 						i++;
@@ -84,6 +94,9 @@ void main() {
 			) / 273.0;
 
 		out_color = texture2D(gl3d_texture_diffuse, text_coord);
+		lum = get_lum(out_color);
+		out_color = out_color / lum;
+		out_color = (lum - lum_min) / (lum_max - lum_min) * out_color;
 		out_color += hdr_color;
 		out_color = min(vec4(1.0), out_color);
 }
