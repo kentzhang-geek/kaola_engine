@@ -8,6 +8,7 @@
 
 namespace gl3d {
 class general_light_source {
+public:
     enum gl3d_light_type {
         point_light = 0,
         directional_point_light,
@@ -16,6 +17,7 @@ class general_light_source {
 
     GL3D_UTILS_PROPERTY(location, glm::vec3);
     GL3D_UTILS_PROPERTY(direction, glm::vec3);
+    GL3D_UTILS_PROPERTY(light_angle, float);
     GL3D_UTILS_PROPERTY(light_type, gl3d_light_type);
     GL3D_UTILS_PROPERTY(is_attached_to_object, bool);
     GL3D_UTILS_PROPERTY(attached_object_id, int);

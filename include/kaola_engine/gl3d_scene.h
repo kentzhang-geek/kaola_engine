@@ -270,7 +270,7 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(height, GLfloat);
 
         // 场景光源
-        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, general_light_source *);
+        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 
     private:
         void init();

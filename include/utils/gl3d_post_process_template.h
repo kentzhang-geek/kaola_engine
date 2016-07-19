@@ -25,6 +25,7 @@ public:
                                       src->get_size_x(), \
                                       src->get_size_y()); \
             fb.attach_color_text(dst->get_text_obj()); \
+            fb.use_this_frame(); \
             gl3d::shader_param * current_shader_param = ::gl3d::shader_manager::sharedInstance()->get_param(#name); \
             current_shader_param->user_data.insert(string("scene"), one_scene); \
             one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL; \
