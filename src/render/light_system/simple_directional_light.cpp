@@ -49,6 +49,7 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
          it != scene->get_light_srcs()->end();
          it++) {
         // 设置光照参数
+        glUseProgram(pro);
         GL3D_SET_VEC3(light_location, (*it)->get_location(), pro);
         GL3D_SET_VEC3(light_to, (*it)->get_direction(), pro);
         glUniform1f(glGetUniformLocation(pro, "light_angle"),
@@ -56,15 +57,15 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
         glUniform1f(glGetUniformLocation(pro, "light_lum"),
                     10.0);
         glUniform1f(glGetUniformLocation(pro, "light_low_factor"),
-                    0.1);
+                    0.0);
         // 绘制合成用的图形
         scene->draw(true);
     }
 
     // 去除光照绘制环境
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-
     fb_light.attach_color_text(0);
+
     return light_pic;
 }
 
@@ -98,7 +99,10 @@ gl3d_general_texture * simple_directional_light::compose_pic(
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     scene->delete_obj(2333);
 
-    delete src;
+    // tear down render env
+    fb.attach_color_text(0);
+    delete sobj;
+
     return dst;
 }
 

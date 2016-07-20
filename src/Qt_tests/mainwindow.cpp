@@ -53,6 +53,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
 
     this->ui->openGLWidget->main_scene->prepare_buffer();
 
+    // add a light
     general_light_source * light_1 = new general_light_source();
     glm::vec3 lightp(24.0, 7.0, 12.0);
     lightp += glm::vec3(2.0, -1.2, 4.0);
