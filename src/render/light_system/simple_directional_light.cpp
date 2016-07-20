@@ -35,6 +35,7 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
     fb_light.attach_color_text(light_pic->get_text_obj());
 
     // 进行绘制前的准备
+    GLuint pro = GL3D_GET_SHADER("simple_directional_light")->getProgramID();
     gl3d::shader_param * current_shader_param =
             ::gl3d::shader_manager::sharedInstance()->get_param("simple_directional_light");
     current_shader_param->user_data.insert(string("scene"), scene);
@@ -47,8 +48,15 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
     for (auto it = scene->get_light_srcs()->begin();
          it != scene->get_light_srcs()->end();
          it++) {
-        // TODO：设置光照参数
-
+        // 设置光照参数
+        GL3D_SET_VEC3(light_location, (*it)->get_location(), pro);
+        GL3D_SET_VEC3(light_to, (*it)->get_direction(), pro);
+        glUniform1f(glGetUniformLocation(pro, "light_angle"),
+                    (*it)->get_light_angle());
+        glUniform1f(glGetUniformLocation(pro, "light_lum"),
+                    10.0);
+        glUniform1f(glGetUniformLocation(pro, "light_low_factor"),
+                    0.1);
         // 绘制合成用的图形
         scene->draw(true);
     }
@@ -94,9 +102,9 @@ gl3d_general_texture * simple_directional_light::compose_pic(
     return dst;
 }
 
-//GL3D_LOAD_SHADER(simple_directional_light,
-//                 simple_directional_light.vdata,
-//                 simple_directional_light.fdata);
+GL3D_LOAD_SHADER(simple_directional_light,
+                 simple_directional_light.vdata,
+                 simple_directional_light.fdata);
 GL3D_SHADER_PARAM(simple_directional_light) {
     GLuint pro = GL3D_GET_SHADER("simple_directional_light")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
@@ -110,9 +118,9 @@ GL3D_SHADER_PARAM(simple_directional_light) {
     return true;
 
 }
-//GL3D_LOAD_SHADER(light_compose,
-//                 light_compose.vdata,
-//                 light_compose.fdata);
+GL3D_LOAD_SHADER(light_compose,
+                 light_compose.vdata,
+                 light_compose.fdata);
 GL3D_SHADER_PARAM(light_compose) {
     GLuint pro = GL3D_GET_SHADER("light_compose")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
