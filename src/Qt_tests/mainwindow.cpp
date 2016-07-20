@@ -56,8 +56,8 @@ void MainWindow::showEvent(QShowEvent * ev) {
     // add a light
     general_light_source * light_1 = new general_light_source();
     glm::vec3 lightp(24.0, 7.0, 12.0);
-    lightp += glm::vec3(2.0, -1.2, 4.0);
-    lightp.y = 9.0f;
+//    lightp += glm::vec3(2.0, -1.2, 4.0);
+    lightp.y = 2.0f;
     light_1->set_location(lightp);
     light_1->set_direction(glm::vec3(0.0, -1.0, 0.0));
     light_1->set_light_type(light_1->directional_point_light);

@@ -51,9 +51,7 @@ out vec4 out_color;
 void main() {
     out_color = texture2D(gl3d_texture_diffuse, text_coord);
     vec4 tmp_clr = texture2D(gl3d_texture_specular, text_coord);
-    float lum = tmp_clr.r * 256.0 * 256.0 +
-    tmp_clr.g * 256.0 +
-    tmp_clr.b;
-    
+    float lum = tmp_clr.r + tmp_clr.g + tmp_clr.b;
+
     out_color += vec4(lum);
 }

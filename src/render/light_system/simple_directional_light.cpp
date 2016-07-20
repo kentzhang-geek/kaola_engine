@@ -55,7 +55,7 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
         glUniform1f(glGetUniformLocation(pro, "light_angle"),
                     (*it)->get_light_angle());
         glUniform1f(glGetUniformLocation(pro, "light_lum"),
-                    10.0);
+                    1.0);
         glUniform1f(glGetUniformLocation(pro, "light_low_factor"),
                     0.0);
         // 绘制合成用的图形
