@@ -11,7 +11,8 @@ public:
         mm = 0,
         cm,
         m,
-        skybox
+        skybox,
+        wall
     };
     enum platform {
         windows = 0

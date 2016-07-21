@@ -56,21 +56,6 @@ namespace gl3d {
         friend class object;
         friend class scene;
 
-        // properties
-        GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
-        GL3D_UTILS_PROPERTY(bounding_value_min, glm::vec3);
-        GL3D_UTILS_PROPERTY(material_index, int);
-        GL3D_UTILS_PROPERTY(points_data, obj_points * );
-        GL3D_UTILS_PROPERTY(indecis, GLushort * );
-        GL3D_UTILS_PROPERTY(num_idx, unsigned int );
-        GL3D_UTILS_PROPERTY(num_pts, unsigned int );
-
-    private:
-        bool data_buffered;
-        GLuint vbo;
-        GLuint idx;
-        bool texture_repeat;
-
         mesh(void * as_mesh);
 
         // 多个mesh合并成一个mesh
@@ -90,6 +75,21 @@ namespace gl3d {
          obj_texture * txtr, int number_of_textures);
         void buffer_data();
         ~mesh();
+
+        // properties
+        GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
+        GL3D_UTILS_PROPERTY(bounding_value_min, glm::vec3);
+        GL3D_UTILS_PROPERTY(material_index, int);
+        GL3D_UTILS_PROPERTY(points_data, obj_points * );
+        GL3D_UTILS_PROPERTY(indecis, GLushort * );
+        GL3D_UTILS_PROPERTY(num_idx, unsigned int );
+        GL3D_UTILS_PROPERTY(num_pts, unsigned int );
+
+    private:
+        bool data_buffered;
+        GLuint vbo;
+        GLuint idx;
+        bool texture_repeat;
         void init();
     };
 }

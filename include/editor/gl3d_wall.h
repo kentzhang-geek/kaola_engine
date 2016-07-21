@@ -47,6 +47,9 @@ public:
     GL3D_UTILS_PROPERTY(hight, float);
 
     void calculate_mesh();
+private:
+    void release_last_data();
+    void init();
 };
 }
 

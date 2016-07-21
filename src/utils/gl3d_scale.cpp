@@ -16,6 +16,7 @@ void scale::init() {
     this->length_unit_to_scale_factor.insert(this->cm, 0.05f);
     this->length_unit_to_scale_factor.insert(this->m, 5.0f);
     this->length_unit_to_scale_factor.insert(this->skybox, 10.0f);
+    this->length_unit_to_scale_factor.insert(this->wall, 1.0f);
     // set default platform value
     this->platform_to_standard_widget_width.insert(this->windows, 1024.0f);
 
