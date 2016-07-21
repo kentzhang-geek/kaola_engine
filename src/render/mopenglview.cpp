@@ -194,3 +194,5 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
 //    }
     event->accept();      //接收该事件
 }
+
+
