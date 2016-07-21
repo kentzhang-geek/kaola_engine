@@ -47,8 +47,8 @@ void main() {
 
   // calculate lum factor
   float l_angle = max(0.0, dot(normalize(-light_to), light_vector));
-  float in_l_angle = cos(radians(light_angle)) * light_lum;
-  lum_factor = max(0.0, (l_angle - in_l_angle) / (1.0 - in_l_angle))
+  float in_l_angle = cos(light_angle);
+  lum_factor = max(0.0, (l_angle - in_l_angle) / (1.0 - in_l_angle)) * light_lum
    - (light_low_factor * (length(light_location - vec3(vert_pos / vert_pos.w)) + length(eye_pos - vec3(vert_pos / vert_pos.w))));
 
   gl_Position = pvmMatrix * vec4(vertex_pos, 1.0);;
