@@ -40,7 +40,8 @@ SOURCES += \
     src/render/render_addons/post_processer_1.cpp \
     src/render/render_addons/gl3d_post_process_template.cpp \
     src/render/gl3d_general_light_source.cpp \
-    src/render/light_system/simple_directional_light.cpp
+    src/render/light_system/simple_directional_light.cpp \
+    src/editor/gl3d_wall.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -71,7 +72,8 @@ HEADERS  += \
     include/kaola_engine/gl3d_post_process.h \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
-    include/kaola_engine/gl3d_general_light_source.h
+    include/kaola_engine/gl3d_general_light_source.h \
+    include/editor/gl3d_wall.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui

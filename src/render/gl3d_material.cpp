@@ -163,6 +163,11 @@ gl3d_material::gl3d_material(gl3d_general_texture * gtext) {
     this->colors.insert(specular, glm::vec3(0.0));
 }
 
+gl3d_material::gl3d_material() {
+    this->init();
+    this->is_empty = true;
+}
+
 gl3d_material::gl3d_material(string file_name) {
     this->init();
     string path = gl3d_sandbox_path;
