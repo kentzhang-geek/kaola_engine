@@ -33,9 +33,15 @@ static GLushort post_indexes[6] = {
 
 void gl3d_wall::init() {
     this->get_property()->scale_unit = gl3d::scale::wall;
+    this->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
+            | GL3D_OBJ_ENABLE_CHANGEMTL
+            | GL3D_OBJ_ENABLE_PICKING;
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {
+    this->init();
+
     // get point
     this->start_point = s_pt;
     this->end_point = e_pt;
@@ -72,7 +78,7 @@ void gl3d_wall::calculate_mesh() {
     this->release_last_data();
 
     glm::mat4 rotate_mtx =
-            glm::rotate(glm::mat4(1.0f), -90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     glm::vec2 tmp = this->end_point - this->start_point;
     glm::vec4 direction =
             glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
@@ -90,18 +96,18 @@ void gl3d_wall::calculate_mesh() {
     glm::vec2 min_bnd = glm::vec2(pts[0]);
     obj_points p_points[8];
     for (int i = 0; i < 4; i++) {
-        p_points->vertex_x = pts[i].x;
-        p_points->vertex_y = 0.0;
-        p_points->vertex_z = pts[i].y;
+        p_points[i].vertex_x = pts[i].x;
+        p_points[i].vertex_y = 0.0;
+        p_points[i].vertex_z = pts[i].y;
         max_bnd = glm::max(pts[i], max_bnd);
         min_bnd = glm::min(pts[i], min_bnd);
     }
     for (int i = 4; i < 8; i++) {
-        p_points->vertex_x = pts[i].x;
-        p_points->vertex_y = this->hight;
-        p_points->vertex_z = pts[i].y;
-        max_bnd = glm::max(pts[i], max_bnd);
-        min_bnd = glm::min(pts[i], min_bnd);
+        p_points[i].vertex_x = pts[i-4].x;
+        p_points[i].vertex_y = this->hight;
+        p_points[i].vertex_z = pts[i-4].y;
+        max_bnd = glm::max(pts[i-4], max_bnd);
+        min_bnd = glm::min(pts[i-4], min_bnd);
     }
     GLushort p_indexes[36] = {
         0, 1, 2, // bottom
@@ -134,10 +140,9 @@ void gl3d_wall::calculate_mesh() {
     p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
     this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
-            | GL3D_OBJ_ENABLE_PICKING
-            | GL3D_OBJ_ENABLE_CULLING;
+            | GL3D_OBJ_ENABLE_PICKING;
     this->get_mtls()->insert(0, p_mat);
-    this->get_property()->draw_authority = GL3D_SCENE_DRAW_WALL;
+    this->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
 
     this->buffer_data();
 }
