@@ -14,7 +14,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -31,8 +31,8 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
-//    this->main_scene->width = this->width();
-//    this->main_scene->height = this->height();
+    //    this->main_scene->width = this->width();
+    //    this->main_scene->height = this->height();
 
     shader_manager * shader_mgr = ::shader_manager::sharedInstance();
     Program * prog;
@@ -93,7 +93,7 @@ void MOpenGLView::paintGL() {
     gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
     glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     // KENT TODO : 这里 为啥要乘以2？
-//    cout << "fbo is " << this->context()->contextHandle()->defaultFramebufferObject() << endl;
+    //    cout << "fbo is " << this->context()->contextHandle()->defaultFramebufferObject() << endl;
     glViewport(0, 0, this->width() * 2, this->height() * 2);
 
     GL3D_GET_CURRENT_RENDER_PROCESS()->render();
@@ -177,4 +177,20 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     f.setVersion(4, 1);    // opengl 2.0 for opengles 2.0 compatible
     f.setProfile(f.CoreProfile);
     this->setFormat(f);
+}
+
+void MOpenGLView::wheelEvent(QWheelEvent *event) {
+    //滚动的角度，*8就是鼠标滚动的距离
+    int numDegrees = event->delta() / 8;
+    //滚动的步数，*15就是鼠标滚动的角度
+    int numSteps = numDegrees / 15;
+
+    cout << "Roller rolling Angle: " << numSteps << endl;
+
+//    if (event->orientation() == Qt::Horizontal) {
+//        scrollHorizontally(numSteps);       //水平滚动
+//    } else {
+//        scrollVertically(numSteps);       //垂直滚动
+//    }
+    event->accept();      //接收该事件
 }

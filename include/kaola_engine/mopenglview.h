@@ -7,6 +7,7 @@
 #include <QGLWidget>
 #include <QOpenGLWidget>
 #include <iostream>
+#include <QWheelEvent>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -45,6 +46,7 @@ public:
     float time_factor;
     GLfloat angle;
     void keyPressEvent(QKeyEvent *event);
+    void wheelEvent(QWheelEvent *event);
 public slots:
     void view_change();
 private:

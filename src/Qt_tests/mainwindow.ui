@@ -17,10 +17,10 @@
    <widget class="MOpenGLView" name="openGLWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>1121</width>
-      <height>881</height>
+      <x>0</x>
+      <y>0</y>
+      <width>1141</width>
+      <height>901</height>
      </rect>
     </property>
    </widget>
@@ -73,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>1310</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

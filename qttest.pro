@@ -71,7 +71,8 @@ HEADERS  += \
     include/kaola_engine/gl3d_post_process.h \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
-    include/kaola_engine/gl3d_general_light_source.h
+    include/kaola_engine/gl3d_general_light_source.h \
+    ui/event.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui
