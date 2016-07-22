@@ -26,6 +26,7 @@ viewer::viewer(GLfloat h, GLfloat w) {
     this->height = h;
     this->width = w;
     this->view_mode = viewer::normal_view;
+    this->top_view_size = 30.0;
 }
 
 viewer::~viewer() {
@@ -128,7 +129,12 @@ void viewer::calculate_mat() {
         auto lp = cp;
         lp.y = 0.0;
         this->viewing_matrix = ::glm::lookAt(cp, lp, glm::vec3(0.0, 0.0, 1.0));
-        this->projection_matrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+        this->projection_matrix = glm::ortho
+                (-this->top_view_size,
+                 this->top_view_size,
+                 -this->top_view_size / gl3d_global_param::shared_instance()->canvas_width *  gl3d_global_param::shared_instance()->canvas_height,
+                 this->top_view_size / gl3d_global_param::shared_instance()->canvas_width *  gl3d_global_param::shared_instance()->canvas_height,
+                 -100.0f, 500.0f);
     }
 }
 

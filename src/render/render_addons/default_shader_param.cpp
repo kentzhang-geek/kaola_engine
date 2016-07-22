@@ -287,7 +287,7 @@ GL3D_SHADER_PARAM(image) {
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
     
-    ::glm::mat4 pvm = scene->watcher->projection_matrix;
+    ::glm::mat4 pvm = *scene->watcher->get_projection_matrix();
     glm::vec3 currentpos = *scene->watcher->get_position();
     glm::vec3 lookat = *scene->watcher->get_lookat();
     glm::vec3 headto = *scene->watcher->get_headto();

@@ -14,6 +14,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "utils/gl3d_utils.h"
+#include "utils/gl3d_global_param.h"
+
 namespace gl3d {
     // 一个场景会有一个观察者
     class viewer {
@@ -55,19 +58,24 @@ namespace gl3d {
         bool go_rotate(GLfloat angle);
 
         friend class scene;
-        ::glm::mat4 projection_matrix; // for test
+
+        // properties
+        GL3D_UTILS_PROPERTY(height, GLfloat);
+        GL3D_UTILS_PROPERTY(width, GLfloat);
+        GL3D_UTILS_PROPERTY_GET_POINTER(projection_matrix,
+                                        ::glm::mat4);
+        GL3D_UTILS_PROPERTY_GET_POINTER(viewing_matrix,
+                                        ::glm::mat4);
+        GL3D_UTILS_PROPERTY_GET_POINTER(translationMatrix,
+                                        ::glm::mat4);
+        GL3D_UTILS_PROPERTY(top_view_size, GLfloat);
 
     private:
         _view_mode view_mode;
         ::glm::vec3 look_direction;
         ::glm::vec3 head_direction;
         ::glm::vec3 current_position;
-        GLfloat height;
-        GLfloat width;
 
-//        ::glm::mat4 projection_matrix;
-        ::glm::mat4 viewing_matrix;
-        ::glm::mat4 translationMatrix;
         void calculate_mat();
     };
 }

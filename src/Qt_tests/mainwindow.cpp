@@ -127,3 +127,15 @@ void MainWindow::on_pushButton_2_clicked()
 
     test_flag_global = false;
 }
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
+    vr->set_top_view_size(vr->get_top_view_size() + 1.0f);
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
+    vr->set_top_view_size(vr->get_top_view_size() - 1.0f);
+}
