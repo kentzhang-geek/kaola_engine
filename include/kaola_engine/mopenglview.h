@@ -7,7 +7,6 @@
 #include <QGLWidget>
 #include <QOpenGLWidget>
 #include <iostream>
-#include <QWheelEvent>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -29,6 +28,9 @@
 // gl3d
 #include "gl3d.hpp"
 
+//yananli includes ----------------------------------------
+#include <QWheelEvent>
+
 using namespace std;
 
 class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
@@ -46,7 +48,11 @@ public:
     float time_factor;
     GLfloat angle;
     void keyPressEvent(QKeyEvent *event);
+
+    //yananli codes -----------------------------------------------------
     void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 public slots:
     void view_change();
 private:

@@ -179,6 +179,10 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     this->setFormat(f);
 }
 
+
+//yananli codes ----------------------------------------------------------------------
+
+//滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
     //滚动的角度，*8就是鼠标滚动的距离
     int numDegrees = event->delta() / 8;
@@ -187,10 +191,36 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
 
     cout << "Roller rolling Angle: " << numSteps << endl;
 
-//    if (event->orientation() == Qt::Horizontal) {
-//        scrollHorizontally(numSteps);       //水平滚动
-//    } else {
-//        scrollVertically(numSteps);       //垂直滚动
-//    }
+    //    if (event->orientation() == Qt::Horizontal) {
+    //        scrollHorizontally(numSteps);       //水平滚动
+    //    } else {
+    //        scrollVertically(numSteps);       //垂直滚动
+    //    }
     event->accept();      //接收该事件
+}
+
+//鼠标按下事件
+void MOpenGLView::mousePressEvent(QMouseEvent *event) {
+    //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
+    //    cout << "down: " << event->x() << ", " << event->y() << endl;
+    if(event->button() == Qt::LeftButton) {
+        cout << "left down: " << event->x() << ", " << event->y() << endl;
+    } else if(event->button() == Qt::RightButton) {
+        cout << "right down: " << event->x() << ", " << event->y() << endl;
+    } else if(event->button() == Qt::MidButton) {
+        cout << "centre down: " << event->x() << ", " << event->y() << endl;
+    }
+}
+
+//鼠标移动事件
+void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
+    //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
+    cout << "move: " << event->x() << ", " << event->y() << endl;
+    if(event->buttons()&Qt::LeftButton) {
+        cout << "left move: " << event->x() << ", " << event->y() << endl;
+    } else if(event->buttons()&Qt::LeftButton) {
+        cout << "right move: " << event->x() << ", " << event->y() << endl;
+    } else if(event->buttons()&Qt::LeftButton) {
+        cout << "centre move: " << event->x() << ", " << event->y() << endl;
+    }
 }
