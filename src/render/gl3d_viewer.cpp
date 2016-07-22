@@ -56,18 +56,6 @@ bool viewer::position(::glm::vec3 position) {
     return false;
 }
 
-::glm::vec3 * viewer::get_lookat() {
-    return &this->look_direction;
-}
-
-::glm::vec3 * viewer::get_headto() {
-    return &this->head_direction;
-}
-
-::glm::vec3 * viewer::get_position() {
-    return &this->current_position;
-}
-
 bool viewer::change_position(::glm::vec3 val) {
     if (this->view_mode == viewer::normal_view) {
         // 前进值
@@ -120,8 +108,8 @@ bool viewer::go_rotate(GLfloat angle) {
  */
 void viewer::calculate_mat() {
     glm::vec3 location =
-            *this->get_position(); // *
-//            gl3d::scale::shared_instance()->get_global_scale();
+            this->get_current_position() *
+            gl3d::scale::shared_instance()->get_global_scale();
     if (this->view_mode == viewer::normal_view) {
         this->viewing_matrix = ::glm::lookAt(location, location + this->look_direction, this->head_direction);
         this->projection_matrix = glm::perspective(glm::radians(40.0f), (float)(this->width/this->height), 1.0f, 1000.0f);
@@ -149,4 +137,10 @@ void viewer::set_normal_view() {
 void viewer::set_top_view() {
     this->view_mode = viewer::top_view;
     this->calculate_mat();
+}
+
+glm::vec3 viewer::get_scaled_position() {
+    return this->get_current_position()
+            * scale::shared_instance()->get_global_scale();
+
 }

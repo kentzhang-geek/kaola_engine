@@ -43,13 +43,6 @@ namespace gl3d {
         // 设置位置
         bool position(::glm::vec3 position);
 
-        // 获取观察方向
-        ::glm::vec3 * get_lookat();
-        // 获取头顶方向
-        ::glm::vec3 * get_headto();
-        // 获取位置
-        ::glm::vec3 * get_position();
-
         // 位移控制
         bool change_position(::glm::vec3 val);
         // 俯仰控制(单位为角度，最大+-90.0),抬头为正向
@@ -58,6 +51,11 @@ namespace gl3d {
         bool go_rotate(GLfloat angle);
 
         friend class scene;
+
+        // location, and directions
+        GL3D_UTILS_PROPERTY(current_position, ::glm::vec3);
+        GL3D_UTILS_PROPERTY(head_direction, ::glm::vec3);
+        GL3D_UTILS_PROPERTY(look_direction, ::glm::vec3);
 
         // properties
         GL3D_UTILS_PROPERTY(height, GLfloat);
@@ -71,11 +69,10 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(top_view_size, GLfloat);
         GL3D_UTILS_PROPERTY(view_mode, _view_mode);
 
-    private:
-        ::glm::vec3 look_direction;
-        ::glm::vec3 head_direction;
-        ::glm::vec3 current_position;
+        // get scaled postion
+        glm::vec3 get_scaled_position();
 
+    private:
         void calculate_mat();
     };
 }

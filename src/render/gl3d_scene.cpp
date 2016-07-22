@@ -498,7 +498,7 @@ void scene::coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out, GLfloat high
                                  this->watcher->projection_matrix * this->watcher->viewing_matrix,
                                  glm::vec4(0.0, 0.0, this->width, this->height));
     
-    glm::vec3 near_pt = *this->watcher->get_position();
+    glm::vec3 near_pt = this->watcher->get_current_position();
     txxx = glm::normalize(txxx);
     glm::vec3 reallazer = txxx;  // 真实射线向量计算OK
     
@@ -525,7 +525,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
     
     // 获取一些坐标
     this->coord_ground(coord_in, grd_coord);
-    cam_coord = *this->watcher->get_position();
+    cam_coord = this->watcher->get_current_position();
     obj_coord = obj->get_property()->position;
     
     glm::vec3 c_to_o = obj_coord - cam_coord;

@@ -100,8 +100,8 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
@@ -179,8 +179,8 @@ GL3D_SHADER_PARAM(shadow_mask) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
@@ -227,8 +227,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
@@ -285,9 +285,9 @@ GL3D_SHADER_PARAM(image) {
     GL3D_SET_VEC3(light_vector, light, pro);
     
     ::glm::mat4 pvm = *scene->watcher->get_projection_matrix();
-    glm::vec3 currentpos = *scene->watcher->get_position();
-    glm::vec3 lookat = *scene->watcher->get_lookat();
-    glm::vec3 headto = *scene->watcher->get_headto();
+    glm::vec3 currentpos = scene->watcher->get_scaled_position();
+    glm::vec3 lookat = scene->watcher->get_look_direction();
+    glm::vec3 headto = scene->watcher->get_head_direction();
     pvm = pvm * ::glm::lookAt(currentpos, currentpos + lookat, headto);
 
     // set model matrix
@@ -355,8 +355,8 @@ GL3D_SHADER_PARAM(dm) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
@@ -422,8 +422,8 @@ GL3D_SHADER_PARAM(dm2) {
     trans = ::glm::scale(trans, glm::vec3(s_range));
     
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
