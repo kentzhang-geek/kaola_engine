@@ -358,7 +358,6 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
     //    norMtx = this->watcher->viewing_matrix * trans;

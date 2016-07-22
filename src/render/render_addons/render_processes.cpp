@@ -12,6 +12,7 @@
 #include "kaola_engine/gl3d_post_process.h"
 #include "kaola_engine/gl3d_general_texture.hpp"
 #include "kaola_engine/gl3d_material.hpp"
+#include "utils/gl3d_post_process_template.h"
 
 using namespace std;
 using namespace gl3d;
@@ -218,9 +219,6 @@ public:
     // result
     void rend_result();
 
-    // set a rect
-    object * build_rect();
-
     // set a material
     gl3d_material * build_material();
 
@@ -324,11 +322,9 @@ void has_post::rend_main_scene() {
 
 void has_post::rend_result() {
     gl3d::scene * one_scene = this->get_attached_scene();
-    object * rect = this->build_rect();
+    special_obj * rect = new special_obj(this->canvas);
 
     rect->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
-    rect->get_meshes()->at(0)->set_material_index(0);
-    rect->get_mtls()->insert(0, this->build_material());
     rect->get_property()->draw_authority = GL3D_SCENE_DRAW_RESULT;
 
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("post_process_result");
@@ -343,39 +339,6 @@ void has_post::rend_result() {
 
     one_scene->delete_obj(222);
     delete rect;
-}
-
-object *has_post::build_rect() {
-    obj_points rect[4];
-    memset(rect, 0, sizeof(obj_points) * 4);
-    rect[0].vertex_x = -1.0f; // left up
-    rect[0].vertex_y = 1.0f;
-    rect[0].texture_x = 0.0f;
-    rect[0].texture_y = 1.0f;
-    rect[1].vertex_x = -1.0f; // left down
-    rect[1].vertex_y = -1.0f;
-    rect[1].texture_x = 0.0f;
-    rect[1].texture_y = 0.0f;
-    rect[2].vertex_x = 1.0f; // right up
-    rect[2].vertex_y = 1.0f;
-    rect[2].texture_x = 1.0f;
-    rect[2].texture_y = 1.0f;
-    rect[3].vertex_x = 1.0f; // right down
-    rect[3].vertex_y = -1.0f;
-    rect[3].texture_x = 1.0f;
-    rect[3].texture_y = 0.0f;
-
-    GLushort indexes[6] = {
-        0, 2, 1,
-        1, 2, 3,
-    };
-
-    object * ret = new object(rect, 4, indexes, 6);
-    ret->get_meshes()->at(0)->set_bounding_value_max(glm::vec3(1.0, 1.0, 0.0));
-    ret->get_meshes()->at(0)->set_bounding_value_min(glm::vec3(-1.0, -1.0, 0.0));
-    ret->get_meshes()->at(0)->set_material_index(0);
-
-    return ret;
 }
 
 gl3d_material * has_post::build_material() {

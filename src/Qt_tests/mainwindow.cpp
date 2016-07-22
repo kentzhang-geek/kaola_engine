@@ -113,6 +113,7 @@ void MainWindow::on_pushButton_2_clicked()
     glm::vec3 * pos = this->ui->openGLWidget->main_scene->watcher->get_position();
     glm::vec3 * look = this->ui->openGLWidget->main_scene->watcher->get_lookat();
     glm::vec2 st = glm::vec2(pos->x, pos->z);
+    st = st / gl3d::scale::shared_instance()->get_global_scale();
     glm::vec2 ed = st + glm::vec2(look->x, look->z) * 2;
     if (NULL == wall) {
         wall = new gl3d_wall(

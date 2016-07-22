@@ -192,9 +192,13 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY_GET_POINTER(mtls, QMap<unsigned int, gl3d_material *> );
         GL3D_UTILS_PROPERTY(number_of_meshes, unsigned long long);
         GL3D_UTILS_PROPERTY(data_buffered, bool);
+        GL3D_UTILS_PROPERTY(pre_scaled, bool);
 
         // 缓存数据
         void buffer_data();
+
+        // 预先做scale变换
+        void pre_scale();
 
     private:
         void init();

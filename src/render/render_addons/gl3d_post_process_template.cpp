@@ -39,5 +39,6 @@ special_obj::special_obj(gl3d_general_texture * p_tex) :
     this->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
     this->get_mtls()->insert(0, p_mat);
     this->get_property()->draw_authority = GL3D_SCENE_DRAW_SPECIAL;
+    this->get_property()->scale_unit = gl3d::scale::special;
 }
 

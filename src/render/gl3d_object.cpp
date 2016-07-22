@@ -29,6 +29,7 @@ void object::init() {
     this->param_x = 1.0;
     this->meshes.clear();
     this->data_buffered = false;
+    this->pre_scaled = false;
     this->use_shader = std::string("multiple_text_vector_shadow"); // use multiple_text_vector_shadow shader as default
     this->mtls.clear();
     this->this_property.authority = GL3D_OBJ_ENABLE_ALL; //使能所有权限
@@ -197,6 +198,9 @@ void object::buffer_data() {
         return;
     }
     
+    // pre process points data
+    this->pre_scale();
+
     // bind vao
     glBindVertexArray(this->vao);
 
@@ -314,4 +318,26 @@ void object::convert_left_hand_to_right_hand() {
     for (; iter != this->meshes.end(); iter++) {
         (*iter)->convert_left_hand_to_right_hand();
     }
+}
+
+void object::pre_scale() {
+    if (this->pre_scaled) {
+        return;
+    }
+    scale * sc = scale::shared_instance();
+    for (QVector<mesh *>::iterator it = this->meshes.begin();
+         it != this->meshes.end(); it++) {
+        // KENT TODO : this need operator support
+        mesh * p_mesh = *it;
+        for(int i = 0; i < p_mesh->get_num_pts(); i++) {
+            p_mesh->get_points_data()[i].vertex_x *=
+                    sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
+            p_mesh->get_points_data()[i].vertex_y *=
+                    sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
+            p_mesh->get_points_data()[i].vertex_z *=
+                    sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
+        }
+    }
+    this->pre_scaled = true;
+    this->this_property.scale_unit = sc->m;
 }

@@ -119,12 +119,15 @@ bool viewer::go_rotate(GLfloat angle) {
  *  通过向量计算出矩阵
  */
 void viewer::calculate_mat() {
+    glm::vec3 location =
+            *this->get_position(); // *
+//            gl3d::scale::shared_instance()->get_global_scale();
     if (this->view_mode == viewer::normal_view) {
-        this->viewing_matrix = ::glm::lookAt(this->current_position, this->current_position + this->look_direction, this->head_direction);
+        this->viewing_matrix = ::glm::lookAt(location, location + this->look_direction, this->head_direction);
         this->projection_matrix = glm::perspective(glm::radians(40.0f), (float)(this->width/this->height), 1.0f, 1000.0f);
     }
     if (this->view_mode == viewer::top_view) {
-        ::glm::vec3 cp = this->current_position;
+        ::glm::vec3 cp = location;
         cp.y = 10.0;
         auto lp = cp;
         lp.y = 0.0;
