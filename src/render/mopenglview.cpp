@@ -135,6 +135,7 @@ void MOpenGLView::view_change() {
     if (this->key_press == 'd') {
         this->main_scene->watcher->go_rotate(2.0);
     }
+
     if (this->key_press == 'j') {
         this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0));
     }
@@ -162,6 +163,8 @@ void MOpenGLView::keyPressEvent(QKeyEvent *event) {
         this->key_press = 's';
     if (event->key() == Qt::Key_D)
         this->key_press = 'd';
+
+
     if (event->key() == Qt::Key_K)
         this->key_press = 'k';
     if (event->key() == Qt::Key_J)
@@ -186,16 +189,15 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
     //滚动的角度，*8就是鼠标滚动的距离
     int numDegrees = event->delta() / 8;
+
     //滚动的步数，*15就是鼠标滚动的角度
     int numSteps = numDegrees / 15;
 
-    cout << "Roller rolling Angle: " << numSteps << endl;
+    auto tmp_viewer = this->main_scene->watcher;
+    if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+        tmp_viewer->set_top_view_size(tmp_viewer->get_top_view_size() - (float)numSteps);
+    }
 
-    //    if (event->orientation() == Qt::Horizontal) {
-    //        scrollHorizontally(numSteps);       //水平滚动
-    //    } else {
-    //        scrollVertically(numSteps);       //垂直滚动
-    //    }
     event->accept();      //接收该事件
 }
 
@@ -218,6 +220,11 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     cout << "move: " << event->x() << ", " << event->y() << endl;
     if(event->buttons()&Qt::LeftButton) {
         cout << "left move: " << event->x() << ", " << event->y() << endl;
+
+        auto tmp_viewer = this->main_scene->watcher;
+        if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+            tmp_viewer->change_position(glm::vec3(0.0, 1.0, 0.0));
+        }
     } else if(event->buttons()&Qt::LeftButton) {
         cout << "right move: " << event->x() << ", " << event->y() << endl;
     } else if(event->buttons()&Qt::LeftButton) {
