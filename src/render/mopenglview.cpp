@@ -212,6 +212,8 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
     //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
     //    cout << "down: " << event->x() << ", " << event->y() << endl;
     if(event->button() == Qt::LeftButton) {
+        this->tmp_point_x = event->x();
+        this->tmp_point_y = event->y();
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
@@ -237,11 +239,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     }
 
     if(event->buttons()&Qt::LeftButton) {
-        cout << "left move: " << event->x() << ", " << event->y() << endl;
+//        cout << "left move: " << event->x() << ", " << event->y() << endl;
 
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-            tmp_viewer->change_position(glm::vec3(0.0, 1.0, 0.0));
+            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
+            tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
+            this->tmp_point_x = event->x();
+            this->tmp_point_y = event->y();
             setCursor(Qt::SizeAllCursor);
         }
     } else if(event->buttons()&Qt::LeftButton) {

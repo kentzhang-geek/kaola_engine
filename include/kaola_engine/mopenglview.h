@@ -66,6 +66,7 @@ private:
     QTimer * timer;
     QTimer * keyTimer;
     char key_press;
+    int tmp_point_x, tmp_point_y;
 };
 
 #endif // MOPENGLVIEW_H
