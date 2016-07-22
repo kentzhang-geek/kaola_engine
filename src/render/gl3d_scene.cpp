@@ -238,6 +238,9 @@ bool scene::draw(bool use_global_shader) {
                     // then delete param
                     param->user_data.erase(param->user_data.find(string("object")));
                 }
+                if (iter_objs.key() >= 23423) {
+                    cout << "shit" << endl;
+                }
                 this->draw_object(current_obj, use_shader->getProgramID());
             }
             iter_objs++;
@@ -401,7 +404,9 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
         
         // bouding box test
-        if ((check_bouding(p_mesh->bounding_value_max, p_mesh->bounding_value_min, pvm) == true) || !(obj->this_property.authority & GL3D_OBJ_ENABLE_CULLING)) {
+        if ((check_bouding(p_mesh->bounding_value_max, p_mesh->bounding_value_min, pvm) == true)
+                || !(obj->this_property.authority & GL3D_OBJ_ENABLE_CULLING)
+                || (this->watcher->view_mode != this->watcher->normal_view)) {
             // 多重纹理的绑定与绘制
             try {
                 obj->mtls.value(p_mesh->material_index)->use_this(pro);

@@ -35,6 +35,7 @@ namespace gl3d {
         
         gl3d_material(aiMaterial * mtls);
         gl3d_material(string file_name);
+        gl3d_material();
         gl3d_material(gl3d_general_texture * gtext);
         ~gl3d_material();
         void use_this(GLuint pro);

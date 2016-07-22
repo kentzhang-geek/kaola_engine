@@ -161,7 +161,8 @@ class editing : public render_process {
 public:
     void render() {
         gl3d::scene * one_scene = this->get_attached_scene();
-        // 输入阴影贴图的参数，然后绘制主图像
+        glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
+
         gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
@@ -169,6 +170,7 @@ public:
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
         one_scene->prepare_canvas(false);
         glDisable(GL_CULL_FACE);
+        glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -245,7 +247,7 @@ void has_post::pre_render() {
 
     QVector<string> cmd;
     cmd.clear();
-    cmd.push_back(string("simple_directional_light"));
+//    cmd.push_back(string("simple_directional_light")); // no light for now
     cmd.push_back(string("hdr_test"));
     this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd, this->get_attached_scene(), this->canvas);
 }

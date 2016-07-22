@@ -30,7 +30,7 @@
       <x>1160</x>
       <y>20</y>
       <width>131</width>
-      <height>329</height>
+      <height>381</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -61,6 +61,20 @@
       <widget class="QPushButton" name="pushButton_2">
        <property name="text">
         <string>addon</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>Top View ADD</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>Top View SUB</string>
        </property>
       </widget>
      </item>

@@ -190,13 +190,15 @@ namespace gl3d {
         // Properties
         GL3D_UTILS_PROPERTY_GET_POINTER(meshes, QVector<mesh *>);
         GL3D_UTILS_PROPERTY_GET_POINTER(mtls, QMap<unsigned int, gl3d_material *> );
+        GL3D_UTILS_PROPERTY(number_of_meshes, unsigned long long);
+        GL3D_UTILS_PROPERTY(data_buffered, bool);
+
+        // 缓存数据
+        void buffer_data();
 
     private:
         void init();
-        void buffer_data();
         obj_property this_property;
-        bool data_buffered;
-        unsigned long long number_of_meshes;
         GLuint vao;
     };
 }

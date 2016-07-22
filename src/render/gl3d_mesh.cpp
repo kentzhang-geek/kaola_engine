@@ -145,6 +145,8 @@ void gl3d::mesh::buffer_data() {
     this->points_data = NULL;
     free(this->indecis);
     this->indecis = NULL;
+
+    this->data_buffered = true;
 }
 
 // KENT TODO : 测试mesh的合并算法
@@ -256,7 +258,7 @@ void gl3d::mesh::recalculate_normals(float cos_angle) {
             ori_normal = glm::normalize(ori_normal);
             // 需要则设置新法线
 //            tmpvector.push_back(glm::dot(ori_normal, normal));
-            if (glm::dot(ori_normal, normal) < 0.17) {
+            if (glm::dot(ori_normal, normal) < cos_angle) {
                 new_points[i * 3 + j].normal_x = normal.x;
                 new_points[i * 3 + j].normal_y = normal.y;
                 new_points[i * 3 + j].normal_z = normal.z;

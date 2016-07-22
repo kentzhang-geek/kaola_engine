@@ -8,6 +8,8 @@
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 
+#include "editor/gl3d_wall.h"
+
 using namespace std;
 
 extern MOpenGLView * one_view;
@@ -62,6 +64,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     light_1->set_direction(glm::vec3(0.0, -1.0, 0.0));
     light_1->set_light_type(light_1->directional_point_light);
     light_1->set_light_angle(30.0);
+
     this->ui->openGLWidget->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->openGLWidget->main_scene);
@@ -105,5 +108,34 @@ void MainWindow::on_qqq_clicked()
 extern bool test_flag_global;
 void MainWindow::on_pushButton_2_clicked()
 {
+    static int tmp_id = 23423;
+    static gl3d_wall * wall = NULL;
+    glm::vec3 * pos = this->ui->openGLWidget->main_scene->watcher->get_position();
+    glm::vec3 * look = this->ui->openGLWidget->main_scene->watcher->get_lookat();
+    glm::vec2 st = glm::vec2(pos->x, pos->z);
+    glm::vec2 ed = st + glm::vec2(look->x, look->z) * 2;
+    if (NULL == wall) {
+        wall = new gl3d_wall(
+                    st, ed, 1.0, 6.0);
+        this->ui->openGLWidget->main_scene->add_obj(
+                    QPair<int , object *>(tmp_id++, wall));
+    }
+    else {
+        wall->set_end_point(ed);
+        wall->calculate_mesh();
+    }
+
     test_flag_global = false;
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
+    vr->set_top_view_size(vr->get_top_view_size() + 1.0f);
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
+    vr->set_top_view_size(vr->get_top_view_size() - 1.0f);
 }
