@@ -10,6 +10,8 @@
 
 #include "editor/gl3d_wall.h"
 
+#include "utils/gl3d_global_param.h"
+
 using namespace std;
 
 extern MOpenGLView * one_view;
@@ -58,7 +60,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     // add a light
     general_light_source * light_1 = new general_light_source();
     glm::vec3 lightp(24.0, 7.0, 12.0);
-//    lightp += glm::vec3(2.0, -1.2, 4.0);
+    //    lightp += glm::vec3(2.0, -1.2, 4.0);
     lightp.y = 2.0f;
     light_1->set_location(lightp);
     light_1->set_direction(glm::vec3(0.0, -1.0, 0.0));
@@ -138,4 +140,13 @@ void MainWindow::on_pushButton_4_clicked()
 {
     gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
     vr->set_top_view_size(vr->get_top_view_size() - 1.0f);
+}
+
+void MainWindow::on_drawwall_b_clicked(bool checked)
+{
+    if(!checked) {
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+    } else {
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+    }
 }

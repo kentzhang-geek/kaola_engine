@@ -29,6 +29,8 @@ private slots:
 
     void on_pushButton_4_clicked();
 
+    void on_drawwall_b_clicked(bool checked);
+
 signals:
     void sig1();
 

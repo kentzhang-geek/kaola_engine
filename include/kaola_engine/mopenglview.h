@@ -50,6 +50,11 @@ public:
     void keyPressEvent(QKeyEvent *event);
 
     //yananli codes -----------------------------------------------------
+    enum button_state {
+        clear = 0,
+        drawwall = 1
+    };
+
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -59,7 +64,6 @@ private:
     string res_path;
     QTimer * timer;
     QTimer * keyTimer;
-
     char key_press;
 };
 
