@@ -109,13 +109,21 @@ extern bool test_flag_global;
 void MainWindow::on_pushButton_2_clicked()
 {
     static int tmp_id = 23423;
+    static gl3d_wall * wall = NULL;
     glm::vec3 * pos = this->ui->openGLWidget->main_scene->watcher->get_position();
     glm::vec3 * look = this->ui->openGLWidget->main_scene->watcher->get_lookat();
     glm::vec2 st = glm::vec2(pos->x, pos->z);
     glm::vec2 ed = st + glm::vec2(look->x, look->z) * 2;
-    this->ui->openGLWidget->main_scene->add_obj(
-                QPair<int , object *>(tmp_id++, new gl3d_wall(
-                                          st, ed, 1.0, 6.0)));
+    if (NULL == wall) {
+        wall = new gl3d_wall(
+                    st, ed, 1.0, 6.0);
+        this->ui->openGLWidget->main_scene->add_obj(
+                    QPair<int , object *>(tmp_id++, wall));
+    }
+    else {
+        wall->set_end_point(ed);
+        wall->calculate_mesh();
+    }
 
     test_flag_global = false;
 }
