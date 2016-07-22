@@ -69,9 +69,9 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY_GET_POINTER(translationMatrix,
                                         ::glm::mat4);
         GL3D_UTILS_PROPERTY(top_view_size, GLfloat);
+        GL3D_UTILS_PROPERTY(view_mode, _view_mode);
 
     private:
-        _view_mode view_mode;
         ::glm::vec3 look_direction;
         ::glm::vec3 head_direction;
         ::glm::vec3 current_position;

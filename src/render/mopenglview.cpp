@@ -14,7 +14,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -31,8 +31,8 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
-//    this->main_scene->width = this->width();
-//    this->main_scene->height = this->height();
+    //    this->main_scene->width = this->width();
+    //    this->main_scene->height = this->height();
 
     shader_manager * shader_mgr = ::shader_manager::sharedInstance();
     Program * prog;
@@ -135,6 +135,7 @@ void MOpenGLView::view_change() {
     if (this->key_press == 'd') {
         this->main_scene->watcher->go_rotate(2.0);
     }
+
     if (this->key_press == 'j') {
         this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0));
     }
@@ -162,6 +163,8 @@ void MOpenGLView::keyPressEvent(QKeyEvent *event) {
         this->key_press = 's';
     if (event->key() == Qt::Key_D)
         this->key_press = 'd';
+
+
     if (event->key() == Qt::Key_K)
         this->key_press = 'k';
     if (event->key() == Qt::Key_J)
@@ -177,4 +180,54 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     f.setVersion(4, 1);    // opengl 2.0 for opengles 2.0 compatible
     f.setProfile(f.CoreProfile);
     this->setFormat(f);
+}
+
+
+//yananli codes ----------------------------------------------------------------------
+
+//滚轮滑动事件
+void MOpenGLView::wheelEvent(QWheelEvent *event) {
+    //滚动的角度，*8就是鼠标滚动的距离
+    int numDegrees = event->delta() / 8;
+
+    //滚动的步数，*15就是鼠标滚动的角度
+    int numSteps = numDegrees / 15;
+
+    auto tmp_viewer = this->main_scene->watcher;
+    if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+        tmp_viewer->set_top_view_size(tmp_viewer->get_top_view_size() - (float)numSteps);
+    }
+
+    event->accept();      //接收该事件
+}
+
+//鼠标按下事件
+void MOpenGLView::mousePressEvent(QMouseEvent *event) {
+    //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
+    //    cout << "down: " << event->x() << ", " << event->y() << endl;
+    if(event->button() == Qt::LeftButton) {
+        cout << "left down: " << event->x() << ", " << event->y() << endl;
+    } else if(event->button() == Qt::RightButton) {
+        cout << "right down: " << event->x() << ", " << event->y() << endl;
+    } else if(event->button() == Qt::MidButton) {
+        cout << "centre down: " << event->x() << ", " << event->y() << endl;
+    }
+}
+
+//鼠标移动事件
+void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
+    //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
+    cout << "move: " << event->x() << ", " << event->y() << endl;
+    if(event->buttons()&Qt::LeftButton) {
+        cout << "left move: " << event->x() << ", " << event->y() << endl;
+
+        auto tmp_viewer = this->main_scene->watcher;
+        if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+            tmp_viewer->change_position(glm::vec3(0.0, 1.0, 0.0));
+        }
+    } else if(event->buttons()&Qt::LeftButton) {
+        cout << "right move: " << event->x() << ", " << event->y() << endl;
+    } else if(event->buttons()&Qt::LeftButton) {
+        cout << "centre move: " << event->x() << ", " << event->y() << endl;
+    }
 }

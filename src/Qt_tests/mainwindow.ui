@@ -17,10 +17,10 @@
    <widget class="MOpenGLView" name="openGLWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>1121</width>
-      <height>881</height>
+      <x>0</x>
+      <y>0</y>
+      <width>1141</width>
+      <height>901</height>
      </rect>
     </property>
    </widget>
@@ -80,6 +80,16 @@
      </item>
     </layout>
    </widget>
+   <widget class="QTextEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>920</x>
+      <y>20</y>
+      <width>191</width>
+      <height>161</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -87,7 +97,7 @@
      <x>0</x>
      <y>0</y>
      <width>1310</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
