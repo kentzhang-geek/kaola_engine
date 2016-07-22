@@ -2,6 +2,7 @@
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "utils/gl3d_global_param.h"
+#include "../Qt_tests/mainwindow.h"
 
 using namespace std;
 
@@ -9,6 +10,9 @@ using namespace std;
 QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions = NULL;
 
 void MOpenGLView::do_init() {
+    //yananli code
+    this->setMouseTracking(true);
+
     // set OPENGL context
     timer = new QTimer(this);
     timer->start(100);
@@ -213,6 +217,9 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
     } else if(event->button() == Qt::RightButton) {
         cout << "right down: " << event->x() << ", " << event->y() << endl;
+        if(now_state == gl3d::gl3d_global_param::drawwall) {
+            MainWindow::on_draw_clear();
+        }
     } else if(event->button() == Qt::MidButton) {
         cout << "centre down: " << event->x() << ", " << event->y() << endl;
     }
@@ -220,18 +227,34 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
 //鼠标移动事件
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
+    auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
     //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
-    cout << "move: " << event->x() << ", " << event->y() << endl;
+
+    if(now_state == gl3d::gl3d_global_param::drawwall) {
+        setCursor(Qt::CrossCursor);
+        cout << "move: " << event->x() << ", " << event->y() << endl;
+    }
+
     if(event->buttons()&Qt::LeftButton) {
         cout << "left move: " << event->x() << ", " << event->y() << endl;
 
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
             tmp_viewer->change_position(glm::vec3(0.0, 1.0, 0.0));
+            setCursor(Qt::SizeAllCursor);
         }
     } else if(event->buttons()&Qt::LeftButton) {
         cout << "right move: " << event->x() << ", " << event->y() << endl;
     } else if(event->buttons()&Qt::LeftButton) {
         cout << "centre move: " << event->x() << ", " << event->y() << endl;
+    }
+}
+
+//鼠标松开事件
+void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
+    cout << "loosen: " << event->x() << ", " << event->y() << endl;
+    if(gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawwall) {
+        setCursor(Qt::ArrowCursor);
     }
 }
