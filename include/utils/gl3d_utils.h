@@ -27,4 +27,7 @@
 #define GL3D_UTILS_ERROR(...) throw QString::asprintf(__VA_ARGS__);
 
 #define GL3D_UTILS_WARN(...) std::cout <<  QString::asprintf(__VA_ARGS__).toStdString() << std::endl;
+
+#define GL3D_UTILS_SHADOW_MAP_ORTHO glm::ortho(-20.0,20.0,-20.0,20.0,-30.0, 200.0)
+
 #endif // GL3D_UTILS_H

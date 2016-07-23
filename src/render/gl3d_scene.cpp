@@ -352,18 +352,17 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     this->watcher->viewing_matrix;
     
     // set model matrix
-    ::glm::mat4 trans;
+    ::glm::mat4 trans(1.0f);
     // set norMtx
-    ::glm::mat4 norMtx;
+    ::glm::mat4 norMtx(1.0f);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
     //    norMtx = this->watcher->viewing_matrix * trans;
     norMtx = trans;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     pvm *= trans;    // final MVP
     glm::mat4 unpvm = glm::inverse(pvm);
         
@@ -486,39 +485,16 @@ bool scene::move_object(object * obj, glm::vec3 des_pos) {
     return false;
 }
 
-void scene::coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out, GLfloat hight) {
-    coord_in.z = 1.0;
-    glm::vec3 txxx = glm::unProject(coord_in,
-                                    glm::mat4(1.0),
-                                    this->watcher->projection_matrix * this->watcher->viewing_matrix,
-                                    glm::vec4(0.0, 0.0, this->width,
-                                              this->height));
-    coord_in.z = 0.1;
-    txxx = txxx - glm::unProject(coord_in,
-                                 glm::mat4(1.0),
-                                 this->watcher->projection_matrix * this->watcher->viewing_matrix,
-                                 glm::vec4(0.0, 0.0, this->width, this->height));
-    
-    glm::vec3 near_pt = *this->watcher->get_position();
-    txxx = glm::normalize(txxx);
-    glm::vec3 reallazer = txxx;  // 真实射线向量计算OK
-    
-    GLfloat param = (hight - near_pt.y) / reallazer.y;
-    glm::vec3 tgt = near_pt + param * reallazer;
-    //    log_c("we have tgt \n %f \n %f \n %f ", tgt.x, tgt.y, tgt.z);
-    coord_out = glm::vec2(tgt.x, tgt.z);
-    
+void scene::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight) {
+    this->watcher->coord_ground(coord_in, coord_out, hight);
     return;
 }
 
-void scene::coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out) {
+void scene::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out) {
     this->coord_ground(coord_in, coord_out, 0.0);
-//    GLfloat depth = 0.0;
-//    glReadPixels(coord_in.x, coord_in.y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-//    log_c("Get Depth %f", depth);
 }
 
-GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
+GLfloat scene::get_obj_hight(object * obj, glm::vec2 coord_in) {
     GLfloat hight_ret = 0.0;
     glm::vec2 grd_coord;
     glm::vec3 cam_coord;
@@ -526,7 +502,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec3 coord_in) {
     
     // 获取一些坐标
     this->coord_ground(coord_in, grd_coord);
-    cam_coord = *this->watcher->get_position();
+    cam_coord = this->watcher->get_current_position();
     obj_coord = obj->get_property()->position;
     
     glm::vec3 c_to_o = obj_coord - cam_coord;

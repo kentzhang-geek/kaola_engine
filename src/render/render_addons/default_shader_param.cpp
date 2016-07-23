@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "kaola_engine/gl3d.hpp"
+#include "utils/gl3d_utils.h"
 #include "utils/gl3d_global_param.h"
 
 // test param configuration
@@ -94,21 +95,19 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
     
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-    //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -176,18 +175,17 @@ GL3D_SHADER_PARAM(shadow_mask) {
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
@@ -223,20 +221,19 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -288,9 +285,9 @@ GL3D_SHADER_PARAM(image) {
     GL3D_SET_VEC3(light_vector, light, pro);
     
     ::glm::mat4 pvm = *scene->watcher->get_projection_matrix();
-    glm::vec3 currentpos = *scene->watcher->get_position();
-    glm::vec3 lookat = *scene->watcher->get_lookat();
-    glm::vec3 headto = *scene->watcher->get_headto();
+    glm::vec3 currentpos = scene->watcher->get_scaled_position();
+    glm::vec3 lookat = scene->watcher->get_look_direction();
+    glm::vec3 headto = scene->watcher->get_head_direction();
     pvm = pvm * ::glm::lookAt(currentpos, currentpos + lookat, headto);
 
     // set model matrix
@@ -300,12 +297,11 @@ GL3D_SHADER_PARAM(image) {
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
     //    norMtx = this->watcher->viewing_matrix * trans;
     norMtx = trans;	
-    trans = ::glm::scale(trans, glm::vec3(s_range));
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     // KENT WARN : 这里要注意是z轴向上还是y轴向上
     trans = ::glm::scale(trans, glm::vec3(1.0, -1.0, 1.0));
     pvm *= trans;    // final MVP
@@ -353,20 +349,19 @@ GL3D_SHADER_PARAM(dm) {
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -421,20 +416,19 @@ GL3D_SHADER_PARAM(dm2) {
     // 计算model matrix
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                obj->get_property()->scale_unit,
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
-    glm::vec3 shadow_center = *((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_position();
-    shadow_center += 20.0f * glm::normalize(*((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_lookat());
+    glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
+    shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
     shadow_center.y = 0.0;
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;

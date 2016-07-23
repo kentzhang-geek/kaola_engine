@@ -24,7 +24,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    drawhomewin dhw;
+    drawhomewin * dhw;
 };
 
 #endif // MAINWINDOW_H

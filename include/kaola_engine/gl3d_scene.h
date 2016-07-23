@@ -211,8 +211,8 @@ namespace gl3d {
          *  @param coord_out 输出的地面坐标
          *  @param hight 输入的选取层高度
          */
-        void coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out);
-        void coord_ground(glm::vec3 coord_in, glm::vec2 & coord_out, GLfloat hight);
+        void coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out);
+        void coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
 
         /**
          *  @author Kent, 16-03-22 15:03:26
@@ -224,7 +224,7 @@ namespace gl3d {
          *
          *  @return 点击位置的高度
          */
-        GLfloat get_obj_hight(object * obj, glm::vec3 coord_in);
+        GLfloat get_obj_hight(object * obj, glm::vec2 coord_in);
 
         /**
          *  @author Kent, 16-03-23 16:03:43
