@@ -30,7 +30,7 @@
       <x>1160</x>
       <y>20</y>
       <width>131</width>
-      <height>381</height>
+      <height>399</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -89,6 +89,13 @@
       <widget class="QPushButton" name="pushButton_6">
        <property name="text">
         <string>Pick centor</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_7">
+       <property name="text">
+        <string>test tesslation</string>
        </property>
       </widget>
      </item>

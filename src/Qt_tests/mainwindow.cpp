@@ -17,6 +17,90 @@ extern MOpenGLView * one_view;
 QTextEdit * qtout = NULL;
 static gl3d_wall * wall = NULL;
 
+
+gl3d::object * test_obj() {
+    gl3d::obj_points pts[8];
+    memset(pts, 0, sizeof(pts));
+
+    GLfloat tmp[8][5] = {
+    {-2.69258,-2.5,0, 0, 0},
+    {2.69258,-2.5,0, 5.38516, 0},
+    {2.69258,2.5,0, 5.38516, 5},
+    {-2.69258,2.5,0, 0, 5},
+    {-0.5,-0.5,0, 2.19258, 2},
+    {0.5,-0.5,0, 3.19258, 2},
+    {0.5,0.5,0, 3.19258, 3},
+    {-0.5,0.5,0, 2.19258, 3}};
+
+    for (int i = 0; i < 8; i++) {
+        pts[i].vertex_x = tmp[i][0];
+        pts[i].vertex_y = tmp[i][1];
+        pts[i].vertex_z = tmp[i][2];
+        pts[i].texture_x = tmp[i][3];
+        pts[i].texture_y = tmp[i][4];
+    }
+
+    GLushort indexes[24] = {
+        0,4,3,
+        4,0,1,
+        4,1,5,
+        5,1,6,
+        3,7,2,
+        7,3,4,
+        2,7,6,
+        2,6,1
+    };
+
+    gl3d::object * obj = new gl3d::object(pts, 8, indexes, 24);
+
+    obj->get_mtls()->clear();
+    obj->get_mtls()->insert(0, new gl3d::gl3d_material("Color_A1.jpg"));
+    obj->set_repeat(true);
+
+    obj->get_property()->scale_unit = gl3d::scale::m;
+    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
+    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+
+    return obj;
+}
+
+gl3d::object * test_obj2() {
+    gl3d::obj_points pts[8];
+    memset(pts, 0, sizeof(pts));
+
+    GLfloat tmp[4][5] = {
+        {-0.5,-0.5,-5.87747e-39, 0, 0},
+        {0.5,-0.5,-5.87747e-39, 1, 0},
+        {0.5,0.5,-5.87747e-39, 1, 1},
+        {-0.5,0.5,-5.87747e-39, 0, 1}}
+  ;
+
+    for (int i = 0; i < 4; i++) {
+        pts[i].vertex_x = tmp[i][0];
+        pts[i].vertex_y = tmp[i][1];
+        pts[i].vertex_z = tmp[i][2];
+        pts[i].texture_x = tmp[i][3];
+        pts[i].texture_y = tmp[i][4];
+    }
+
+    GLushort indexes[6] = {
+        1,3,0,
+        3,1,2,
+    };
+
+    gl3d::object * obj = new gl3d::object(pts, 4, indexes, 6);
+
+    obj->get_mtls()->clear();
+    obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
+    obj->set_repeat(true);
+
+    obj->get_property()->scale_unit = gl3d::scale::m;
+    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
+    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+
+    return obj;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -163,4 +247,10 @@ void MainWindow::on_pushButton_6_clicked()
     vr->coord_ground(glm::vec2(0.5,0.75), pick, 0.0);
     wall->set_end_point(pick);
     wall->calculate_mesh();
+}
+
+void MainWindow::on_pushButton_7_clicked()
+{
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(6666, test_obj()));
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, test_obj2()));
 }
