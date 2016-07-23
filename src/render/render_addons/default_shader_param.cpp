@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "kaola_engine/gl3d.hpp"
+#include "utils/gl3d_utils.h"
 #include "utils/gl3d_global_param.h"
 
 // test param configuration
@@ -106,8 +107,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
-    //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -185,7 +185,7 @@ GL3D_SHADER_PARAM(shadow_mask) {
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     //    glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0.0), glm::vec3(0, 0, 1.0));
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
@@ -233,7 +233,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -361,7 +361,7 @@ GL3D_SHADER_PARAM(dm) {
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
@@ -428,7 +428,7 @@ GL3D_SHADER_PARAM(dm2) {
 
     glm::vec3 lightInvDir = glm::vec3(0, 15.0f, -15.0f);
     // Compute the MVP matrix from the light's point of view
-    glm::mat4 depthProjectionMatrix = glm::ortho(-30.0,30.0,-30.0,30.0,-15.0, 500.0);
+    glm::mat4 depthProjectionMatrix = GL3D_UTILS_SHADOW_MAP_ORTHO;
     glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir + shadow_center, shadow_center, glm::vec3(0, 1.0, 0));
     glm::mat4 depthModelMatrix = trans;
     glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;

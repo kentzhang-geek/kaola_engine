@@ -76,6 +76,9 @@ void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm
     // 默认参数
     ::gl3d::obj_property * obj_pro = obj->get_property();
     obj_pro->scale_unit = gl3d::scale::mm;
+    obj_pro->authority = GL3D_OBJ_ENABLE_CULLING;
+    obj_pro->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
+    obj_pro->scale_unit = gl3d::scale::mm;
     // 合并顶点重算法向量
     obj->merge_meshes();
     obj->recalculate_normals();
@@ -84,7 +87,6 @@ void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm
     obj->get_property()->position = glm::vec3(coord.x, 0.0, coord.y);
     obj->get_property()->scale_unit = gl3d::scale::mm;
     // 缓存数据
-    obj->get_property()->draw_authority |=  GL3D_OBJ_ENABLE_CULLING;
     obj->buffer_data();
     // 添加obj到场景
     this->available_id++;

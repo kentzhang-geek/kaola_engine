@@ -246,7 +246,7 @@ void has_post::pre_render() {
     QVector<string> cmd;
     cmd.clear();
 //    cmd.push_back(string("simple_directional_light")); // no light for now
-    cmd.push_back(string("copy_only"));
+    cmd.push_back(string("hdr_test"));
     this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd, this->get_attached_scene(), this->canvas);
 }
 
