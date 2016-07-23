@@ -2,6 +2,7 @@
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "utils/gl3d_global_param.h"
+#include "editor/gl3d_wall.h"
 #include "../Qt_tests/drawhomewin.h"
 
 using namespace std;
@@ -18,7 +19,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -206,6 +207,7 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
 
     event->accept();      //接收该事件
 }
+static gl3d::gl3d_wall * new_wall = NULL;
 
 //鼠标按下事件
 void MOpenGLView::mousePressEvent(QMouseEvent *event) {
@@ -217,6 +219,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         this->tmp_point_x = event->x();
         this->tmp_point_y = event->y();
         if(now_state == gl3d::gl3d_global_param::drawwall) {
+            gl3d::scene * vr = this->ui->openGLWidget->main_scene;
+            // set wall
+            glm::vec2 pick;
+            vr->coord_ground(glm::vec2(((float)event->x()) / this->width(),
+                                       ((float)event->y()) / this->height()),
+                             pick, 0.0);
+
             cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
     } else if(event->button() == Qt::RightButton) {
