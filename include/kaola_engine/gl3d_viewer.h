@@ -69,8 +69,16 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(top_view_size, GLfloat);
         GL3D_UTILS_PROPERTY(view_mode, _view_mode);
 
+        // const value
+        const float top_view_hight = 10.0f;
+
         // get scaled postion
         glm::vec3 get_scaled_position();
+
+        // pick up
+        void coord_ground_project(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
+        void coord_ground_ortho(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
+        void coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
 
     private:
         void calculate_mat();

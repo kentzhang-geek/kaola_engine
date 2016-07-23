@@ -15,6 +15,7 @@ using namespace std;
 extern MOpenGLView * one_view;
 
 QTextEdit * qtout = NULL;
+static gl3d_wall * wall = NULL;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -109,12 +110,11 @@ extern bool test_flag_global;
 void MainWindow::on_pushButton_2_clicked()
 {
     static int tmp_id = 23423;
-    static gl3d_wall * wall = NULL;
     glm::vec3 pos = this->ui->openGLWidget->main_scene->watcher->get_current_position();
     glm::vec3 look = this->ui->openGLWidget->main_scene->watcher->get_look_direction();
     glm::vec2 st = glm::vec2(pos.x, pos.z);
 //    st = st / gl3d::scale::shared_instance()->get_global_scale();
-    glm::vec2 ed = st + glm::vec2(0.0, 2.0);
+    glm::vec2 ed = st + glm::vec2(2.0, 2.0);
     if (NULL == wall) {
         wall = new gl3d_wall(
                     st, ed, 0.3, 1.8);
@@ -139,4 +139,23 @@ void MainWindow::on_pushButton_4_clicked()
 {
     gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
     vr->set_top_view_size(vr->get_top_view_size() - 1.0f);
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    glm::vec3 locat = this->ui->openGLWidget->main_scene->watcher->get_current_position();
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    glm::vec3 locat = this->ui->openGLWidget->main_scene->watcher->get_current_position();
+    glm::vec2 pick;
+    gl3d::scene * vr = this->ui->openGLWidget->main_scene;
+
+    // set wall
+    vr->coord_ground(glm::vec2(0.75,0.5), pick, 0.0);
+    wall->set_start_point(pick);
+    vr->coord_ground(glm::vec2(0.5,0.75), pick, 0.0);
+    wall->set_end_point(pick);
+    wall->calculate_mesh();
 }

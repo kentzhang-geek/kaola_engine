@@ -78,6 +78,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="text">
+        <string>Get Location</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_6">
+       <property name="text">
+        <string>Pick centor</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QTextEdit" name="lineEdit">
@@ -97,7 +111,7 @@
      <x>0</x>
      <y>0</y>
      <width>1310</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

@@ -97,8 +97,8 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
     glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
     shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
@@ -176,8 +176,8 @@ GL3D_SHADER_PARAM(shadow_mask) {
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
     glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
     shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
@@ -224,8 +224,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
     glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
     shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
@@ -301,7 +301,7 @@ GL3D_SHADER_PARAM(image) {
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
     //    norMtx = this->watcher->viewing_matrix * trans;
     norMtx = trans;	
-    trans = ::glm::scale(trans, glm::vec3(s_range));
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     // KENT WARN : 这里要注意是z轴向上还是y轴向上
     trans = ::glm::scale(trans, glm::vec3(1.0, -1.0, 1.0));
     pvm *= trans;    // final MVP
@@ -352,8 +352,8 @@ GL3D_SHADER_PARAM(dm) {
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
     glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
     shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
@@ -419,8 +419,8 @@ GL3D_SHADER_PARAM(dm2) {
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
-    trans = ::glm::scale(trans, glm::vec3(s_range));
-    
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+
     // 计算阴影中心位置
     glm::vec3 shadow_center = ((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_scaled_position();
     shadow_center += 20.0f * glm::normalize(((gl3d::scene *)this->user_data.value(string("scene")))->watcher->get_look_direction());
