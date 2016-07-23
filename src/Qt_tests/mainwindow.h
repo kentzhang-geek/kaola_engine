@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QShowEvent>
 
+#include <iostream>
+#include "drawhomewin.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,30 +18,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    static void on_draw_clear();
 
 private slots:
-    void on_pushButton_clicked();
-
-    void on_qqq_clicked();
-
-    void on_sig1();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_pushButton_4_clicked();
-
-    void on_drawwall_b_clicked(bool checked);
-signals:
-    void sig1();
+    void on_testtiaozhuan_clicked();
 
 private:
     Ui::MainWindow *ui;
-
-protected:
-    void showEvent(QShowEvent *ev);
+    drawhomewin dhw;
 };
 
 #endif // MAINWINDOW_H

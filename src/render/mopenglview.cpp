@@ -2,7 +2,7 @@
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "utils/gl3d_global_param.h"
-#include "../Qt_tests/mainwindow.h"
+#include "../Qt_tests/drawhomewin.h"
 
 using namespace std;
 
@@ -220,7 +220,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
     } else if(event->button() == Qt::RightButton) {
         cout << "right down: " << event->x() << ", " << event->y() << endl;
         if(now_state == gl3d::gl3d_global_param::drawwall) {
-            MainWindow::on_draw_clear();
+            drawhomewin::on_draw_clear();
         }
     } else if(event->button() == Qt::MidButton) {
         cout << "centre down: " << event->x() << ", " << event->y() << endl;
