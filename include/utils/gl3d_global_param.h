@@ -14,7 +14,9 @@ public:
 
     enum work_state {
         normal = 0,
-        drawwall = 1
+        drawwall = 1,
+        drawwalling = 2,
+        drawwallend = 3
     } current_work_state ;
 
 private:
