@@ -45,7 +45,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     cout << this->ui->OpenGLCanvas->width() << "vs scene" << this->ui->OpenGLCanvas->main_scene->get_width() << endl;
     cout << this->ui->OpenGLCanvas->height() << "vs scene" << this->ui->OpenGLCanvas->main_scene->get_height() << endl;
     this->ui->OpenGLCanvas->main_scene->init(&config);
-    this->ui->OpenGLCanvas->main_scene->watcher->position(glm::vec3(24.0, 7.0, 12.0));
+    this->ui->OpenGLCanvas->main_scene->watcher->position(glm::vec3(0.0, 1.8, 0.0));
     this->ui->OpenGLCanvas->main_scene->watcher->lookat(glm::vec3(2.0, -1.2, 4.0));
     this->ui->OpenGLCanvas->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
@@ -62,7 +62,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
     // add a light
     general_light_source * light_1 = new general_light_source();
-    glm::vec3 lightp(24.0, 7.0, 12.0);
+    glm::vec3 lightp(0.0, 1.8, 0.0);
     //    lightp += glm::vec3(2.0, -1.2, 4.0);
     lightp.y = 2.0f;
     light_1->set_location(lightp);
@@ -108,13 +108,13 @@ void drawhomewin::on_tempdraw_clicked()
 {
     static int tmp_id = 23423;
     static gl3d_wall * wall = NULL;
-    glm::vec3 * pos = this->ui->OpenGLCanvas->main_scene->watcher->get_position();
-    glm::vec3 * look = this->ui->OpenGLCanvas->main_scene->watcher->get_lookat();
-    glm::vec2 st = glm::vec2(pos->x, pos->z);
-    glm::vec2 ed = st + glm::vec2(look->x, look->z) * 2;
+    glm::vec3 pos = this->ui->OpenGLCanvas->main_scene->watcher->get_current_position();
+    glm::vec3 look = this->ui->OpenGLCanvas->main_scene->watcher->get_look_direction();
+    glm::vec2 st = glm::vec2(pos.x, pos.z);
+    glm::vec2 ed = st + glm::vec2(look.x, look.z) * 2;
     if (NULL == wall) {
         wall = new gl3d_wall(
-                    st, ed, 1.0, 6.0);
+                    st, ed, 0.5, 1.2);
         this->ui->OpenGLCanvas->main_scene->add_obj(
                     QPair<int , object *>(tmp_id++, wall));
     }

@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>drawhomewin</class>
  <widget class="QWidget" name="drawhomewin">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
-    <height>432</height>
+    <width>1198</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,8 +63,8 @@
     <rect>
      <x>140</x>
      <y>10</y>
-     <width>651</width>
-     <height>411</height>
+     <width>1041</width>
+     <height>671</height>
     </rect>
    </property>
   </widget>

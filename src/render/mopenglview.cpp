@@ -35,6 +35,8 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
+    float tmpw = this->width();
+    float tmph = this->height();
     //    this->main_scene->width = this->width();
     //    this->main_scene->height = this->height();
 

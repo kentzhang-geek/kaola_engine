@@ -52,11 +52,11 @@ GL3D_MODEL_PARAM(4, "wood.3ds") {
     this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE;
 }
 
-GL3D_MODEL_PARAM(11, "sidetable.3ds") {
-    this->obj->get_property()->scale_unit = gl3d::scale::mm;
-    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
-    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
-}
+//GL3D_MODEL_PARAM(11, "sidetable.3ds") {
+//    this->obj->get_property()->scale_unit = gl3d::scale::mm;
+//    this->obj->get_property()->authority = GL3D_OBJ_ENABLE_NONE | GL3D_OBJ_ENABLE_CULLING;
+//    this->obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
+//}
 
 //GL3D_MODEL_PARAM(5, "ceiling.3ds") {
 //    this->obj->get_property()->scale_unit = gl3d::scale::mm;

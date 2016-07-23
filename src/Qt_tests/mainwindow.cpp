@@ -17,5 +17,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_testtiaozhuan_clicked()
 {
-    dhw.show();
+    dhw = new drawhomewin(this->parentWidget());
+    dhw->show();
 }
