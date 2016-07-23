@@ -27,7 +27,7 @@ public:
     template <typename T>
     T pre_scale_vertex(T &in_value, length_unit unit);
 
-    GL3D_UTILS_PROPERTY(global_scale, float);
+//    GL3D_UTILS_PROPERTY(global_scale, float);
     GL3D_UTILS_PROPERTY(current_platform, platform);
     GL3D_UTILS_PROPERTY_GET_POINTER(length_unit_to_scale_factor, QMap<length_unit, float> );
     GL3D_UTILS_PROPERTY_GET_POINTER(platform_to_standard_widget_width,

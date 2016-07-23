@@ -13,7 +13,7 @@ void scale::init() {
     this->platform_to_standard_widget_width.clear();
 
     // set current global scale
-    this->global_scale = 5.0f;
+//    this->global_scale = 5.0f;
 
     // set default pre-scale value
     this->length_unit_to_scale_factor.insert(this->mm, 0.001f);
@@ -44,8 +44,8 @@ scale * scale::shared_instance() {
 
 float scale::get_scale_factor(float widget_width) {
     return 1.0f;
-    float ret;
-    ret = this->global_scale;
-    ret = ret / (widget_width/this->platform_to_standard_widget_width.value(this->current_platform));
-    return ret;
+//    float ret;
+//    ret = this->global_scale;
+//    ret = ret / (widget_width/this->platform_to_standard_widget_width.value(this->current_platform));
+//    return ret;
 }

@@ -26,7 +26,7 @@ viewer::viewer(GLfloat h, GLfloat w) {
     this->height = h;
     this->width = w;
     this->view_mode = viewer::normal_view;
-    this->top_view_size = 30.0;
+    this->top_view_size = 10.0;
 }
 
 viewer::~viewer() {
@@ -140,9 +140,7 @@ void viewer::set_top_view() {
 }
 
 glm::vec3 viewer::get_scaled_position() {
-    return this->get_current_position()
-            * scale::shared_instance()->get_global_scale();
-
+    return this->get_current_position();
 }
 
 void viewer::coord_ground_project(glm::vec2 coord_input, glm::vec2 & coord_out, GLfloat hight) {
