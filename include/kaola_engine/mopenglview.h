@@ -28,6 +28,9 @@
 // gl3d
 #include "gl3d.hpp"
 
+// test draw wall
+#include "editor/gl3d_wall.h"
+
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
 
@@ -54,6 +57,8 @@ public:
         clear = 0,
         drawwall = 1
     };
+    gl3d::gl3d_wall * new_wall;
+
 
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
