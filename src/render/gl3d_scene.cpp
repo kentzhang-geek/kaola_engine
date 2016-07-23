@@ -352,9 +352,9 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     this->watcher->viewing_matrix;
     
     // set model matrix
-    ::glm::mat4 trans;
+    ::glm::mat4 trans(1.0f);
     // set norMtx
-    ::glm::mat4 norMtx;
+    ::glm::mat4 norMtx(1.0f);
     trans = ::glm::translate(trans, obj->get_property()->position);
     trans = trans * obj->get_property()->rotate_mat;
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(

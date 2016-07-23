@@ -19,7 +19,7 @@ void scale::init() {
     this->length_unit_to_scale_factor.insert(this->mm, 0.001f);
     this->length_unit_to_scale_factor.insert(this->cm, 0.01f);
     this->length_unit_to_scale_factor.insert(this->m, 1.0f);
-    this->length_unit_to_scale_factor.insert(this->skybox, 2.0f);
+    this->length_unit_to_scale_factor.insert(this->skybox, 20.0f);
     this->length_unit_to_scale_factor.insert(this->wall, 1.0f);
     this->length_unit_to_scale_factor.insert(this->special, 1.0f);
     // set default platform value
@@ -43,6 +43,7 @@ scale * scale::shared_instance() {
 }
 
 float scale::get_scale_factor(float widget_width) {
+    return 1.0f;
     float ret;
     ret = this->global_scale;
     ret = ret / (widget_width/this->platform_to_standard_widget_width.value(this->current_platform));

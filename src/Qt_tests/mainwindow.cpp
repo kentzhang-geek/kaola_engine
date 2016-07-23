@@ -122,6 +122,7 @@ void MainWindow::on_pushButton_2_clicked()
                     QPair<int , object *>(tmp_id++, wall));
     }
     else {
+        wall->set_start_point(st + glm::vec2(0.0, 0.5));
         wall->set_end_point(st);
         wall->calculate_mesh();
     }
@@ -131,8 +132,12 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    gl3d::viewer * vr = this->ui->openGLWidget->main_scene->watcher;
-    vr->set_top_view_size(vr->get_top_view_size() + 1.0f);
+    // add a furniture
+    glm::vec3 vc = this->ui->openGLWidget->main_scene->watcher->get_current_position();
+    model_manager::shared_instance()->add_obj_to_scene(
+                this->ui->openGLWidget->main_scene,
+                (char *)"sidetable.3ds",
+                glm::vec2(vc.x, vc.z));
 }
 
 void MainWindow::on_pushButton_4_clicked()

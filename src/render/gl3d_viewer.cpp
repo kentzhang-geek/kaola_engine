@@ -108,8 +108,8 @@ bool viewer::go_rotate(GLfloat angle) {
  */
 void viewer::calculate_mat() {
     glm::vec3 location =
-            this->get_current_position() *
-            gl3d::scale::shared_instance()->get_global_scale();
+            this->get_current_position(); // *
+//            gl3d::scale::shared_instance()->get_global_scale();
     if (this->view_mode == viewer::normal_view) {
         this->viewing_matrix = ::glm::lookAt(location, location + this->look_direction, this->head_direction);
         this->projection_matrix = glm::perspective(glm::radians(40.0f), (float)(this->width/this->height), 1.0f, 1000.0f);
@@ -172,16 +172,20 @@ void viewer::coord_ground_project(glm::vec2 coord_input, glm::vec2 & coord_out, 
 }
 
 void viewer::coord_ground_ortho(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight) {
-    glm::vec4 tmp = glm::inverse(this->projection_matrix * this->viewing_matrix) *
-            glm::vec4(coord_in.x, coord_in.y, 0.0, 1.0);
     coord_in = coord_in * 2.0f - 1.0f; // from (0,1) to (-1,1)
-    coord_in.x = coord_in.x * this->top_view_size / scale::shared_instance()->get_global_scale();
-    coord_in.y = coord_in.y
-            * this->top_view_size
-            / gl3d_global_param::shared_instance()->canvas_width
-            * gl3d_global_param::shared_instance()->canvas_height
-            / scale::shared_instance()->get_global_scale();
-    coord_out = glm::vec2(this->current_position.x - coord_in.x, this->current_position.z - coord_in.y) ;
+    glm::vec4 tmp = glm::inverse(
+                this->projection_matrix * this->viewing_matrix
+                * glm::mat4(1.0f)) //* glm::scale(glm::mat4(1.0f), glm::vec3(1.0f) * gl3d::scale::shared_instance()->get_global_scale()))
+                * glm::vec4(coord_in.x, -coord_in.y, 0.0, 1.0);
+    coord_out.x = tmp.x;
+    coord_out.y = tmp.z;
+//    coord_in.x = coord_in.x * this->top_view_size / scale::shared_instance()->get_global_scale();
+//    coord_in.y = coord_in.y
+//            * this->top_view_size
+//            / gl3d_global_param::shared_instance()->canvas_width
+//            * gl3d_global_param::shared_instance()->canvas_height
+//            / scale::shared_instance()->get_global_scale();
+//    coord_out = glm::vec2(this->current_position.x - coord_in.x, this->current_position.z - coord_in.y) ;
 }
 
 void viewer::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight) {

@@ -67,7 +67,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_3">
        <property name="text">
-        <string>Top View ADD</string>
+        <string>Furniture</string>
        </property>
       </widget>
      </item>

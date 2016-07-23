@@ -73,9 +73,16 @@ model_param::model_param() : id(-1), file_name(string("")), obj(NULL) {
 void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm::vec2 coord) {
     // 新建obj
     gl3d::object * obj = new object((char *)(gl3d_sandbox_path + "\\" + obj_filename).c_str());
+    // 默认参数
+    ::gl3d::obj_property * obj_pro = obj->get_property();
+    obj_pro->scale_unit = gl3d::scale::mm;
+    // 合并顶点重算法向量
+    obj->merge_meshes();
+    obj->recalculate_normals();
+    obj->convert_left_hand_to_right_hand();
     // 设置位置
-    obj->get_property()->position = glm::vec3(coord, 0.0);
-    obj->get_property()->scale_unit = gl3d::scale::mm;  // KENT TODO : 这里默认缩放比例是否需要可调?
+    obj->get_property()->position = glm::vec3(coord.x, 0.0, coord.y);
+    obj->get_property()->scale_unit = gl3d::scale::mm;
     // 缓存数据
     obj->get_property()->draw_authority |=  GL3D_OBJ_ENABLE_CULLING;
     obj->buffer_data();
