@@ -72,6 +72,9 @@ private:
     QTimer * keyTimer;
     char key_press;
     int tmp_point_x, tmp_point_y;
+    int wall_temp_id;
+
+    void openglDrawWall(const int x, const int y);
 };
 
 #endif // MOPENGLVIEW_H
