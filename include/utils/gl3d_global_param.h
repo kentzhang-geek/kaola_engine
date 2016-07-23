@@ -12,6 +12,11 @@ public:
     float canvas_height;
     unsigned int framebuffer;
 
+    enum work_state {
+        normal = 0,
+        drawwall = 1
+    } current_work_state ;
+
 private:
     gl3d_global_param();
 };
