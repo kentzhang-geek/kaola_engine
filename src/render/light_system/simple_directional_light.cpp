@@ -42,21 +42,21 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
     scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
     scene->get_property()->global_shader = "simple_directional_light";
     scene->prepare_canvas(true);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
 
     // 遍历所有光源进行绘制
     for (auto it = scene->get_light_srcs()->begin();
          it != scene->get_light_srcs()->end();
          it++) {
         // 设置光照参数
-        glUseProgram(pro);
+        GL3D_GL()->glUseProgram(pro);
         GL3D_SET_VEC3(light_location, (*it)->get_location(), pro);
         GL3D_SET_VEC3(light_to, (*it)->get_direction(), pro);
-        glUniform1f(glGetUniformLocation(pro, "light_angle"),
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "light_angle"),
                     (*it)->get_light_angle());
-        glUniform1f(glGetUniformLocation(pro, "light_lum"),
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "light_lum"),
                     1.0);
-        glUniform1f(glGetUniformLocation(pro, "light_low_factor"),
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "light_low_factor"),
                     0.0);
         // 绘制合成用的图形
         scene->draw(true);
@@ -94,7 +94,7 @@ gl3d_general_texture * simple_directional_light::compose_pic(
     scene->get_property()->global_shader = "light_compose";
     scene->add_obj(QPair<int, object *>(2333, sobj));
     scene->prepare_canvas(true);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     scene->delete_obj(2333);
@@ -112,11 +112,11 @@ GL3D_LOAD_SHADER(simple_directional_light,
 GL3D_SHADER_PARAM(simple_directional_light) {
     GLuint pro = GL3D_GET_SHADER("simple_directional_light")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
     return true;
@@ -128,11 +128,11 @@ GL3D_LOAD_SHADER(light_compose,
 GL3D_SHADER_PARAM(light_compose) {
     GLuint pro = GL3D_GET_SHADER("light_compose")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
     return true;

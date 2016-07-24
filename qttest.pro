@@ -42,6 +42,10 @@ SOURCES += \
     src/render/gl3d_general_light_source.cpp \
     src/render/light_system/simple_directional_light.cpp \
     src/editor/gl3d_wall.cpp
+#    src/editor/klm_surface.cpp \
+#    src/editor/bounding_box.cpp \
+#    src/editor/gl_utility.cpp \
+#    src/editor/vertex.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -73,7 +77,11 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-    ui/event.h
+    ui/event.h \
+    include/editor/klm_surface.h \
+    include/editor/bounding_box.h \
+    include/editor/gl_utility.h \
+    include/editor/vertex.h
     include/editor/gl3d_wall.h
 
 FORMS    += \
@@ -91,6 +99,7 @@ win32:INCLUDEPATH += include
 
 INCLUDEPATH += LIBS\assimp-3.2\include
 INCLUDEPATH += LIBS\glm_build
+INCLUDEPATH += LIBS\boost_1_61_0
 
 RESOURCES +=
 
