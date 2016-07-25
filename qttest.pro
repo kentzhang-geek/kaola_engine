@@ -100,6 +100,13 @@ win32:INCLUDEPATH += include
 INCLUDEPATH += LIBS\assimp-3.2\include
 INCLUDEPATH += LIBS\glm_build
 INCLUDEPATH += LIBS\boost_1_61_0
+INCLUDEPATH += include
+
+
+macx: INCLUDEPATH += LIBS/assimp-3.2/include
+macx: INCLUDEPATH += LIBS/glm_build
+macx: INCLUDEPATH += LIBS/boost_1_61_0
+macx: INCLUDEPATH += include
 
 RESOURCES +=
 
@@ -113,7 +120,7 @@ OBJECTIVE_SOURCES +=
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/assimp_build/code/release/ -lassimp-vc130-mtd
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/assimp_build/code/debug/ -lassimp-vc130-mtd
-else:unix: LIBS += -L$$PWD/LIBS/assimp_build/code/ -lassimp-vc130-mtd
+#else:unix: LIBS += -L$$PWD/LIBS/assimp_build/code/ -lassimp-vc130-mtd
 
 INCLUDEPATH += $$PWD/LIBS/assimp-3.2/include
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
@@ -122,7 +129,7 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_bu
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/debug/libassimp-vc130-mtd.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/release/assimp-vc130-mtd.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/debug/assimp-vc130-mtd.lib
-else:unix: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/libassimp-vc130-mtd.a
+#else:unix: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/libassimp-vc130-mtd.a
 
 #win32: LIBS += -L$$PWD/LIBS/glew-1.13.0/lib/Release/x64/ -lglew32
 
@@ -133,3 +140,9 @@ else:unix: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/libassimp-vc130-mtd.a
 #else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/glew-1.13.0/lib/Release/x64/libglew32.a
 
 win32: LIBS += -lGlU32
+
+macx: LIBS += -L$$PWD/LIBS/assimp-3.2/lib/ -lassimp
+
+DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
+
+macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a

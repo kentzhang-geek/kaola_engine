@@ -1,9 +1,9 @@
 #include "utils/gl3d_post_process_template.h"
 
-GL3D_POST_PROCESS_IMPLEMENT(post_process_gauss);
-GL3D_POST_PROCESS_IMPLEMENT(hdr_test);
+//GL3D_POST_PROCESS_IMPLEMENT(post_process_gauss);
+//GL3D_POST_PROCESS_IMPLEMENT(hdr_test);
 
-#if 0
+#if 1
 
 class hdr_test : public gl3d_post_processer {
 public:

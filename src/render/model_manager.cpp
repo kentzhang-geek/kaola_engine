@@ -39,7 +39,7 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
     this->available_id = 0;
     gl3d::object * obj_tmp;
     for (; iter != this->models.end(); iter++) {
-        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "\\" + (*iter)->file_name).c_str());
+        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + "/" + (*iter)->file_name).c_str());
         (*iter)->obj = obj_tmp;
         // 默认参数
         ::gl3d::obj_property * obj_pro = obj_tmp->get_property();
