@@ -10,6 +10,7 @@
 
 #include "editor/gl3d_wall.h"
 #include "editor/klm_surface.h"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 using namespace klm;
@@ -103,7 +104,8 @@ gl3d::object * test_obj2() {
     return obj;
 }
 
-gl3d::object * test_obj3() {
+QVector<gl3d::object *> * test_obj3() {
+    QVector<gl3d::object *> * ret = new QVector<gl3d::object *>();
     QVector<glm::vec3> coords;
     coords.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
     coords.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
@@ -144,7 +146,6 @@ gl3d::object * test_obj3() {
     free(pts);
     free(idxes);
 
-//    auto sub = surface->getSubSurface(0);
     obj->get_mtls()->clear();
     obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
     obj->get_mtls()->insert(1, new gl3d::gl3d_material("_35.jpg"));
@@ -154,8 +155,58 @@ gl3d::object * test_obj3() {
     obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
     obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
 
+    glm::mat4 tr(1.0);
+    surface->getTransFromParent(tr);
+    glm::vec4 pos(0.0);
+    pos.w = 1.0f;
+    pos = tr * pos;
+    obj->get_property()->position += glm::vec3(pos);
+
+    ret->push_back(obj);
+
+    // sub surface begin here
+
+    auto sub = surface->getSubSurface(0);
+    tr = glm::mat4(1.0);
+    sub->getTransFromParent(tr);
+    pos = glm::vec4(0.0);
+    pos.w = 1.0f;
+    pos = tr * pos;
+
+    sub->getRenderingVertices(tmp_data, pts_len);
+    pts = (gl3d::obj_points *)
+            malloc(sizeof(gl3d::obj_points) * pts_len);
+    memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
+    for (int i = 0; i < pts_len; i++) {
+        pts[i].vertex_x = tmp_data[i * 5 + 0];
+        pts[i].vertex_y = tmp_data[i * 5 + 1];
+        pts[i].vertex_z = tmp_data[i * 5 + 2];
+        pts[i].texture_x = tmp_data[i * 5 + 3];
+        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+    }
+
+    idxes = NULL;
+    sub->getRenderingIndicies(idxes, idx_len);
+
+    obj = new gl3d::object(pts, pts_len, idxes, idx_len);
+
+    free(pts);
+    free(idxes);
+
+    obj->get_mtls()->clear();
+    obj->get_mtls()->insert(0, new gl3d::gl3d_material("_35.jpg"));
+    obj->set_repeat(true);
+
+    obj->get_property()->scale_unit = gl3d::scale::m;
+    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
+    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+
+    obj->get_property()->position += glm::vec3(pos);
+
+    ret->push_back(obj);
+
     delete surface;
-    return obj;
+    return ret;
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -173,7 +224,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     QMainWindow::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo");
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数
@@ -310,5 +361,7 @@ void MainWindow::on_pushButton_7_clicked()
 {
 //    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(6666, test_obj()));
 //    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, test_obj2()));
-    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(9999, test_obj3()));
+    auto vobj = test_obj3();
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(9999, vobj->at(0)));
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, vobj->at(1)));
 }

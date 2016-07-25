@@ -8,6 +8,7 @@
 #include "kaola_engine/gl3d_material.hpp"
 #include "kaola_engine/log.h"
 #include "kaola_engine/shader_manager.hpp"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 using namespace gl3d;
@@ -17,7 +18,7 @@ extern std::string gl3d_sandbox_path;
 gl3d_material::gl3d_material(aiMaterial * mtl) {
     this->init();
     string path = gl3d_sandbox_path;
-    path = path + string("\\");
+    path = path + string(GL3D_PATH_SEPRATOR);
     string text_file_name;
     aiString text_path;
     gl3d_texture * ins_text;

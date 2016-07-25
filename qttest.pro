@@ -81,7 +81,8 @@ HEADERS  += \
     include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     include/editor/gl_utility.h \
-    include/editor/vertex.h
+    include/editor/vertex.h \
+    include/utils/gl3d_path_config.h
     include/editor/gl3d_wall.h
 
 FORMS    += \
