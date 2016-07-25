@@ -1,13 +1,8 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include "kaola_engine/glheaders.h"
 #include "kaola_engine/gl3d_out_headers.h"
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include <iostream>
-
-using namespace glm;
 
 namespace klm{
 
@@ -15,17 +10,17 @@ namespace klm{
     public:
         Vertex(const GLdouble &setX, const GLdouble &getY, const GLdouble &z,
                const GLdouble w =0, const GLdouble h = 0) noexcept;
-        Vertex(const vec3 &position, const vec2 = vec2(0.0f, 0.0f)) noexcept;
+        Vertex(const glm::vec3 &position, const glm::vec2 = glm::vec2(0.0f, 0.0f)) noexcept;
         Vertex(const Vertex &vertex) noexcept;
         ~Vertex() noexcept;
 
         bool equals(const Vertex& another) const noexcept;
         GLdouble* getData() const noexcept;
 
-        void getPosition(vec3 &position) const noexcept;
-        void setPosition(const vec3 &position) noexcept;
-        void getTexture(vec2 &texture) const noexcept;
-        void setTexture(const vec2 &texture) noexcept;
+        void getPosition(glm::vec3 &position) const noexcept;
+        void setPosition(const glm::vec3 &position) noexcept;
+        void getTexture(glm::vec2 &texture) const noexcept;
+        void setTexture(const glm::vec2 &texture) noexcept;
 
 
         void setX(GLdouble x);

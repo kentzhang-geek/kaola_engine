@@ -9,6 +9,7 @@
 #include <QThread>
 
 #include "editor/gl3d_wall.h"
+#include "editor/klm_surface.h"
 
 using namespace std;
 

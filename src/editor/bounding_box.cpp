@@ -1,22 +1,21 @@
 #include "editor/bounding_box.h"
 
 using namespace klm;
-using namespace glm;
 
-BoundingBox::BoundingBox(const vector<vec3> &points){
+BoundingBox::BoundingBox(const QVector<glm::vec3> &points){
     initValues();
-    for(vector<vec3>::const_iterator point = points.begin();
+    for(QVector<glm::vec3>::const_iterator point = points.begin();
         point != points.end(); ++point){
         swapIfLess(*point, xMin, yMin, zMin);
         swapIfGreater(*point, xMax, yMax, zMax);
     }
 }
 
-BoundingBox::BoundingBox(const vector<Vertex*> &vertices){
+BoundingBox::BoundingBox(const QVector<Vertex*> &vertices){
     initValues();
-    for(vector<Vertex*>::const_iterator vertex = vertices.begin();
+    for(QVector<Vertex*>::const_iterator vertex = vertices.begin();
         vertex != vertices.end(); ++vertex){
-        vec3 point;
+        glm::vec3 point;
         (*vertex)->getPosition(point);
         swapIfLess(point, xMin, yMin, zMin);
         swapIfGreater(point, xMax, yMax, zMax);
@@ -32,7 +31,7 @@ void BoundingBox::initValues(){
     zMax = numeric_limits<float>::min();
 }
 
-void BoundingBox::swapIfLess(const vec3 &vector,
+void BoundingBox::swapIfLess(const glm::vec3 &vector,
                  GLfloat &x, GLfloat &y, GLfloat &z) const noexcept{
     if(x > vector.x){
         x = vector.x;
@@ -45,7 +44,7 @@ void BoundingBox::swapIfLess(const vec3 &vector,
     }
 }
 
-void BoundingBox::swapIfGreater(const vec3 &vector,
+void BoundingBox::swapIfGreater(const glm::vec3 &vector,
                     GLfloat &x, GLfloat &y, GLfloat &z) const noexcept{
     if(x < vector.x){
         x = vector.x;
@@ -63,8 +62,8 @@ void BoundingBox::genTexture(Vertex &vertex) const noexcept{
     vertex.setH(vertex.getY() - yMin);
 }
 
-void BoundingBox::genTexture(vector<Vertex*> &verteces) const noexcept{
-    for(vector<Vertex*>::iterator vertex = verteces.begin();
+void BoundingBox::genTexture(QVector<Vertex*> &verteces) const noexcept{
+    for(QVector<Vertex*>::iterator vertex = verteces.begin();
         vertex != verteces.end(); ++vertex){
         genTexture(**vertex);
     }
@@ -82,8 +81,8 @@ GLfloat BoundingBox::getWidth() const noexcept{
     return zMax - zMin;
 }
 
-vec3 BoundingBox::getCenter() const noexcept{
-    return vec3((xMin + xMax)/2,
+glm::vec3 BoundingBox::getCenter() const noexcept{
+    return glm::vec3((xMin + xMax)/2,
                 (yMin + yMax)/2,
                 (zMin + zMax)/2);
 }

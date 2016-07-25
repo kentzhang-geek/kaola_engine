@@ -41,11 +41,11 @@ SOURCES += \
     src/render/render_addons/gl3d_post_process_template.cpp \
     src/render/gl3d_general_light_source.cpp \
     src/render/light_system/simple_directional_light.cpp \
-    src/editor/gl3d_wall.cpp
-#    src/editor/klm_surface.cpp \
-#    src/editor/bounding_box.cpp \
-#    src/editor/gl_utility.cpp \
-#    src/editor/vertex.cpp
+    src/editor/gl3d_wall.cpp \
+    src/editor/klm_surface.cpp \
+    src/editor/bounding_box.cpp \
+    src/editor/gl_utility.cpp \
+    src/editor/vertex.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -131,3 +131,5 @@ else:unix: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/libassimp-vc130-mtd.a
 
 #win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/glew-1.13.0/lib/Release/x64/glew32.lib
 #else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/glew-1.13.0/lib/Release/x64/libglew32.a
+
+win32: LIBS += -lGlU32

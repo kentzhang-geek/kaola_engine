@@ -1,7 +1,6 @@
 #include "editor/vertex.h"
 
 using namespace klm;
-using namespace glm;
 
 Vertex::Vertex(const GLdouble &x, const GLdouble &y, const GLdouble &z,
                const GLdouble w, const GLdouble h) noexcept{
@@ -13,7 +12,7 @@ Vertex::Vertex(const GLdouble &x, const GLdouble &y, const GLdouble &z,
     data[H] = h;
 }
 
-Vertex::Vertex(const vec3 &position, const vec2 t) noexcept{
+Vertex::Vertex(const glm::vec3 &position, const glm::vec2 t) noexcept{
     data = new GLdouble[VERTEX_SIZE];
     data[X] = (GLdouble)position.x;
     data[Y] = (GLdouble)position.y;
@@ -48,24 +47,24 @@ bool Vertex::equals(const Vertex &another) const noexcept{
     }
 }
 
-void Vertex::getPosition(vec3 &position) const noexcept{
+void Vertex::getPosition(glm::vec3 &position) const noexcept{
     position.x = (GLfloat)data[X];
     position.y = (GLfloat)data[Y];
     position.z = (GLfloat)data[Z];
 }
 
-void Vertex::setPosition(const vec3 &position) noexcept{
+void Vertex::setPosition(const glm::vec3 &position) noexcept{
     data[X] = (GLdouble)position.x;
     data[Y] = (GLdouble)position.y;
     data[Z] = (GLdouble)position.z;
 }
 
-void Vertex::getTexture(vec2 &texture) const noexcept{
+void Vertex::getTexture(glm::vec2 &texture) const noexcept{
     texture.x = (GLfloat)data[W];
     texture.y = (GLfloat)data[H];
 }
 
-void Vertex::setTexture(const vec2 &texture) noexcept{
+void Vertex::setTexture(const glm::vec2 &texture) noexcept{
     data[W] = (GLdouble)texture.x;
     data[H] = (GLdouble)texture.y;
 }

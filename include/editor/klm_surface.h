@@ -28,7 +28,7 @@
   * represent any surface from Wall, Ceiling, Floor and so on.
   */
 #include <string>
-#include <gl/GLU.h>
+#include "kaola_engine/glheaders.h"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -44,7 +44,6 @@ typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
 typedef bg::model::polygon<bg_Point, false, false> bg_Polygon;
 
 using namespace std;
-using namespace glm;
 
 namespace klm{
 
@@ -59,12 +58,12 @@ namespace klm{
 
     class Surface final{
     public:
-        Surface(const vector<vec3> &points) throw(SurfaceException);
+        Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
         ~Surface();
-        void getSurfaceVertices(vector<Vertex*> &localVertices) const;
-        void getVerticiesToParent(vector<Vertex*> &toParent) const;
-        void getVerticiesOnParent(vector<Vertex*> &onParent) const;
-        void getTransFromParent(mat4 &transform) const;
+        void getSurfaceVertices(QVector<Vertex*> &localVertices) const;
+        void getVerticiesToParent(QVector<Vertex*> &toParent) const;
+        void getVerticiesOnParent(QVector<Vertex*> &onParent) const;
+        void getTransFromParent(glm::mat4 &transform) const;
 
         void updateVertices();
         Surface& getParent() const;
@@ -72,14 +71,14 @@ namespace klm{
         bool getRenderingVertices(GLfloat *&data, int &len) const;
         bool getRenderingIndicies(GLushort *&indecies, int &len) const;
 
-        bool addSubSurface(const vector<vec3> &points);
+        bool addSubSurface(const QVector<glm::vec3> &points);
 
         bool isRoot() const;
 
         int getSubSurfaceCnt() const;
         Surface* getSubSurface(const int index) const;
     public:
-        static void deleteVertices(vector<Vertex*>* vertices);
+        static void deleteVertices(QVector<Vertex*>* vertices);
         static void deleteTessellator();
     private:
         static Surface* targetSurface;
@@ -87,24 +86,24 @@ namespace klm{
 
     //Tessellation properties and methods
     private:
-        vector<Vertex*>  *renderVertices;
-        vector<GLushort> *renderIndicies;
+        QVector<Vertex*>  *renderVertices;
+        QVector<GLushort> *renderIndicies;
 
     //Surface Properties
     private:        
-        vector<Vertex*> *verticesToParent;
-        vector<Vertex*> *localVertices;
+        QVector<Vertex*> *verticesToParent;
+        QVector<Vertex*> *localVertices;
         //this transform is used to move this surface
         //to its original coordinates as it passed in for
         //surface construction
-        mat4 *transFromParent;
+        glm::mat4 *transFromParent;
         //this transform makes sure sub-surface will not rotate
         //but able to translate
-        vec3 *translate;
+        glm::vec3 *translate;
         bool visible;
         BoundingBox *boundingBox;
         //this polygon is stored in surface for collission test
-        Polygon *collisionTester;
+        bg_Polygon *collisionTester;
 
     //sub surface and related proerties
     private:
@@ -115,7 +114,7 @@ namespace klm{
         static GLUtesselator *tess;
     private:
         Surface* parent;
-        vector<Surface*> *subSurfaces;
+        QVector<Surface*> *subSurfaces;
     };
 
 }
