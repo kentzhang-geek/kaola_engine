@@ -146,3 +146,16 @@ void gl3d_wall::calculate_mesh() {
 
     this->buffer_data();
 }
+
+
+void gl3d_wall::get_coord_on_screen(glm::vec2 * coord_screen, gl3d::scene * main_scene) {
+    glm::vec2 stpos = this->get_start_point();
+    glm::vec2 edpos = this->get_end_point();
+
+    glm::mat4 pvm = glm::mat4(1.0);
+}
+
+bool gl3d_wall::process_corner(gl3d_wall * wall1, gl3d_wall * wall2) {
+
+    return false;
+}
