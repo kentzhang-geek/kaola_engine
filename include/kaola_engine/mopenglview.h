@@ -22,6 +22,13 @@
 #include <QResource>
 #include <QFile>
 
+#include "kaola_engine/gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
+
+#include "../src/Qt_tests/drawhomewin.h"
+#include "../src/Qt_tests/ui/pickupdig.h"
+
 // OpenGL in Win
 #include "glheaders.h"
 
@@ -73,6 +80,7 @@ private:
     char key_press;
     int tmp_point_x, tmp_point_y;
     int wall_temp_id;
+    PickupDig *puDig;
 
     void openglDrawWall(const int x, const int y);
 };

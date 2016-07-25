@@ -16,7 +16,8 @@ public:
         normal = 0,
         drawwall = 1,
         drawwalling = 2,
-        drawwallend = 3
+        drawwallend = 3,
+        pickup = 4
     } current_work_state ;
 
 private:

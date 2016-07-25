@@ -42,7 +42,8 @@ SOURCES += \
     src/render/gl3d_general_light_source.cpp \
     src/render/light_system/simple_directional_light.cpp \
     src/editor/gl3d_wall.cpp \
-    src/Qt_tests/drawhomewin.cpp
+    src/Qt_tests/drawhomewin.cpp \
+    src/Qt_tests/ui/pickupdig.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -74,8 +75,8 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-    ui/event.h \
-    src/Qt_tests/drawhomewin.h
+    src/Qt_tests/drawhomewin.h \
+    src/Qt_tests/ui/pickupdig.h
     include/editor/gl3d_wall.h
 
 FORMS    += \

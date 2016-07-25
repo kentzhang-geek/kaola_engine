@@ -24,7 +24,6 @@ private slots:
     void on_tempdraw_clicked();
 
     void on_drawwall_b_clicked(bool checked);
-
 private:
     Ui::drawhomewin *ui;
 

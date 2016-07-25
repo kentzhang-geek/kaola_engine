@@ -1,8 +1,4 @@
 #include "kaola_engine/mopenglview.h"
-#include "kaola_engine/gl3d_out_headers.h"
-#include "kaola_engine/gl3d_render_process.hpp"
-#include "utils/gl3d_global_param.h"
-#include "../Qt_tests/drawhomewin.h"
 
 using namespace std;
 
@@ -36,8 +32,6 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
-    float tmpw = this->width();
-    float tmph = this->height();
     //    this->main_scene->width = this->width();
     //    this->main_scene->height = this->height();
 
@@ -220,8 +214,14 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     vr->coord_ground(glm::vec2(((float)x) / this->width(),
                                ((float)y) / this->height()),
                      pick, 0.0);
-    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.1, 2.8);
+    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.2, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
+
+    //删除拾取到的墙
+    //    int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(12, 14);
+    //    gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
+    //    this->main_scene->delete_obj(get_wall_obj_id);
+    //    delete get_wall_obj;
 }
 
 
@@ -231,7 +231,28 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
     //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
     //    cout << "down: " << event->x() << ", " << event->y() << endl;
+
+    //左键按下事件
     if(event->button() == Qt::LeftButton) {
+        //拾取
+        if(now_state == gl3d::gl3d_global_param::normal) {
+            //            int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+            //            gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
+
+            //            cout << "click objid: " << get_wall_obj_id << endl;
+
+            puDig = new PickupDig(this->parentWidget(), event->x(), event->y());
+            puDig->show();
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
+        }
+
+        //取消拾取
+        if(now_state == gl3d::gl3d_global_param::pickup) {
+            puDig->close();
+            delete puDig;
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        }
+
         this->tmp_point_x = event->x();
         this->tmp_point_y = event->y();
 
@@ -253,6 +274,8 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
 
+
+        //右键按下事件
     } else if(event->button() == Qt::RightButton) {
         cout << "right down: " << event->x() << ", " << event->y() << endl;
         //点击右键-取消画墙状态
