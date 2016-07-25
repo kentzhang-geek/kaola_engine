@@ -1,0 +1,61 @@
+#version 410
+precision highp float;
+in float depth;
+out vec4 out_color;
+
+vec4 pack1 (float depth)
+{
+    const vec4 bitSh = vec4(256.0 * 256.0 * 256.0,
+                            256.0 * 256.0,
+                            256.0,
+                            1.0);
+    const vec4 bitMsk = vec4(0,
+                             1.0 / 256.0,
+                             1.0 / 256.0,
+                             1.0 / 256.0);
+    vec4 comp = fract(depth * bitSh);
+    comp -= comp.xxyz * bitMsk;
+    return comp;
+}
+
+vec4 pack(float depth) {
+    vec4 ret;
+    ret = vec4(fract(depth));
+    ret.w = 1.0;
+    return ret;
+}
+
+vec4 pack2(float depth) {
+    const vec4 mask = vec4(0.0, 0.25, 0.50, 0.75);
+    vec4 ret = vec4(depth) - mask;
+    ret = max(vec4(0.0), ret);
+    ret *= 4.0;
+    ret = min(vec4(1.0), ret);
+
+    return ret;
+}
+
+vec4 pack3(float depth) {
+    const vec4 bitSh = vec4(256.0,
+                            256.0 * 256.0,
+                            256.0 * 256.0 * 256.0,
+                            256.0 * 256.0 * 256.0 * 256.0);
+    vec4 ret = floor(depth * bitSh);
+    ret = ret / 256.0;
+
+    return ret;
+}
+
+// vec4 pack4(float depth) {
+//     depth = 
+// }
+
+void main() {
+    // the depth
+    // float normalizedDistance  = gl_FragCoord.z / gl_FragCoord.w;
+    // // scale -1.0;1.0 to 0.0;1.0
+    // normalizedDistance = (normalizedDistance + 1.0) / 2.0;
+
+    // out_color = pack2(depth * 10.0) ;
+    out_color = pack(depth * 10.0) ;
+}

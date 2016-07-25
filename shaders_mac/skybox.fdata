@@ -1,0 +1,38 @@
+#version 410
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+in float df;
+in float sf;
+in float distance_factor;
+in vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
+
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
+
+// light
+uniform float shininess;
+uniform float param_x;
+
+out vec4 out_color;
+
+void main() {
+#if 0 // for test
+#endif
+    
+    out_color = texture(gl3d_texture_ambient, text_coord) +
+    texture(gl3d_texture_diffuse, text_coord)  +
+    texture(gl3d_texture_specular, text_coord) ;
+    out_color.w = 1.0;
+}

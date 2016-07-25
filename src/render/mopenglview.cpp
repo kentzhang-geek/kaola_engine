@@ -14,7 +14,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders_mac";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);

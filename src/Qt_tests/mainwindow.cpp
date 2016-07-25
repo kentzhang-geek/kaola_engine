@@ -183,7 +183,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     cout << this->ui->openGLWidget->height() << "vs scene" << this->ui->openGLWidget->main_scene->get_height() << endl;
     this->ui->openGLWidget->main_scene->init(&config);
     this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(0.0, 1.8, 0.0));
-    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.0, -1.2, 4.0));
+    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(0.0, 0.0, 1.0));
     this->ui->openGLWidget->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->openGLWidget->main_scene->set_width(
