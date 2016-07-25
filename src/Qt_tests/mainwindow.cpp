@@ -12,6 +12,7 @@
 #include "editor/klm_surface.h"
 
 using namespace std;
+using namespace klm;
 
 extern MOpenGLView * one_view;
 
@@ -99,6 +100,61 @@ gl3d::object * test_obj2() {
     obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
     obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
 
+    return obj;
+}
+
+gl3d::object * test_obj3() {
+    QVector<glm::vec3> coords;
+    coords.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+    coords.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
+    coords.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
+    coords.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
+    klm::Surface * surface = new klm::Surface(coords);
+
+    QVector<glm::vec3> subCoords;
+    subCoords.push_back(glm::vec3(-0.5f, -0.5f, 0.0f));
+    subCoords.push_back(glm::vec3( 0.5f, -0.5f, 0.0f));
+    subCoords.push_back(glm::vec3( 0.5f,  0.5f, 0.0f));
+    subCoords.push_back(glm::vec3(-0.5f,  0.5f, 0.0f));
+    if(surface->addSubSurface(subCoords)){
+        std::cout<<"SubSurface added"<<std::endl;
+    }
+
+    GLfloat * tmp_data = NULL;
+    int pts_len;
+    gl3d::obj_points * pts = NULL;
+    surface->getRenderingVertices(tmp_data, pts_len);
+    pts = (gl3d::obj_points *)
+            malloc(sizeof(gl3d::obj_points) * pts_len);
+    memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
+    for (int i = 0; i < pts_len; i++) {
+        pts[i].vertex_x = tmp_data[i * 5 + 0];
+        pts[i].vertex_y = tmp_data[i * 5 + 1];
+        pts[i].vertex_z = tmp_data[i * 5 + 2];
+        pts[i].texture_x = tmp_data[i * 5 + 3];
+        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+    }
+
+    GLushort * idxes = NULL;
+    int idx_len;
+    surface->getRenderingIndicies(idxes, idx_len);
+
+    gl3d::object * obj = new gl3d::object(pts, pts_len, idxes, idx_len);
+
+    free(pts);
+    free(idxes);
+
+//    auto sub = surface->getSubSurface(0);
+    obj->get_mtls()->clear();
+    obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
+    obj->get_mtls()->insert(1, new gl3d::gl3d_material("_35.jpg"));
+    obj->set_repeat(true);
+
+    obj->get_property()->scale_unit = gl3d::scale::m;
+    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
+    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+
+    delete surface;
     return obj;
 }
 
@@ -252,6 +308,7 @@ void MainWindow::on_pushButton_6_clicked()
 
 void MainWindow::on_pushButton_7_clicked()
 {
-    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(6666, test_obj()));
-    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, test_obj2()));
+//    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(6666, test_obj()));
+//    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, test_obj2()));
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(9999, test_obj3()));
 }
