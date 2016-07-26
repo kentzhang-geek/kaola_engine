@@ -1,0 +1,93 @@
+#version 410
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+in float df;
+in float sf;
+in float cam_pos_distance;
+in vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
+
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
+
+// light
+uniform float shininess;
+uniform float param_x;
+in vec3 eye_to_pos;
+in vec3 l_normal;
+in vec3 in_light;
+
+// shadow
+in vec4 vPos;
+uniform mat4 s_mtx;
+uniform sampler2DShadow gl3d_texture_shadow;
+uniform vec3 shadow_center_input;
+uniform mat4 transmtx;
+uniform bool shadow_enable;
+uniform vec2 shadow_map_size;
+in float test;
+
+// reflection
+uniform float alpha;
+
+// frag unproject
+uniform mat4 unpvm;
+
+// bounds
+uniform vec2 canvas_size;
+
+// out color
+out vec4 out_color;
+#define EPSILON 0.005
+
+float get_lum(vec4 clr) {
+	return 0.27 * clr.r + 0.67 * clr.g + 0.06 * clr.b;
+}
+
+void main() {
+		vec4 samples[25];
+
+		int i = 0;
+		for (float y = -2.0 ; y <= 2.0 ; y++) {
+				for (float x = -2.0 ; x <= 2.0 ; x++) {
+						vec2 tmpcoord = text_coord;
+						tmpcoord.x += x * EPSILON;
+						tmpcoord.y += y * EPSILON;
+						samples[i] = texture(gl3d_texture_diffuse, tmpcoord);
+						samples[i] = samples[i] - 0.8;
+						samples[i] = clamp(samples[i], vec4(0.0), vec4(1.0));
+						i++;
+				}
+		}
+
+		// Gaussian weighting:
+		// 1  4  7  4 1
+		// 4 16 26 16 4
+		// 7 26 41 26 7 / 273 (i.e. divide by total of weightings)
+		// 4 16 26 16 4
+		// 1  4  7  4 1
+
+		vec4 hdr_color = (
+			(1.0  * (samples[0] + samples[4]  + samples[20] + samples[24])) +
+			(4.0  * (samples[1] + samples[3]  + samples[5]  + samples[9] + samples[15] + samples[19] + samples[21] + samples[23])) +
+			(7.0  * (samples[2] + samples[10] + samples[14] + samples[22])) +
+			(16.0 * (samples[6] + samples[8]  + samples[16] + samples[18])) +
+			(26.0 * (samples[7] + samples[11] + samples[13] + samples[17])) +
+			(41.0 * samples[12])
+			) / 273.0;
+
+		out_color = texture(gl3d_texture_diffuse, text_coord);
+		out_color += hdr_color;
+		out_color = min(vec4(1.0), out_color);
+}

@@ -9,10 +9,18 @@
 #include <QtOpenGL>
 #include <QOpenGLFunctions_4_1_Core>
 
+#ifdef _WIN32
+#include <gl/GLU.h>
+#else
+#include <glu.h>
+#endif
+
 extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;
 
 #define GL3D_GL() gl3d_win_gl_functions
 
+// 现在不使用这些宏去处理
+#if 0
 // 直接用宏去替换用到的function
 #define glActiveTexture(...) gl3d_win_gl_functions->glActiveTexture(__VA_ARGS__)
 #define glUniform1f(...) gl3d_win_gl_functions->glUniform1f(__VA_ARGS__)
@@ -76,5 +84,6 @@ extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;
 #define glClear(...) gl3d_win_gl_functions->glClear(__VA_ARGS__)
 #define glClearColor(...) gl3d_win_gl_functions->glClearColor(__VA_ARGS__)
 #define glReadPixels(...) gl3d_win_gl_functions->glReadPixels(__VA_ARGS__)
+#endif
 
 #endif // GLHEADERS_H

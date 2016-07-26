@@ -32,7 +32,7 @@ public:
             one_scene->get_property()->global_shader = #name; \
             one_scene->add_obj(QPair<int, object *>(2333, sobj)); \
             one_scene->prepare_canvas(true); \
-            glDisable(GL_CULL_FACE); \
+            GL3D_GL()->glDisable(GL_CULL_FACE); \
             one_scene->draw(true); \
             current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene"))); \
             one_scene->delete_obj(2333); \
@@ -48,15 +48,15 @@ GL3D_LOAD_SHADER(name, \
 GL3D_SHADER_PARAM(name) { \
     GLuint pro = GL3D_GET_SHADER(#name)->getProgramID(); \
     gl3d::object * obj = GL3D_GET_OBJ(); \
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3); \
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5); \
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0); \
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1); \
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2); \
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3); \
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5); \
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0); \
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1); \
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2); \
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0); \
     GL3D_SET_VEC3(light_vector, light, pro); \
     glm::vec2 canvas_size(2.0 * gl3d_global_param::shared_instance()->canvas_width, 2.0 * gl3d_global_param::shared_instance()->canvas_height); \
-    glUniform2fv(glGetUniformLocation(pro, "canvas_size"), 1, glm::value_ptr(canvas_size)); \
+    GL3D_GL()->glUniform2fv(GL3D_GL()->glGetUniformLocation(pro, "canvas_size"), 1, glm::value_ptr(canvas_size)); \
     return true; \
 }
 

@@ -1,0 +1,38 @@
+#version 410
+precision highp float;
+precision highp int;
+
+in vec3 vertex_pos;
+in vec3 vertex_normal;
+in vec4 vertex_color;
+in vec2 vertex_tex_coord;
+in float vertex_tex_id;
+
+out vec4 color;
+
+// mvp matrix
+uniform mat4 translationMatrix;
+uniform mat4 viewingMatrix;
+uniform mat4 pvmMatrix;
+uniform mat3 normalMtx;
+
+// light
+uniform vec3 light_vector;
+uniform vec3 eye_pos;
+out vec3 eye_to_pos;
+out vec3 l_normal;
+out vec3 in_light;
+
+out float df;
+out float sf;
+out float cam_pos_distance;
+out vec2 text_coord;
+
+// shadow
+out vec4 vPos;
+out float test;
+
+void main() {
+    text_coord = vertex_tex_coord;
+    gl_Position = vec4(vertex_pos, 1.0);
+}

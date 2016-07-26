@@ -1,5 +1,8 @@
 #include "kaola_engine/mopenglview.h"
-
+#include "kaola_engine/gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
 using namespace std;
 
 // 全局OpenGL Functions
@@ -14,8 +17,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
-    //    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = GL3D_PATH_SHADER;
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -39,8 +41,8 @@ void MOpenGLView::create_scene() {
     Program * prog;
     auto load_iter = shader_mgr->loaders.begin();
     for (; load_iter != shader_mgr->loaders.end(); load_iter++) {
-        string vert = this->res_path + "\\" + load_iter.value()->vertex;
-        string frag = this->res_path + "\\" + load_iter.value()->frag;
+        string vert = this->res_path + GL3D_PATH_SEPRATOR + load_iter.value()->vertex;
+        string frag = this->res_path + GL3D_PATH_SEPRATOR + load_iter.value()->frag;
         cout << "Load Vertex Shader " << vert << endl;
         cout << "Load Fragment Shader " << frag << endl;
 #if 0

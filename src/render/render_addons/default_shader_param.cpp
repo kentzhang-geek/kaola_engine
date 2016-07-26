@@ -29,8 +29,8 @@ GL3D_SHADER_PARAM(vector_light) {
     GL3D_SET_VEC4(mtlDiffuseColor, tmp, pro);
     tmp = glm::vec4(0.2);
     GL3D_SET_VEC4(mtlSpecularColor, tmp, pro);
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 1);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.02);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 1);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.02);
     glm::vec3 light = glm::vec3(0.0, 0.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
 
@@ -46,8 +46,8 @@ GL3D_SHADER_PARAM(vector_light_toon) {
     GL3D_SET_VEC4(mtlDiffuseColor, tmp, pro);
     tmp = glm::vec4(0.2);
     GL3D_SET_VEC4(mtlSpecularColor, tmp, pro);
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 1);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.02);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 1);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.02);
     glm::vec3 light = glm::vec3(0.0, 0.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
     
@@ -58,13 +58,13 @@ GL3D_SHADER_PARAM(vector_light_toon) {
 GL3D_SHADER_PARAM(multiple_text) {
     GLuint pro = GL3D_GET_SHADER("multiple_text")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -77,16 +77,16 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     gl3d::object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 1.0);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 1.0);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     // enable shadow test
-    glUniform1i(glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -114,19 +114,19 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
+    GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 检查是否固定alpha值
     if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
-        glUniform1f(glGetUniformLocation(pro, "alpha"), 1.0);
-        glDepthMask(GL_TRUE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+        GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
         float alpha = *(float *)obj->user_data.value(string("alpha"));
-        glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
-        glDepthMask(GL_FALSE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
+        GL3D_GL()->glDepthMask(GL_FALSE);
     }
-    glCullFace(GL_BACK);  // 显示正面不显示背面
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
     
     GL3D_SET_VEC3(shadow_center_input, shadow_center, pro);
     GL3D_SET_MAT4(transmtx, trans, pro);
@@ -141,7 +141,7 @@ GL3D_SHADER_PARAM(picking_mask) {
     gl3d::object * obj = GL3D_GET_OBJ();
     
     // 只有coding map在3号单元上
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_picking_mask"), 5);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_picking_mask"), 5);
     
     GLuint id = obj->get_property()->id;
     GLubyte color[4];
@@ -151,12 +151,12 @@ GL3D_SHADER_PARAM(picking_mask) {
     color[3] = 0xff;
         
     if (dispath_once) {
-        glGenTextures(1, &text_obj);
+        GL3D_GL()->glGenTextures(1, &text_obj);
         dispath_once = false;
     }
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, text_obj);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+    GL3D_GL()->glActiveTexture(GL_TEXTURE5);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, text_obj);
+    GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                  1,
                  1,
                  0, GL_RGBA, GL_UNSIGNED_BYTE,
@@ -193,7 +193,7 @@ GL3D_SHADER_PARAM(shadow_mask) {
 
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
+    GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
 
     return true;
 }
@@ -203,16 +203,16 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     gl3d::object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 1.0);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 1.0);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     // enable shadow test
-    glUniform1i(glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -240,28 +240,28 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
 
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
+    GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
 
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
     gl3d_general_texture * shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
     shadow_txt->bind(GL_TEXTURE4);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
     
     // 阴影贴图大小
     glm::vec2 textsize = glm::vec2(2048.0);
-    glUniform2fv(glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
+    GL3D_GL()->glUniform2fv(GL3D_GL()->glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
     
     // 检查是否固定alpha值
     if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
-        glUniform1f(glGetUniformLocation(pro, "alpha"), 1.0);
-        glDepthMask(GL_TRUE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+        GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
         float alpha = *(float *)obj->user_data.value(string("alpha"));
-        glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
-        glDepthMask(GL_FALSE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
+        GL3D_GL()->glDepthMask(GL_FALSE);
     }
-    glCullFace(GL_BACK);  // 显示正面不显示背面
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
 
     GL3D_SET_VEC3(shadow_center_input, shadow_center, pro);
     GL3D_SET_MAT4(transmtx, trans, pro);
@@ -273,13 +273,13 @@ GL3D_SHADER_PARAM(image) {
     GLuint pro = GL3D_GET_SHADER("image")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
     gl3d::scene * scene = (gl3d::scene *)this->user_data.value(string("scene"));
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -307,7 +307,7 @@ GL3D_SHADER_PARAM(image) {
     pvm *= trans;    // final MVP
     
     GL3D_SET_MAT4(pvmImageMatrix, pvm, pro);
-    glCullFace(GL_FRONT);  // 显示背面不显示正面（由于y轴反转）
+    GL3D_GL()->glCullFace(GL_FRONT);  // 显示背面不显示正面（由于y轴反转）
     
     return true;
 }
@@ -315,13 +315,13 @@ GL3D_SHADER_PARAM(image) {
 GL3D_SHADER_PARAM(skybox) {
     GLuint pro = GL3D_GET_SHADER("skybox")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -335,13 +335,13 @@ GL3D_SHADER_PARAM(dm) {
     gl3d::object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.6);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.6);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -368,28 +368,28 @@ GL3D_SHADER_PARAM(dm) {
 
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
+    GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 拿到阴影贴图，并且把阴影贴图绑定到采样器7上
     gl3d_general_texture * shadow_txt = ((gl3d::scene *)this->user_data.value(string("scene")))->get_shadow_texture();
     shadow_txt->bind(GL_TEXTURE4);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_shadow"), 4);
     
     // 阴影贴图大小
     glm::vec2 textsize = glm::vec2(2048.0);
-    glUniform2fv(glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
+    GL3D_GL()->glUniform2fv(GL3D_GL()->glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
     
     // 检查是否固定alpha值
     if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
-        glUniform1f(glGetUniformLocation(pro, "alpha"), 1.0);
-        glDepthMask(GL_TRUE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+        GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
         float alpha = *(float *)obj->user_data.value(string("alpha"));
-        glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
-        glDepthMask(GL_FALSE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
+        GL3D_GL()->glDepthMask(GL_FALSE);
     }
-    glCullFace(GL_BACK);  // 显示正面不显示背面
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
     
     GL3D_SET_VEC3(shadow_center_input, shadow_center, pro);
     GL3D_SET_MAT4(transmtx, trans, pro);
@@ -402,13 +402,13 @@ GL3D_SHADER_PARAM(dm2) {
     gl3d::object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.6);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.6);
     
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -435,19 +435,19 @@ GL3D_SHADER_PARAM(dm2) {
 
     // Send our transformation to the currently bound shader,
     // in the "MVP" uniform
-    glUniformMatrix4fv(glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
+    GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 检查是否固定alpha值
     if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
-        glUniform1f(glGetUniformLocation(pro, "alpha"), 1.0);
-        glDepthMask(GL_TRUE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+        GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
         float alpha = *(float *)obj->user_data.value(string("alpha"));
-        glUniform1f(glGetUniformLocation(pro, "alpha"), alpha);
-        glDepthMask(GL_FALSE);
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
+        GL3D_GL()->glDepthMask(GL_FALSE);
     }
-    glCullFace(GL_BACK);  // 显示正面不显示背面
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
     
     GL3D_SET_VEC3(shadow_center_input, shadow_center, pro);
     GL3D_SET_MAT4(transmtx, trans, pro);
@@ -459,13 +459,13 @@ GL3D_SHADER_PARAM(dm2) {
 GL3D_SHADER_PARAM(post_process_result) {
     GLuint pro = GL3D_GET_SHADER("post_process_result")->getProgramID();
     gl3d::object * obj = GL3D_GET_OBJ();
-    glUniform1f(glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
-    glUniform1f(glGetUniformLocation(pro, "shininess"), 0.5);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
 
     // 原色，散射与镜面分别是0，1，2
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
 
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);

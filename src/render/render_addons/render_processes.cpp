@@ -54,37 +54,37 @@ void normal::render() {
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
     one_scene->prepare_canvas(false);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(false);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     
     // 绘制地面蒙版
     current_shader_param = GL3D_GET_PARAM("multiple_text");
     current_shader_param->user_data.insert(string("scene"), one_scene);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw_stencil();
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
     // 在有模板的情况下绘制地面倒影
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_EQUAL, 1, 0xffffffff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    GL3D_GL()->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    GL3D_GL()->glEnable(GL_STENCIL_TEST);
+    GL3D_GL()->glStencilFunc(GL_EQUAL, 1, 0xffffffff);
+    GL3D_GL()->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     current_shader_param = GL3D_GET_PARAM("image");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
     one_scene->get_property()->global_shader = string("image");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-    glDisable(GL_STENCIL_TEST);
+    GL3D_GL()->glDisable(GL_STENCIL_TEST);
     
     // 绘制地面
     current_shader_param = GL3D_GET_PARAM("dm");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
     one_scene->get_property()->global_shader = string("dm");
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -116,7 +116,7 @@ void moving::render() {
     one_scene->get_property()->global_shader = string("multiple_text_vector");
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
     one_scene->prepare_canvas(false);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -125,7 +125,7 @@ void moving::render() {
     // 选择全局渲染器
     one_scene->get_property()->global_shader = string("dm2");
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -134,7 +134,7 @@ void moving::render() {
     // 选择全局渲染器
     one_scene->get_property()->global_shader = string("skybox");
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     return;
@@ -151,7 +151,7 @@ public:
         one_scene->get_property()->global_shader = string("default");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_SKYBOX);
         one_scene->prepare_canvas(false);
-        glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     }
@@ -162,7 +162,7 @@ class editing : public render_process {
 public:
     void render() {
         gl3d::scene * one_scene = this->get_attached_scene();
-        glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
+        GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
 
         gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
         current_shader_param->user_data.insert(string("scene"), one_scene);
@@ -170,8 +170,8 @@ public:
         one_scene->get_property()->global_shader = string("multiple_text_vector");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
         one_scene->prepare_canvas(false);
-        glDisable(GL_CULL_FACE);
-        glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -180,7 +180,7 @@ public:
         // 选择全局渲染器
         one_scene->get_property()->global_shader = string("dm2");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-        glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -189,7 +189,7 @@ public:
         // 选择全局渲染器
         one_scene->get_property()->global_shader = string("skybox");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-        glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -277,37 +277,37 @@ void has_post::rend_main_scene() {
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
     one_scene->prepare_canvas(false);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(false);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
     // 绘制地面蒙版
     current_shader_param = GL3D_GET_PARAM("multiple_text");
     current_shader_param->user_data.insert(string("scene"), one_scene);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw_stencil();
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
     // 在有模板的情况下绘制地面倒影
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_EQUAL, 1, 0xffffffff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    GL3D_GL()->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    GL3D_GL()->glEnable(GL_STENCIL_TEST);
+    GL3D_GL()->glStencilFunc(GL_EQUAL, 1, 0xffffffff);
+    GL3D_GL()->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     current_shader_param = GL3D_GET_PARAM("image");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
     one_scene->get_property()->global_shader = string("image");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-    glDisable(GL_STENCIL_TEST);
+    GL3D_GL()->glDisable(GL_STENCIL_TEST);
 
     // 绘制地面
     current_shader_param = GL3D_GET_PARAM("dm");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
     one_scene->get_property()->global_shader = string("dm");
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
@@ -333,7 +333,7 @@ void has_post::rend_result() {
     one_scene->get_property()->global_shader = string("post_process_result");
     one_scene->add_obj(QPair<int, object *>(222, rect));
     one_scene->prepare_canvas(true);
-    glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 

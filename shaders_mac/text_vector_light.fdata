@@ -1,0 +1,21 @@
+#version 410
+precision highp float;
+
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
+
+in float df;
+in float sf;
+in float distance_factor;
+in vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_0;
+
+void main() {
+    gl_FragColor = texture(gl3d_texture_0, text_coord) * 0.6 + (df * texture(gl3d_texture_0, text_coord) + sf * mtlSpecularColor) * (distance_factor * 3.0);
+    gl_FragColor.w = 1.0;
+}
