@@ -3,9 +3,11 @@
 
 #include <QDialog>
 #include <QVBoxLayout>
-#include <QFormLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QSlider>
+#include <QSpinBox>
+#include <QPushButton>
 
 class PickupDig:public QDialog
 {
