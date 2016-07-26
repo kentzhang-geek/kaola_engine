@@ -8,6 +8,7 @@
 #include "kaola_engine/gl3d_material.hpp"
 #include "kaola_engine/log.h"
 #include "kaola_engine/shader_manager.hpp"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 using namespace gl3d;
@@ -17,7 +18,7 @@ extern std::string gl3d_sandbox_path;
 gl3d_material::gl3d_material(aiMaterial * mtl) {
     this->init();
     string path = gl3d_sandbox_path;
-    path = path + string("\\");
+    path = path + string(GL3D_PATH_SEPRATOR);
     string text_file_name;
     aiString text_path;
     gl3d_texture * ins_text;
@@ -91,9 +92,9 @@ void gl3d_material::use_this(GLuint pro) {
     }
     
     // 初始化贴图单元使能够
-    glUniform1i(glGetUniformLocation(pro, "gl3d_t_ambient_enable"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_t_diffuse_enable"), 0);
-    glUniform1i(glGetUniformLocation(pro, "gl3d_t_specular_enable"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_ambient_enable"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_diffuse_enable"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_specular_enable"), 0);
     if (this->textures.size() != 0) {
         // 绑定texture
         for (auto iter_t = this->textures.begin(); iter_t != this->textures.end(); iter_t++) {
@@ -101,17 +102,17 @@ void gl3d_material::use_this(GLuint pro) {
                 case ambient :
                     // 原色贴图在 0 号单元
                     iter_t.value()->bind(GL_TEXTURE0);
-                    glUniform1i(glGetUniformLocation(pro, "gl3d_t_ambient_enable"), 1);
+                    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_ambient_enable"), 1);
                     break;
                 case diffuse :
                     // 散射贴图在 1 号单元
                     iter_t.value()->bind(GL_TEXTURE1);
-                    glUniform1i(glGetUniformLocation(pro, "gl3d_t_diffuse_enable"), 1);
+                    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_diffuse_enable"), 1);
                     break;
                 case specular :
                     // 镜面反射贴图在 2 号单元
                     iter_t.value()->bind(GL_TEXTURE2);
-                    glUniform1i(glGetUniformLocation(pro, "gl3d_t_specular_enable"), 1);
+                    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_t_specular_enable"), 1);
                     break;
                 default:
                     log_c("Load texture type what failed");

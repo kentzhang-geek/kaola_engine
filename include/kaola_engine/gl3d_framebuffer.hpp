@@ -37,6 +37,7 @@ namespace gl3d {
         GLuint get_frame_obj();
         bool is_complete();
         bool generated_by_object();
+        bool save_to_file(QString filename);
     private:
         GLuint frame_obj;
         GLuint color_obj;

@@ -1,0 +1,56 @@
+#version 410
+precision highp float;
+precision highp int;
+
+in vec3 vertex_pos;
+in vec3 vertex_normal;
+in vec4 vertex_color;
+in vec2 vertex_tex_coord;
+in float vertex_tex_id;
+
+out vec4 color;
+
+// mvp matrix
+uniform mat4 translationMatrix;
+uniform mat4 viewingMatrix;
+uniform mat4 pvmMatrix;
+uniform mat3 normalMtx;
+
+uniform vec3 light_vector;
+uniform vec3 eye_pos;
+
+out float df;
+out float sf;
+out float cam_pos_distance;
+out vec2 text_coord;
+
+// light
+uniform vec3 light_location;
+uniform vec3 light_to;
+uniform float light_angle;
+uniform float light_lum;
+uniform float light_low_factor;
+
+// light luminum
+out float lum_factor;
+
+void main() {
+  // normalize light direction
+  vec4 vert_pos = viewingMatrix * translationMatrix * vec4(vertex_pos, 1.0);
+  vec3 light_vector = normalize(light_location - vec3(vert_pos / vert_pos.w));
+  vec3 Nor = normalMtx * vertex_normal;
+  Nor = normalize(Nor);
+  vec3 E = vec3(0, 1, 0);
+  vec3 H = normalize(light_vector + E);
+
+  df = max(0.0, dot(Nor, light_vector));
+  sf = max(0.0, dot(Nor, H));
+
+  // calculate lum factor
+  float l_angle = max(0.0, dot(normalize(-light_to), light_vector));
+  float in_l_angle = cos(light_angle);
+  lum_factor = max(0.0, (l_angle - in_l_angle) / (1.0 - in_l_angle)) * light_lum
+   - (light_low_factor * (length(light_location - vec3(vert_pos / vert_pos.w)) + length(eye_pos - vec3(vert_pos / vert_pos.w))));
+
+  gl_Position = pvmMatrix * vec4(vertex_pos, 1.0);;
+}

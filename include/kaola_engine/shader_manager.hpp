@@ -111,17 +111,17 @@ namespace gl3d {
 #define GL3D_GET_OBJ() (gl3d::object *)(this->user_data.value(string("object")))
 
 #define GL3D_SET_MAT4(matrixName, matrixValue, program) \
-glUniformMatrix4fv \
-(glGetUniformLocation \
+GL3D_GL()->glUniformMatrix4fv \
+(GL3D_GL()->glGetUniformLocation \
  (program, #matrixName), \
  1, GL_FALSE, glm::value_ptr(matrixValue));
 
 #define GL3D_SET_VEC4(vecName, vecValue, program) \
-glUniform4fv(glGetUniformLocation \
+GL3D_GL()->glUniform4fv(GL3D_GL()->glGetUniformLocation \
 (program, #vecName), 1, glm::value_ptr(vecValue));
 
 #define GL3D_SET_VEC3(vecName, vecValue, program) \
-glUniform3fv(glGetUniformLocation \
+GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation \
 (program, #vecName), 1, glm::value_ptr(vecValue));
 
 

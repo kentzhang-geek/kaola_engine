@@ -19,14 +19,14 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
     this->size_y = y;
     
     // gen texture
-    glGenTextures(1, &this->text_obj);
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
+    GL3D_GL()->glGenTextures(1, &this->text_obj);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, this->text_obj);
     
     // 设置贴图格式
     switch (set_type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
-            glTexImage2D(GL_TEXTURE_2D,
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D,
                          0,
                          GL_DEPTH_COMPONENT,
                          x,
@@ -35,12 +35,12 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
                          GL_DEPTH_COMPONENT,
                          GL_UNSIGNED_BYTE,
                          NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 //            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_UNSIGNED_BYTE_24_8_OES, x, y);
             break;
         case GL3D_RGBA:
-            glTexImage2D(GL_TEXTURE_2D,
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D,
                          0,
                          GL_RGBA,
                          x,
@@ -56,16 +56,16 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
             break;
     }
     
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void gl3d_general_texture::clean_data() {
-    glActiveTexture(GL_TEXTURE_2D);
+    GL3D_GL()->glActiveTexture(GL_TEXTURE_2D);
     switch (type) {
         case GL3D_DEPTH_COMPONENT:
-            glBindTexture(GL_TEXTURE_2D, this->text_obj);
+            GL3D_GL()->glBindTexture(GL_TEXTURE_2D, this->text_obj);
             this->set_parami(false);
-            glTexImage2D(GL_TEXTURE_2D, 0,
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0,
                          GL_DEPTH_COMPONENT,
                          size_x,
                          size_y,
@@ -73,20 +73,20 @@ void gl3d_general_texture::clean_data() {
                          GL_DEPTH_COMPONENT,
                          GL_UNSIGNED_BYTE,
                          NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+            GL3D_GL()->glBindTexture(GL_TEXTURE_2D, 0);
             break;
         case GL3D_RGBA:
-            glBindTexture(GL_TEXTURE_2D, this->text_obj);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+            GL3D_GL()->glBindTexture(GL_TEXTURE_2D, this->text_obj);
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                          size_x,
                          size_y,
                          0,
                          GL_RGBA,
                          GL_UNSIGNED_BYTE,
                          NULL);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            GL3D_GL()->glBindTexture(GL_TEXTURE_2D, 0);
             break;
         default:
             throw std::invalid_argument("invalid general texture type");
@@ -95,13 +95,13 @@ void gl3d_general_texture::clean_data() {
 }
 
 void gl3d_general_texture::bind(GLenum text_unit) {
-    glActiveTexture(text_unit);
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
+    GL3D_GL()->glActiveTexture(text_unit);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, this->text_obj);
     switch (type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
             break;
         case GL3D_RGBA:
             this->set_parami(true);
@@ -114,11 +114,11 @@ void gl3d_general_texture::bind(GLenum text_unit) {
 }
 
 void gl3d_general_texture::buffer_data(GLvoid *data) {
-    glBindTexture(GL_TEXTURE_2D, this->text_obj);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, this->text_obj);
     switch (type) {
         case GL3D_DEPTH_COMPONENT:
             this->set_parami(false);
-            glTexImage2D(GL_TEXTURE_2D,
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D,
                          0,
                          GL_DEPTH_COMPONENT,
                          size_x,
@@ -127,11 +127,11 @@ void gl3d_general_texture::buffer_data(GLvoid *data) {
                          GL_DEPTH_COMPONENT,
                          GL_UNSIGNED_BYTE,
                          data);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
             break;
         case GL3D_RGBA:
-            glTexImage2D(GL_TEXTURE_2D,
+            GL3D_GL()->glTexImage2D(GL_TEXTURE_2D,
                          0,
                          GL_RGBA,
                          size_x,
@@ -148,7 +148,7 @@ void gl3d_general_texture::buffer_data(GLvoid *data) {
 }
 
 gl3d_general_texture::~gl3d_general_texture() {
-    glDeleteTextures(1, &this->text_obj);
+    GL3D_GL()->glDeleteTextures(1, &this->text_obj);
     
     return;
 }
@@ -161,17 +161,17 @@ void gl3d_general_texture::set_parami(bool repeat) {
      */
     if (repeat) {
         // 这里平铺贴图
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
     else {
         // 这里应该是拉伸贴图
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
     // 各向异性

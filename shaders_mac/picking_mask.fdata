@@ -1,0 +1,13 @@
+#version 410
+precision highp float;
+
+in vec2 text_coord;
+
+// for texture
+uniform sampler2D gl3d_texture_picking_mask;
+
+out vec4 out_color;
+
+void main() {
+    out_color = texture(gl3d_texture_picking_mask, text_coord);
+}

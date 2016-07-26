@@ -34,6 +34,9 @@
 #include "utils/gl3d_utils.h"
 #include "kaola_engine/gl3d_general_light_source.h"
 
+// framebuffers
+#include "kaola_engine/gl3d_framebuffer.hpp"
+
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
     class scene {
@@ -182,6 +185,8 @@ namespace gl3d {
          *  @return object的id
          */
         int get_object_id_by_coordination(int x, int y);
+        void draw_object_picking_mask();
+        GL3D_UTILS_PROPERTY(picking_frame, gl3d::gl3d_framebuffer *);
 
         /**
          *  @author Kent, 16-02-23 14:02:14
@@ -280,7 +285,6 @@ namespace gl3d {
         QMap<int,gl3d::object *> * objects;
         scene_property this_property;
         light_property lights[4];
-//        GLuint shadow_text;
         gl3d_general_texture * shadow_text;
     };
 }

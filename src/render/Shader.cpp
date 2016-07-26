@@ -10,36 +10,36 @@
 
 gl3d::Shader::Shader(const std::string &shaderSource, GLenum shaderType){
     
-    shaderID = glCreateShader(shaderType);
+    shaderID = GL3D_GL()->glCreateShader(shaderType);
     if(shaderID == 0){
         throw std::runtime_error("Failed to create shader");
     }
     
     const char* code = shaderSource.c_str();
-    glShaderSource(shaderID, 1, (const GLchar**) &code, nullptr);
-    glCompileShader(shaderID);
+    GL3D_GL()->glShaderSource(shaderID, 1, (const GLchar**) &code, nullptr);
+    GL3D_GL()->glCompileShader(shaderID);
     
     GLint status;
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+    GL3D_GL()->glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
     if(status == GL_FALSE){
         std::string msg("Failed to compile Shader:");
         
         GLint messageLen;
-        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &messageLen);
+        GL3D_GL()->glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &messageLen);
         char* compileInfo = new char[messageLen + 1];
-        glGetShaderInfoLog(shaderID, messageLen, nullptr, compileInfo);
+        GL3D_GL()->glGetShaderInfoLog(shaderID, messageLen, nullptr, compileInfo);
         msg += compileInfo;
         
         delete[] compileInfo;
         
-        glDeleteShader(shaderID);
+        GL3D_GL()->glDeleteShader(shaderID);
         shaderID = 0;
         throw std::runtime_error(msg);
     }
 }
 
 gl3d::Shader::~Shader(){
-    glDeleteShader(shaderID);
+    GL3D_GL()->glDeleteShader(shaderID);
     shaderID = 0;
 }
 

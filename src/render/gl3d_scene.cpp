@@ -15,12 +15,13 @@
 #include "assimp/Logger.hpp"
 #include "assimp/DefaultLogger.hpp"
 #include "kaola_engine/gl3d_framebuffer.hpp"
+#include "utils/gl3d_lock.h"
 
 std::string gl3d_sandbox_path;
 
 // assimp log stream
 class myStream :
-public Assimp::LogStream
+        public Assimp::LogStream
 { public:
     // Constructor
     myStream() {
@@ -127,78 +128,78 @@ bool scene::prepare_buffer() {
 bool scene::prepare_canvas(bool use_global_shader) {
     // clear and set scene
     if (use_global_shader) {
-        glClearColor(0.0, 0.0, 0.0, 1.0);
+        GL3D_GL()->glClearColor(0.0, 0.0, 0.0, 1.0);
     }
     else {
-        glClearColor
-        (this->this_property.background_color.x,
-         this->this_property.background_color.y,
-         this->this_property.background_color.z,
-         1.0);
+        GL3D_GL()->glClearColor
+                (this->this_property.background_color.x,
+                 this->this_property.background_color.y,
+                 this->this_property.background_color.z,
+                 1.0);
     }
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
-    glClearDepthf(1.0);
-    glCullFace(GL_BACK);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glDisable(GL_STENCIL_TEST);  // 通常绘制不使用模板缓冲区
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glEnable(GL_DITHER);
+    GL3D_GL()->glEnable(GL_CULL_FACE);
+    GL3D_GL()->glCullFace(GL_BACK);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    GL3D_GL()->glDepthMask(GL_TRUE);
+    GL3D_GL()->glDepthFunc(GL_LEQUAL);
+    GL3D_GL()->glClearDepthf(1.0);
+    GL3D_GL()->glCullFace(GL_BACK);
+    GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    GL3D_GL()->glEnable(GL_BLEND);
+    GL3D_GL()->glDisable(GL_STENCIL_TEST);  // 通常绘制不使用模板缓冲区
+    GL3D_GL()->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    GL3D_GL()->glEnable(GL_DITHER);
     
     return true;
 }
 
 void scene::set_attribute(GLuint pro) {
     // enable attribute
-    glEnableVertexAttribArray(glGetAttribLocation(pro, "vertex_pos"));
-    glEnableVertexAttribArray(glGetAttribLocation(pro, "vertex_normal"));
-    glEnableVertexAttribArray(glGetAttribLocation(pro, "vertex_color"));
-    glEnableVertexAttribArray(glGetAttribLocation(pro, "vertex_tex_coord"));
+    GL3D_GL()->glEnableVertexAttribArray(GL3D_GL()->glGetAttribLocation(pro, "vertex_pos"));
+    GL3D_GL()->glEnableVertexAttribArray(GL3D_GL()->glGetAttribLocation(pro, "vertex_normal"));
+    GL3D_GL()->glEnableVertexAttribArray(GL3D_GL()->glGetAttribLocation(pro, "vertex_color"));
+    GL3D_GL()->glEnableVertexAttribArray(GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord"));
     
     // set vertex
     GLint lct;
-    lct = glGetAttribLocation(pro, "vertex_pos");
-    glVertexAttribPointer
-    (lct,
-     3,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) (GLvoid *) &((gl3d::obj_points *)NULL)->vertex_x);
+    lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_pos");
+    GL3D_GL()->glVertexAttribPointer
+            (lct,
+             3,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) (GLvoid *) &((gl3d::obj_points *)NULL)->vertex_x);
     
     // set normal
-    lct = glGetAttribLocation(pro, "vertex_normal");
-    glVertexAttribPointer
-    (lct,
-     3,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->normal_x);
+    lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_normal");
+    GL3D_GL()->glVertexAttribPointer
+            (lct,
+             3,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->normal_x);
     
     // set color
-    lct = glGetAttribLocation(pro, "vertex_color");
-    glVertexAttribPointer
-    (lct,
-     4,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->color_r);
+    lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_color");
+    GL3D_GL()->glVertexAttribPointer
+            (lct,
+             4,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->color_r);
     
     // set texture coordinate
-    lct = glGetAttribLocation(pro, "vertex_tex_coord");
-    glVertexAttribPointer
-    (glGetAttribLocation(pro, "vertex_tex_coord"),
-     2,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->texture_x);
+    lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord");
+    GL3D_GL()->glVertexAttribPointer
+            (GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord"),
+             2,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->texture_x);
 }
 
 bool scene::draw(bool use_global_shader) {
@@ -223,7 +224,7 @@ bool scene::draw(bool use_global_shader) {
             use_shader = GL3D_GET_SHADER(current_obj->use_shader);
         }
         if (NULL != use_shader) {
-            glUseProgram(use_shader->getProgramID());
+            GL3D_GL()->glUseProgram(use_shader->getProgramID());
             if (use_global_shader) {
                 param = GL3D_GET_PARAM(this->this_property.global_shader.c_str());
             }
@@ -248,7 +249,7 @@ bool scene::draw(bool use_global_shader) {
             iter_objs = this->objects->erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
     }
-    glBindVertexArray(0);
+    GL3D_GL()->glBindVertexArray(0);
     
     return true;
 }
@@ -283,14 +284,14 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
             if (j != k) {
                 // a or b is in rect
                 if ((abs(pos[j].x) <= 1.0f) &&
-                    (abs(pos[j].y) <= 1.0f) &&
-                    (pos[j].z >= 0)) {
+                        (abs(pos[j].y) <= 1.0f) &&
+                        (pos[j].z >= 0)) {
                     traw_able = true;
                     break;
                 }
                 if ((abs(pos[k].x) <= 1.0f) &&
-                    (abs(pos[k].y) <= 1.0f) &&
-                    (pos[k].z >= 0)) {
+                        (abs(pos[k].y) <= 1.0f) &&
+                        (pos[k].z >= 0)) {
                     traw_able = true;
                     break;
                 }
@@ -342,14 +343,14 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
 
 void scene::draw_object(gl3d::object *obj, GLuint pro) {
     // set vao
-    glBindVertexArray(obj->vao);
+    GL3D_GL()->glBindVertexArray(obj->vao);
     this->set_attribute(pro);
     
     // TODO : set matrix
     // set MVP
     ::glm::mat4 pvm =
-    this->watcher->projection_matrix *
-    this->watcher->viewing_matrix;
+            this->watcher->projection_matrix *
+            this->watcher->viewing_matrix;
     
     // set model matrix
     ::glm::mat4 trans(1.0f);
@@ -365,39 +366,39 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     pvm *= trans;    // final MVP
     glm::mat4 unpvm = glm::inverse(pvm);
-        
-    glUniformMatrix4fv
-    (glGetUniformLocation
-     (pro, "unpvm"),
-     1, GL_FALSE, glm::value_ptr(unpvm));
-    glUniformMatrix4fv
-    (glGetUniformLocation
-     (pro, "pvmMatrix"),
-     1, GL_FALSE, glm::value_ptr(pvm));
-    glUniformMatrix4fv
-    (glGetUniformLocation
-     (pro, "translationMatrix"),
-     1, GL_FALSE, glm::value_ptr(trans));
-    glUniformMatrix4fv
-    (glGetUniformLocation
-     (pro, "viewingMatrix"),
-     1, GL_FALSE, glm::value_ptr(this->watcher->viewing_matrix));
-    glUniform3fv(glGetUniformLocation(pro, "eye_pos"), 1, glm::value_ptr(this->watcher->current_position));
-    glUniform3fv(glGetUniformLocation(pro, "eye_look_at"), 1, glm::value_ptr(this->watcher->look_direction));
-    glUniformMatrix3fv
-    (glGetUniformLocation
-     (pro, "normalMtx"),
-     1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
-    glUniform1f(glGetUniformLocation
-                (pro, "param_x"), obj->param_x);
+
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "unpvm"),
+             1, GL_FALSE, glm::value_ptr(unpvm));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "pvmMatrix"),
+             1, GL_FALSE, glm::value_ptr(pvm));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "translationMatrix"),
+             1, GL_FALSE, glm::value_ptr(trans));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "viewingMatrix"),
+             1, GL_FALSE, glm::value_ptr(this->watcher->viewing_matrix));
+    GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_pos"), 1, glm::value_ptr(this->watcher->current_position));
+    GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_look_at"), 1, glm::value_ptr(this->watcher->look_direction));
+    GL3D_GL()->glUniformMatrix3fv
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "normalMtx"),
+             1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                           (pro, "param_x"), obj->param_x);
     
     auto iter = obj->meshes.begin();
     gl3d::mesh *p_mesh;
     while (iter != obj->meshes.end()) {
         p_mesh = *iter;
         // set buffers
-        glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
+        GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
         
         // bouding box test
         if ((check_bouding(p_mesh->bounding_value_max, p_mesh->bounding_value_min, pvm) == true)
@@ -411,17 +412,17 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
                 //log_c("material_index is %d and out of range", p_mesh->material_index);
             }
             this->set_attribute(pro);
-            glDrawElements(GL_TRIANGLES,
-                           p_mesh->num_idx,
-                           GL_UNSIGNED_SHORT,
-                           (GLvoid *)NULL);
+            GL3D_GL()->glDrawElements(GL_TRIANGLES,
+                                      p_mesh->num_idx,
+                                      GL_UNSIGNED_SHORT,
+                                      (GLvoid *)NULL);
         }
         iter++;
     }
     
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL3D_GL()->glBindVertexArray(0);
 }
 
 bool scene::set_property(scene_property * property) {
@@ -441,35 +442,63 @@ bool scene::set_light(int id_of_light, light_property * property) {
 gl3d::scene::light_property * scene::get_light(int id_of_light) {
     return &this->lights[id_of_light];
 }
-
-int scene::get_object_id_by_coordination(int x, int y) {
-    GLuint colorRenderbuffer;
-    GLuint framebuffer;
-    GLuint depthRenderBuffer;
+void scene::draw_object_picking_mask() {
     GLubyte pixelColor[4];
-    
-    // fb
-    gl3d_framebuffer * frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
-    frame->use_this_frame();
-        
+
+    this->picking_frame->use_this_frame();
+
     // KENT WARN : 有时间架构下渲染绘制流程，加入一个用texture绘制obj的id的招数
-    this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
+    this->this_property.current_draw_authority =
+            GL3D_SCENE_DRAW_NORMAL |
+            GL3D_SCENE_DRAW_GROUND |
+            GL3D_SCENE_DRAW_WALL;
     this->this_property.global_shader = string("picking_mask");
     this->prepare_canvas(true);
     this->draw(true);
-    glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
 
-    delete frame;
+    this->picking_frame->unbind_this_frame();
+
+    return;
+}
+
+int scene::get_object_id_by_coordination(int x, int y) {
+    GLubyte pixelColor[4];
+
+    // lock render
+    gl3d_lock::shared_instance()->render_lock.lock();
+    // pikcing mask
+    this->picking_frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
+
+    this->draw_object_picking_mask();
+
+    // use picking mask
+    this->picking_frame->use_this_frame();
+
+    // get pixel
+    // 这里临时处理了下，似乎整个画面倒过来了？
+    GL3D_GL()->glReadPixels(x, this->height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
     
+    // unbind picking mask
+    this->picking_frame->unbind_this_frame();
+    delete this->picking_frame;
+    this->picking_frame = NULL;
+
+    // unlock render
+    gl3d_lock::shared_instance()->render_lock.unlock();
+
     int obj_id = -1;
     if (pixelColor[3] == 0xff) {
         obj_id = pixelColor[0] + (pixelColor[1]<<8) + (pixelColor[2]<<16);
     }
-    //    log_c("Get Obj Id is %d", obj_id);
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+        if (this->objects->contains(obj_id)) {
+            if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+                obj_id = -1;
+            }
+        }
+        else {
             obj_id = -1;
         }
     }
@@ -524,7 +553,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec2 coord_in) {
 #define TEXTURE_HEIGHT 2048
 void scene::gen_shadow_texture() {
     this->shadow_text = new gl3d_general_texture(gl3d_general_texture::GL3D_DEPTH_COMPONENT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-//    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    //    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 }
 
 void scene::delete_shadow_texture() {
@@ -539,15 +568,15 @@ void scene::draw_shadow_mask() {
     // clean shadow text data
     this->shadow_text->clean_data();
 
-//    this->shadow_text->bind(GL_TEXTURE0);
-//    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
-//    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage
-//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-//    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
-//    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
-//        throw std::runtime_error("save failed");
-//    }
+    //    this->shadow_text->bind(GL_TEXTURE0);
+    //    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+    //    memset(test_data, 0, 4 * 2048 * 2048);
+    //    gl3d_win_gl_functions->glGetTexImage
+    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+    //    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
+    //    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
+    //        throw std::runtime_error("save failed");
+    //    }
     
     // create a frame for draw shadow
     gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -559,22 +588,22 @@ void scene::draw_shadow_mask() {
     frame->use_this_frame();
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
-    glDisable(GL_BLEND);
-//    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
-//    glEnable(GL_POLYGON_OFFSET_FILL);
+    GL3D_GL()->glDisable(GL_BLEND);
+    //    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
+    //    glEnable(GL_POLYGON_OFFSET_FILL);
     this->draw(true);
-//    glDisable(GL_POLYGON_OFFSET_FILL);
-    glEnable(GL_BLEND);
+    //    glDisable(GL_POLYGON_OFFSET_FILL);
+    GL3D_GL()->glEnable(GL_BLEND);
 
-//    this->shadow_text->bind(GL_TEXTURE0);
-//    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage
-//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-//    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
-//    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
-//        throw std::runtime_error("save failed");
-//    }
-//    free(test_data);
+    //    this->shadow_text->bind(GL_TEXTURE0);
+    //    memset(test_data, 0, 4 * 2048 * 2048);
+    //    gl3d_win_gl_functions->glGetTexImage
+    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+    //    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
+    //    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
+    //        throw std::runtime_error("save failed");
+    //    }
+    //    free(test_data);
 
     frame->unbind_this_frame();
     delete frame;
@@ -584,13 +613,13 @@ void scene::draw_shadow_mask() {
 
 void scene::draw_stencil() {
     /* Don't update color or depth. */
-    glDisable(GL_DEPTH_TEST);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    GL3D_GL()->glDisable(GL_DEPTH_TEST);
+    GL3D_GL()->glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     
     /* Draw 1 into the stencil buffer. */
-    glEnable(GL_STENCIL_TEST);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glStencilFunc(GL_ALWAYS, 1, 0xffffffff);
+    GL3D_GL()->glEnable(GL_STENCIL_TEST);
+    GL3D_GL()->glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    GL3D_GL()->glStencilFunc(GL_ALWAYS, 1, 0xffffffff);
     
     /* Now drawing the floor just tags the floor pixels
      as stencil value 1. */
@@ -599,6 +628,6 @@ void scene::draw_stencil() {
     this->draw(true);
     
     /* Re-enable update of color and depth. */
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
+    GL3D_GL()->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
 }

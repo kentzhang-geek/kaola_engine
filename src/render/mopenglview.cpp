@@ -1,4 +1,9 @@
 #include "kaola_engine/mopenglview.h"
+#include "kaola_engine/gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
+#include "utils/gl3d_lock.h"
 
 using namespace std;
 
@@ -14,8 +19,7 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
-    //    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = GL3D_PATH_SHADER;
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -39,8 +43,8 @@ void MOpenGLView::create_scene() {
     Program * prog;
     auto load_iter = shader_mgr->loaders.begin();
     for (; load_iter != shader_mgr->loaders.end(); load_iter++) {
-        string vert = this->res_path + "\\" + load_iter.value()->vertex;
-        string frag = this->res_path + "\\" + load_iter.value()->frag;
+        string vert = this->res_path + GL3D_PATH_SEPRATOR + load_iter.value()->vertex;
+        string frag = this->res_path + GL3D_PATH_SEPRATOR + load_iter.value()->frag;
         cout << "Load Vertex Shader " << vert << endl;
         cout << "Load Fragment Shader " << frag << endl;
 #if 0
@@ -82,7 +86,13 @@ MOpenGLView::MOpenGLView() : QGLWidget()
     throw std::invalid_argument("should not create openglview without parent widget");
 }
 
+bool need_capture;
 void MOpenGLView::paintGL() {
+    // lock render
+    if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
+        return;
+    }
+
     // 设置场景
     GL3D_GET_CURRENT_RENDER_PROCESS()->add_user_object("scene", this->main_scene);
 
@@ -93,6 +103,7 @@ void MOpenGLView::paintGL() {
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
     gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
     glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     glViewport(0, 0,
                this->main_scene->get_width(),
                this->main_scene->get_height());
@@ -101,6 +112,13 @@ void MOpenGLView::paintGL() {
 
     // 后渲染
     GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();
+
+    // release default fbo
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // unlock render
+    gl3d_lock::shared_instance()->render_lock.unlock();
 }
 
 void MOpenGLView::initializeGL() {
@@ -182,7 +200,7 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     f.setProfile(f.CoreProfile);
     this->setFormat(f);
 
-    this->wall_temp_id = 2333333;
+    this->wall_temp_id = 23333;
 }
 
 
@@ -204,6 +222,8 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
     event->accept();      //接收该事件
 }
 
+extern bool need_capture;
+
 //opengl执行画墙
 void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->new_wall = NULL;
@@ -217,11 +237,12 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.2, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
 
-    //删除拾取到的墙
-    //    int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(12, 14);
-    //    gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
-    //    this->main_scene->delete_obj(get_wall_obj_id);
-    //    delete get_wall_obj;
+    //删除拾取到的墙    
+    need_capture = true;
+    int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(x, y);
+    gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
+    this->main_scene->delete_obj(get_wall_obj_id);
+    delete get_wall_obj;
 }
 
 
