@@ -53,7 +53,7 @@ public:
 
     static bool process_corner(gl3d_wall * wall1, gl3d_wall * wall2);
 
-    GL3D_UTILS_PROPERTY(bottom_pts, gl3d::obj_points *);
+    gl3d::obj_points bottom_pts[4];
 
 private:
     void release_last_data();
