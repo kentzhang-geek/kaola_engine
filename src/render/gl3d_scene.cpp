@@ -60,9 +60,6 @@ void scene::init() {
     using namespace Assimp;
     DefaultLogger::create("",Logger::VERBOSE);
     DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
-
-    // pikcing mask
-    this->picking_frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
 }
 
 scene::scene(GLfloat h, GLfloat w) {
@@ -469,6 +466,8 @@ int scene::get_object_id_by_coordination(int x, int y) {
 
     // lock render
     gl3d_lock::shared_instance()->render_lock.lock();
+    // pikcing mask
+    this->picking_frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
 
     this->draw_object_picking_mask();
 
@@ -476,13 +475,13 @@ int scene::get_object_id_by_coordination(int x, int y) {
     this->picking_frame->use_this_frame();
 
     // get pixel
-    GL3D_GL()->glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
-
-    this->picking_frame->save_to_file(
-                QString("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg"));
+    // 这里临时处理了下，似乎整个画面倒过来了？
+    GL3D_GL()->glReadPixels(x, this->height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
     
     // unbind picking mask
     this->picking_frame->unbind_this_frame();
+    delete this->picking_frame;
+    this->picking_frame = NULL;
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();
