@@ -491,7 +491,6 @@ int scene::get_object_id_by_coordination(int x, int y) {
     if (pixelColor[3] == 0xff) {
         obj_id = pixelColor[0] + (pixelColor[1]<<8) + (pixelColor[2]<<16);
     }
-    //    log_c("Get Obj Id is %d", obj_id);
     
     // 检测是否可拾取
     if (obj_id > 0) {

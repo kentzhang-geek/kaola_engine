@@ -88,7 +88,6 @@ MOpenGLView::MOpenGLView() : QGLWidget()
 
 bool need_capture;
 void MOpenGLView::paintGL() {
-//    return;
     // lock render
     if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
         return;
