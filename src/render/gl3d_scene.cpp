@@ -57,9 +57,9 @@ void scene::init() {
     this->objects = new QMap<int,gl3d::object *>();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
-    using namespace Assimp;
-    DefaultLogger::create("",Logger::VERBOSE);
-    DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
+//    using namespace Assimp;
+//    DefaultLogger::create("",Logger::VERBOSE);
+//    DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
 }
 
 scene::scene(GLfloat h, GLfloat w) {

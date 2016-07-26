@@ -48,7 +48,8 @@ SOURCES += \
     src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
     src/editor/klm_surface.cpp \
-    src/utils/gl3d_lock.cpp
+    src/utils/gl3d_lock.cpp \
+    src/utils/gl3d_math.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -89,7 +90,8 @@ HEADERS  += \
     src/Qt_tests/ui/pickupdig.h \
     include/editor/gl3d_wall.h \
     include/editor/gl_utility.h \
-    include/utils/gl3d_lock.h
+    include/utils/gl3d_lock.h \
+    include/utils/gl3d_math.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
