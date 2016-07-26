@@ -10,9 +10,10 @@ namespace gl3d {
     public:
         glm::vec2 a;
         glm::vec2 b;
+        line(glm::vec2 tag_a, glm::vec2 tag_b) : a(tag_a), b(tag_b) {}
     };
 
-    void get_cross(const line &l1, const line &l2, glm::vec2 cross_point);
+    bool get_cross(const line &l1, const line &l2, glm::vec2 &cross_point);
 
     }
 }

@@ -3,33 +3,61 @@
 using namespace gl3d;
 using namespace gl3d::math;
 
-void gl3d::math::get_cross(const line &l1,
+bool gl3d::math::get_cross(const line &l1,
                            const line &l2,
-                           glm::vec2 cross_point) {
-    if (l1.a.x == l1.b.x) { // special edition is x equals
-
-    }
-    if (l2.a.x == l2.b.x) {
-
-    }
-
+                           glm::vec2 & cross_point) {
     glm::vec2 p1 = l1.a;
     glm::vec2 p2 = l1.b;
     glm::vec2 p3 = l2.a;
     glm::vec2 p4 = l2.b;
 
-    float x = (p2.y - p1.y) / (p2.x - p1.x) - p1.y +
-            (p4.y - p3.y) / (p4.x - p3.x) * p3.x + p3.y;
-    x = x / ((p2.y - p1.y)/(p2.x - p1.x) - (p4.y - p3.y) / (p4.x - p3.x));
-    float y = x * (p2.y - p1.y) / (p2.x - p1.x)
-            - (p2.y - p1.y) / (p2.x - p1.x) * p1.x + p1.y;
+    float x = 0.0;
+    float y = 0.0;
+    if (glm::normalize(p2 - p1) == glm::normalize(p4 - p3)) {
+        return false;
+    }
+    if (glm::normalize(p2 - p1) == glm::normalize(p3 - p4)) {
+        return false;
+    }
+
+    if (p1.x == p2.x) { // special edition is x equals
+        x = p1.x;
+        y = x * (p4.y - p3.y) / (p4.x - p3.x)
+                - (p4.y - p3.y) / (p4.x - p3.x) * p3.x + p3.y;
+    }
+    if (p3.x == p4.x) {
+        x = p3.x;
+        y = x * (p2.y - p1.y) / (p2.x - p1.x)
+                - (p2.y - p1.y) / (p2.x - p1.x) * p1.x + p1.y;
+    }
+    else {
+        x = (p2.y - p1.y) / (p2.x - p1.x) - p1.y +
+                (p4.y - p3.y) / (p4.x - p3.x) * p3.x + p3.y;
+        x = x / ((p2.y - p1.y)/(p2.x - p1.x) - (p4.y - p3.y) / (p4.x - p3.x));
+        y = x * (p2.y - p1.y) / (p2.x - p1.x)
+                - (p2.y - p1.y) / (p2.x - p1.x) * p1.x + p1.y;
+
+    }
 
     cross_point.x = x;
     cross_point.y = y;
+    return true;
 }
 
 #if 1
+#include <QtTest/QtTest>
 void main() {
+    glm::vec2 p1(0.0, 1.0);
+    glm::vec2 p2(1.0, 1.0);
+    glm::vec2 p3(0.0, 0.0);
+    glm::vec2 p4(0.5, 0.5);
+    glm::vec2 p5(0.0, 2.0);
 
+    line l1(p5, p2);
+    line l2(p3, p4);
+    glm::vec2 res;
+    bool ib = gl3d::math::get_cross(l1, l2, res);
+    QVERIFY(ib == true);
+    QVERIFY(res == glm::vec2(1.0, 1.0));
 }
 #endif
