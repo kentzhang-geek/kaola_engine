@@ -1,8 +1,4 @@
 #include "kaola_engine/mopenglview.h"
-#include "kaola_engine/gl3d_out_headers.h"
-#include "kaola_engine/gl3d_render_process.hpp"
-#include "utils/gl3d_global_param.h"
-#include "../Qt_tests/drawhomewin.h"
 
 using namespace std;
 
@@ -18,8 +14,8 @@ void MOpenGLView::do_init() {
     timer->start(100);
 
     // init path KENT TODO : shader目录设置要调整
-    //    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
-    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
+    this->res_path = "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders";
+    //    this->res_path = "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders";
 
     this->create_scene();
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
@@ -36,8 +32,6 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
-    float tmpw = this->width();
-    float tmph = this->height();
     //    this->main_scene->width = this->width();
     //    this->main_scene->height = this->height();
 
@@ -187,6 +181,8 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     f.setVersion(4, 1);    // opengl 2.0 for opengles 2.0 compatible
     f.setProfile(f.CoreProfile);
     this->setFormat(f);
+
+    this->wall_temp_id = 2333333;
 }
 
 
@@ -208,13 +204,55 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
     event->accept();      //接收该事件
 }
 
+//opengl执行画墙
+void MOpenGLView::openglDrawWall(const int x, const int y) {
+    this->new_wall = NULL;
+    this->wall_temp_id = this->wall_temp_id + 1;
+    gl3d::scene * vr = this->main_scene;
+    // set wall
+    glm::vec2 pick;
+    vr->coord_ground(glm::vec2(((float)x) / this->width(),
+                               ((float)y) / this->height()),
+                     pick, 0.0);
+    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.2, 2.8);
+    this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
+
+    //删除拾取到的墙
+    //    int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(12, 14);
+    //    gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
+    //    this->main_scene->delete_obj(get_wall_obj_id);
+    //    delete get_wall_obj;
+}
+
+
 //鼠标按下事件
 void MOpenGLView::mousePressEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //    QString str = "("+QString::number(event->x())+","+QString::number(event->y())+")";
     //    cout << "down: " << event->x() << ", " << event->y() << endl;
+
+    //左键按下事件
     if(event->button() == Qt::LeftButton) {
+        //拾取
+        if(now_state == gl3d::gl3d_global_param::normal) {
+            //            int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+            //            gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
+
+            //            cout << "click objid: " << get_wall_obj_id << endl;
+
+            puDig = new PickupDig(this->parentWidget(), event->x(), event->y());
+            puDig->show();
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
+        }
+
+        //取消拾取
+        if(now_state == gl3d::gl3d_global_param::pickup) {
+            puDig->close();
+            delete puDig;
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        }
+
         this->tmp_point_x = event->x();
         this->tmp_point_y = event->y();
 
@@ -225,30 +263,31 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
         //画墙中节点结束
         if(now_state == gl3d::gl3d_global_param::drawwalling) {
-            this->new_wall = NULL;
-            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwallend;
+            this->openglDrawWall(event->x(), event->y());
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
 
         //画墙节点开始
         if(now_state == gl3d::gl3d_global_param::drawwall) {
-            this->new_wall = NULL;
-            gl3d::scene * vr = this->main_scene;
-            // set wall
-            glm::vec2 pick;
-            static int tmpid = 23333;
-            vr->coord_ground(glm::vec2(((float)event->x()) / this->width(),
-                                       ((float)event->y()) / this->height()),
-                             pick, 0.0);
-            this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.3, 1.8);
-            this->main_scene->add_obj(QPair<int , object *>(tmpid++, this->new_wall));
+            this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
             cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
 
+
+        //右键按下事件
     } else if(event->button() == Qt::RightButton) {
         cout << "right down: " << event->x() << ", " << event->y() << endl;
+        //点击右键-取消画墙状态
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             drawhomewin::on_draw_clear();
+        }
+        //点击右键-终止画墙连接
+        if(now_state == gl3d::gl3d_global_param::drawwalling) {
+            this->main_scene->delete_obj(this->wall_temp_id);
+            delete this->new_wall;
+            this->new_wall = NULL;
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         }
     } else if(event->button() == Qt::MidButton) {
         cout << "centre down: " << event->x() << ", " << event->y() << endl;
@@ -293,7 +332,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 //鼠标松开事件
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     cout << "loosen: " << event->x() << ", " << event->y() << endl;
-//    if(gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawwall) {
-//        setCursor(Qt::ArrowCursor);
-//    }
+    if(gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawwall) {
+        setCursor(Qt::ArrowCursor);
+    }
 }

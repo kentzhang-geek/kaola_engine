@@ -97,6 +97,7 @@ void drawhomewin::on_switch_2_clicked()
     }
 }
 
+//取消所有按钮选择状态
 void drawhomewin::on_draw_clear() {
     dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
@@ -117,8 +118,7 @@ void drawhomewin::on_tempdraw_clicked()
                     st, ed, 0.5, 1.2);
         this->ui->OpenGLCanvas->main_scene->add_obj(
                     QPair<int , object *>(tmp_id++, wall));
-    }
-    else {
+    } else {
         wall->set_end_point(ed);
         wall->calculate_mesh();
     }
