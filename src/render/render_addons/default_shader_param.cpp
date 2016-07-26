@@ -161,7 +161,6 @@ GL3D_SHADER_PARAM(picking_mask) {
                  1,
                  0, GL_RGBA, GL_UNSIGNED_BYTE,
                  (GLvoid *) color);
-    
     return true;
 }
 

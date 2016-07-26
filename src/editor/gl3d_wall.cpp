@@ -148,14 +148,21 @@ void gl3d_wall::calculate_mesh() {
 }
 
 
-void gl3d_wall::get_coord_on_screen(glm::vec2 * coord_screen, gl3d::scene * main_scene) {
+void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
+                                    glm::vec2 & start_pos,
+                                    glm::vec2 &end_pos) {
     glm::vec2 stpos = this->get_start_point();
     glm::vec2 edpos = this->get_end_point();
 
     glm::mat4 pv = glm::mat4(1.0);
     pv = pv * *main_scene->watcher->get_projection_matrix();
     pv = pv * *main_scene->watcher->get_viewing_matrix();
-    glm::mat4 m1 = glm::translate(glm::mat4(1.0), glm::vec3());
+
+    glm::vec4 coord_out;
+    coord_out = pv * this->get_property()->rotate_mat * glm::vec4(stpos.x, stpos.y, 0.0f, 1.0f);
+    start_pos = glm::vec2(coord_out.x, coord_out.y);
+    coord_out = pv * this->get_property()->rotate_mat * glm::vec4(edpos.x, edpos.y, 0.0f, 1.0f);
+    end_pos = glm::vec2(coord_out.x, coord_out.y);
 }
 
 bool gl3d_wall::process_corner(gl3d_wall * wall1, gl3d_wall * wall2) {

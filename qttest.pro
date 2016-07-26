@@ -47,7 +47,8 @@ SOURCES += \
     src/editor/bounding_box.cpp \
     src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
-    src/editor/klm_surface.cpp
+    src/editor/klm_surface.cpp \
+    src/utils/gl3d_lock.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -87,7 +88,8 @@ HEADERS  += \
     include/utils/gl3d_path_config.h \
     src/Qt_tests/ui/pickupdig.h \
     include/editor/gl3d_wall.h \
-    include/editor/gl_utility.h
+    include/editor/gl_utility.h \
+    include/utils/gl3d_lock.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

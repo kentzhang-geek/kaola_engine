@@ -49,7 +49,7 @@ public:
 
     void calculate_mesh();
 
-    void get_coord_on_screen(glm::vec2 * coord_screen, scene * main_scene);
+    void get_coord_on_screen(scene * main_scene, glm::vec2 &start_pos, glm::vec2 &end_pos);
 
     static bool process_corner(gl3d_wall * wall1, gl3d_wall * wall2);
 

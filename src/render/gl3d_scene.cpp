@@ -15,12 +15,13 @@
 #include "assimp/Logger.hpp"
 #include "assimp/DefaultLogger.hpp"
 #include "kaola_engine/gl3d_framebuffer.hpp"
+#include "utils/gl3d_lock.h"
 
 std::string gl3d_sandbox_path;
 
 // assimp log stream
 class myStream :
-public Assimp::LogStream
+        public Assimp::LogStream
 { public:
     // Constructor
     myStream() {
@@ -59,6 +60,9 @@ void scene::init() {
     using namespace Assimp;
     DefaultLogger::create("",Logger::VERBOSE);
     DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
+
+    // pikcing mask
+    this->picking_frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
 }
 
 scene::scene(GLfloat h, GLfloat w) {
@@ -131,10 +135,10 @@ bool scene::prepare_canvas(bool use_global_shader) {
     }
     else {
         GL3D_GL()->glClearColor
-        (this->this_property.background_color.x,
-         this->this_property.background_color.y,
-         this->this_property.background_color.z,
-         1.0);
+                (this->this_property.background_color.x,
+                 this->this_property.background_color.y,
+                 this->this_property.background_color.z,
+                 1.0);
     }
     GL3D_GL()->glEnable(GL_CULL_FACE);
     GL3D_GL()->glCullFace(GL_BACK);
@@ -163,42 +167,42 @@ void scene::set_attribute(GLuint pro) {
     GLint lct;
     lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_pos");
     GL3D_GL()->glVertexAttribPointer
-    (lct,
-     3,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) (GLvoid *) &((gl3d::obj_points *)NULL)->vertex_x);
+            (lct,
+             3,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) (GLvoid *) &((gl3d::obj_points *)NULL)->vertex_x);
     
     // set normal
     lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_normal");
     GL3D_GL()->glVertexAttribPointer
-    (lct,
-     3,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->normal_x);
+            (lct,
+             3,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->normal_x);
     
     // set color
     lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_color");
     GL3D_GL()->glVertexAttribPointer
-    (lct,
-     4,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->color_r);
+            (lct,
+             4,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->color_r);
     
     // set texture coordinate
     lct = GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord");
     GL3D_GL()->glVertexAttribPointer
-    (GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord"),
-     2,
-     GL_FLOAT,
-     GL_FALSE,
-     sizeof(gl3d::obj_points),
-     (GLvoid *) &((gl3d::obj_points *)NULL)->texture_x);
+            (GL3D_GL()->glGetAttribLocation(pro, "vertex_tex_coord"),
+             2,
+             GL_FLOAT,
+             GL_FALSE,
+             sizeof(gl3d::obj_points),
+             (GLvoid *) &((gl3d::obj_points *)NULL)->texture_x);
 }
 
 bool scene::draw(bool use_global_shader) {
@@ -283,14 +287,14 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
             if (j != k) {
                 // a or b is in rect
                 if ((abs(pos[j].x) <= 1.0f) &&
-                    (abs(pos[j].y) <= 1.0f) &&
-                    (pos[j].z >= 0)) {
+                        (abs(pos[j].y) <= 1.0f) &&
+                        (pos[j].z >= 0)) {
                     traw_able = true;
                     break;
                 }
                 if ((abs(pos[k].x) <= 1.0f) &&
-                    (abs(pos[k].y) <= 1.0f) &&
-                    (pos[k].z >= 0)) {
+                        (abs(pos[k].y) <= 1.0f) &&
+                        (pos[k].z >= 0)) {
                     traw_able = true;
                     break;
                 }
@@ -348,8 +352,8 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     // TODO : set matrix
     // set MVP
     ::glm::mat4 pvm =
-    this->watcher->projection_matrix *
-    this->watcher->viewing_matrix;
+            this->watcher->projection_matrix *
+            this->watcher->viewing_matrix;
     
     // set model matrix
     ::glm::mat4 trans(1.0f);
@@ -365,31 +369,31 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     pvm *= trans;    // final MVP
     glm::mat4 unpvm = glm::inverse(pvm);
-        
+
     GL3D_GL()->glUniformMatrix4fv
-    (GL3D_GL()->glGetUniformLocation
-     (pro, "unpvm"),
-     1, GL_FALSE, glm::value_ptr(unpvm));
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "unpvm"),
+             1, GL_FALSE, glm::value_ptr(unpvm));
     GL3D_GL()->glUniformMatrix4fv
-    (GL3D_GL()->glGetUniformLocation
-     (pro, "pvmMatrix"),
-     1, GL_FALSE, glm::value_ptr(pvm));
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "pvmMatrix"),
+             1, GL_FALSE, glm::value_ptr(pvm));
     GL3D_GL()->glUniformMatrix4fv
-    (GL3D_GL()->glGetUniformLocation
-     (pro, "translationMatrix"),
-     1, GL_FALSE, glm::value_ptr(trans));
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "translationMatrix"),
+             1, GL_FALSE, glm::value_ptr(trans));
     GL3D_GL()->glUniformMatrix4fv
-    (GL3D_GL()->glGetUniformLocation
-     (pro, "viewingMatrix"),
-     1, GL_FALSE, glm::value_ptr(this->watcher->viewing_matrix));
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "viewingMatrix"),
+             1, GL_FALSE, glm::value_ptr(this->watcher->viewing_matrix));
     GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_pos"), 1, glm::value_ptr(this->watcher->current_position));
     GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_look_at"), 1, glm::value_ptr(this->watcher->look_direction));
     GL3D_GL()->glUniformMatrix3fv
-    (GL3D_GL()->glGetUniformLocation
-     (pro, "normalMtx"),
-     1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
+            (GL3D_GL()->glGetUniformLocation
+             (pro, "normalMtx"),
+             1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                (pro, "param_x"), obj->param_x);
+                           (pro, "param_x"), obj->param_x);
     
     auto iter = obj->meshes.begin();
     gl3d::mesh *p_mesh;
@@ -412,9 +416,9 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
             }
             this->set_attribute(pro);
             GL3D_GL()->glDrawElements(GL_TRIANGLES,
-                           p_mesh->num_idx,
-                           GL_UNSIGNED_SHORT,
-                           (GLvoid *)NULL);
+                                      p_mesh->num_idx,
+                                      GL_UNSIGNED_SHORT,
+                                      (GLvoid *)NULL);
         }
         iter++;
     }
@@ -441,26 +445,48 @@ bool scene::set_light(int id_of_light, light_property * property) {
 gl3d::scene::light_property * scene::get_light(int id_of_light) {
     return &this->lights[id_of_light];
 }
-
-int scene::get_object_id_by_coordination(int x, int y) {
-    GLuint colorRenderbuffer;
-    GLuint framebuffer;
-    GLuint depthRenderBuffer;
+void scene::draw_object_picking_mask() {
     GLubyte pixelColor[4];
-    
-    // fb
-    gl3d_framebuffer * frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, width, height);
-    frame->use_this_frame();
-        
+
+    this->picking_frame->use_this_frame();
+
     // KENT WARN : 有时间架构下渲染绘制流程，加入一个用texture绘制obj的id的招数
-    this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
+    this->this_property.current_draw_authority =
+            GL3D_SCENE_DRAW_NORMAL |
+            GL3D_SCENE_DRAW_GROUND |
+            GL3D_SCENE_DRAW_WALL;
     this->this_property.global_shader = string("picking_mask");
     this->prepare_canvas(true);
     this->draw(true);
+
+    this->picking_frame->unbind_this_frame();
+
+    return;
+}
+
+int scene::get_object_id_by_coordination(int x, int y) {
+    GLubyte pixelColor[4];
+
+    // lock render
+    gl3d_lock::shared_instance()->render_lock.lock();
+
+    this->draw_object_picking_mask();
+
+    // use picking mask
+    this->picking_frame->use_this_frame();
+
+    // get pixel
     GL3D_GL()->glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
 
-    delete frame;
+    this->picking_frame->save_to_file(
+                QString("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg"));
     
+    // unbind picking mask
+    this->picking_frame->unbind_this_frame();
+
+    // unlock render
+    gl3d_lock::shared_instance()->render_lock.unlock();
+
     int obj_id = -1;
     if (pixelColor[3] == 0xff) {
         obj_id = pixelColor[0] + (pixelColor[1]<<8) + (pixelColor[2]<<16);
@@ -469,7 +495,12 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+        if (this->objects->contains(obj_id)) {
+            if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+                obj_id = -1;
+            }
+        }
+        else {
             obj_id = -1;
         }
     }
@@ -524,7 +555,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec2 coord_in) {
 #define TEXTURE_HEIGHT 2048
 void scene::gen_shadow_texture() {
     this->shadow_text = new gl3d_general_texture(gl3d_general_texture::GL3D_DEPTH_COMPONENT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-//    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    //    glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_, TEXTURE_WIDTH, TEXTURE_HEIGHT);
 }
 
 void scene::delete_shadow_texture() {
@@ -539,15 +570,15 @@ void scene::draw_shadow_mask() {
     // clean shadow text data
     this->shadow_text->clean_data();
 
-//    this->shadow_text->bind(GL_TEXTURE0);
-//    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
-//    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage
-//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-//    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
-//    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
-//        throw std::runtime_error("save failed");
-//    }
+    //    this->shadow_text->bind(GL_TEXTURE0);
+    //    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
+    //    memset(test_data, 0, 4 * 2048 * 2048);
+    //    gl3d_win_gl_functions->glGetTexImage
+    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+    //    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
+    //    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
+    //        throw std::runtime_error("save failed");
+    //    }
     
     // create a frame for draw shadow
     gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -560,21 +591,21 @@ void scene::draw_shadow_mask() {
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
     GL3D_GL()->glDisable(GL_BLEND);
-//    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
-//    glEnable(GL_POLYGON_OFFSET_FILL);
+    //    gl3d_win_gl_functions->glPolygonOffset(1.0, 0.0);
+    //    glEnable(GL_POLYGON_OFFSET_FILL);
     this->draw(true);
-//    glDisable(GL_POLYGON_OFFSET_FILL);
+    //    glDisable(GL_POLYGON_OFFSET_FILL);
     GL3D_GL()->glEnable(GL_BLEND);
 
-//    this->shadow_text->bind(GL_TEXTURE0);
-//    memset(test_data, 0, 4 * 2048 * 2048);
-//    gl3d_win_gl_functions->glGetTexImage
-//    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-//    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
-//    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
-//        throw std::runtime_error("save failed");
-//    }
-//    free(test_data);
+    //    this->shadow_text->bind(GL_TEXTURE0);
+    //    memset(test_data, 0, 4 * 2048 * 2048);
+    //    gl3d_win_gl_functions->glGetTexImage
+    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
+    //    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
+    //    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
+    //        throw std::runtime_error("save failed");
+    //    }
+    //    free(test_data);
 
     frame->unbind_this_frame();
     delete frame;
