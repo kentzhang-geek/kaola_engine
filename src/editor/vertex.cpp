@@ -39,7 +39,7 @@ bool Vertex::equals(const Vertex &another) const noexcept{
         return true;
     } else {
         for(int index = 0; index != VERTEX_SIZE; ++index){
-            if(this->data[index] != another.data[index]){
+            if(this->data[index] != another.data[index]){                
                 return false;
             }
         }

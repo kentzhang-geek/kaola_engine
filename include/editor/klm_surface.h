@@ -94,7 +94,7 @@ namespace klm{
         static void deleteTessellator();
     private:
         static Surface* targetSurface;
-        static void updateRenderingData(Surface* surface);
+        static void updateRenderingData(Surface* surface, const bool debug = false);
 
     //Tessellation properties and methods
     private:
@@ -105,6 +105,11 @@ namespace klm{
         QVector<GLushort> *connectiveIndicies;
 
         void updateConnectivedData();
+
+        //returns -1 if vertex is not yet added to rendering vertex
+        //returns -2 if vertex is null or illegal
+        //or the index of the vertex if it exists
+        GLushort addRenderingVertex(const Vertex* vertex);
 
     //Surface Properties
     private:        
