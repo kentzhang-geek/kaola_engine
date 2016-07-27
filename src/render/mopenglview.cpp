@@ -3,6 +3,8 @@
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
+#include "utils/gl3d_lock.h"
+
 using namespace std;
 
 // 全局OpenGL Functions
@@ -82,6 +84,11 @@ MOpenGLView::MOpenGLView() : QGLWidget()
 }
 
 void MOpenGLView::paintGL() {
+    // lock render
+    if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
+        return;
+    }
+
     // 设置场景
     GL3D_GET_CURRENT_RENDER_PROCESS()->add_user_object("scene", this->main_scene);
 
@@ -92,6 +99,7 @@ void MOpenGLView::paintGL() {
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
     gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
     glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     glViewport(0, 0,
                this->main_scene->get_width(),
                this->main_scene->get_height());
@@ -100,6 +108,13 @@ void MOpenGLView::paintGL() {
 
     // 后渲染
     GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();
+
+    // release default fbo
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // unlock render
+    gl3d_lock::shared_instance()->render_lock.unlock();
 }
 
 void MOpenGLView::initializeGL() {

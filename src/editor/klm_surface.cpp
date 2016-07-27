@@ -9,7 +9,8 @@ static QMutex tess_mutex;
 
 Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
-    renderVertices(nullptr), renderIndicies(nullptr){
+    renderVertices(nullptr), renderIndicies(nullptr),
+    translate(nullptr){
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
     }
@@ -40,10 +41,10 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
         vertex->setZ(vertex->getZ() - center.z);
 
         GLUtility::positionTransform(*vertex, rotation);
-        localVertices->push_back(vertex);
 
+        localVertices->push_back(vertex);        
         collisionTester->outer().push_back(bg_Point((*point).x, (*point).y));
-    }
+    }    
 
     delete boundingBox;
 
@@ -84,7 +85,13 @@ void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
     for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
         vertex != verticesToParent->end(); ++vertex){
         Vertex* v = new Vertex(**vertex);
-        v->setZ(0.0f);
+        if(translate ==nullptr){
+            v->setZ(0.0f);
+        } else {
+            v->setX(v->getX() - translate->x);
+            v->setY(v->getY() - translate->y);
+            v->setZ(v->getZ() - translate->z);
+        }
         vertices.push_back(v);
     }
 }
@@ -95,7 +102,7 @@ void Surface::getTransFromParent(glm::mat4 &transform) const{
     } else {
         glm::mat4 inheritedTransform;
         parent->getTransFromParent(inheritedTransform);
-        transform = inheritedTransform * *(this->transFromParent);
+        transform = *(this->transFromParent) * inheritedTransform;
     }
 }
 
@@ -202,6 +209,97 @@ Surface* Surface::getSubSurface(const int index) const{
     }
 }
 
+void Surface::setHeightToParent(const GLfloat &height){
+    if(translate != nullptr){
+        delete translate;
+    }
+    translate = new glm::vec3(0.0f, 0.0f, height);
+}
+
+GLfloat Surface::getHeightToParent() const{
+    return translate == nullptr ? 0.0f :
+                                  translate->z;
+}
+
+bool Surface::isConnectedToParent() const{
+    return translate != nullptr;
+}
+
+bool Surface::getConnectiveVerticies(QVector<Vertex *> &connectiveVertices) const{
+    if(!isConnectedToParent()){
+        for(QVector<Vertex*>::iterator vertex = this->connectiveVerticies->begin();
+            vertex != this->connectiveVerticies->end(); ++vertex){
+            connectiveVertices.push_back(new Vertex(**vertex));
+        }
+        return true;
+    }
+
+    return false;
+}
+
+
+void Surface::updateConnectivedData(){
+    if(connectiveIndicies != nullptr){
+        connectiveIndicies->clear();
+        delete connectiveIndicies;
+    }
+    connectiveIndicies = new QVector<GLushort>();
+
+    if(connectiveVerticies != nullptr){
+        for(QVector<Vertex*>::iterator vertex = connectiveVerticies->begin();
+            vertex != connectiveVerticies->end(); ++vertex){
+            delete *vertex;
+        }
+        connectiveVerticies->clear();
+        delete connectiveVerticies;
+    }
+    connectiveVerticies = new QVector<Vertex*>();
+
+    QVector<Vertex*> base;
+    QVector<Vertex*> derived;
+    getVerticiesToParent(base);
+    getVerticiesOnParent(derived);
+
+    int modeBase = base.size();
+
+    Vertex* baseVertex = new Vertex(*base[0]);
+    Vertex* derivedVertex = new Vertex(*derived[0]);
+
+    baseVertex->setW(0.0);
+    baseVertex->setH(0.0);
+    derivedVertex->setW(0.0);
+    derivedVertex->setH(derivedVertex->distance(*baseVertex));
+
+    connectiveVerticies->push_back(baseVertex);
+    connectiveVerticies->push_back(derivedVertex);
+
+    for(int index = 1; index != base.size(); ++index){
+        Vertex* v1 = new Vertex(*base[index]);
+        Vertex* v2 = new Vertex(*derived[index]);
+
+        v1->setW(baseVertex->distance(*v1));
+        v1->setH(0.0);
+        v2->setW(derivedVertex->distance(*v2));
+        v2->setH(v2->distance(*v1));
+
+        connectiveVerticies->push_back(v1);
+        connectiveVerticies->push_back(v2);
+
+        baseVertex = v1;
+        derivedVertex = v2;
+    }
+
+    for(int index = 1; index < base.size(); index+=2){
+        connectiveIndicies->push_back(index);
+        connectiveIndicies->push_back((index + 3) % modeBase);
+        connectiveIndicies->push_back((index + 2) % modeBase);
+        connectiveIndicies->push_back(index);
+        connectiveIndicies->push_back((index + 1) % modeBase);
+        connectiveIndicies->push_back((index + 3) % modeBase);
+    }
+
+}
+
 void Surface::updateRenderingData(Surface *surface){
     tess_mutex.lock();
 
@@ -216,6 +314,8 @@ void Surface::updateRenderingData(Surface *surface){
                         (void (__stdcall*)())     tessVertex);
         gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA,
                         (void (__stdcall*)(void)) tessEdge);
+        gluTessCallback(tess, GLU_TESS_ERROR,
+                        (void (__stdcall*)(void)) tessError);
     }
 
     targetSurface = surface;
@@ -310,6 +410,13 @@ void Surface::deleteVertices(QVector<Vertex*> *vertices) {
         vertices->empty();
         delete vertices;
     }    
+}
+
+void Surface::tessError(GLenum type){
+    cout<<"Tessellation Error has been called"<<endl;
+    const GLubyte *errStr;
+    errStr = gluErrorString(type);
+    cout<<"[ERROR] : "<<errStr<<endl;
 }
 
 GLUtesselator* Surface::tess = nullptr;
