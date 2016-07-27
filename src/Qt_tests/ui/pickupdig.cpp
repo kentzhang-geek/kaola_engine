@@ -1,7 +1,9 @@
 #include "PickupDig.h"
 
-PickupDig::PickupDig(QWidget* parent, int x, int y)
+PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene *sc)
 {
+    main_scene = sc;
+    this->pickUpObjID = pickUpObjID;
     this->setParent(parent);
     this->setAutoFillBackground(true);
     QPalette palette;
@@ -12,6 +14,11 @@ PickupDig::PickupDig(QWidget* parent, int x, int y)
     setGeometry(x + 160, y + 60, 0, 0);
     //隐藏标题栏
     setWindowFlags(Qt::FramelessWindowHint);
+
+    //根据拾取到的objid获取模型obj
+    pickUpObj = this->main_scene->get_obj(pickUpObjID);
+    wall = (gl3d::gl3d_wall *)pickUpObj;
+
     initBasicInfo();                                    //初始化信息窗体
 
     QVBoxLayout* layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
@@ -27,9 +34,10 @@ void PickupDig::initBasicInfo()
 {
     baseWidget = new QWidget;                           //实例化baseWidget
 
-   //控制按钮
+    //控制按钮
     QPushButton *delButton = new QPushButton();
     delButton->setText("删除");
+    connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
     QPushButton *splitButton = new QPushButton();
     splitButton->setText("拆分");
 
@@ -39,29 +47,37 @@ void PickupDig::initBasicInfo()
     slider->setMinimum(1);
     slider->setMaximum(20);
     slider->setValue(10);
-    QSpinBox *spinBox = new QSpinBox;
+    QDoubleSpinBox *spinBox = new QDoubleSpinBox;
     spinBox->setRange(1, 20);
-    QLabel *unitLabel = new QLabel(tr("m"));
+    QLabel *unitLabel = new QLabel(tr("M"));
 
     //    厚度控件
     QLabel *nameLabel2 = new QLabel(tr("厚度"));         //定义窗体部件
-    QSlider *slider2 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
-    slider2->setMinimum(1);
-    slider2->setMaximum(20);
-    slider2->setValue(10);
-    QSpinBox *spinBox2 = new QSpinBox;
-    spinBox2->setRange(1, 20);
-    QLabel *unitLabel2 = new QLabel(tr("m"));
+    slider2 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
+    slider2->setMinimum(0.01 * 100);
+    slider2->setMaximum(1.00 * 100);
+    slider2->setValue(wall->get_thickness() * 100);
+    spinBox2 = new QDoubleSpinBox;
+    spinBox2->setRange(0.01, 1.00);
+    spinBox2->setValue(wall->get_thickness());
+    spinBox2->setSingleStep(0.01);
+    QLabel *unitLabel2 = new QLabel(tr("M"));
+    connect(spinBox2, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider2()));
+    connect(slider2, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox2()));
 
     //    高度控件
     QLabel *nameLabel3 = new QLabel(tr("高度"));         //定义窗体部件
-    QSlider *slider3 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
-    slider3->setMinimum(1);
-    slider3->setMaximum(20);
-    slider3->setValue(10);
-    QSpinBox *spinBox3 = new QSpinBox;
-    spinBox3->setRange(1, 20);
-    QLabel *unitLabel3 = new QLabel(tr("m"));
+    slider3 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
+    slider3->setMinimum(0.10 * 100);
+    slider3->setMaximum(2.80 * 100);
+    slider3->setValue(wall->get_hight() * 100);
+    spinBox3 = new QDoubleSpinBox;
+    spinBox3->setRange(0.10, 2.80);
+    spinBox3->setValue(wall->get_hight());
+    spinBox3->setSingleStep(0.01);
+    QLabel *unitLabel3 = new QLabel(tr("M"));
+    connect(spinBox3, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider3()));
+    connect(slider3, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox3()));
 
 
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
@@ -95,4 +111,35 @@ void PickupDig::initBasicInfo()
     vboxLayout->addLayout(hlayout3);
 
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
+}
+
+void PickupDig::slotDoubleSpinbox_Slider2() {
+    slider2->setValue((int)(spinBox2->value()*100));
+
+    //改变墙厚度
+    wall->set_thickness(float(spinBox2->value()));
+    wall->calculate_mesh();
+}
+void PickupDig::slotSlider_DoubleSpinbox2() {
+    spinBox2->setValue((double)(slider2->value())/100);
+}
+
+void PickupDig::slotDoubleSpinbox_Slider3() {
+    slider3->setValue((int)(spinBox3->value()*100));
+
+    //改变墙高度
+    wall->set_hight(float(spinBox3->value()));
+    wall->calculate_mesh();
+}
+void PickupDig::slotSlider_DoubleSpinbox3() {
+    spinBox3->setValue((double)(slider3->value())/100);
+}
+
+
+//删除拾取的obj对象
+void PickupDig::on_delete_obj(){
+    this->main_scene->delete_obj(pickUpObjID);
+    delete pickUpObj;
+    delete this;
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }

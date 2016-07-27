@@ -234,15 +234,8 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     vr->coord_ground(glm::vec2(((float)x) / this->width(),
                                ((float)y) / this->height()),
                      pick, 0.0);
-    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.2, 2.8);
+    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.12, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
-
-    //删除拾取到的墙    
-    need_capture = true;
-    int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(x, y);
-    gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
-    this->main_scene->delete_obj(get_wall_obj_id);
-    delete get_wall_obj;
 }
 
 
@@ -255,16 +248,16 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
     //左键按下事件
     if(event->button() == Qt::LeftButton) {
-        //拾取
+        //拾取并新建选项框
         if(now_state == gl3d::gl3d_global_param::normal) {
-            //            int get_wall_obj_id = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
-            //            gl3d::object *get_wall_obj = this->main_scene->get_obj(get_wall_obj_id);
-
-            //            cout << "click objid: " << get_wall_obj_id << endl;
-
-            puDig = new PickupDig(this->parentWidget(), event->x(), event->y());
-            puDig->show();
-            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
+            need_capture = true;
+            pickUpObjID = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+            if(pickUpObjID > 0) {
+                cout << "click objid: " << pickUpObjID << endl;
+                puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene);
+                puDig->show();
+                gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
+            }
         }
 
         //取消拾取
@@ -333,8 +326,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     }
 
     if(event->buttons()&Qt::LeftButton) {
-        //        cout << "left move: " << event->x() << ", " << event->y() << endl;
-
+        cout << "left move: " << event->x() << ", " << event->y() << endl;
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
             cout << float(event->x() - this->tmp_point_x) / 100 << endl;
@@ -344,15 +336,15 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
             setCursor(Qt::SizeAllCursor);
         }
     } else if(event->buttons()&Qt::LeftButton) {
-        cout << "right move: " << event->x() << ", " << event->y() << endl;
+        //        cout << "right move: " << event->x() << ", " << event->y() << endl;
     } else if(event->buttons()&Qt::LeftButton) {
-        cout << "centre move: " << event->x() << ", " << event->y() << endl;
+        //        cout << "centre move: " << event->x() << ", " << event->y() << endl;
     }
 }
 
 //鼠标松开事件
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
-    cout << "loosen: " << event->x() << ", " << event->y() << endl;
+    //    cout << "loosen: " << event->x() << ", " << event->y() << endl;
     if(gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawwall) {
         setCursor(Qt::ArrowCursor);
     }

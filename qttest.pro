@@ -80,7 +80,6 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-    ui/event.h \
     include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     src/Qt_tests/drawhomewin.h \
