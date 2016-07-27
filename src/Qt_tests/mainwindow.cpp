@@ -58,7 +58,7 @@ gl3d::surface_object * test_obj3() {
     obj->set_repeat(true);
 
     gl3d::mesh * m = obj->get_meshes()->at(2);
-    obj->get_meshes()->remove(1);
+//    obj->get_meshes()->remove(1);
 //    obj->get_meshes()->remove(2);
     cout << "we have " << obj->get_meshes()->size() << endl;
 

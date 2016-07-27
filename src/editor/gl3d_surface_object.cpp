@@ -32,6 +32,7 @@ void surface_object::iter_surface(Surface *sfc) {
     int pts_len;
     gl3d::obj_points * pts = NULL;
     sfc->getRenderingVertices(tmp_data, pts_len);
+    pts_len = pts_len / klm::Vertex::VERTEX_SIZE;
     pts = (gl3d::obj_points *)
             malloc(sizeof(gl3d::obj_points) * pts_len);
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
