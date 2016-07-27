@@ -1,4 +1,5 @@
 #include "editor/gl3d_wall.h"
+#include "utils/gl3d_math.h"
 
 using namespace std;
 using namespace gl3d;
@@ -168,6 +169,22 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
 }
 
 bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
+    float dis = glm::length(wall1->start_point - wall2->start_point);
+    dis = dis < (glm::length(wall1->start_point - wall2->end_point)) ?
+               dis : (glm::length(wall1->start_point - wall2->end_point));
+    dis = dis < (glm::length(wall1->end_point - wall2->end_point)) ?
+               dis : (glm::length(wall1->end_point - wall2->end_point));
+    dis = dis < (glm::length(wall1->end_point - wall2->start_point)) ?
+               dis : (glm::length(wall1->end_point - wall2->start_point));
+    if (dis > this->wall_combine_distance) { // check is there near points
+        return false;
+    }
+
+    float st_dis_tmp = glm::min(glm::length(wall1->start_point - wall2->end_point),
+                                glm::length(wall1->start_point - wall2->start_point));
+    float ed_dis_tmp = glm::min(glm::length(wall1->end_point - wall2->end_point),
+                                glm::length(wall1->end_point - wall2->start_point));
+
 
     return false;
 }

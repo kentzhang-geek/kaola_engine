@@ -53,6 +53,7 @@ public:
 
     void get_coord_on_screen(scene * main_scene, glm::vec2 &start_pos, glm::vec2 &end_pos);
 
+    static const float wall_combine_distance = 1.0f;
     static bool combine(gl3d_wall * wall1, gl3d_wall * wall2);
 
     gl3d::obj_points bottom_pts[4];

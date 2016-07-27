@@ -44,6 +44,13 @@ bool gl3d::math::get_cross(const line &l1,
 }
 
 #if 0
+#include <QString>
+#define GL3D_TEST(...) if (!(__VA_ARGS__)) { \
+    QString throw_out = QString::asprintf("test failed at %s : %d \n", __FILE__, __LINE__);\
+    throw_out += QString::asprintf("expression is %s", ##__VA_ARGS__); \
+    throw throw_out; \
+    }
+
 #include <QtTest/QtTest>
 void main() {
     glm::vec2 p1(0.0, 1.0);
@@ -51,10 +58,40 @@ void main() {
     glm::vec2 p3(0.0, 0.0);
     glm::vec2 p4(0.5, 0.5);
     glm::vec2 p5(0.0, 2.0);
+    glm::vec2 p6(3.0, 3.0);
+    glm::vec2 p7(3.0, 0.0);
+
+    glm::vec2 p8(4.0, 1.0);
+    glm::vec2 p9(5.0, 1.0);
+
+    glm::vec2 p10(1.0, 2.0);
 
     line l1(p5, p2);
     line l2(p3, p4);
+    line l3(p1, p2);
+    line l4(p6, p7);
+    line l5(p8, p9);
+
+    line l6(p1, p3);
+    line l7(p6, p7);
+
+    line l8(p1, p2);
+    line l9(p8, p9);
+
+    line l10(p2, p3);
+    line l11(p1, p10);
     glm::vec2 res;
-    bool ib = gl3d::math::get_cross(l1, l2, res);
+    bool ib = gl3d::math::get_cross(l2, l1, res);
+    GL3D_TEST(ib == true);
+    ib = gl3d::math::get_cross(l3, l4, res);
+    GL3D_TEST(ib == true);
+    ib = gl3d::math::get_cross(l5, l4, res);
+    GL3D_TEST(ib == true);
+    ib = gl3d::math::get_cross(l6, l7, res);
+    GL3D_TEST(ib == false);
+    ib = gl3d::math::get_cross(l8, l9, res);
+    GL3D_TEST(ib == false);
+    ib = gl3d::math::get_cross(l10, l11, res);
+    GL3D_TEST(ib == false);
 }
 #endif
