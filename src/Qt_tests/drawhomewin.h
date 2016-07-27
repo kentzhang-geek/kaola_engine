@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QShowEvent>
+#include "ui/drawoption.h"
 
 namespace Ui {
 class drawhomewin;
@@ -23,9 +24,11 @@ private slots:
 
     void on_tempdraw_clicked();
 
-    void on_drawwall_b_clicked(bool checked);
+    void on_drawwall_b_stateChanged(int arg1);
+
 private:
     Ui::drawhomewin *ui;
+    DrawOption *dop;
 
 protected:
     void showEvent(QShowEvent *ev);

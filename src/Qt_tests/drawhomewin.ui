@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1351</width>
-    <height>700</height>
+    <height>701</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="MOpenGLView" name="OpenGLCanvas">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>220</x>
      <y>30</y>
-     <width>1211</width>
+     <width>1121</width>
      <height>661</height>
     </rect>
    </property>
@@ -31,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>141</width>
+     <width>221</width>
      <height>701</height>
     </rect>
    </property>
@@ -50,25 +50,12 @@ background: rgb(255, 255, 255)
     <attribute name="title">
      <string>Tab 1</string>
     </attribute>
-    <widget class="QCheckBox" name="drawwall_b">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>140</y>
-       <width>53</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>画 墙</string>
-     </property>
-    </widget>
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>121</width>
+       <width>191</width>
        <height>111</height>
       </rect>
      </property>
@@ -92,6 +79,39 @@ background: rgb(255, 255, 255)
       </item>
      </layout>
     </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>191</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="drawwall_b">
+        <property name="text">
+         <string>画墙</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="drawhome_b">
+        <property name="text">
+         <string>画房间</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="drawarea_b">
+        <property name="text">
+         <string>画区域</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -102,9 +122,9 @@ background: rgb(255, 255, 255)
   <widget class="QWidget" name="toolWidget" native="true">
    <property name="geometry">
     <rect>
-     <x>139</x>
+     <x>220</x>
      <y>0</y>
-     <width>1201</width>
+     <width>1131</width>
      <height>31</height>
     </rect>
    </property>
@@ -117,9 +137,9 @@ background: rgb(255, 255, 255)
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>-1</y>
-      <width>1201</width>
+      <x>10</x>
+      <y>0</y>
+      <width>1111</width>
       <height>31</height>
      </rect>
     </property>
