@@ -333,6 +333,8 @@ void Surface::updateRenderingData(Surface *surface){
                         (void (__stdcall*)(void)) tessEdge);
         gluTessCallback(tess, GLU_TESS_ERROR,
                         (void (__stdcall*)(void)) tessError);
+        gluTessCallback(tess, GLU_TESS_COMBINE,
+                        (GLvoid (*) ()) tessCombine) ;
     }
 
     targetSurface = surface;
@@ -414,7 +416,8 @@ void Surface::tessVertex(const GLvoid *data){
         }
         index++;
     }
-    cout<<"vertex is not found in targetSurface->renderVertices()"<<endl;
+    targetSurface->renderVertices->push_back(new Vertex(vertexData[0],vertexData[1], vertexData[2], vertexData[3], vertexData[4]));
+    targetSurface->renderIndicies->push_back(targetSurface->renderVertices->size() -1);
 }
 
 void Surface::deleteVertices(QVector<Vertex*> *vertices) {
@@ -427,6 +430,37 @@ void Surface::deleteVertices(QVector<Vertex*> *vertices) {
         vertices->empty();
         delete vertices;
     }    
+}
+
+void Surface::tessCombine(GLdouble coords[3],
+                          GLdouble *vertex_data[4],
+                          GLfloat weight[4], GLdouble **dataOut){
+    GLdouble *vertex;
+    int i;
+
+    vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
+    cout << "combine coord" << coords[0] << "," << coords[1] << "," << coords[2] << endl;
+//    cout << weight[0] << "," << weight[1] << "," << weight[2] << "," << weight[3] << endl;
+//    cout << vertex_data[0] << "," << vertex_data[1] << "," << vertex_data[2] << "," << vertex_data[3] << endl;
+    vertex[0] = coords[0];
+    vertex[1] = coords[1];
+    vertex[2] = coords[2];
+    for (i = 3; i < 5; i++) {
+        vertex[i] =  weight[0] * vertex_data[0][i];
+        if  (weight[1] > 0)
+            vertex[i] += weight[1] * vertex_data[1][i];
+        if  (weight[2] > 0)
+            vertex[i] += weight[2] * vertex_data[2][i];
+        if  (weight[3] > 0)
+            vertex[i] += weight[3] * vertex_data[3][i];
+    }
+
+    //    for (int i = 3; i < 5; i++)
+//           vertex[i] =   weight[0] * vertex_data[0][i]
+//                       + weight[1] * vertex_data[1][i]
+//                       + weight[2] * vertex_data[2][i]
+//                       + weight[3] * vertex_data[3][i];
+    *dataOut = vertex;
 }
 
 void Surface::tessError(GLenum type){

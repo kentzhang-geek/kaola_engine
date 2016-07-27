@@ -55,6 +55,11 @@ void surface_object::iter_surface(Surface *sfc) {
     int idx_len;
     sfc->getRenderingIndicies(idxes, idx_len);
 
+    if (idxes == NULL) {
+        cout << "aaaaa";
+
+    }
+
     // create new mesh
     gl3d::mesh * m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
     m->set_material_index(this->tmp_idx++);

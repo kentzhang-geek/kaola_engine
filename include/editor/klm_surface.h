@@ -124,6 +124,9 @@ namespace klm{
 
     //sub surface and related proerties
     private:
+        static void tessCombine(GLdouble coords[3],
+                                GLdouble *vertex_data[4],
+                                GLfloat weight[4], GLdouble **dataOut);
         static void tessBegin(GLenum type);
         static void tessVertex(const GLvoid *data);
         static void tessEnd();

@@ -40,12 +40,14 @@ gl3d::surface_object * test_obj3() {
     }
 
     QVector<glm::vec3> subCoords2;
-    subCoords2.push_back(glm::vec3(-2.0f, -0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-1.5f, -0.5f, 0.0f));
     subCoords2.push_back(glm::vec3(-1.0f, -0.5f, 0.0f));
     subCoords2.push_back(glm::vec3(-1.0f,  0.5f, 0.0f));
-    subCoords2.push_back(glm::vec3(-2.0f,  0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-1.5f,  0.5f, 0.0f));
     if(surface->addSubSurface(subCoords2)){
         std::cout<<"SubSurface added"<<std::endl;
+    } else {
+        std::cout<<"Failed to add sub-surface -2"<<std::endl;
     }
 
     gl3d::surface_object * obj = new gl3d::surface_object(surface);
@@ -54,6 +56,15 @@ gl3d::surface_object * test_obj3() {
     obj->get_mtls()->insert(1, new gl3d::gl3d_material("_35.jpg"));
     obj->get_mtls()->insert(2, new gl3d::gl3d_material("___101.jpg"));
     obj->set_repeat(true);
+
+    gl3d::mesh * m = obj->get_meshes()->at(2);
+    obj->get_meshes()->remove(1);
+//    obj->get_meshes()->remove(2);
+    cout << "we have " << obj->get_meshes()->size() << endl;
+
+    for (int i = 0; i < m->get_num_pts(); i++) {
+        cout << "pts No." << i << " is" << m->get_points_data()[i].vertex_x << ", " << m->get_points_data()[i].vertex_y << ", " << m->get_points_data()[i].vertex_z << endl;
+    }
 
     return obj;
 }
