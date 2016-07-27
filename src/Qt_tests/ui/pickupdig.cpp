@@ -1,7 +1,9 @@
 #include "PickupDig.h"
 
-PickupDig::PickupDig(QWidget* parent, int x, int y)
+PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene *sc)
 {
+    main_scene = sc;
+    this->pickUpObjID = pickUpObjID;
     this->setParent(parent);
     this->setAutoFillBackground(true);
     QPalette palette;
@@ -9,31 +11,135 @@ PickupDig::PickupDig(QWidget* parent, int x, int y)
     this->setPalette(palette);
 
     //定义窗口坐标
-    setGeometry(x + 180, y + 30, 0, 0);
+    setGeometry(x + 160, y + 60, 0, 0);
     //隐藏标题栏
     setWindowFlags(Qt::FramelessWindowHint);
+
+    //根据拾取到的objid获取模型obj
+    pickUpObj = this->main_scene->get_obj(pickUpObjID);
+    wall = (gl3d::gl3d_wall *)pickUpObj;
+
     initBasicInfo();                                    //初始化信息窗体
 
     QVBoxLayout* layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
     layout->addWidget(baseWidget);                      //加入baseWidget
     layout->setSizeConstraint(QLayout::SetFixedSize);   //设置窗体缩放模式，此处设置为固定大小
     layout->setSpacing(6);                              //窗口部件之间间隔大小
+    layout->setMargin(5);
     setLayout(layout);                                  //加载到窗体上
 }
 
+//墙
 void PickupDig::initBasicInfo()
 {
     baseWidget = new QWidget;                           //实例化baseWidget
-    QLabel* nameLabel = new QLabel(tr("Name"));         //定义窗体部件
 
-    QFormLayout* formLayout = new QFormLayout;          //表单布局方法
+    //控制按钮
+    QPushButton *delButton = new QPushButton();
+    delButton->setText("删除");
+    connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
+    QPushButton *splitButton = new QPushButton();
+    splitButton->setText("拆分");
+
+    //    长度控件
+    QLabel *nameLabel = new QLabel(tr("长度"));         //定义窗体部件
     QSlider *slider = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
-    slider->setMinimum(0);
-    slider->setMaximum(100);
-    slider->setValue(50);
-    formLayout->addRow(nameLabel, slider);
+    slider->setMinimum(1);
+    slider->setMaximum(20);
+    slider->setValue(10);
+    QDoubleSpinBox *spinBox = new QDoubleSpinBox;
+    spinBox->setRange(1, 20);
+    QLabel *unitLabel = new QLabel(tr("M"));
+
+    //    厚度控件
+    QLabel *nameLabel2 = new QLabel(tr("厚度"));         //定义窗体部件
+    slider2 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
+    slider2->setMinimum(0.01 * 100);
+    slider2->setMaximum(1.00 * 100);
+    slider2->setValue(wall->get_thickness() * 100);
+    spinBox2 = new QDoubleSpinBox;
+    spinBox2->setRange(0.01, 1.00);
+    spinBox2->setValue(wall->get_thickness());
+    spinBox2->setSingleStep(0.01);
+    QLabel *unitLabel2 = new QLabel(tr("M"));
+    connect(spinBox2, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider2()));
+    connect(slider2, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox2()));
+
+    //    高度控件
+    QLabel *nameLabel3 = new QLabel(tr("高度"));         //定义窗体部件
+    slider3 = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
+    slider3->setMinimum(0.10 * 100);
+    slider3->setMaximum(2.80 * 100);
+    slider3->setValue(wall->get_hight() * 100);
+    spinBox3 = new QDoubleSpinBox;
+    spinBox3->setRange(0.10, 2.80);
+    spinBox3->setValue(wall->get_hight());
+    spinBox3->setSingleStep(0.01);
+    QLabel *unitLabel3 = new QLabel(tr("M"));
+    connect(spinBox3, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider3()));
+    connect(slider3, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox3()));
+
+
+    QHBoxLayout *hlayoutButtons = new QHBoxLayout;
+    hlayoutButtons->setContentsMargins(0, 0, 0, 10);
+    hlayoutButtons->addWidget(delButton);
+    hlayoutButtons->addWidget(splitButton);
+
+    QHBoxLayout *hlayout1 = new QHBoxLayout;
+    hlayout1->addWidget(nameLabel);
+    hlayout1->addWidget(slider);
+    hlayout1->addWidget(spinBox);
+    hlayout1->addWidget(unitLabel);
+
+    QHBoxLayout *hlayout2 = new QHBoxLayout;
+    hlayout2->addWidget(nameLabel2);
+    hlayout2->addWidget(slider2);
+    hlayout2->addWidget(spinBox2);
+    hlayout2->addWidget(unitLabel2);
+
+    QHBoxLayout *hlayout3 = new QHBoxLayout;
+    hlayout3->addWidget(nameLabel3);
+    hlayout3->addWidget(slider3);
+    hlayout3->addWidget(spinBox3);
+    hlayout3->addWidget(unitLabel3);
+
 
     QVBoxLayout* vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
-    vboxLayout->addLayout(formLayout);                  //顶层窗体加入表单
+    vboxLayout->addLayout(hlayoutButtons);
+    vboxLayout->addLayout(hlayout1);
+    vboxLayout->addLayout(hlayout2);
+    vboxLayout->addLayout(hlayout3);
+
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
+}
+
+void PickupDig::slotDoubleSpinbox_Slider2() {
+    slider2->setValue((int)(spinBox2->value()*100));
+
+    //改变墙厚度
+    wall->set_thickness(float(spinBox2->value()));
+    wall->calculate_mesh();
+}
+void PickupDig::slotSlider_DoubleSpinbox2() {
+    spinBox2->setValue((double)(slider2->value())/100);
+}
+
+void PickupDig::slotDoubleSpinbox_Slider3() {
+    slider3->setValue((int)(spinBox3->value()*100));
+
+    //改变墙高度
+    wall->set_hight(float(spinBox3->value()));
+    wall->calculate_mesh();
+}
+void PickupDig::slotSlider_DoubleSpinbox3() {
+    spinBox3->setValue((double)(slider3->value())/100);
+}
+
+
+//删除拾取的obj对象
+void PickupDig::on_delete_obj(){
+    this->main_scene->delete_obj(pickUpObjID);
+    delete pickUpObj;
+    delete this;
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }

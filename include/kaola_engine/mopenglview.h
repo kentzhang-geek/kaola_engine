@@ -81,6 +81,7 @@ private:
     int tmp_point_x, tmp_point_y;
     int wall_temp_id;
     PickupDig *puDig;
+    int pickUpObjID;
 
     void openglDrawWall(const int x, const int y);
 };
