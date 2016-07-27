@@ -10,6 +10,9 @@
 
 #include "editor/gl3d_wall.h"
 #include "editor/klm_surface.h"
+#include "utils/gl3d_path_config.h"
+
+#include "editor/gl3d_surface_object.h"
 
 using namespace std;
 using namespace klm;
@@ -19,91 +22,7 @@ extern MOpenGLView * one_view;
 QTextEdit * qtout = NULL;
 static gl3d_wall * wall = NULL;
 
-
-gl3d::object * test_obj() {
-    gl3d::obj_points pts[8];
-    memset(pts, 0, sizeof(pts));
-
-    GLfloat tmp[8][5] = {
-    {-2.69258,-2.5,0, 0, 0},
-    {2.69258,-2.5,0, 5.38516, 0},
-    {2.69258,2.5,0, 5.38516, 5},
-    {-2.69258,2.5,0, 0, 5},
-    {-0.5,-0.5,0, 2.19258, 2},
-    {0.5,-0.5,0, 3.19258, 2},
-    {0.5,0.5,0, 3.19258, 3},
-    {-0.5,0.5,0, 2.19258, 3}};
-
-    for (int i = 0; i < 8; i++) {
-        pts[i].vertex_x = tmp[i][0];
-        pts[i].vertex_y = tmp[i][1];
-        pts[i].vertex_z = tmp[i][2];
-        pts[i].texture_x = tmp[i][3];
-        pts[i].texture_y = tmp[i][4];
-    }
-
-    GLushort indexes[24] = {
-        0,4,3,
-        4,0,1,
-        4,1,5,
-        5,1,6,
-        3,7,2,
-        7,3,4,
-        2,7,6,
-        2,6,1
-    };
-
-    gl3d::object * obj = new gl3d::object(pts, 8, indexes, 24);
-
-    obj->get_mtls()->clear();
-    obj->get_mtls()->insert(0, new gl3d::gl3d_material("Color_A1.jpg"));
-    obj->set_repeat(true);
-
-    obj->get_property()->scale_unit = gl3d::scale::m;
-    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
-    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
-
-    return obj;
-}
-
-gl3d::object * test_obj2() {
-    gl3d::obj_points pts[8];
-    memset(pts, 0, sizeof(pts));
-
-    GLfloat tmp[4][5] = {
-        {-0.5,-0.5,-5.87747e-39, 0, 0},
-        {0.5,-0.5,-5.87747e-39, 1, 0},
-        {0.5,0.5,-5.87747e-39, 1, 1},
-        {-0.5,0.5,-5.87747e-39, 0, 1}}
-  ;
-
-    for (int i = 0; i < 4; i++) {
-        pts[i].vertex_x = tmp[i][0];
-        pts[i].vertex_y = tmp[i][1];
-        pts[i].vertex_z = tmp[i][2];
-        pts[i].texture_x = tmp[i][3];
-        pts[i].texture_y = tmp[i][4];
-    }
-
-    GLushort indexes[6] = {
-        1,3,0,
-        3,1,2,
-    };
-
-    gl3d::object * obj = new gl3d::object(pts, 4, indexes, 6);
-
-    obj->get_mtls()->clear();
-    obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
-    obj->set_repeat(true);
-
-    obj->get_property()->scale_unit = gl3d::scale::m;
-    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
-    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
-
-    return obj;
-}
-
-gl3d::object * test_obj3() {
+gl3d::surface_object * test_obj3() {
     QVector<glm::vec3> coords;
     coords.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
     coords.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
@@ -120,41 +39,22 @@ gl3d::object * test_obj3() {
         std::cout<<"SubSurface added"<<std::endl;
     }
 
-    GLfloat * tmp_data = NULL;
-    int pts_len;
-    gl3d::obj_points * pts = NULL;
-    surface->getRenderingVertices(tmp_data, pts_len);
-    pts = (gl3d::obj_points *)
-            malloc(sizeof(gl3d::obj_points) * pts_len);
-    memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
-    for (int i = 0; i < pts_len; i++) {
-        pts[i].vertex_x = tmp_data[i * 5 + 0];
-        pts[i].vertex_y = tmp_data[i * 5 + 1];
-        pts[i].vertex_z = tmp_data[i * 5 + 2];
-        pts[i].texture_x = tmp_data[i * 5 + 3];
-        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+    QVector<glm::vec3> subCoords2;
+    subCoords.push_back(glm::vec3(-2.5f, -0.5f, 0.0f));
+    subCoords.push_back(glm::vec3(-1.5f, -0.5f, 0.0f));
+    subCoords.push_back(glm::vec3(-1.5f,  0.5f, 0.0f));
+    subCoords.push_back(glm::vec3(-2.5f,  0.5f, 0.0f));
+    if(surface->addSubSurface(subCoords2)){
+        std::cout<<"SubSurface added"<<std::endl;
     }
 
-    GLushort * idxes = NULL;
-    int idx_len;
-    surface->getRenderingIndicies(idxes, idx_len);
+    gl3d::surface_object * obj = new gl3d::surface_object(surface);
 
-    gl3d::object * obj = new gl3d::object(pts, pts_len, idxes, idx_len);
-
-    free(pts);
-    free(idxes);
-
-//    auto sub = surface->getSubSurface(0);
-    obj->get_mtls()->clear();
     obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
     obj->get_mtls()->insert(1, new gl3d::gl3d_material("_35.jpg"));
+    obj->get_mtls()->insert(2, new gl3d::gl3d_material("___101.jpg"));
     obj->set_repeat(true);
 
-    obj->get_property()->scale_unit = gl3d::scale::m;
-    obj->get_property()->authority = GL3D_OBJ_ENABLE_ALL;
-    obj->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
-
-    delete surface;
     return obj;
 }
 
@@ -173,7 +73,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     QMainWindow::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo");
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数
@@ -183,7 +83,7 @@ void MainWindow::showEvent(QShowEvent * ev) {
     cout << this->ui->openGLWidget->height() << "vs scene" << this->ui->openGLWidget->main_scene->get_height() << endl;
     this->ui->openGLWidget->main_scene->init(&config);
     this->ui->openGLWidget->main_scene->watcher->position(glm::vec3(0.0, 1.8, 0.0));
-    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(2.0, -1.2, 4.0));
+    this->ui->openGLWidget->main_scene->watcher->lookat(glm::vec3(0.0, 0.0, 1.0));
     this->ui->openGLWidget->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->openGLWidget->main_scene->set_width(
@@ -310,5 +210,6 @@ void MainWindow::on_pushButton_7_clicked()
 {
 //    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(6666, test_obj()));
 //    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(8888, test_obj2()));
-    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(9999, test_obj3()));
+    auto vobj = test_obj3();
+    this->ui->openGLWidget->main_scene->add_obj(QPair<int , object *>(9999, vobj));
 }

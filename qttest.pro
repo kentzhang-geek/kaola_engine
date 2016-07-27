@@ -42,10 +42,13 @@ SOURCES += \
     src/render/gl3d_general_light_source.cpp \
     src/render/light_system/simple_directional_light.cpp \
     src/editor/gl3d_wall.cpp \
-    src/editor/klm_surface.cpp \
     src/editor/bounding_box.cpp \
+    src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
-    src/editor/vertex.cpp
+    src/editor/klm_surface.cpp \
+    src/utils/gl3d_lock.cpp \
+    src/utils/gl3d_math.cpp \
+    src/editor/gl3d_surface_object.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -81,8 +84,12 @@ HEADERS  += \
     include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     include/editor/gl_utility.h \
-    include/editor/vertex.h
-    include/editor/gl3d_wall.h
+    include/editor/vertex.h \
+    include/utils/gl3d_path_config.h \
+    include/editor/gl3d_wall.h \
+    include/utils/gl3d_lock.h \
+    include/utils/gl3d_math.h \
+    include/editor/gl3d_surface_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui

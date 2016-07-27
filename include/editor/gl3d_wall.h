@@ -31,6 +31,7 @@
 #include "kaola_engine/gl3d_general_light_source.h"
 #include "kaola_engine/gl3d_mesh.h"
 #include "kaola_engine/gl3d_object.h"
+#include "kaola_engine/gl3d_scene.h"
 
 using namespace std;
 
@@ -45,8 +46,20 @@ public:
     GL3D_UTILS_PROPERTY(end_point, glm::vec2);
     GL3D_UTILS_PROPERTY(thickness, float);
     GL3D_UTILS_PROPERTY(hight, float);
+    GL3D_UTILS_PROPERTY(start_point_fixed, bool);
+    GL3D_UTILS_PROPERTY(end_point_fixed, bool);
 
     void calculate_mesh();
+
+    void get_coord_on_screen(scene * main_scene, glm::vec2 &start_pos, glm::vec2 &end_pos);
+
+    static bool combine(gl3d_wall * wall1, gl3d_wall * wall2);
+
+    gl3d::obj_points bottom_pts[4];
+
+    float get_length();
+    bool set_length(float len);
+
 private:
     void release_last_data();
     void init();

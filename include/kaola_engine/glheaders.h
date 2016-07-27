@@ -9,7 +9,7 @@
 #include <QtOpenGL>
 #include <QOpenGLFunctions_4_1_Core>
 
-#ifdef __WIN32
+#ifdef _WIN32
 #include <gl/GLU.h>
 #else
 #include <glu.h>
