@@ -37,6 +37,8 @@ void gl3d_wall::init() {
     this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
             | GL3D_OBJ_ENABLE_PICKING;
+    this->start_point_fixed = false;
+    this->end_point_fixed = false;
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {
@@ -165,7 +167,34 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
     end_pos = glm::vec2(coord_out.x, coord_out.y);
 }
 
-bool gl3d_wall::process_corner(gl3d_wall * wall1, gl3d_wall * wall2) {
+bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
 
     return false;
+}
+
+float gl3d_wall::get_length() {
+    glm::vec2 v = this->end_point - this->start_point;
+    return glm::length(v);
+}
+
+bool gl3d_wall::set_length(float len) {
+    if (this->start_point_fixed && this->end_point_fixed) {
+        return false; // both two side fixed , so set length failed
+    }
+
+    if (this->start_point_fixed) {
+        // start point fixed , change end point
+        glm::vec2 dir = this->end_point - this->start_point;
+        dir = glm::normalize(dir);
+        this->end_point = this->start_point + len * dir;
+    }
+    else {
+        // end point fixed , change start point
+        glm::vec2 dir = this->start_point - this->start_point;
+        dir = glm::normalize(dir);
+        this->start_point = this->end_point + len * dir;
+    }
+
+    this->calculate_mesh();
+    return true;
 }
