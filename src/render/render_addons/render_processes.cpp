@@ -332,6 +332,7 @@ void has_post::rend_result() {
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
     one_scene->get_property()->global_shader = string("post_process_result");
     one_scene->add_obj(QPair<int, object *>(222, rect));
+    GL3D_GL()->glViewport(0, 0, one_scene->get_width() * 2, one_scene->get_height() * 2);
     one_scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
