@@ -40,10 +40,10 @@ gl3d::surface_object * test_obj3() {
     }
 
     QVector<glm::vec3> subCoords2;
-    subCoords.push_back(glm::vec3(-2.5f, -0.5f, 0.0f));
-    subCoords.push_back(glm::vec3(-1.5f, -0.5f, 0.0f));
-    subCoords.push_back(glm::vec3(-1.5f,  0.5f, 0.0f));
-    subCoords.push_back(glm::vec3(-2.5f,  0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-2.0f, -0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-1.0f, -0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-1.0f,  0.5f, 0.0f));
+    subCoords2.push_back(glm::vec3(-2.0f,  0.5f, 0.0f));
     if(surface->addSubSurface(subCoords2)){
         std::cout<<"SubSurface added"<<std::endl;
     }

@@ -29,6 +29,8 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     glm::mat4 rotation;
     GLUtility::getRotation(planNormal, GLUtility::Z_AXIS, rotation);
 
+    cout<<"points forms this surface are:"<<endl;
+
     for(QVector<glm::vec3>::const_iterator point = points.begin();
         point != points.end(); ++point){
 
@@ -44,6 +46,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
 
         localVertices->push_back(vertex);        
         collisionTester->outer().push_back(bg_Point((*point).x, (*point).y));
+        cout<<"("<<(*point).x<<","<<(*point).y<<")"<<endl;
     }    
 
     delete boundingBox;
@@ -167,8 +170,7 @@ bool Surface::addSubSurface(const QVector<glm::vec3> &points){
     Surface* newSubSurface;
     try{
         newSubSurface = new Surface(points);
-    } catch (SurfaceException &ex){
-        delete newSubSurface;
+    } catch (SurfaceException &ex){        
         return false;
     }
 
@@ -176,8 +178,14 @@ bool Surface::addSubSurface(const QVector<glm::vec3> &points){
     bool collisionFound = false;
     while(subSurface != subSurfaces->end() && !collisionFound){
         collisionFound = bg::intersects(
-                    *collisionTester,
+                    *(newSubSurface->collisionTester),
                     *((*subSurface)->collisionTester));
+        if(collisionFound){
+            cout<<"the following polygons have collison"<<endl;
+            bg::wkt<bg_Polygon>(*collisionTester);
+            cout<<"and "<<endl;
+            bg::wkt<bg_Polygon>(*((*subSurface)->collisionTester));
+        }
         subSurface++;
     }
 
