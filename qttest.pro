@@ -47,7 +47,8 @@ SOURCES += \
     src/editor/gl_utility.cpp \
     src/editor/klm_surface.cpp \
     src/utils/gl3d_lock.cpp \
-    src/utils/gl3d_math.cpp
+    src/utils/gl3d_math.cpp \
+    src/editor/gl3d_surface_object.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -87,7 +88,8 @@ HEADERS  += \
     include/utils/gl3d_path_config.h \
     include/editor/gl3d_wall.h \
     include/utils/gl3d_lock.h \
-    include/utils/gl3d_math.h
+    include/utils/gl3d_math.h \
+    include/editor/gl3d_surface_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui

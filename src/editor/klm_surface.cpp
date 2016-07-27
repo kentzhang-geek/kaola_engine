@@ -226,17 +226,26 @@ bool Surface::isConnectedToParent() const{
 }
 
 bool Surface::getConnectiveVerticies(QVector<Vertex *> &connectiveVertices) const{
-    if(!isConnectedToParent()){
+    if(isConnectedToParent()){
         for(QVector<Vertex*>::iterator vertex = this->connectiveVerticies->begin();
             vertex != this->connectiveVerticies->end(); ++vertex){
             connectiveVertices.push_back(new Vertex(**vertex));
         }
         return true;
     }
-
     return false;
 }
 
+bool Surface::getConnectiveIndicies(QVector<GLushort> &connectiveIndicies) const{
+    if(isConnectedToParent()){
+        for(QVector<GLushort>::iterator index = this->connectiveIndicies->begin();
+            index != this->connectiveIndicies->end(); ++index){
+            connectiveIndicies.push_back(*index);
+        }
+        return true;
+    }
+    return false;
+}
 
 void Surface::updateConnectivedData(){
     if(connectiveIndicies != nullptr){
