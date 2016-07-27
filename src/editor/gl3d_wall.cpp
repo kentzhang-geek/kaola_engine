@@ -4,6 +4,8 @@
 using namespace std;
 using namespace gl3d;
 
+static const float wall_combine_distance = 1.0f;
+
 static gl3d::obj_points post_rect[4] = {
     {-1.0, 1.0, 0.0,  // vt
      0.0, 0.0, 0.0,   // normal
@@ -53,6 +55,36 @@ gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_
 
     // recalculate meshes
     this->calculate_mesh();
+}
+
+gl3d_wall::~gl3d_wall() {
+    gl3d_wall * attach;
+
+    if (this->start_point_fixed) {
+        attach = this->start_point_attach;
+        if (glm::length(this->start_point - attach->start_point) >
+                (glm::length(this->start_point - attach->end_point))) {
+            attach->end_point_attach = NULL;
+            attach->end_point_fixed = false;
+        }
+        else {
+            attach->start_point_attach = NULL;
+            attach->start_point_fixed = false;
+        }
+    }
+
+    if (this->end_point_fixed) {
+        attach = this->end_point_attach;
+        if (glm::length(this->end_point - attach->start_point) >
+                (glm::length(this->end_point - attach->end_point))) {
+            attach->end_point_attach = NULL;
+            attach->end_point_fixed = false;
+        }
+        else {
+            attach->start_point_attach = NULL;
+            attach->start_point_fixed = false;
+        }
+    }
 }
 
 void gl3d_wall::release_last_data() {
@@ -171,20 +203,42 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
 bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
     float dis = glm::length(wall1->start_point - wall2->start_point);
     dis = dis < (glm::length(wall1->start_point - wall2->end_point)) ?
-               dis : (glm::length(wall1->start_point - wall2->end_point));
+                dis : (glm::length(wall1->start_point - wall2->end_point));
     dis = dis < (glm::length(wall1->end_point - wall2->end_point)) ?
-               dis : (glm::length(wall1->end_point - wall2->end_point));
+                dis : (glm::length(wall1->end_point - wall2->end_point));
     dis = dis < (glm::length(wall1->end_point - wall2->start_point)) ?
-               dis : (glm::length(wall1->end_point - wall2->start_point));
-    if (dis > this->wall_combine_distance) { // check is there near points
+                dis : (glm::length(wall1->end_point - wall2->start_point));
+    if (dis > wall_combine_distance) { // check is there near points
         return false;
     }
 
+    // attach wall1
     float st_dis_tmp = glm::min(glm::length(wall1->start_point - wall2->end_point),
                                 glm::length(wall1->start_point - wall2->start_point));
     float ed_dis_tmp = glm::min(glm::length(wall1->end_point - wall2->end_point),
                                 glm::length(wall1->end_point - wall2->start_point));
+    if (st_dis_tmp > ed_dis_tmp) {
+        wall1->end_point_fixed = true;
+        wall1->end_point_attach = wall2;
+    }
+    else {
+        wall1->start_point_fixed = true;
+        wall1->start_point_attach = wall2;
+    }
 
+    // attach wall2
+    st_dis_tmp = glm::min(glm::length(wall2->start_point - wall1->end_point),
+                          glm::length(wall2->start_point - wall1->start_point));
+    ed_dis_tmp = glm::min(glm::length(wall2->end_point - wall1->end_point),
+                          glm::length(wall2->end_point - wall1->start_point));
+    if (st_dis_tmp > ed_dis_tmp) {
+        wall2->end_point_fixed = true;
+        wall2->end_point_attach = wall2;
+    }
+    else {
+        wall2->start_point_fixed = true;
+        wall2->start_point_attach = wall2;
+    }
 
     return false;
 }
