@@ -24,7 +24,6 @@ drawhomewin::drawhomewin(QWidget *parent) :
 {
     ui->setupUi(this);
     dhw = this;
-    ui->OpenGLCanvas->setParent(this);
 }
 
 drawhomewin::~drawhomewin()
