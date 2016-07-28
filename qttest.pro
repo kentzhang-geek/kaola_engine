@@ -119,7 +119,8 @@ macx: INCLUDEPATH += LIBS/glm_build
 macx: INCLUDEPATH += LIBS/boost_1_61_0
 macx: INCLUDEPATH += include
 
-RESOURCES +=
+RESOURCES += \
+    res.qrc
 
 DISTFILES +=
 
