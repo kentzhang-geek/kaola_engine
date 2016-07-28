@@ -40,6 +40,7 @@ class gl3d_wall : public object {
 public:
     gl3d_wall() : start_point(0.0), end_point(0.0) {}
     gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float hight);
+    ~gl3d_wall();
 
     // properties
     GL3D_UTILS_PROPERTY(start_point, glm::vec2);
@@ -48,6 +49,8 @@ public:
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);
+    GL3D_UTILS_PROPERTY(start_point_attach, gl3d_wall *);
+    GL3D_UTILS_PROPERTY(end_point_attach, gl3d_wall *);
 
     void calculate_mesh();
 

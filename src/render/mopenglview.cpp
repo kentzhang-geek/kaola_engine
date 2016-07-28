@@ -119,6 +119,7 @@ void MOpenGLView::paintGL() {
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();
+
 }
 
 void MOpenGLView::initializeGL() {
@@ -199,8 +200,21 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     f.setVersion(4, 1);    // opengl 2.0 for opengles 2.0 compatible
     f.setProfile(f.CoreProfile);
     this->setFormat(f);
+    int wid = this->width();
+    int hit = this->height();
 
     this->wall_temp_id = 23333;
+}
+
+void MOpenGLView::resizeGL(int width, int height) {
+    QGLWidget::resizeGL(width, height);
+    this->main_scene->set_height((float)height);
+    this->main_scene->set_width((float)width);
+    this->main_scene->watcher->set_width((float)width);
+    this->main_scene->watcher->set_height((float)height);
+    this->main_scene->watcher->calculate_mat();
+    gl3d::gl3d_global_param::shared_instance()->canvas_height = (float) height;
+    gl3d::gl3d_global_param::shared_instance()->canvas_width = (float) width;
 }
 
 

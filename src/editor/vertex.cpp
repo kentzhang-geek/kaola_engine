@@ -117,6 +117,12 @@ void Vertex::print() const{
     std::cout<<"Vertex "<<this<<" : ("<<getX()<<","<<getY()<<","<<getZ()<<","<<getW()<<","<<getH()<<")"<<std::endl;
 }
 
+GLfloat Vertex::distance(const Vertex &another) const{
+    glm::vec3 a(this->getX(), this->getY(), this->getZ());
+    glm::vec3 b(another.getX(), another.getY(), another.getZ());
+    return glm::distance(a, b);
+}
+
 const int Vertex::X  = 0;
 const int Vertex::Y  = 1;
 const int Vertex::Z  = 2;

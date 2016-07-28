@@ -35,6 +35,8 @@ namespace klm{
         GLdouble getW() const;
         GLdouble getH() const;
 
+        GLfloat distance(const Vertex &another) const;
+
         void print() const;
 
     private:

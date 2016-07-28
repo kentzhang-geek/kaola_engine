@@ -62,7 +62,9 @@ glm::vec3 GLUtility::getNormal(const Vertex &p1, const Vertex &p2,
 void GLUtility::getRotation(const glm::vec3 &source,
                             const glm::vec3 &dest,
                             glm::mat4 &matrix) noexcept{
-    if(source == dest){
+    glm::vec3 tempSource = source;
+    tempSource = glm::normalize(tempSource);
+    if(tempSource == dest){
         matrix = glm::mat4(1.0f);
     } else {
         GLfloat sourceLen = glm::length(source);

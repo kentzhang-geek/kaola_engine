@@ -56,6 +56,7 @@ namespace klm{
         string message;
     };
 
+
     class Surface final{
     public:
         Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
@@ -77,6 +78,17 @@ namespace klm{
 
         int getSubSurfaceCnt() const;
         Surface* getSubSurface(const int index) const;
+
+        void setHeightToParent(const GLfloat &height);
+        GLfloat getHeightToParent() const;
+        bool isConnectedToParent() const;
+
+        bool getConnectiveVerticies(QVector<Vertex*> &connectiveVertices) const;
+        bool getConnectiveIndicies(QVector<GLushort> &connectiveIndicies) const;
+
+        bool isVisible() const;
+        void setVisibility(const bool visible);
+
     public:
         static void deleteVertices(QVector<Vertex*>* vertices);
         static void deleteTessellator();
@@ -88,6 +100,11 @@ namespace klm{
     private:
         QVector<Vertex*>  *renderVertices;
         QVector<GLushort> *renderIndicies;
+
+        QVector<Vertex*>  *connectiveVerticies;
+        QVector<GLushort> *connectiveIndicies;
+
+        void updateConnectivedData();
 
     //Surface Properties
     private:        
@@ -111,6 +128,7 @@ namespace klm{
         static void tessVertex(const GLvoid *data);
         static void tessEnd();
         static void tessEdge();
+        static void tessError(GLenum type);
         static GLUtesselator *tess;
     private:
         Surface* parent;
