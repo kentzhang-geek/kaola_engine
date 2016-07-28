@@ -11,6 +11,9 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
     renderVertices(nullptr), renderIndicies(nullptr),
     translateFromParent(nullptr), debug(false){
+    // init
+    this->connectiveIndicies = nullptr;
+    this->connectiveVerticies = nullptr;
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
     }
@@ -90,11 +93,6 @@ void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
         vertices.push_back(transformedVertex);
     }
     delete overAllTransform;
-//    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
-//        vertex != verticesToParent->end(); ++vertex){
-//        Vertex* v = new Vertex(**vertex);
-//        vertices.push_back(v);
-//    }
 }
 
 void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
@@ -104,18 +102,6 @@ void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
         GLUtility::positionTransform(*transformedVertex, *transFromParent);
         vertices.push_back(transformedVertex);
     }
-//    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
-//        vertex != verticesToParent->end(); ++vertex){
-//        Vertex* v = new Vertex(**vertex);
-//        if(translateFromParent ==nullptr){
-//            v->setZ(0.0f);
-//        } else {
-//            v->setX(v->getX() - translateFromParent->x);
-//            v->setY(v->getY() - translateFromParent->y);
-//            v->setZ(v->getZ() - translateFromParent->z);
-//        }
-//        vertices.push_back(v);
-//    }
 }
 
 void Surface::getTransFromParent(glm::mat4 &transform) const{
@@ -247,6 +233,7 @@ Surface* Surface::getSubSurface(const int index) const{
 void Surface::setHeightToParent(const GLfloat &height){
     glm::vec3 translate(0.0f, 0.0f, height);
     setTranslateToParent(translate);
+    updateConnectivedData();
 }
 
 void Surface::setTranslateToParent(const glm::vec3 &translate){

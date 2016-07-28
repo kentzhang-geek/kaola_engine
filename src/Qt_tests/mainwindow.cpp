@@ -56,6 +56,9 @@ gl3d::surface_object * test_obj3() {
     obj->get_mtls()->insert(0, new gl3d::gl3d_material("bottle.jpg"));
     obj->get_mtls()->insert(1, new gl3d::gl3d_material("_35.jpg"));
     obj->get_mtls()->insert(2, new gl3d::gl3d_material("___101.jpg"));
+    obj->get_mtls()->insert(3, new gl3d::gl3d_material("_19.jpg"));
+    obj->get_mtls()->insert(4, new gl3d::gl3d_material("_Blue_.jpg"));
+    obj->get_mtls()->insert(5, new gl3d::gl3d_material("_Corro04.jpg"));
     obj->set_repeat(true);
 
     gl3d::mesh * m = obj->get_meshes()->at(2);
