@@ -88,6 +88,7 @@ MOpenGLView::MOpenGLView() : QGLWidget()
 
 bool need_capture;
 void MOpenGLView::paintGL() {
+    QGLWidget::paintGL();
     // lock render
     if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
         return;
@@ -124,6 +125,8 @@ void MOpenGLView::paintGL() {
 
 void MOpenGLView::initializeGL() {
     QGLWidget::initializeGL();
+    // here gat parent widget size and set to sel
+//    this->setGeometry(this->parentWidget()->geometry());
 
     this->initializeOpenGLFunctions();
     gl3d_win_gl_functions = this;
@@ -175,6 +178,7 @@ void MOpenGLView::view_change() {
 }
 
 void MOpenGLView::keyPressEvent(QKeyEvent *event) {
+    QGLWidget::keyPressEvent(event);
     if (event->key() == Qt::Key_W)
         this->key_press = 'w';
     if (event->key() == Qt::Key_A)
@@ -208,6 +212,8 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
 
 void MOpenGLView::resizeGL(int width, int height) {
     QGLWidget::resizeGL(width, height);
+    // here gat parent widget size and set to sel
+//    this->setGeometry(this->parentWidget()->geometry());
     this->main_scene->set_height((float)height);
     this->main_scene->set_width((float)width);
     this->main_scene->watcher->set_width((float)width);
