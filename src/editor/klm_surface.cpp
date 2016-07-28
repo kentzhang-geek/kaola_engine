@@ -10,7 +10,7 @@ static QMutex tess_mutex;
 Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
     renderVertices(nullptr), renderIndicies(nullptr),
-    translate(nullptr){
+    translateFromParent(nullptr), debug(false){
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
     }
@@ -20,7 +20,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     }
 
     localVertices = new QVector<Vertex*>();
-    verticesToParent = new QVector<Vertex*>();
+//    verticesToParent = new QVector<Vertex*>();
 
     collisionTester = new bg_Polygon();
 
@@ -33,7 +33,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
         point != points.end(); ++point){
 
         Vertex* vertex = new Vertex(*point);
-        verticesToParent->push_back(vertex);
+//        verticesToParent->push_back(vertex);
 
         vertex = new Vertex(*point);
         vertex->setX(vertex->getX() - center.x);
@@ -61,9 +61,11 @@ Surface::~Surface(){
     if(transFromParent != nullptr){
         delete transFromParent;
     }
-
+    if(translateFromParent != nullptr){
+        delete translateFromParent;
+    }
     deleteVertices(localVertices);
-    deleteVertices(verticesToParent);
+//    deleteVertices(verticesToParent);
 }
 
 void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
@@ -74,35 +76,63 @@ void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
 }
 
 void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
-    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
-        vertex != verticesToParent->end(); ++vertex){
-        Vertex* v = new Vertex(**vertex);
-        vertices.push_back(v);
+    glm::mat4* overAllTransform;
+    if(translateFromParent == nullptr){
+        overAllTransform = new glm::mat4(*transFromParent);
+    } else {
+        overAllTransform = new glm::mat4(glm::translate(*translateFromParent) *
+                                         (*transFromParent));
     }
+    for(QVector<Vertex*>::iterator vertex = localVertices->begin();
+        vertex != localVertices->end(); ++vertex){
+        Vertex* transformedVertex = new Vertex(**vertex);
+        GLUtility::positionTransform(*transformedVertex, *overAllTransform);
+        vertices.push_back(transformedVertex);
+    }
+    delete overAllTransform;
+//    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
+//        vertex != verticesToParent->end(); ++vertex){
+//        Vertex* v = new Vertex(**vertex);
+//        vertices.push_back(v);
+//    }
 }
 
 void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
-    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
-        vertex != verticesToParent->end(); ++vertex){
-        Vertex* v = new Vertex(**vertex);
-        if(translate ==nullptr){
-            v->setZ(0.0f);
-        } else {
-            v->setX(v->getX() - translate->x);
-            v->setY(v->getY() - translate->y);
-            v->setZ(v->getZ() - translate->z);
-        }
-        vertices.push_back(v);
+    for(QVector<Vertex*>::iterator vertex = localVertices->begin();
+        vertex != localVertices->end(); ++vertex){
+        Vertex* transformedVertex = new Vertex(**vertex);
+        GLUtility::positionTransform(*transformedVertex, *transFromParent);
+        vertices.push_back(transformedVertex);
     }
+//    for(QVector<Vertex*>::iterator vertex = verticesToParent->begin();
+//        vertex != verticesToParent->end(); ++vertex){
+//        Vertex* v = new Vertex(**vertex);
+//        if(translateFromParent ==nullptr){
+//            v->setZ(0.0f);
+//        } else {
+//            v->setX(v->getX() - translateFromParent->x);
+//            v->setY(v->getY() - translateFromParent->y);
+//            v->setZ(v->getZ() - translateFromParent->z);
+//        }
+//        vertices.push_back(v);
+//    }
 }
 
 void Surface::getTransFromParent(glm::mat4 &transform) const{
     if(parent == nullptr){
-        transform = *(this->transFromParent);
+        if(translateFromParent != nullptr){
+            transform = glm::translate(*translateFromParent) * (*(this->transFromParent));
+        } else {
+            transform = *(this->transFromParent);
+        }
     } else {
         glm::mat4 inheritedTransform;
         parent->getTransFromParent(inheritedTransform);
-        transform = *(this->transFromParent) * inheritedTransform;
+        if(translateFromParent != nullptr){
+            transform = glm::translate(*translateFromParent) * (*(this->transFromParent)) * inheritedTransform;
+        } else {
+            transform = (*(this->transFromParent)) * inheritedTransform;
+        }
     }
 }
 
@@ -215,19 +245,27 @@ Surface* Surface::getSubSurface(const int index) const{
 }
 
 void Surface::setHeightToParent(const GLfloat &height){
-    if(translate != nullptr){
-        delete translate;
+    glm::vec3 translate(0.0f, 0.0f, height);
+    setTranslateToParent(translate);
+}
+
+void Surface::setTranslateToParent(const glm::vec3 &translate){
+    if(translateFromParent != nullptr){
+        delete translateFromParent;
     }
-    translate = new glm::vec3(0.0f, 0.0f, height);
+    translateFromParent = new glm::vec3(translate);
+    if(parent != nullptr){
+        Surface::updateRenderingData(this->parent);
+    }
 }
 
 GLfloat Surface::getHeightToParent() const{
-    return translate == nullptr ? 0.0f :
-                                  translate->z;
+    return translateFromParent == nullptr ? 0.0f :
+           translateFromParent->z;
 }
 
 bool Surface::isConnectedToParent() const{
-    return translate != nullptr;
+    return translateFromParent != nullptr;
 }
 
 bool Surface::getConnectiveVerticies(QVector<Vertex *> &connectiveVertices) const{
@@ -314,7 +352,7 @@ void Surface::updateConnectivedData(){
 
 }
 
-void Surface::updateRenderingData(Surface *surface, const bool debug){
+void Surface::updateRenderingData(Surface *surface){
     tess_mutex.lock();
 
     if(tess == nullptr){
@@ -348,12 +386,12 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
     }
 
     gluTessBeginPolygon(tess, 0);
-    if(debug){
+    if(targetSurface->isDebug()){
         cout<<"gluTessBeginPolygon(tess, 0);"<<endl;
     }
     {
         gluTessBeginContour(tess);
-        if(debug){
+        if(targetSurface->isDebug()){
             cout<<"\tgluTessBeginContour(tess);"<<endl;
         }
         for(QVector<Vertex*>::iterator vertex = targetSurface->localVertices->begin();
@@ -361,7 +399,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
             Vertex *newVertex = new Vertex(**vertex);
             GLdouble *vertexData = newVertex->getData();
             gluTessVertex(tess, vertexData, vertexData);
-            if(debug){
+            if(targetSurface->isDebug()){
                 cout<<"\t\tgluTessVertex(tess, vertexData,vertexData);"<<endl;
                 cout<<"\t\t{"<<vertexData[0]<<","<<vertexData[1]<<
                      ","<<vertexData[2]<<","<<vertexData[3]<<","<<
@@ -369,7 +407,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
             }
         }
         gluTessEndContour(tess);
-        if(debug){
+        if(targetSurface->isDebug()){
             cout<<"\tgluTessEndContour(tess);"<<endl;
         }
 
@@ -378,7 +416,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
             subSurface != targetSurface->subSurfaces->end(); ++subSurface){
             (*subSurface)->getVerticiesOnParent(surfaceCoords);
             gluTessBeginContour(tess);
-            if(debug){
+            if(targetSurface->isDebug()){
                 cout<<"\tgluTessBeginContour(tess);"<<endl;
             }
 
@@ -388,7 +426,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
                 targetSurface->boundingBox->genTexture(*newVertex);
                 GLdouble* vertexData = newVertex->getData();
                 gluTessVertex(tess, vertexData, vertexData);
-                if(debug){
+                if(targetSurface->isDebug()){
                     cout<<"\t\tgluTessVertex(tess, vertexData,vertexData);"<<endl;
                     cout<<"\t\t{"<<vertexData[0]<<","<<vertexData[1]<<
                          ","<<vertexData[2]<<","<<vertexData[3]<<","<<
@@ -396,7 +434,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
                 }
             }
             gluTessEndContour(tess);
-            if(debug){
+            if(targetSurface->isDebug()){
                 cout<<"\tgluTessEndContour(tess);"<<endl;
             }
 
@@ -409,7 +447,7 @@ void Surface::updateRenderingData(Surface *surface, const bool debug){
 
     }
     gluTessEndPolygon(tess);
-    if(debug){
+    if(targetSurface->isDebug()){
         cout<<"gluTessEndPolygon(tess);"<<endl;
     }
 
@@ -435,22 +473,32 @@ GLushort Surface::addRenderingVertex(const Vertex* vertex){
     return -1;
 }
 
+void Surface::setDebug(){
+    debug = true;
+}
+
+bool Surface::isDebug() const{
+    return debug;
+}
+
 void Surface::tessBegin(GLenum type){return;}
 
 void Surface::tessEnd(){
-//    cout<<"Surface : "<<targetSurface<<" tesselation finished;"<<endl;
-//    for(QVector<Vertex*>::iterator it = targetSurface->renderVertices->begin();
-//        it != targetSurface->renderVertices->end(); ++it){
-//        GLdouble* vd = (*it)->getData();
-        //cout<<"tessVertex : ("<<vd[0]<<",\t\t"<<vd[1]<<",\t\t"<<vd[2]<<",\t\t"<<vd[3]<<",\t\t"<<vd[4]<<")"<<endl;
-//        cout<<"{"<<vd[0]<<","<<vd[1]<<","<<vd[2]<<","<<vd[3]<<","<<vd[4]<<"},"<<endl;
-//    }
-//    cout<<"indicies : (";
-//    for(QVector<GLushort>::iterator it = targetSurface->renderIndicies->begin();
-//        it != targetSurface->renderIndicies->end(); ++it){
-//        cout<<*it<<",";
-//    }
-//    cout<<")"<<endl<<endl;
+    if(targetSurface->isDebug()){
+        cout<<"Surface : "<<targetSurface<<" tesselation finished;"<<endl;
+        for(QVector<Vertex*>::iterator it = targetSurface->renderVertices->begin();
+            it != targetSurface->renderVertices->end(); ++it){
+            GLdouble* vd = (*it)->getData();
+            cout<<"tessVertex : ("<<vd[0]<<",\t\t"<<vd[1]<<",\t\t"<<vd[2]<<",\t\t"<<vd[3]<<",\t\t"<<vd[4]<<")"<<endl;
+            cout<<"{"<<vd[0]<<","<<vd[1]<<","<<vd[2]<<","<<vd[3]<<","<<vd[4]<<"},"<<endl;
+        }
+        cout<<"indicies : (";
+        for(QVector<GLushort>::iterator it = targetSurface->renderIndicies->begin();
+            it != targetSurface->renderIndicies->end(); ++it){
+            cout<<*it<<",";
+        }
+        cout<<")"<<endl<<endl;
+    }
     return;
 }
 void Surface::tessEdge(){return;}

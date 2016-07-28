@@ -69,5 +69,8 @@ void surface_object::iter_surface(Surface *sfc) {
     // clean env
     free(pts);
     free(idxes);
+
+    // process conective surface
+    sfc->getConnectiveVerticies();
     return;
 }

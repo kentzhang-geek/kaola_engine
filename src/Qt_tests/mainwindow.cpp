@@ -37,7 +37,8 @@ gl3d::surface_object * test_obj3() {
     subCoords.push_back(glm::vec3(-0.5f,  0.5f, 0.0f));
     if(surface->addSubSurface(subCoords)){
         std::cout<<"SubSurface added"<<std::endl;
-    }
+    }    
+    surface->getSubSurface(0)->setHeightToParent(-0.5);
 
     QVector<glm::vec3> subCoords2;
     subCoords2.push_back(glm::vec3(-1.5f, -0.5f, 0.0f));

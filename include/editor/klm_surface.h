@@ -89,12 +89,15 @@ namespace klm{
         bool isVisible() const;
         void setVisibility(const bool visible);
 
+        void setDebug();
+        bool isDebug() const;
+
     public:
         static void deleteVertices(QVector<Vertex*>* vertices);
         static void deleteTessellator();
     private:
         static Surface* targetSurface;
-        static void updateRenderingData(Surface* surface, const bool debug = false);
+        static void updateRenderingData(Surface* surface);
 
     //Tessellation properties and methods
     private:
@@ -111,9 +114,11 @@ namespace klm{
         //or the index of the vertex if it exists
         GLushort addRenderingVertex(const Vertex* vertex);
 
+        void setTranslateToParent(const glm::vec3 &translate);
+
     //Surface Properties
     private:        
-        QVector<Vertex*> *verticesToParent;
+//        QVector<Vertex*> *verticesToParent;
         QVector<Vertex*> *localVertices;
         //this transform is used to move this surface
         //to its original coordinates as it passed in for
@@ -121,7 +126,7 @@ namespace klm{
         glm::mat4 *transFromParent;
         //this transform makes sure sub-surface will not rotate
         //but able to translate
-        glm::vec3 *translate;
+        glm::vec3 *translateFromParent;
         bool visible;
         BoundingBox *boundingBox;
         //this polygon is stored in surface for collission test
@@ -141,6 +146,7 @@ namespace klm{
     private:
         Surface* parent;
         QVector<Surface*> *subSurfaces;
+        bool debug;
     };
 
 }
