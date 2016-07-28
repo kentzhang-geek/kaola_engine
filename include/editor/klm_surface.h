@@ -90,7 +90,7 @@ namespace klm{
         void setVisibility(const bool visible);
 
         void setDebug();
-        bool isDebug() const;
+        bool isDebug() const;                
 
     public:
         static void deleteVertices(QVector<Vertex*>* vertices);

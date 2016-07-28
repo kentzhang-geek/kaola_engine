@@ -113,9 +113,9 @@ void Surface::getTransFromParent(glm::mat4 &transform) const{
         glm::mat4 inheritedTransform;
         parent->getTransFromParent(inheritedTransform);
         if(translateFromParent != nullptr){
-            transform = glm::translate(*translateFromParent) * (*(this->transFromParent)) * inheritedTransform;
+            transform = inheritedTransform * glm::translate(*translateFromParent) * (*(this->transFromParent));
         } else {
-            transform = (*(this->transFromParent)) * inheritedTransform;
+            transform = inheritedTransform * (*(this->transFromParent)) ;
         }
     }
 }
@@ -124,7 +124,7 @@ void Surface::getTransFromParent(glm::mat4 &transform) const{
  * TO DO: implement connective surface here
  * @brief Surface::updateVertices
  */
-void Surface::updateVertices(){
+void Surface::updateVertices(){    
     Surface::updateRenderingData(this);
 }
 
@@ -313,9 +313,9 @@ void Surface::updateConnectivedData(){
         Vertex* v1 = new Vertex(*base[index]);
         Vertex* v2 = new Vertex(*derived[index]);
 
-        v1->setW(baseVertex->distance(*v1));
+        v1->setW(baseVertex->distance(*v1) + baseVertex->getW());
         v1->setH(0.0);
-        v2->setW(derivedVertex->distance(*v2));
+        v2->setW(derivedVertex->distance(*v2) + derivedVertex->getW());
         v2->setH(v2->distance(*v1));
 
         connectiveVerticies->push_back(v1);
@@ -339,7 +339,7 @@ void Surface::updateConnectivedData(){
     int index = 0;
     for(QVector<Vertex*>::iterator it = connectiveVerticies->begin();
         it != connectiveVerticies->end(); ++it){
-        std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<")"<<std::endl;
+        std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<"\t-"<<(*it)->getW()<<","<<(*it)->getH()<<")"<<std::endl;
     }
 
     index = 0;

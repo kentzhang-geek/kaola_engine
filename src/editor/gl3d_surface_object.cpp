@@ -98,6 +98,10 @@ void surface_object::iter_surface(Surface *sfc) {
             pts[j].vertex_x = tmp_vert.x;
             pts[j].vertex_y = tmp_vert.y;
             pts[j].vertex_z = tmp_vert.z;
+//            pts[j].texture_x = vertexes.at(j)->getX() +
+//                    glm::normalize(vertexes.at(j)->getZ());
+//            pts[j].texture_y = vertexes.at(j)->getY() +
+//                    glm::normalize(vertexes.at(j)->getZ());
             pts[j].texture_x = vertexes.at(j)->getW();
             pts[j].texture_y = 1.0f - vertexes.at(j)->getH();
         }
