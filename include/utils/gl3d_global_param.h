@@ -10,6 +10,7 @@ public:
     static gl3d_global_param * shared_instance();
     float canvas_width;
     float canvas_height;
+    float wall_thick;
     unsigned int framebuffer;
 
     enum work_state {
@@ -19,7 +20,6 @@ public:
         drawwallend = 3,
         pickup = 4
     } current_work_state ;
-
 private:
     gl3d_global_param();
 };

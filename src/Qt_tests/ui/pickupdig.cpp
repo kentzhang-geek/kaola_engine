@@ -1,4 +1,4 @@
-#include "PickupDig.h"
+#include "pickupdig.h"
 
 PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene *sc)
 {
@@ -11,7 +11,7 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     this->setPalette(palette);
 
     //定义窗口坐标
-    setGeometry(x + 160, y + 60, 0, 0);
+    setGeometry(x + 240, y + 40, 0, 0);
     //隐藏标题栏
     setWindowFlags(Qt::FramelessWindowHint);
 
@@ -43,13 +43,17 @@ void PickupDig::initBasicInfo()
 
     //    长度控件
     QLabel *nameLabel = new QLabel(tr("长度"));         //定义窗体部件
-    QSlider *slider = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
-    slider->setMinimum(1);
-    slider->setMaximum(20);
-    slider->setValue(10);
-    QDoubleSpinBox *spinBox = new QDoubleSpinBox;
-    spinBox->setRange(1, 20);
+    slider = new QSlider(Qt::Horizontal);      //新建一个水平方向的滑动条QSlider控件
+    slider->setMinimum(0.12 * 100);
+    slider->setMaximum(20.00 * 100);
+    slider->setValue(wall->get_length() * 100);
+    spinBox = new QDoubleSpinBox;
+    spinBox->setRange(0.12, 20.00);
+    spinBox->setValue(wall->get_length());
+    spinBox->setSingleStep(0.01);
     QLabel *unitLabel = new QLabel(tr("M"));
+    connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider()));
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox()));
 
     //    厚度控件
     QLabel *nameLabel2 = new QLabel(tr("厚度"));         //定义窗体部件
@@ -78,7 +82,6 @@ void PickupDig::initBasicInfo()
     QLabel *unitLabel3 = new QLabel(tr("M"));
     connect(spinBox3, SIGNAL(valueChanged(double)), this, SLOT(slotDoubleSpinbox_Slider3()));
     connect(slider3, SIGNAL(valueChanged(int)), this, SLOT(slotSlider_DoubleSpinbox3()));
-
 
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
@@ -111,6 +114,17 @@ void PickupDig::initBasicInfo()
     vboxLayout->addLayout(hlayout3);
 
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
+}
+
+void PickupDig::slotDoubleSpinbox_Slider() {
+    slider->setValue((int)(spinBox->value()*100));
+
+    //改变墙长度
+    wall->set_length(float(spinBox->value()));
+    wall->calculate_mesh();
+}
+void PickupDig::slotSlider_DoubleSpinbox() {
+    spinBox->setValue((double)(slider->value())/100);
 }
 
 void PickupDig::slotDoubleSpinbox_Slider2() {

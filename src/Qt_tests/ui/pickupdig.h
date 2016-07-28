@@ -20,6 +20,8 @@ public:
     PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene * sc);
     void initBasicInfo();
 private slots:
+    void slotDoubleSpinbox_Slider();
+    void slotSlider_DoubleSpinbox();
     void slotDoubleSpinbox_Slider2();
     void slotSlider_DoubleSpinbox2();
     void slotDoubleSpinbox_Slider3();
@@ -28,8 +30,10 @@ private slots:
     void on_delete_obj();
 private:
     QWidget* baseWidget;
+    QSlider *slider;
     QSlider *slider2;
     QSlider *slider3;
+    QDoubleSpinBox *spinBox;
     QDoubleSpinBox *spinBox2;
     QDoubleSpinBox *spinBox3;
 

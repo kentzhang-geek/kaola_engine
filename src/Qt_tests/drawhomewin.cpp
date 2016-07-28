@@ -126,12 +126,16 @@ void drawhomewin::on_tempdraw_clicked()
     test_flag_global = false;
 }
 
-//画墙功能按钮-click
-void drawhomewin::on_drawwall_b_clicked(bool checked)
+//画墙功能按钮-change
+void drawhomewin::on_drawwall_b_stateChanged(int arg1)
 {
-    if(!checked) {
+    if(!arg1) {
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        dop->close();
+        delete dop;
     } else {
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+        dop = new DrawOption(this->ui->OpenGLCanvas);
+        dop->show();
     }
 }

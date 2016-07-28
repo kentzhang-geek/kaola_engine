@@ -36,8 +36,8 @@ void MOpenGLView::create_scene() {
     this->main_scene = new gl3d::scene( this->height(), this->width() );
     gl3d::gl3d_global_param::shared_instance()->canvas_height = this->height();
     gl3d::gl3d_global_param::shared_instance()->canvas_width = this->width();
-    //    this->main_scene->width = this->width();
-    //    this->main_scene->height = this->height();
+    float xsss = this->width();
+    float ysss = this->height();
 
     shader_manager * shader_mgr = ::shader_manager::sharedInstance();
     Program * prog;
@@ -234,7 +234,7 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     vr->coord_ground(glm::vec2(((float)x) / this->width(),
                                ((float)y) / this->height()),
                      pick, 0.0);
-    this->new_wall = new gl3d::gl3d_wall(pick, pick, 0.12, 2.8);
+    this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
 }
 
@@ -285,13 +285,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
-            cout << "left down: " << event->x() << ", " << event->y() << endl;
+//            cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
 
 
         //右键按下事件
     } else if(event->button() == Qt::RightButton) {
-        cout << "right down: " << event->x() << ", " << event->y() << endl;
+//        cout << "right down: " << event->x() << ", " << event->y() << endl;
         //点击右键-取消画墙状态
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             drawhomewin::on_draw_clear();
@@ -304,7 +304,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         }
     } else if(event->button() == Qt::MidButton) {
-        cout << "centre down: " << event->x() << ", " << event->y() << endl;
+//        cout << "centre down: " << event->x() << ", " << event->y() << endl;
     }
 }
 
@@ -322,14 +322,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                          pick, 0.0);
         this->new_wall->set_end_point(pick);
         this->new_wall->calculate_mesh();
-        cout << "move: " << event->x() << ", " << event->y() << endl;
+//        cout << "move: " << event->x() << ", " << event->y() << endl;
     }
 
     if(event->buttons()&Qt::LeftButton) {
         cout << "left move: " << event->x() << ", " << event->y() << endl;
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
+//            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
             tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
             this->tmp_point_x = event->x();
             this->tmp_point_y = event->y();
