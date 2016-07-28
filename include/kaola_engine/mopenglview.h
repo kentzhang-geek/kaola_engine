@@ -58,6 +58,7 @@ public:
     float time_factor;
     GLfloat angle;
     void keyPressEvent(QKeyEvent *event);
+    void resizeGL(int width, int height);
 
     //yananli codes -----------------------------------------------------
     enum button_state {

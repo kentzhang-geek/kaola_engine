@@ -42,8 +42,6 @@ namespace gl3d {
     class scene {
     public:
         typedef struct scene_property {
-            GLfloat screen_width;
-            GLfloat screen_height;
             glm::vec3 background_color;
             string global_shader;
             GLuint64 current_draw_authority; // 当前绘制哪些obj，见gl3d_obj_authority.h

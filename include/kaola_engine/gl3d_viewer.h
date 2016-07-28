@@ -79,8 +79,6 @@ namespace gl3d {
         void coord_ground_project(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
         void coord_ground_ortho(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
         void coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
-
-    private:
         void calculate_mat();
     };
 }
