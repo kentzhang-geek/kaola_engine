@@ -10,10 +10,8 @@ static QMutex tess_mutex;
 Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
     renderVertices(nullptr), renderIndicies(nullptr),
-    translateFromParent(nullptr), debug(false){
-    // init
-    this->connectiveIndicies = nullptr;
-    this->connectiveVerticies = nullptr;
+    translateFromParent(nullptr), debug(false),
+    connectiveVerticies(nullptr), connectiveIndicies(nullptr){
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
     }
@@ -130,8 +128,8 @@ void Surface::updateVertices(){
     Surface::updateRenderingData(this);
 }
 
-Surface& Surface::getParent() const{    
-    return *parent;
+Surface * Surface::getParent() const{
+    return parent;
 }
 
 bool Surface::getRenderingVertices(GLfloat *&data, int &len) const{
@@ -299,7 +297,6 @@ void Surface::updateConnectivedData(){
     getVerticiesToParent(base);
     getVerticiesOnParent(derived);
 
-    int modeBase = base.size();
 
     Vertex* baseVertex = new Vertex(*base[0]);
     Vertex* derivedVertex = new Vertex(*derived[0]);
@@ -328,13 +325,27 @@ void Surface::updateConnectivedData(){
         derivedVertex = v2;
     }
 
-    for(int index = 1; index < base.size(); index+=2){
+     int modeBase = connectiveVerticies->size();
+
+    for(int index = 0; index < modeBase; index+=2){
         connectiveIndicies->push_back(index);
         connectiveIndicies->push_back((index + 3) % modeBase);
         connectiveIndicies->push_back((index + 2) % modeBase);
         connectiveIndicies->push_back(index);
         connectiveIndicies->push_back((index + 1) % modeBase);
         connectiveIndicies->push_back((index + 3) % modeBase);
+    }
+
+    int index = 0;
+    for(QVector<Vertex*>::iterator it = connectiveVerticies->begin();
+        it != connectiveVerticies->end(); ++it){
+        std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<")"<<std::endl;
+    }
+
+    index = 0;
+    for(QVector<GLushort>::iterator it = connectiveIndicies->begin();
+        it != connectiveIndicies->end(); ++it){
+        std::cout<<"indicies["<<index++<<"] = "<<*it<<std::endl;
     }
 
 }

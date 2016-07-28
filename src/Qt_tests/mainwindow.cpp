@@ -31,14 +31,14 @@ gl3d::surface_object * test_obj3() {
     klm::Surface * surface = new klm::Surface(coords);
 
     QVector<glm::vec3> subCoords;
-    subCoords.push_back(glm::vec3(-0.5f, -0.5f, 0.0f));
-    subCoords.push_back(glm::vec3( 0.5f, -0.5f, 0.0f));
-    subCoords.push_back(glm::vec3( 0.5f,  0.5f, 0.0f));
-    subCoords.push_back(glm::vec3(-0.5f,  0.5f, 0.0f));
+    subCoords.push_back(glm::vec3(-0.75f, -0.75f, 0.0f));
+    subCoords.push_back(glm::vec3( 0.75f, -0.75f, 0.0f));
+    subCoords.push_back(glm::vec3( 0.75f,  0.75f, 0.0f));
+    subCoords.push_back(glm::vec3(-0.75f,  0.75f, 0.0f));
     if(surface->addSubSurface(subCoords)){
         std::cout<<"SubSurface added"<<std::endl;
     }    
-    surface->getSubSurface(0)->setHeightToParent(-0.5);
+    surface->getSubSurface(0)->setHeightToParent(1.5);
 
     QVector<glm::vec3> subCoords2;
     subCoords2.push_back(glm::vec3(-1.5f, -0.5f, 0.0f));

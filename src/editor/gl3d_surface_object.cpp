@@ -75,12 +75,18 @@ void surface_object::iter_surface(Surface *sfc) {
     QVector<GLushort> indecis;
     sfc->getConnectiveVerticies(vertexes);
     sfc->getConnectiveIndicies(indecis);
+    trans_mat = glm::mat4(1.0);
+    if (sfc->getParent() != NULL) {
+        sfc->getParent()->getTransFromParent(trans_mat);
+    }
     // have conective surface , then process meshes
     if ((vertexes.size() > 0) && (indecis.size() > 0)) {
         pts = (obj_points *)malloc(sizeof(obj_points) * vertexes.size());
         memset(pts, 0, sizeof(obj_points) * vertexes.size());
         idxes = (GLushort *)malloc(sizeof(GLushort) * indecis.size());
         memset(idxes, 0, sizeof(GLushort) * indecis.size());
+        pts_len = vertexes.size();
+        idx_len = indecis.size();
         for (int j = 0; j < vertexes.size(); j++) {
             glm::vec4 tmp_vert = glm::vec4(
                         vertexes.at(j)->getX(),

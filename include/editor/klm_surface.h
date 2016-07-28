@@ -67,7 +67,7 @@ namespace klm{
         void getTransFromParent(glm::mat4 &transform) const;
 
         void updateVertices();
-        Surface& getParent() const;
+        Surface * getParent() const;
 
         bool getRenderingVertices(GLfloat *&data, int &len) const;
         bool getRenderingIndicies(GLushort *&indecies, int &len) const;
