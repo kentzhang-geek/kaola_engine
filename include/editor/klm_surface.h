@@ -67,7 +67,7 @@ namespace klm{
         void getTransFromParent(glm::mat4 &transform) const;
 
         void updateVertices();
-        Surface& getParent() const;
+        Surface * getParent() const;
 
         bool getRenderingVertices(GLfloat *&data, int &len) const;
         bool getRenderingIndicies(GLushort *&indecies, int &len) const;
@@ -89,6 +89,9 @@ namespace klm{
         bool isVisible() const;
         void setVisibility(const bool visible);
 
+        void setDebug();
+        bool isDebug() const;                
+
     public:
         static void deleteVertices(QVector<Vertex*>* vertices);
         static void deleteTessellator();
@@ -106,9 +109,16 @@ namespace klm{
 
         void updateConnectivedData();
 
+        //returns -1 if vertex is not yet added to rendering vertex
+        //returns -2 if vertex is null or illegal
+        //or the index of the vertex if it exists
+        GLushort addRenderingVertex(const Vertex* vertex);
+
+        void setTranslateToParent(const glm::vec3 &translate);
+
     //Surface Properties
     private:        
-        QVector<Vertex*> *verticesToParent;
+//        QVector<Vertex*> *verticesToParent;
         QVector<Vertex*> *localVertices;
         //this transform is used to move this surface
         //to its original coordinates as it passed in for
@@ -116,7 +126,7 @@ namespace klm{
         glm::mat4 *transFromParent;
         //this transform makes sure sub-surface will not rotate
         //but able to translate
-        glm::vec3 *translate;
+        glm::vec3 *translateFromParent;
         bool visible;
         BoundingBox *boundingBox;
         //this polygon is stored in surface for collission test
@@ -124,6 +134,9 @@ namespace klm{
 
     //sub surface and related proerties
     private:
+        static void tessCombine(GLdouble coords[3],
+                                GLdouble *vertex_data[4],
+                                GLfloat weight[4], GLdouble **dataOut);
         static void tessBegin(GLenum type);
         static void tessVertex(const GLvoid *data);
         static void tessEnd();
@@ -133,6 +146,7 @@ namespace klm{
     private:
         Surface* parent;
         QVector<Surface*> *subSurfaces;
+        bool debug;
     };
 
 }

@@ -16,7 +16,7 @@ GL3D_LOAD_SHADER(default, default.vdata, default.fdata);
 
 GL3D_LOAD_SHADER(vector_light, vector_light.vdata, vector_light.fdata);
 
-GL3D_LOAD_SHADER(vector_light_toon, vector_light_toon.vdata, vector_light_toon.fdata);
+//GL3D_LOAD_SHADER(vector_light_toon, vector_light_toon.vdata, vector_light_toon.fdata);
 
 
 GL3D_LOAD_SHADER(multiple_text, multiple_text.vdata, multiple_text.fdata);
