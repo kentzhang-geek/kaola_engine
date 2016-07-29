@@ -173,6 +173,7 @@ void gl3d_wall::calculate_mesh() {
     // mtl
     gl3d_material * p_mat = new gl3d_material();
     p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
+    p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
     this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
             | GL3D_OBJ_ENABLE_PICKING;
