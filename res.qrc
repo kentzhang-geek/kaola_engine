@@ -5,5 +5,12 @@
         <file alias="redo">images/Action_Redo_32px.png</file>
         <file alias="undo">images/Action_Undo_32px.png</file>
         <file alias="flip">images/object_flip_horizontal_32px.png</file>
+        <file alias="3d">images/3d_px.png</file>
+        <file alias="drawhome">images/Application_Blueprint_32px.png</file>
+        <file alias="close">images/Gnome_System_Shutdown_32px.png</file>
+        <file alias="export_image">images/export_mail_32px.png</file>
+        <file alias="brush">images/brush_paint_32px.png</file>
+        <file alias="Disk">images/Could_Disk_32px.png</file>
+        <file alias="new_draw">images/file_new_32px.png</file>
     </qresource>
 </RCC>
