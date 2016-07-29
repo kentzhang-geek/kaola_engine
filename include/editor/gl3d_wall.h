@@ -32,10 +32,18 @@
 #include "kaola_engine/gl3d_mesh.h"
 #include "kaola_engine/gl3d_object.h"
 #include "kaola_engine/gl3d_scene.h"
+#include "utils/gl3d_math.h"
+#include "utils/gl3d_global_param.h"
 
 using namespace std;
+using namespace gl3d;
+
+namespace klm {
+class Surface;
+}
 
 namespace gl3d {
+    void surface_to_mesh(const klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
 class gl3d_wall : public object {
 public:
     gl3d_wall() : start_point(0.0), end_point(0.0) {}
@@ -51,6 +59,7 @@ public:
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);
     GL3D_UTILS_PROPERTY(start_point_attach, gl3d_wall *);
     GL3D_UTILS_PROPERTY(end_point_attach, gl3d_wall *);
+    GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *> );
 
     void calculate_mesh();
 

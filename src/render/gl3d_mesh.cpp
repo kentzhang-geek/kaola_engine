@@ -19,6 +19,8 @@ void gl3d::mesh::init() {
     this->bounding_value_max = glm::vec3(0.0f);
     this->bounding_value_min = glm::vec3(0.0f);
     this->texture_repeat = false;
+    this->points_data = NULL;
+    this->indecis = NULL;
 }
 
 gl3d::mesh::~mesh() {

@@ -50,7 +50,8 @@ SOURCES += \
     src/editor/klm_surface.cpp \
     src/utils/gl3d_lock.cpp \
     src/utils/gl3d_math.cpp \
-    src/Qt_tests/ui/drawoption.cpp
+    src/Qt_tests/ui/drawoption.cpp \
+    src/editor/gl3d_surface_object.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -92,7 +93,8 @@ HEADERS  += \
     include/editor/gl_utility.h \
     include/utils/gl3d_lock.h \
     include/utils/gl3d_math.h \
-    src/Qt_tests/ui/drawoption.h
+    src/Qt_tests/ui/drawoption.h \
+    include/editor/gl3d_surface_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
