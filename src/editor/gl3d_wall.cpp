@@ -173,6 +173,7 @@ void gl3d_wall::calculate_mesh() {
     // mtl
     gl3d_material * p_mat = new gl3d_material();
     p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
+    p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
     this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
             | GL3D_OBJ_ENABLE_PICKING;
@@ -253,7 +254,7 @@ bool gl3d_wall::set_length(float len) {
         return false; // both two side fixed , so set length failed
     }
 
-    if (this->start_point_fixed) {
+    if (!this->end_point_fixed) {
         // start point fixed , change end point
         glm::vec2 dir = this->end_point - this->start_point;
         dir = glm::normalize(dir);
@@ -261,7 +262,7 @@ bool gl3d_wall::set_length(float len) {
     }
     else {
         // end point fixed , change start point
-        glm::vec2 dir = this->start_point - this->start_point;
+        glm::vec2 dir = this->start_point - this->end_point;
         dir = glm::normalize(dir);
         this->start_point = this->end_point + len * dir;
     }

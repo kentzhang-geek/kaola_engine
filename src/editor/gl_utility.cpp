@@ -54,7 +54,7 @@ glm::vec3 GLUtility::getNormal(const Vertex &p1, const Vertex &p2,
     glm::vec3 lineOne = vp1 - vp2;
     glm::vec3 lineTwo = vp3 - vp2;
     glm::vec3 normal = glm::cross(lineTwo, lineOne);
-    glm::normalize(normal);
+    normal = glm::normalize(normal);
 
     return normal;
 }
@@ -115,6 +115,13 @@ void GLUtility::textureTransform(Vertex &vertex, const glm::mat4 &matrix) noexce
     temp =  matrix * temp;
     vertex.setW(temp.x);
     vertex.setH(temp.y);
+}
+
+bool GLUtility::equals(const glm::vec3 &v1, const glm::vec3 &v2){
+    return
+            (v1.x - v2.x < 0.0000001) && (v1.x - v2.x > -0.0000001) &&
+            (v1.y - v2.y < 0.0000001) && (v1.y - v2.y > -0.0000001) &&
+            (v1.z - v2.z < 0.0000001) && (v1.z - v2.z > -0.0000001);
 }
 
 const glm::vec3 GLUtility::NON_NORMAL = glm::vec3(0.0f, 0.0f, 0.0f);
