@@ -72,9 +72,13 @@ void GLUtility::getRotation(const glm::vec3 &source,
         if(sourceLen == 0.0f || destLen == 0.0f){
             matrix = glm::mat4(1.0f);
         } else {
+            glm::vec3 crossVec = glm::cross(source, dest);
+            if(crossVec == NON_NORMAL){
+                crossVec.y = 1.0f;
+            }
             matrix =glm::rotate(
                     glm::acos(glm::dot(source, dest)/(sourceLen * destLen)),
-                    glm::cross(source, dest));
+                    crossVec);
         }
     }
 }

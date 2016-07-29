@@ -150,6 +150,7 @@ namespace klm{
         Surface* parent;
         QVector<Surface*> *subSurfaces;
         bool debug;
+        glm::vec3 initNormal;
     };
 
 }
