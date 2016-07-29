@@ -235,6 +235,7 @@ void Surface::setHeightToParent(const GLfloat &height){
 }
 
 void Surface::setTranslateToParent(const glm::vec3 &translate){
+    std::cout<<"Hello World"<<std::endl;
     if(translateFromParent != nullptr){
         delete translateFromParent;
     }
@@ -325,9 +326,9 @@ void Surface::updateConnectivedData(){
         derivedVertex = v2;
     }
 
-     int modeBase = connectiveVerticies->size();
+    int modeBase = connectiveVerticies->size();
 
-    for(int index = 0; index < modeBase; index+=2){
+    for(int index = 0; index < modeBase-2; index+=2){
         connectiveIndicies->push_back(index);
         connectiveIndicies->push_back((index + 3) % modeBase);
         connectiveIndicies->push_back((index + 2) % modeBase);
@@ -336,16 +337,37 @@ void Surface::updateConnectivedData(){
         connectiveIndicies->push_back((index + 3) % modeBase);
     }
 
-    int index = 0;
-    for(QVector<Vertex*>::iterator it = connectiveVerticies->begin();
-        it != connectiveVerticies->end(); ++it){
-        std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<"\t-"<<(*it)->getW()<<","<<(*it)->getH()<<")"<<std::endl;
-    }
+    Vertex* endingBase = new Vertex(*(connectiveVerticies->operator [](0)));
+    Vertex* endingDerived = new Vertex(*(connectiveVerticies->operator [](1)));
+    endingBase->setW(baseVertex->distance(*endingBase) + baseVertex->getW());
+    endingBase->setH(0.0);
+    endingDerived->setW(derivedVertex->distance(*endingDerived) + derivedVertex->getW());
+    endingDerived->setH(endingDerived->distance(*endingBase));
 
-    index = 0;
-    for(QVector<GLushort>::iterator it = connectiveIndicies->begin();
-        it != connectiveIndicies->end(); ++it){
-        std::cout<<"indicies["<<index++<<"] = "<<*it<<std::endl;
+    int i = connectiveVerticies->size();
+
+    connectiveVerticies->push_back(endingBase);
+    connectiveVerticies->push_back(endingDerived);
+
+    connectiveIndicies->push_back(i-2);
+    connectiveIndicies->push_back((i + 1));
+    connectiveIndicies->push_back((i));
+    connectiveIndicies->push_back(i-2);
+    connectiveIndicies->push_back((i - 1));
+    connectiveIndicies->push_back((i + 1));
+
+    if(debug){
+        int index = 0;
+        for(QVector<Vertex*>::iterator it = connectiveVerticies->begin();
+            it != connectiveVerticies->end(); ++it){
+            std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<"\t-"<<(*it)->getW()<<","<<(*it)->getH()<<")"<<std::endl;
+        }
+
+        index = 0;
+        for(QVector<GLushort>::iterator it = connectiveIndicies->begin();
+            it != connectiveIndicies->end(); ++it){
+            std::cout<<"indicies["<<index++<<"] = "<<*it<<std::endl;
+        }
     }
 
 }
@@ -471,6 +493,32 @@ GLushort Surface::addRenderingVertex(const Vertex* vertex){
     return -1;
 }
 
+float Surface::getRoughArea() const{
+    if(localVertices == nullptr || localVertices->size() == 0){
+        return 0.0f;
+    }
+
+    float ret = 0.0;
+    for(int index = 0; index < (localVertices->size() -1); ++ index){
+        Vertex* v1 = localVertices->operator[](index);
+        Vertex* v2 = localVertices->operator[](index + 1);
+        ret += ((v1->getX() * v2->getX()) - (v1->getY() * v2->getY()));
+    }
+    Vertex* v1 = localVertices->last();
+    Vertex* v2 = localVertices->first();
+    ret += ((v1->getX() * v2->getX()) - (v1->getY() * v2->getY()));
+    return ret;
+}
+
+float Surface::getExactArea() const{
+    float ret = getRoughArea();
+    for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+        subSurface != subSurfaces->end(); ++subSurface){
+        ret -= (*subSurface)->getRoughArea();
+    }
+    return ret;
+}
+
 void Surface::setDebug(){
     debug = true;
 }
@@ -543,9 +591,6 @@ void Surface::tessCombine(GLdouble coords[3],
     int i;
 
     vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
-//    cout << "combine coord" << coords[0] << "," << coords[1] << "," << coords[2] << endl;
-//    cout << weight[0] << "," << weight[1] << "," << weight[2] << "," << weight[3] << endl;
-//    cout << vertex_data[0] << "," << vertex_data[1] << "," << vertex_data[2] << "," << vertex_data[3] << endl;
     vertex[0] = coords[0];
     vertex[1] = coords[1];
     vertex[2] = coords[2];
@@ -559,11 +604,6 @@ void Surface::tessCombine(GLdouble coords[3],
             vertex[i] += weight[3] * vertex_data[3][i];
     }
 
-    //    for (int i = 3; i < 5; i++)
-//           vertex[i] =   weight[0] * vertex_data[0][i]
-//                       + weight[1] * vertex_data[1][i]
-//                       + weight[2] * vertex_data[2][i]
-//                       + weight[3] * vertex_data[3][i];
     *dataOut = vertex;
 }
 

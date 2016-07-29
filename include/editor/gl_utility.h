@@ -28,6 +28,7 @@ namespace klm{
                                       const glm::mat4 &matrix) noexcept;
         static void textureTransform(Vertex &vertex,
                                      const glm::mat4 &matrix) noexcept;
+        static bool equals(const glm::vec3 &v1, const glm::vec3 &v2);
     public:
         static const glm::vec3 NON_NORMAL;
         static const glm::vec3 Z_AXIS;
