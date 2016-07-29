@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/images">
         <file alias="import">images/File_Receive_32px.png</file>
+        <file alias="import_image">images/document_import_picture_32px.png</file>
+        <file alias="redo">images/Action_Redo_32px.png</file>
+        <file alias="undo">images/Action_Undo_32px.png</file>
+        <file alias="flip">images/object_flip_horizontal_32px.png</file>
     </qresource>
 </RCC>
