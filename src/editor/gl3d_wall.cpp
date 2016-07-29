@@ -253,7 +253,7 @@ bool gl3d_wall::set_length(float len) {
         return false; // both two side fixed , so set length failed
     }
 
-    if (this->start_point_fixed) {
+    if (!this->end_point_fixed) {
         // start point fixed , change end point
         glm::vec2 dir = this->end_point - this->start_point;
         dir = glm::normalize(dir);
@@ -261,7 +261,7 @@ bool gl3d_wall::set_length(float len) {
     }
     else {
         // end point fixed , change start point
-        glm::vec2 dir = this->start_point - this->start_point;
+        glm::vec2 dir = this->start_point - this->end_point;
         dir = glm::normalize(dir);
         this->start_point = this->end_point + len * dir;
     }
