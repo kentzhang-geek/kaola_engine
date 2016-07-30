@@ -35,7 +35,7 @@ namespace gl3d {
     float point_distance_to_line(const glm::vec3 pt, const line_3d l);
     float point_distance_to_facet(const triangle_facet & fc, const glm::vec3 & pt);
 
-    void line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
+    bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
 
     }
 }

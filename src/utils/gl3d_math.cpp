@@ -98,14 +98,20 @@ float gl3d::math::point_distance_to_facet(const triangle_facet &fc, const glm::v
     return glm::abs(glm::dot(nor, fc.c - pt));
 }
 
-void gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 &pt) {
+bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 &pt) {
+    if (0.000001 > glm::dot(
+                f.get_normal(),
+                glm::normalize(ray.b - ray.a)
+                )) {
+        return false;
+    }
     float dis = gl3d::math::point_distance_to_facet(f, ray.a);
     float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
     cosx = glm::abs(cosx);
     dis = dis / cosx;
     pt = ray.a + (ray.b - ray.a) * dis;
 
-    return;
+    return true;
 }
 
 float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
