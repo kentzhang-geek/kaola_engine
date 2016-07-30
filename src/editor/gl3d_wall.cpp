@@ -44,6 +44,7 @@ void gl3d_wall::init() {
             | GL3D_OBJ_ENABLE_PICKING;
     this->start_point_fixed = false;
     this->end_point_fixed = false;
+    this->set_obj_type(this->type_wall);
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {

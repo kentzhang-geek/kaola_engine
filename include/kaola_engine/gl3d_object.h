@@ -52,6 +52,16 @@ namespace gl3d {
     // 每一个模型，都是一个物件（object）
     class object{
     public:
+        // 描述Object的具体类型，墙，家居还是其他
+        enum tag_obj_type {
+            type_default = 0,
+            type_wall,
+            type_furniture,
+            type_ground,
+            type_special
+        };
+        GL3D_UTILS_PROPERTY(obj_type, tag_obj_type);
+
         /**
          *  @author Kent, 16-02-17 20:02:05
          *

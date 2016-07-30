@@ -27,6 +27,7 @@ GL3D_MODEL_PARAM(168, "floor.3ds") {
     (*alpha) = 0.90;
     this->obj->user_data.clear();
     this->obj->user_data.insert(string("alpha"), alpha);
+    this->obj->set_obj_type(this->obj->type_ground);
 }
 
 //GL3D_MODEL_PARAM(1, "wall-01.3ds") {
