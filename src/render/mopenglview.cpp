@@ -89,6 +89,7 @@ MOpenGLView::MOpenGLView() : QGLWidget()
 bool need_capture;
 void MOpenGLView::paintGL() {
     QGLWidget::paintGL();
+
     // lock render
     if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
         return;
@@ -126,7 +127,6 @@ void MOpenGLView::paintGL() {
 void MOpenGLView::initializeGL() {
     QGLWidget::initializeGL();
     // here gat parent widget size and set to sel
-//    this->setGeometry(this->parentWidget()->geometry());
 
     this->initializeOpenGLFunctions();
     gl3d_win_gl_functions = this;
