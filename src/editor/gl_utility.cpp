@@ -95,7 +95,7 @@ glm::vec3 GLUtility::getPlaneNormal(const QVector<glm::vec3> &points) noexcept{
         glm::vec3 testNormal = getNormal(points[index -1],
                                     points[index],
                                     points[index + 1]);
-        if(testNormal != sampleNormal){
+        if(!equals(testNormal,sampleNormal)){
             return NON_NORMAL;
         }
     }
