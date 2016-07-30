@@ -134,9 +134,9 @@ void gl3d_wall::calculate_mesh() {
     direction = direction / direction.w;
     glm::vec2 top_dir = glm::normalize(glm::vec2(direction));
 
-    gl3d::math::line l_left(this->start_point + top_dir * this->thickness / 2.0f,
+    gl3d::math::line_2d l_left(this->start_point + top_dir * this->thickness / 2.0f,
                             this->end_point + top_dir * this->thickness / 2.0f);
-    gl3d::math::line l_right(this->start_point - top_dir * this->thickness / 2.0f,
+    gl3d::math::line_2d l_right(this->start_point - top_dir * this->thickness / 2.0f,
                              this->end_point - top_dir * this->thickness / 2.0f);
 
     // 根据attach状态重算左右边线
@@ -148,9 +148,9 @@ void gl3d_wall::calculate_mesh() {
         direction = rotate_mtx * direction;
         direction = direction / direction.w;
         top_dir = glm::normalize(glm::vec2(direction));
-        gl3d::math::line tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+        gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
                                 tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
-        gl3d::math::line tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+        gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
                                  tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
 
         // 重算left和right的a点
@@ -179,9 +179,9 @@ void gl3d_wall::calculate_mesh() {
         direction = rotate_mtx * direction;
         direction = direction / direction.w;
         top_dir = glm::normalize(glm::vec2(direction));
-        gl3d::math::line tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+        gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
                                 tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
-        gl3d::math::line tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+        gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
                                  tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
 
         // 重算left和right的a点

@@ -25,8 +25,35 @@ glm::vec3 triangle_facet::get_normal() const {
     return nor;
 }
 
-bool gl3d::math::get_cross(const line &l1,
-                           const line &l2,
+bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
+    if (0.00001 < gl3d::math::point_distance_to_facet(*this, pt)) {
+        // 与平面距离不为0,则认为不在三角形内
+        return false;
+    }
+    glm::vec3 ap = pt - this->a;
+    glm::vec3 ab = this->b - this->a;
+    glm::vec3 ac = this->c - this->a;
+    float alpha = glm::acos(glm::dot(glm::normalize(ab), glm::normalize(ac)));
+
+    glm::vec3 tab = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->c))
+            / glm::sin(alpha) * glm::normalize(ab);
+    glm::vec3 tac = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->b))
+            / glm::sin(alpha) * glm::normalize(ac);
+    if (
+            (glm::normalize(tab) == glm::normalize(ab)) &&
+            (glm::normalize(tac) == glm::normalize(ac)) &&
+            (glm::length(tab) <= glm::length(ab)) &&
+            (glm::length(tac) <= glm::length(ac))
+            ) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool gl3d::math::get_cross(const line_2d &l1,
+                           const line_2d &l2,
                            glm::vec2 & cross_point) {
     glm::vec2 p1 = l1.a;
     glm::vec2 p2 = l1.b;
@@ -68,10 +95,10 @@ bool gl3d::math::get_cross(const line &l1,
 float gl3d::math::point_distance_to_facet(const triangle_facet &fc, const glm::vec3 &pt) {
     glm::vec3 nor = fc.get_normal();
 
-    return glm::dot(nor, fc.c - pt);
+    return glm::abs(glm::dot(nor, fc.c - pt));
 }
 
-void gl3d::math::line_cross_facet(const triangle_facet &f, const line &ray, glm::vec3 &pt) {
+void gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 &pt) {
     float dis = gl3d::math::point_distance_to_facet(f, ray.a);
     float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
     cosx = glm::abs(cosx);
@@ -80,6 +107,12 @@ void gl3d::math::line_cross_facet(const triangle_facet &f, const line &ray, glm:
 
     return;
 }
+
+float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
+    float alpha = glm::acos(glm::dot(glm::normalize(pt - l.a), glm::normalize(l.b - l.a)));
+    return glm::length(pt - l.a) * glm::sin(alpha);
+}
+
 
 #if 0
 #include <QString>
@@ -104,20 +137,20 @@ void main() {
 
     glm::vec2 p10(1.0, 2.0);
 
-    line l1(p5, p2);
-    line l2(p3, p4);
-    line l3(p1, p2);
-    line l4(p6, p7);
-    line l5(p8, p9);
+    line_2d l1(p5, p2);
+    line_2d l2(p3, p4);
+    line_2d l3(p1, p2);
+    line_2d l4(p6, p7);
+    line_2d l5(p8, p9);
 
-    line l6(p1, p3);
-    line l7(p6, p7);
+    line_2d l6(p1, p3);
+    line_2d l7(p6, p7);
 
-    line l8(p1, p2);
-    line l9(p8, p9);
+    line_2d l8(p1, p2);
+    line_2d l9(p8, p9);
 
-    line l10(p2, p3);
-    line l11(p1, p10);
+    line_2d l10(p2, p3);
+    line_2d l11(p1, p10);
     glm::vec2 res;
     bool ib = gl3d::math::get_cross(l2, l1, res);
     GL3D_TEST(ib == true);
@@ -131,5 +164,9 @@ void main() {
     GL3D_TEST(ib == false);
     ib = gl3d::math::get_cross(l10, l11, res);
     GL3D_TEST(ib == false);
+
+    line_3d lll(glm::vec3(0.0), glm::vec3(1.0));
+    glm::vec3 pt(0.1, 0.5, 0.25);
+    float xxqqq = gl3d::math::point_distance_to_line(pt, lll);
 }
 #endif
