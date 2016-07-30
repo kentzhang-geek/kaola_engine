@@ -22,6 +22,7 @@ drawhomewin::drawhomewin(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::drawhomewin)
 {
+    setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
 }
@@ -111,4 +112,9 @@ void drawhomewin::on_switch3D_clicked()
     else {
         GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
     }
+}
+
+void drawhomewin::on_colse_b_clicked()
+{
+    this->close();
 }

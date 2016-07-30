@@ -21,7 +21,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#drawhomewin {
-background-color: rgb(255, 255, 255);
+background-color:rgb(45, 46, 47);
 }</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -82,7 +82,7 @@ background-color: rgb(255, 255, 255);
         </property>
         <property name="styleSheet">
          <string notr="true">#headWidget{
-background-color:rgb(49, 56, 74);
+background-color:rgb(46, 47, 49)
 }</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
@@ -102,42 +102,52 @@ background-color:rgb(49, 56, 74);
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>黑体</family>
-             <pointsize>20</pointsize>
-            </font>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">#label {
+          <widget class="QWidget" name="widget_2" native="true">
+           <widget class="QLabel" name="label">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>141</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>微软雅黑</family>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">#label {
 color:rgb(245, 245, 245);
 }</string>
-           </property>
-           <property name="text">
-            <string>考拉猫Logo</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-           <property name="margin">
-            <number>12</number>
-           </property>
+            </property>
+            <property name="text">
+             <string>考拉猫</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="margin">
+             <number>12</number>
+            </property>
+           </widget>
           </widget>
          </item>
          <item>
@@ -150,22 +160,86 @@ color:rgb(245, 245, 245);
            </property>
            <property name="minimumSize">
             <size>
-             <width>300</width>
+             <width>440</width>
              <height>0</height>
             </size>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
+             <widget class="QPushButton" name="advice_b">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>微软雅黑</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#advice_b {
+color: rgb(249, 249, 249);
+border-radius: 0;
+background-color: rgb(46, 47, 49);
+border:0
+}</string>
+              </property>
+              <property name="text">
+               <string>我要吐槽</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../../res.qrc">
+                <normaloff>:/images/userinfo</normaloff>:/images/userinfo</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="flat">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_5">
+              <property name="styleSheet">
+               <string notr="true">#line_5 {
+background-color: rgb(117, 117, 117);
+}</string>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
+              <property name="lineWidth">
+               <number>2</number>
+              </property>
+              <property name="midLineWidth">
+               <number>0</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="new_draw">
               <property name="font">
                <font>
-                <family>黑体</family>
+                <family>微软雅黑</family>
                 <pointsize>10</pointsize>
                </font>
               </property>
               <property name="styleSheet">
                <string notr="true">#new_draw {
 color: rgb(249, 249, 249);
+border-radius: 0;
+background-color: rgb(46, 47, 49);
+border:0
 }</string>
               </property>
               <property name="text">
@@ -196,13 +270,16 @@ color: rgb(249, 249, 249);
               </property>
               <property name="font">
                <font>
-                <family>黑体</family>
+                <family>微软雅黑</family>
                 <pointsize>10</pointsize>
                </font>
               </property>
               <property name="styleSheet">
                <string notr="true">#save_b {
 color: rgb(249, 249, 249);
+border-radius: 0;
+background-color: rgb(46, 47, 49);
+border:0
 }</string>
               </property>
               <property name="text">
@@ -233,13 +310,16 @@ color: rgb(249, 249, 249);
               </property>
               <property name="font">
                <font>
-                <family>黑体</family>
+                <family>微软雅黑</family>
                 <pointsize>10</pointsize>
                </font>
               </property>
               <property name="styleSheet">
                <string notr="true">#colse_b {
 color: rgb(249, 249, 249);
+border-radius: 0;
+background-color: rgb(46, 47, 49);
+border:0
 }</string>
               </property>
               <property name="text">
@@ -268,7 +348,7 @@ color: rgb(249, 249, 249);
       </item>
       <item>
        <widget class="QWidget" name="downWidget" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,4">
+        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,4">
          <property name="spacing">
           <number>0</number>
          </property>
@@ -285,7 +365,7 @@ color: rgb(249, 249, 249);
           <number>0</number>
          </property>
          <item>
-          <widget class="QTabWidget" name="tabWidget">
+          <widget class="QWidget" name="widget" native="true">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -315,7 +395,7 @@ color: rgb(249, 249, 249);
            </property>
            <property name="font">
             <font>
-             <family>黑体</family>
+             <family>微软雅黑</family>
              <pointsize>10</pointsize>
             </font>
            </property>
@@ -331,403 +411,765 @@ color: rgb(249, 249, 249);
            <property name="inputMethodHints">
             <set>Qt::ImhNone</set>
            </property>
-           <property name="tabPosition">
-            <enum>QTabWidget::North</enum>
-           </property>
-           <property name="tabShape">
-            <enum>QTabWidget::Rounded</enum>
-           </property>
-           <property name="currentIndex">
-            <number>0</number>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="elideMode">
-            <enum>Qt::ElideLeft</enum>
-           </property>
-           <property name="usesScrollButtons">
-            <bool>false</bool>
-           </property>
-           <property name="documentMode">
-            <bool>false</bool>
-           </property>
-           <property name="tabsClosable">
-            <bool>false</bool>
-           </property>
-           <property name="movable">
-            <bool>false</bool>
-           </property>
-           <property name="tabBarAutoHide">
-            <bool>false</bool>
-           </property>
-           <widget class="QWidget" name="tab">
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+             <number>0</number>
             </property>
-            <attribute name="icon">
-             <iconset resource="../../res.qrc">
-              <normaloff>:/images/drawhome</normaloff>:/images/drawhome</iconset>
-            </attribute>
-            <attribute name="title">
-             <string>创建户型</string>
-            </attribute>
-            <widget class="QCheckBox" name="drawwall_b">
-             <property name="geometry">
-              <rect>
-               <x>40</x>
-               <y>30</y>
-               <width>51</width>
-               <height>21</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>画墙</string>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QWidget" name="tab_2">
-            <attribute name="icon">
-             <iconset resource="../../res.qrc">
-              <normaloff>:/images/import</normaloff>:/images/import</iconset>
-            </attribute>
-            <attribute name="title">
-             <string>家具布置</string>
-            </attribute>
-           </widget>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QWidget" name="drawhome_titleview" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">#drawhome_titleview {
+background-color: rgb(55, 59, 66);
+
+}</string>
+              </property>
+              <widget class="QLabel" name="drawhometitle">
+               <property name="geometry">
+                <rect>
+                 <x>50</x>
+                 <y>16</y>
+                 <width>61</width>
+                 <height>20</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#drawhometitle {
+color: rgb(248, 248, 248);
+}
+</string>
+               </property>
+               <property name="text">
+                <string>创建户型</string>
+               </property>
+              </widget>
+              <widget class="QLabel" name="drawhomeimage">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>31</width>
+                 <height>31</height>
+                </rect>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#drawhomeimage {
+background-image: url(:/images/drawhome_title);
+}</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QWidget" name="drawhomebuttonview" native="true">
+              <property name="styleSheet">
+               <string notr="true">#drawhomebuttonview {
+background-color: rgb(28, 29, 32)
+}</string>
+              </property>
+              <widget class="QCheckBox" name="drawwall_b">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="geometry">
+                <rect>
+                 <x>40</x>
+                 <y>180</y>
+                 <width>75</width>
+                 <height>52</height>
+                </rect>
+               </property>
+               <property name="acceptDrops">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../res.qrc">
+                 <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QWidget" name="gridLayoutWidget">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>40</y>
+                 <width>241</width>
+                 <height>73</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_2 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>墙</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_4">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_4 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>区域</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="label_3">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_3 {
+color: rgb(245, 245, 245);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>房间</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QToolButton" name="p_1">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p1 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="autoRaise">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QToolButton" name="p_2">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p2 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/drawhome</normaloff>:/images/drawhome</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="autoRaise">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QToolButton" name="p_3">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p3 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/drawquyu</normaloff>:/images/drawquyu</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="autoRaise">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QLabel" name="l_5">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>48</width>
+                 <height>17</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string>#l_5 {
+color: rgb(245, 245, 245);
+}</string>
+               </property>
+               <property name="text">
+                <string>自由绘制</string>
+               </property>
+              </widget>
+              <zorder>drawwall_b</zorder>
+              <zorder>drawhome_titleview</zorder>
+              <zorder>gridLayoutWidget</zorder>
+              <zorder>l_5</zorder>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,20">
+          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,20">
            <property name="spacing">
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <property name="spacing">
-              <number>0</number>
+            <widget class="QWidget" name="buttonsWidget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="leftMargin">
-              <number>6</number>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>50</height>
+              </size>
              </property>
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <property name="rightMargin">
-              <number>6</number>
-             </property>
-             <property name="bottomMargin">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="importHomeImage">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                 <stylestrategy>PreferDefault</stylestrategy>
-                 <kerning>true</kerning>
-                </font>
-               </property>
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>导入户型图</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/import_image</normaloff>:/images/import_image</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
-               </property>
-               <property name="autoRepeat">
-                <bool>false</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>false</bool>
-               </property>
-               <property name="autoDefault">
-                <bool>false</bool>
-               </property>
-               <property name="default">
-                <bool>false</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_4">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="modelFlip">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>户型翻转</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/flip</normaloff>:/images/flip</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="undo">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>120</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string> 撤销</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/undo</normaloff>:/images/undo</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="restore">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>120</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>恢复</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/redo</normaloff>:/images/redo</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="clearAll">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>清空画布</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/brush</normaloff>:/images/brush</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="exportImage">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>导出图纸</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/export_image</normaloff>:/images/export_image</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="switch3D">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="autoFillBackground">
-                <bool>false</bool>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">.switch3D {
-background-color: rgb(51, 121, 159);
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="importHomeImage">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                  <stylestrategy>PreferDefault</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::DefaultContextMenu</enum>
+                </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#importHomeImage {
+border-radius: 0
 }</string>
-               </property>
-               <property name="text">
-                <string> 进入3D模式</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/3d</normaloff>:/images/3d</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>32</width>
-                 <height>32</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
-               </property>
-               <property name="autoDefault">
-                <bool>false</bool>
-               </property>
-               <property name="default">
-                <bool>false</bool>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
+                </property>
+                <property name="text">
+                 <string>导入户型图</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/import_image</normaloff>:/images/import_image</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>false</bool>
+                </property>
+                <property name="autoDefault">
+                 <bool>false</bool>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="modelFlip">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#modelFlip {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string>户型翻转</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/flip</normaloff>:/images/flip</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="undo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#undo {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string> 撤销</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/undo</normaloff>:/images/undo</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="restore">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#restore {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string>恢复</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/redo</normaloff>:/images/redo</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="clearAll">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#clearAll {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string>清空画布</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/brush</normaloff>:/images/brush</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="lineWidth">
+                 <number>1</number>
+                </property>
+                <property name="midLineWidth">
+                 <number>0</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="exportImage">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#exportImage {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string>导出图纸</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/export_image</normaloff>:/images/export_image</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="switch3D">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>微软雅黑</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">#switch3D {border-radius: 0}</string>
+                </property>
+                <property name="text">
+                 <string> 进入3D模式</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../../res.qrc">
+                  <normaloff>:/images/3d</normaloff>:/images/3d</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="autoDefault">
+                 <bool>false</bool>
+                </property>
+                <property name="default">
+                 <bool>false</bool>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
             <widget class="MOpenGLView" name="OpenGLCanvas">
