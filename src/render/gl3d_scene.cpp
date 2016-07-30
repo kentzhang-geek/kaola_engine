@@ -454,7 +454,9 @@ void scene::draw_object_picking_mask() {
             GL3D_SCENE_DRAW_WALL;
     this->this_property.global_shader = string("picking_mask");
     this->prepare_canvas(true);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     this->draw(true);
+//    GL3D_GL()->glEnable(GL_CULL_FACE);
 
     this->picking_frame->unbind_this_frame();
 
@@ -477,7 +479,9 @@ int scene::get_object_id_by_coordination(int x, int y) {
     // get pixel
     // 这里临时处理了下，似乎整个画面倒过来了？
     GL3D_GL()->glReadPixels(x, this->height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
-    
+//    this->picking_frame->save_to_file
+//            ("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg");
+
     // unbind picking mask
     this->picking_frame->unbind_this_frame();
     delete this->picking_frame;
