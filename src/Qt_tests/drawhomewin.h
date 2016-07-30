@@ -20,11 +20,9 @@ public:
     static void on_draw_clear();
 
 private slots:
-    void on_switch_2_clicked();
-
-    void on_tempdraw_clicked();
-
     void on_drawwall_b_stateChanged(int arg1);
+
+    void on_switch3D_clicked();
 
 private:
     Ui::drawhomewin *ui;

@@ -11,7 +11,7 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     this->setPalette(palette);
 
     //定义窗口坐标
-    setGeometry(x + 240, y + 40, 0, 0);
+    setGeometry(x + 300, y + 60, 0, 0);
     //隐藏标题栏
     setWindowFlags(Qt::FramelessWindowHint);
 

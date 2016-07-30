@@ -81,48 +81,10 @@ public:
     }
 };
 
-
-
-//切换视角按钮-temp-click
-void drawhomewin::on_switch_2_clicked()
-{
-    static bool flag_edit = false;
-    flag_edit = !flag_edit;
-    if (flag_edit) {
-        GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->OpenGLCanvas->main_scene);
-    }
-    else {
-        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
-    }
-}
-
 //取消所有按钮选择状态
 void drawhomewin::on_draw_clear() {
     dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-}
-
-//画墙按钮-temp-click
-extern bool test_flag_global;
-void drawhomewin::on_tempdraw_clicked()
-{
-    static int tmp_id = 23423;
-    static gl3d_wall * wall = NULL;
-    glm::vec3 pos = this->ui->OpenGLCanvas->main_scene->watcher->get_current_position();
-    glm::vec3 look = this->ui->OpenGLCanvas->main_scene->watcher->get_look_direction();
-    glm::vec2 st = glm::vec2(pos.x, pos.z);
-    glm::vec2 ed = st + glm::vec2(look.x, look.z) * 2;
-    if (NULL == wall) {
-        wall = new gl3d_wall(
-                    st, ed, 0.5, 1.2);
-        this->ui->OpenGLCanvas->main_scene->add_obj(
-                    QPair<int , object *>(tmp_id++, wall));
-    } else {
-        wall->set_end_point(ed);
-        wall->calculate_mesh();
-    }
-
-    test_flag_global = false;
 }
 
 //画墙功能按钮-change
@@ -136,5 +98,17 @@ void drawhomewin::on_drawwall_b_stateChanged(int arg1)
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         dop = new DrawOption(this->ui->OpenGLCanvas);
         dop->show();
+    }
+}
+
+void drawhomewin::on_switch3D_clicked()
+{
+    static bool flag_edit = false;
+    flag_edit = !flag_edit;
+    if (flag_edit) {
+        GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->OpenGLCanvas->main_scene);
+    }
+    else {
+        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
     }
 }
