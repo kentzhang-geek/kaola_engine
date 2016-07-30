@@ -3,6 +3,28 @@
 using namespace gl3d;
 using namespace gl3d::math;
 
+triangle_facet::triangle_facet(glm::vec3 ta, glm::vec3 tb, glm::vec3 tc) :
+    a(ta), b(tb), c(tc)
+{}
+
+bool triangle_facet::is_valid_facet() const {
+    glm::vec3 td1 = glm::normalize(a - b);
+    glm::vec3 td2 = glm::normalize(a - c);
+    if ((td1 == td2) || (td1 == (-td2))) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+glm::vec3 triangle_facet::get_normal() const {
+    glm::vec3 nor = glm::cross((this->b - this->a), (this->c - this->a));
+    nor = glm::normalize(nor);
+
+    return nor;
+}
+
 bool gl3d::math::get_cross(const line &l1,
                            const line &l2,
                            glm::vec2 & cross_point) {
@@ -41,6 +63,22 @@ bool gl3d::math::get_cross(const line &l1,
     cross_point.x = x;
     cross_point.y = y;
     return true;
+}
+
+float gl3d::math::point_distance_to_facet(const triangle_facet &fc, const glm::vec3 &pt) {
+    glm::vec3 nor = fc.get_normal();
+
+    return glm::dot(nor, fc.c - pt);
+}
+
+void gl3d::math::line_cross_facet(const triangle_facet &f, const line &ray, glm::vec3 &pt) {
+    float dis = gl3d::math::point_distance_to_facet(f, ray.a);
+    float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
+    cosx = glm::abs(cosx);
+    dis = dis / cosx;
+    pt = ray.a + (ray.b - ray.a) * dis;
+
+    return;
 }
 
 #if 0
