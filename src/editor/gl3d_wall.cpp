@@ -60,32 +60,26 @@ gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_
 }
 
 gl3d_wall::~gl3d_wall() {
-    gl3d_wall * attach;
-
     if (this->start_point_fixed) {
-        attach = this->start_point_attach;
-        if (glm::length(this->start_point - attach->start_point) >
-                (glm::length(this->start_point - attach->end_point))) {
-            attach->end_point_attach = NULL;
-            attach->end_point_fixed = false;
-        }
-        else {
-            attach->start_point_attach = NULL;
-            attach->start_point_fixed = false;
-        }
+        this->seperate(this->start_point_attach);
     }
 
     if (this->end_point_fixed) {
-        attach = this->end_point_attach;
-        if (glm::length(this->end_point - attach->start_point) >
-                (glm::length(this->end_point - attach->end_point))) {
-            attach->end_point_attach = NULL;
-            attach->end_point_fixed = false;
-        }
-        else {
-            attach->start_point_attach = NULL;
-            attach->start_point_fixed = false;
-        }
+        this->seperate(this->end_point_attach);
+    }
+}
+
+void gl3d_wall::seperate(gl3d::gl3d_wall_attach & attachment) {
+    gl3d_wall * attach = attachment.attach;
+    if (attachment.attach_point == gl3d::gl3d_wall_attach::start_point) {
+        // 附着墙相应位置在start点
+        attach->start_point_attach.attach = NULL;
+        attach->start_point_fixed = false;
+    }
+    else {
+        // 附着墙相应位置在end点
+        attach->end_point_attach.attach = NULL;
+        attach->end_point_fixed = false;
     }
 }
 
@@ -144,6 +138,70 @@ void gl3d_wall::calculate_mesh() {
     gl3d::math::line l_right(this->start_point - top_dir * this->thickness / 2.0f,
                              this->end_point - top_dir * this->thickness / 2.0f);
 
+    // 根据attach状态重算左右边线
+    if (this->start_point_fixed) {
+        // 计算附着墙的左右边线
+        gl3d_wall * tmp_wall = this->start_point_attach.attach;
+        tmp = tmp_wall->end_point - tmp_wall->start_point;
+        direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
+        direction = rotate_mtx * direction;
+        direction = direction / direction.w;
+        top_dir = glm::normalize(glm::vec2(direction));
+        gl3d::math::line tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+                                tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
+        gl3d::math::line tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+                                 tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
+
+        // 重算left和right的a点
+        if (this->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+            // 附加到另外墙的start时
+            glm::vec2 pt;
+            if (gl3d::math::get_cross(l_left, tl_right, pt))
+                l_left.a = pt;
+            if (gl3d::math::get_cross(l_right, tl_left, pt))
+                l_right.a = pt;
+        }
+        else {
+            glm::vec2 pt;
+            if (gl3d::math::get_cross(l_left, tl_left, pt))
+                l_left.a = pt;
+            if (gl3d::math::get_cross(l_right, tl_right, pt))
+                l_right.a = pt;
+        }
+    }
+    if (this->end_point_fixed) {
+        // 重算b点
+        // 计算附着墙的左右边线
+        gl3d_wall * tmp_wall = this->end_point_attach.attach;
+        tmp = tmp_wall->end_point - tmp_wall->start_point;
+        direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
+        direction = rotate_mtx * direction;
+        direction = direction / direction.w;
+        top_dir = glm::normalize(glm::vec2(direction));
+        gl3d::math::line tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+                                tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
+        gl3d::math::line tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+                                 tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
+
+        // 重算left和right的a点
+        if (this->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+            // 附加到另外墙的start时
+            glm::vec2 pt;
+            if (gl3d::math::get_cross(l_left, tl_left, pt))
+                l_left.b = pt;
+            if (gl3d::math::get_cross(l_right, tl_right, pt))
+                l_right.b = pt;
+        }
+        else {
+            glm::vec2 pt;
+            if (gl3d::math::get_cross(l_left, l_right, pt))
+                l_left.b = pt;
+            if (gl3d::math::get_cross(l_right, tl_left, pt))
+                l_right.b = pt;
+        }
+    }
+
+    // 根据左右边线得出surface
     QVector<glm::vec3 > points;
     klm::Surface * s;
     // left
@@ -236,12 +294,9 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
 
 bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
     float dis = glm::length(wall1->start_point - wall2->start_point);
-    dis = dis < (glm::length(wall1->start_point - wall2->end_point)) ?
-                dis : (glm::length(wall1->start_point - wall2->end_point));
-    dis = dis < (glm::length(wall1->end_point - wall2->end_point)) ?
-                dis : (glm::length(wall1->end_point - wall2->end_point));
-    dis = dis < (glm::length(wall1->end_point - wall2->start_point)) ?
-                dis : (glm::length(wall1->end_point - wall2->start_point));
+    dis = glm::min(dis, (glm::length(wall1->start_point - wall2->end_point)));
+    dis = glm::min(dis, (glm::length(wall1->end_point - wall2->end_point)));
+    dis = glm::min(dis, (glm::length(wall1->end_point - wall2->start_point)));
     if (dis > wall_combine_distance) { // check is there near points
         return false;
     }
@@ -252,12 +307,36 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
     float ed_dis_tmp = glm::min(glm::length(wall1->end_point - wall2->end_point),
                                 glm::length(wall1->end_point - wall2->start_point));
     if (st_dis_tmp > ed_dis_tmp) {
+        // 分离之前的attach
+        if (wall1->end_point_fixed == true) {
+            wall1->seperate(wall1->end_point_attach);
+        }
+        // 建立新的attach
         wall1->end_point_fixed = true;
-        wall1->end_point_attach = wall2;
+        wall1->end_point_attach.attach = wall2;
+        if (glm::length(wall1->end_point - wall2->end_point) >
+                glm::length(wall1->end_point - wall2->start_point)) {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
     }
     else {
+        // 分离之前的attach
+        if (wall1->start_point_fixed == true) {
+            wall1->seperate(wall1->start_point_attach);
+        }
+        // 建立新的attach
         wall1->start_point_fixed = true;
-        wall1->start_point_attach = wall2;
+        wall1->start_point_attach.attach = wall2;
+        if (glm::length(wall1->start_point - wall2->end_point) >
+                glm::length(wall1->start_point - wall2->start_point)) {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
     }
 
     // attach wall2
@@ -266,15 +345,41 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
     ed_dis_tmp = glm::min(glm::length(wall2->end_point - wall1->end_point),
                           glm::length(wall2->end_point - wall1->start_point));
     if (st_dis_tmp > ed_dis_tmp) {
+        // 分离之前的attach
+        if (wall2->end_point_fixed == true) {
+            wall2->seperate(wall2->end_point_attach);
+        }
+        // 建立新的attach
         wall2->end_point_fixed = true;
-        wall2->end_point_attach = wall2;
+        wall2->end_point_attach.attach = wall1;
+        if (glm::length(wall2->end_point - wall1->end_point) >
+                glm::length(wall2->end_point - wall1->start_point)) {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
     }
     else {
+        // 分离之前的attach
+        if (wall2->start_point_fixed == true) {
+            wall2->seperate(wall2->start_point_attach);
+        }
+        // 建立新的attach
         wall2->start_point_fixed = true;
-        wall2->start_point_attach = wall2;
+        wall2->start_point_attach.attach = wall1;
+        if (glm::length(wall2->start_point - wall1->end_point) >
+                glm::length(wall2->start_point - wall1->start_point)) {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
     }
 
-    return false;
+    wall1->calculate_mesh();
+    wall2->calculate_mesh();
+    return true;
 }
 
 float gl3d_wall::get_length() {
@@ -411,4 +516,10 @@ void gl3d::surface_to_mesh(const klm::Surface * sfc,
         free(idxes);
     }
     return;
+}
+
+
+gl3d::gl3d_wall_attach::gl3d_wall_attach() {
+    this->attach_point = this->start_point;
+    this->attach = NULL;
 }
