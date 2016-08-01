@@ -85,6 +85,7 @@ private:
     int pickUpObjID;
 
     void openglDrawWall(const int x, const int y);
+    void getWalls();
 };
 
 #endif // MOPENGLVIEW_H
