@@ -52,7 +52,9 @@ SOURCES += \
     src/utils/gl3d_math.cpp \
     src/Qt_tests/ui/drawoption.cpp \
     src/utils/qui/frmmessagebox.cpp \
-    src/utils/qui/iconhelper.cpp
+    src/utils/qui/iconhelper.cpp \
+    src/editor/gl3d_surface_object.cpp \
+    src/render/gl3d_abstract_object.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -97,7 +99,9 @@ HEADERS  += \
     src/Qt_tests/ui/drawoption.h \
     src/utils/qui/frmmessagebox.h \
     src/utils/qui/iconhelper.h \
-    src/utils/qui/myhelper.h
+    src/utils/qui/myhelper.h \
+    include/editor/gl3d_surface_object.h \
+    include/kaola_engine/gl3d_abstract_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

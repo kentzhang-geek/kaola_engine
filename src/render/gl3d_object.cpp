@@ -21,7 +21,7 @@ using namespace std;
  *  Object相关的接口
  */
 void object::init() {
-//    memset(this, 0, sizeof(object));
+    this->obj_type = this->type_default;
     this->this_property.position = glm::vec3(0.0);
     this->this_property.rotate_mat = glm::mat4(1.0);
     this->this_property.bounding_value_max = glm::vec3(0.0f);
@@ -35,8 +35,6 @@ void object::init() {
     this->this_property.authority = GL3D_OBJ_ENABLE_ALL; //使能所有权限
     // 注意默认绘制权限为普通+阴影+倒影。天空盒与地面是特殊绘制
     this->this_property.draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
-    // gen vao
-    GL3D_GL()->glGenVertexArrays(1, &this->vao);
 }
 
 object::object() {
@@ -61,9 +59,6 @@ object::~object() {
         }
         mtls.clear();
     }
-    
-    // delete vao
-    GL3D_GL()->glDeleteVertexArrays(1, &this->vao);
 }
 
 object::object(char * path_to_obj_file) {
@@ -131,7 +126,7 @@ bool object::init(char * filename) {
     this->number_of_meshes = scene->mNumMeshes;
     
     // process meshes
-    GL3D_GL()->glBindVertexArray(this->vao);
+    GL3D_GL()->glBindVertexArray(this->get_vao());
     for (i = 0; i < scene->mNumMeshes; i++) {
         this->meshes.push_back(new gl3d::mesh((void *)scene->mMeshes[i]));
     }
@@ -163,7 +158,7 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only on mesh for test
-    GL3D_GL()->glBindVertexArray(this->vao);
+    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, idx_in, num_of_indecis));
     GL3D_GL()->glBindVertexArray(0);
     
@@ -176,7 +171,7 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only one mesh for test
-    GL3D_GL()->glBindVertexArray(this->vao);
+    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, indecis, num_of_indecis, txtr, number_of_textures));
     GL3D_GL()->glBindVertexArray(0);
     
@@ -202,7 +197,7 @@ void object::buffer_data() {
     this->pre_scale();
 
     // bind vao
-    GL3D_GL()->glBindVertexArray(this->vao);
+    GL3D_GL()->glBindVertexArray(this->get_vao());
 
     gl3d::mesh * p_mesh;
     auto iter = this->meshes.begin();
@@ -341,3 +336,33 @@ void object::pre_scale() {
     this->pre_scaled = true;
     this->this_property.scale_unit = sc->m;
 }
+
+bool object::is_data_changed() {
+    return !(this->data_buffered);
+}
+
+bool object::is_visible() {
+    return true;
+}
+
+glm::mat4 object::get_translation_mat() {
+    return glm::translate(glm::mat4(1.0), this->this_property.position);
+}
+
+glm::mat4 object::get_rotation_mat() {
+    return this->this_property.rotate_mat;
+}
+
+glm::mat4 object::get_scale_mat() {
+    return glm::mat4(1.0);
+}
+
+QVector<gl3d::mesh *> * object::get_abstract_meshes() {
+    return this->get_meshes();
+}
+
+QMap<unsigned int, gl3d_material *> * object::get_abstract_mtls() {
+    return this->get_mtls();
+}
+
+

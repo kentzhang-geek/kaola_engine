@@ -8,7 +8,6 @@
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 
-#include "editor/gl3d_wall.h"
 #include "editor/klm_surface.h"
 #include "utils/gl3d_path_config.h"
 

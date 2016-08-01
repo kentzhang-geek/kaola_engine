@@ -72,9 +72,13 @@ void GLUtility::getRotation(const glm::vec3 &source,
         if(sourceLen == 0.0f || destLen == 0.0f){
             matrix = glm::mat4(1.0f);
         } else {
+            glm::vec3 crossVec = glm::cross(source, dest);
+            if(crossVec == NON_NORMAL){
+                crossVec.y = 1.0f;
+            }
             matrix =glm::rotate(
                     glm::acos(glm::dot(source, dest)/(sourceLen * destLen)),
-                    glm::cross(source, dest));
+                    crossVec);
         }
     }
 }
@@ -91,7 +95,7 @@ glm::vec3 GLUtility::getPlaneNormal(const QVector<glm::vec3> &points) noexcept{
         glm::vec3 testNormal = getNormal(points[index -1],
                                     points[index],
                                     points[index + 1]);
-        if(testNormal != sampleNormal){
+        if(!equals(testNormal,sampleNormal)){
             return NON_NORMAL;
         }
     }

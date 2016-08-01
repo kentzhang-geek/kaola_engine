@@ -275,12 +275,14 @@ namespace gl3d {
         // 场景光源
         GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 
+        // objects
+        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int,gl3d::object *> );
+
     private:
         void init();
         void set_attribute(GLuint pro);
         void draw_object(gl3d::object *obj, GLuint pro);
         shader_manager * shaders;
-        QMap<int,gl3d::object *> * objects;
         scene_property this_property;
         light_property lights[4];
         gl3d_general_texture * shadow_text;

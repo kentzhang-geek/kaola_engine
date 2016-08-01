@@ -89,6 +89,7 @@ MOpenGLView::MOpenGLView() : QGLWidget()
 bool need_capture;
 void MOpenGLView::paintGL() {
     QGLWidget::paintGL();
+
     // lock render
     if (!gl3d_lock::shared_instance()->render_lock.tryLock()) {
         return;
@@ -126,7 +127,6 @@ void MOpenGLView::paintGL() {
 void MOpenGLView::initializeGL() {
     QGLWidget::initializeGL();
     // here gat parent widget size and set to sel
-    //    this->setGeometry(this->parentWidget()->geometry());
 
     this->initializeOpenGLFunctions();
     gl3d_win_gl_functions = this;
@@ -213,7 +213,7 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
 void MOpenGLView::resizeGL(int width, int height) {
     QGLWidget::resizeGL(width, height);
     // here gat parent widget size and set to sel
-    //    this->setGeometry(this->parentWidget()->geometry());
+//    this->setGeometry(this->parentWidget()->geometry());
     this->main_scene->set_height((float)height);
     this->main_scene->set_width((float)width);
     this->main_scene->watcher->set_width((float)width);
@@ -258,19 +258,6 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
 }
 
-//获取屏幕上所有的墙
-void MOpenGLView::getWalls() {
-    for (auto it = this->main_scene->objects->begin();
-         it != this->main_scene->objects->end();
-         it++) {
-        gl3d::object * obj = *it;
-        if (obj->get_obj_type() == obj->type_wall) {
-            gl3d_wall * w = (gl3d_wall *)w;
-            cout << "---------------------------" << w->get_length() << endl;
-        }
-    }
-}
-
 
 //鼠标按下事件
 void MOpenGLView::mousePressEvent(QMouseEvent *event) {
@@ -310,7 +297,6 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
         //画墙中节点结束
         if(now_state == gl3d::gl3d_global_param::drawwalling) {
-            getWalls();
             this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
@@ -319,13 +305,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
-            //            cout << "left down: " << event->x() << ", " << event->y() << endl;
+//            cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
 
 
         //右键按下事件
     } else if(event->button() == Qt::RightButton) {
-        //        cout << "right down: " << event->x() << ", " << event->y() << endl;
+//        cout << "right down: " << event->x() << ", " << event->y() << endl;
         //点击右键-取消画墙状态
         if(now_state == gl3d::gl3d_global_param::drawwall) {
             drawhomewin::on_draw_clear();
@@ -338,7 +324,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         }
     } else if(event->button() == Qt::MidButton) {
-        //        cout << "centre down: " << event->x() << ", " << event->y() << endl;
+//        cout << "centre down: " << event->x() << ", " << event->y() << endl;
     }
 }
 
@@ -356,14 +342,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                          pick, 0.0);
         this->new_wall->set_end_point(pick);
         this->new_wall->calculate_mesh();
-        //        cout << "move: " << event->x() << ", " << event->y() << endl;
+//        cout << "move: " << event->x() << ", " << event->y() << endl;
     }
 
     if(event->buttons()&Qt::LeftButton) {
         cout << "left move: " << event->x() << ", " << event->y() << endl;
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-            //            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
+//            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
             tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
             this->tmp_point_x = event->x();
             this->tmp_point_y = event->y();

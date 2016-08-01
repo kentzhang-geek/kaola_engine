@@ -28,6 +28,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     boundingBox = new BoundingBox(points);    
     glm::vec3 center = boundingBox->getCenter();
     glm::mat4 rotation;
+    initNormal = planNormal;
     GLUtility::getRotation(planNormal, GLUtility::Z_AXIS, rotation);    
 
     for(QVector<glm::vec3>::const_iterator point = points.begin();

@@ -54,7 +54,7 @@ void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
     memset(&this->this_property, 0, sizeof(scene_property));
     memset(&this->lights, 0, sizeof(light_property) * 4);
-    this->objects = new QMap<int,gl3d::object *>();
+    this->objects.clear();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
 //    using namespace Assimp;
@@ -91,18 +91,18 @@ bool scene::init(scene_property * property) {
 }
 
 bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
-    this->objects->insert(obj_key_pair.first, obj_key_pair.second);
+    this->objects.insert(obj_key_pair.first, obj_key_pair.second);
     obj_key_pair.second->this_property.id = (GLuint) obj_key_pair.first;
     obj_key_pair.second->buffer_data();
     return true;
 }
 
 bool scene::delete_obj(int key) {
-    if (!this->objects->contains(key))
+    if (!this->objects.contains(key))
         return true;
     object * obj = this->get_obj(key);
     if (obj->this_property.authority & GL3D_OBJ_ENABLE_DEL) {
-        this->objects->erase(this->objects->find(key));
+        this->objects.erase(this->objects.find(key));
         return true;
     }
     
@@ -110,13 +110,13 @@ bool scene::delete_obj(int key) {
 }
 
 gl3d::object * scene::get_obj(int key) {
-    return this->objects->value(key);
+    return this->objects.value(key);
 }
 
 bool scene::prepare_buffer() {
-    auto itera = this->objects->begin();
+    auto itera = this->objects.begin();
     gl3d::object * obj = NULL;
-    for (; itera != this->objects->end(); itera++) {
+    for (; itera != this->objects.end(); itera++) {
         obj = itera.value();
         // buffer data
         obj->buffer_data();
@@ -212,8 +212,8 @@ bool scene::draw(bool use_global_shader) {
     shader_param * param;
     
     // 遍历object去渲染物体
-    auto iter_objs = this->objects->begin();     // 遍历所有object
-    while (iter_objs != this->objects->end()) {
+    auto iter_objs = this->objects.begin();     // 遍历所有object
+    while (iter_objs != this->objects.end()) {
         current_obj = iter_objs.value();
         int cuid_tmp = iter_objs.key();
         //        cout << "current obj id " << (*iter_objs).first << endl;
@@ -246,7 +246,7 @@ bool scene::draw(bool use_global_shader) {
         else {
             GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), current_obj->use_shader.c_str());
             // TODO : 这里删除的话会报错
-            iter_objs = this->objects->erase(iter_objs);  // 不再绘制当前未找到shader的物件
+            iter_objs = this->objects.erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
     }
     GL3D_GL()->glBindVertexArray(0);
@@ -343,7 +343,7 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
 
 void scene::draw_object(gl3d::object *obj, GLuint pro) {
     // set vao
-    GL3D_GL()->glBindVertexArray(obj->vao);
+    GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
     
     // TODO : set matrix
@@ -454,7 +454,9 @@ void scene::draw_object_picking_mask() {
             GL3D_SCENE_DRAW_WALL;
     this->this_property.global_shader = string("picking_mask");
     this->prepare_canvas(true);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
     this->draw(true);
+//    GL3D_GL()->glEnable(GL_CULL_FACE);
 
     this->picking_frame->unbind_this_frame();
 
@@ -477,7 +479,9 @@ int scene::get_object_id_by_coordination(int x, int y) {
     // get pixel
     // 这里临时处理了下，似乎整个画面倒过来了？
     GL3D_GL()->glReadPixels(x, this->height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
-    
+//    this->picking_frame->save_to_file
+//            ("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg");
+
     // unbind picking mask
     this->picking_frame->unbind_this_frame();
     delete this->picking_frame;
@@ -493,8 +497,8 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (this->objects->contains(obj_id)) {
-            if (!(this->objects->value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+        if (this->objects.contains(obj_id)) {
+            if (!(this->objects.value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
                 obj_id = -1;
             }
         }
