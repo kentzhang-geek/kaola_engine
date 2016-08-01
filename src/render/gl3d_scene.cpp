@@ -57,9 +57,9 @@ void scene::init() {
     this->objects.clear();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
-//    using namespace Assimp;
-//    DefaultLogger::create("",Logger::VERBOSE);
-//    DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
+    //    using namespace Assimp;
+    //    DefaultLogger::create("",Logger::VERBOSE);
+    //    DefaultLogger::get()->attachStream(new myStream(), Logger::Debugging);
 }
 
 scene::scene(GLfloat h, GLfloat w) {
@@ -90,9 +90,9 @@ bool scene::init(scene_property * property) {
     return true;
 }
 
-bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
+bool scene::add_obj(QPair<int, gl3d::abstract_object *> obj_key_pair) {
     this->objects.insert(obj_key_pair.first, obj_key_pair.second);
-    obj_key_pair.second->this_property.id = (GLuint) obj_key_pair.first;
+    obj_key_pair.second->set_id((GLuint) obj_key_pair.first);
     obj_key_pair.second->buffer_data();
     return true;
 }
@@ -100,8 +100,8 @@ bool scene::add_obj(QPair<int,gl3d::object *> obj_key_pair) {
 bool scene::delete_obj(int key) {
     if (!this->objects.contains(key))
         return true;
-    object * obj = this->get_obj(key);
-    if (obj->this_property.authority & GL3D_OBJ_ENABLE_DEL) {
+    abstract_object * obj = this->get_obj(key);
+    if (obj->get_control_authority() & GL3D_OBJ_ENABLE_DEL) {
         this->objects.erase(this->objects.find(key));
         return true;
     }
@@ -109,13 +109,13 @@ bool scene::delete_obj(int key) {
     return false;
 }
 
-gl3d::object * scene::get_obj(int key) {
+gl3d::abstract_object * scene::get_obj(int key) {
     return this->objects.value(key);
 }
 
 bool scene::prepare_buffer() {
     auto itera = this->objects.begin();
-    gl3d::object * obj = NULL;
+    gl3d::abstract_object * obj = NULL;
     for (; itera != this->objects.end(); itera++) {
         obj = itera.value();
         // buffer data
@@ -208,7 +208,7 @@ bool scene::draw(bool use_global_shader) {
         return false;
     }
     Program * use_shader = NULL;
-    object * current_obj = NULL;
+    abstract_object * current_obj = NULL;
     shader_param * param;
     
     // 遍历object去渲染物体
@@ -217,21 +217,13 @@ bool scene::draw(bool use_global_shader) {
         current_obj = iter_objs.value();
         int cuid_tmp = iter_objs.key();
         //        cout << "current obj id " << (*iter_objs).first << endl;
-        if (use_global_shader) {
-            use_shader = GL3D_GET_SHADER(this->this_property.global_shader.c_str());
-        }
-        else {
-            use_shader = GL3D_GET_SHADER(current_obj->use_shader);
-        }
+        // do not support specify shader now, global shader only
+        use_shader = GL3D_GET_SHADER(this->this_property.global_shader.c_str());
         if (NULL != use_shader) {
             GL3D_GL()->glUseProgram(use_shader->getProgramID());
-            if (use_global_shader) {
-                param = GL3D_GET_PARAM(this->this_property.global_shader.c_str());
-            }
-            else {
-                param = GL3D_GET_PARAM(current_obj->use_shader);
-            }
-            if (current_obj->get_property()->draw_authority & this->this_property.current_draw_authority) {
+            // globla shader only, do not support specific shader now
+            param = GL3D_GET_PARAM(this->this_property.global_shader.c_str());
+            if (current_obj->get_render_authority() & this->this_property.current_draw_authority) {
                 if (NULL != param) {
                     // set object to user data before set param
                     param->user_data.insert(string("object"), (void *)current_obj);
@@ -244,7 +236,7 @@ bool scene::draw(bool use_global_shader) {
             iter_objs++;
         }
         else {
-            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), current_obj->use_shader.c_str());
+            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), this->this_property.global_shader.c_str());
             // TODO : 这里删除的话会报错
             iter_objs = this->objects.erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
@@ -341,7 +333,7 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
     return traw_able;
 }
 
-void scene::draw_object(gl3d::object *obj, GLuint pro) {
+void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
@@ -353,16 +345,11 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
             this->watcher->viewing_matrix;
     
     // set model matrix
-    ::glm::mat4 trans(1.0f);
+    ::glm::mat4 trans = obj->get_translation_mat() * obj->get_rotation_mat() * obj->get_scale_mat();
     // set norMtx
-    ::glm::mat4 norMtx(1.0f);
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    ::glm::mat4 norMtx = obj->get_rotation_mat();
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
-    //    norMtx = this->watcher->viewing_matrix * trans;
-    norMtx = trans;
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     pvm *= trans;    // final MVP
     glm::mat4 unpvm = glm::inverse(pvm);
@@ -389,34 +376,35 @@ void scene::draw_object(gl3d::object *obj, GLuint pro) {
             (GL3D_GL()->glGetUniformLocation
              (pro, "normalMtx"),
              1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
-    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                           (pro, "param_x"), obj->param_x);
-    
-    auto iter = obj->meshes.begin();
+    if (obj->get_pick_flag()) {  // obj 拾取要做的一些事
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                               (pro, "param_x"), 0.5);
+    }
+    else {
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                               (pro, "param_x"), 1.0);
+    }
+
+    auto iter = obj->get_abstract_meshes()->begin();
     gl3d::mesh *p_mesh;
-    while (iter != obj->meshes.end()) {
+    while (iter != obj->get_abstract_meshes()->end()) {
         p_mesh = *iter;
         // set buffers
         GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
         GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
         
-        // bouding box test
-        if ((check_bouding(p_mesh->bounding_value_max, p_mesh->bounding_value_min, pvm) == true)
-                || !(obj->this_property.authority & GL3D_OBJ_ENABLE_CULLING)
-                || (this->watcher->view_mode != this->watcher->normal_view)) {
-            // 多重纹理的绑定与绘制
-            try {
-                obj->mtls.value(p_mesh->material_index)->use_this(pro);
-                gl3d_texture::set_parami(p_mesh->texture_repeat);
-            } catch (std::out_of_range & not_used_smth) {
-                //log_c("material_index is %d and out of range", p_mesh->material_index);
-            }
-            this->set_attribute(pro);
-            GL3D_GL()->glDrawElements(GL_TRIANGLES,
-                                      p_mesh->num_idx,
-                                      GL_UNSIGNED_SHORT,
-                                      (GLvoid *)NULL);
+        // 多重纹理的绑定与绘制
+        try {
+            obj->get_abstract_mtls()->value(p_mesh->material_index)->use_this(pro);
+            gl3d_texture::set_parami(p_mesh->texture_repeat);
+        } catch (std::out_of_range & not_used_smth) {
+            //log_c("material_index is %d and out of range", p_mesh->material_index);
         }
+        this->set_attribute(pro);
+        GL3D_GL()->glDrawElements(GL_TRIANGLES,
+                                  p_mesh->num_idx,
+                                  GL_UNSIGNED_SHORT,
+                                  (GLvoid *)NULL);
         iter++;
     }
     
@@ -456,7 +444,7 @@ void scene::draw_object_picking_mask() {
     this->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     this->draw(true);
-//    GL3D_GL()->glEnable(GL_CULL_FACE);
+    //    GL3D_GL()->glEnable(GL_CULL_FACE);
 
     this->picking_frame->unbind_this_frame();
 
@@ -479,8 +467,8 @@ int scene::get_object_id_by_coordination(int x, int y) {
     // get pixel
     // 这里临时处理了下，似乎整个画面倒过来了？
     GL3D_GL()->glReadPixels(x, this->height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColor);
-//    this->picking_frame->save_to_file
-//            ("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg");
+    //    this->picking_frame->save_to_file
+    //            ("D:\\User\\Desktop\\KLM\\qt_opengl_engine\\test.jpg");
 
     // unbind picking mask
     this->picking_frame->unbind_this_frame();
@@ -498,7 +486,7 @@ int scene::get_object_id_by_coordination(int x, int y) {
     // 检测是否可拾取
     if (obj_id > 0) {
         if (this->objects.contains(obj_id)) {
-            if (!(this->objects.value(obj_id)->get_property()->authority & GL3D_OBJ_ENABLE_PICKING)) {
+            if (!(this->objects.value(obj_id)->get_control_authority() & GL3D_OBJ_ENABLE_PICKING)) {
                 obj_id = -1;
             }
         }
@@ -510,9 +498,11 @@ int scene::get_object_id_by_coordination(int x, int y) {
     return obj_id;
 }
 
-bool scene::move_object(object * obj, glm::vec3 des_pos) {
-    if (obj->get_property()->authority & GL3D_OBJ_ENABLE_MOVE) {
-        obj->get_property()->position = des_pos;
+bool scene::move_object(gl3d::abstract_object *obj, glm::vec3 des_pos) {
+    if (obj->get_control_authority() & GL3D_OBJ_ENABLE_MOVE) {
+        obj->set_translation_mat(
+                    glm::translate(glm::mat4(1.0), des_pos)
+                    );
         return true;
     }
     return false;
@@ -527,7 +517,7 @@ void scene::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out) {
     this->coord_ground(coord_in, coord_out, 0.0);
 }
 
-GLfloat scene::get_obj_hight(object * obj, glm::vec2 coord_in) {
+GLfloat scene::get_obj_hight(abstract_object * obj, glm::vec2 coord_in) {
     GLfloat hight_ret = 0.0;
     glm::vec2 grd_coord;
     glm::vec3 cam_coord;
@@ -536,7 +526,7 @@ GLfloat scene::get_obj_hight(object * obj, glm::vec2 coord_in) {
     // 获取一些坐标
     this->coord_ground(coord_in, grd_coord);
     cam_coord = this->watcher->get_current_position();
-    obj_coord = obj->get_property()->position;
+    obj_coord = glm::vec3(obj->get_translation_mat() * glm::vec4(0.0, 0.0, 0.0, 1.0));
     
     glm::vec3 c_to_o = obj_coord - cam_coord;
     glm::vec3 c_to_g = glm::vec3(grd_coord, 0.0) - cam_coord;
@@ -572,16 +562,6 @@ void scene::draw_shadow_mask() {
     // clean shadow text data
     this->shadow_text->clean_data();
 
-    //    this->shadow_text->bind(GL_TEXTURE0);
-    //    unsigned char * test_data = (unsigned char *)malloc(4 * 2048 * 2048);
-    //    memset(test_data, 0, 4 * 2048 * 2048);
-    //    gl3d_win_gl_functions->glGetTexImage
-    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-    //    QImage shadow_out(test_data, 2048, 2048, QImage::Format_RGBA8888);
-    //    if (!shadow_out.save("D:\\User\\Desktop\\KLM\\testb.png")) {
-    //        throw std::runtime_error("save failed");
-    //    }
-    
     // create a frame for draw shadow
     gl3d_framebuffer * frame = new gl3d_framebuffer(0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     
@@ -598,16 +578,6 @@ void scene::draw_shadow_mask() {
     this->draw(true);
     //    glDisable(GL_POLYGON_OFFSET_FILL);
     GL3D_GL()->glEnable(GL_BLEND);
-
-    //    this->shadow_text->bind(GL_TEXTURE0);
-    //    memset(test_data, 0, 4 * 2048 * 2048);
-    //    gl3d_win_gl_functions->glGetTexImage
-    //    (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, test_data);
-    //    QImage shadow_out_after(test_data, 2048, 2048, QImage::Format_RGBA8888);
-    //    if (!shadow_out_after.save("D:\\User\\Desktop\\KLM\\testa.png")) {
-    //        throw std::runtime_error("save failed");
-    //    }
-    //    free(test_data);
 
     frame->unbind_this_frame();
     delete frame;

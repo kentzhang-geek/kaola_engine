@@ -36,9 +36,9 @@ special_obj::special_obj(gl3d_general_texture * p_tex) :
     this->get_meshes()->at(0)->set_bounding_value_max(glm::vec3(1.0, 1.0, 0.0));
     this->get_meshes()->at(0)->set_bounding_value_max(glm::vec3(-1.0, -1.0, 0.0));
     this->get_meshes()->at(0)->set_material_index(0);
-    this->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
+    this->set_control_authority(GL3D_OBJ_ENABLE_DEL);
     this->get_mtls()->insert(0, p_mat);
-    this->get_property()->draw_authority = GL3D_SCENE_DRAW_SPECIAL;
+    this->set_render_authority(GL3D_SCENE_DRAW_SPECIAL);
     this->get_property()->scale_unit = gl3d::scale::special;
     this->set_obj_type(object::type_special);
 }

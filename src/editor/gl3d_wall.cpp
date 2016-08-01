@@ -38,10 +38,10 @@ static GLushort post_indexes[6] = {
 
 void gl3d_wall::init() {
     this->get_property()->scale_unit = gl3d::scale::wall;
-    this->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
+    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
+    this->set_control_authority(GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
-            | GL3D_OBJ_ENABLE_PICKING;
+            | GL3D_OBJ_ENABLE_PICKING);
     this->start_point_fixed = false;
     this->end_point_fixed = false;
     this->set_obj_type(this->type_wall);
@@ -263,11 +263,11 @@ void gl3d_wall::calculate_mesh() {
     gl3d_material * p_mat = new gl3d_material();
     p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
     p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
-    this->get_property()->authority = GL3D_OBJ_ENABLE_DEL
+    this->set_control_authority(GL3D_OBJ_ENABLE_DEL
             | GL3D_OBJ_ENABLE_CHANGEMTL
-            | GL3D_OBJ_ENABLE_PICKING;
+            | GL3D_OBJ_ENABLE_PICKING);
     this->get_mtls()->insert(0, p_mat);
-    this->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
 
     this->buffer_data();
 

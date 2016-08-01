@@ -16,7 +16,7 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     setWindowFlags(Qt::FramelessWindowHint);
 
     //根据拾取到的objid获取模型obj
-    pickUpObj = this->main_scene->get_obj(pickUpObjID);
+    pickUpObj = (gl3d::object *)this->main_scene->get_obj(pickUpObjID);
     wall = (gl3d::gl3d_wall *)pickUpObj;
 
     initBasicInfo();                                    //初始化信息窗体

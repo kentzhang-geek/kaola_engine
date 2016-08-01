@@ -1,22 +1,6 @@
 #ifndef GL3D_SCENE_H
 #define GL3D_SCENE_H
 
-#ifndef GL3D_OBJECT_H
-#error "you should include gl3d_object.h befor this"
-#endif
-
-#ifndef gl3d_general_texture_hpp
-#error "you should include gl3d_general_texture.hpp befor this"
-#endif
-
-#ifndef GL3D_VIEWER_H
-#error "you should include gl3d_viewer.hpp befor this"
-#endif
-
-#ifndef shader_manager_hpp
-#error "you should include shader_manager.hpp befor this"
-#endif
-
 #include <stdio.h>
 #include <iterator>
 #include <string>
@@ -36,6 +20,7 @@
 
 // framebuffers
 #include "kaola_engine/gl3d_framebuffer.hpp"
+#include "kaola_engine/gl3d_abstract_object.h"
 
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
@@ -78,7 +63,7 @@ namespace gl3d {
          *
          *  @return 是否加入成功
          */
-        bool add_obj(QPair<int, object *> obj_key_pair);
+        bool add_obj(QPair<int, abstract_object *> obj_key_pair);
 
         /**
          *  @author Kent, 16-02-17 21:02:11
@@ -100,7 +85,7 @@ namespace gl3d {
          *
          *  @return 物件的指针
          */
-        gl3d::object * get_obj(int key);
+        abstract_object *get_obj(int key);
 
         /**
          *  @author Kent, 16-02-17 21:02:15
@@ -203,7 +188,7 @@ namespace gl3d {
          *
          *  @return 是否变更成功
          */
-        bool move_object(object * obj, glm::vec3 des_pos);
+        bool move_object(abstract_object * obj, glm::vec3 des_pos);
 
         /**
          *  @author Kent, 16-03-21 15:03:56
@@ -227,7 +212,7 @@ namespace gl3d {
          *
          *  @return 点击位置的高度
          */
-        GLfloat get_obj_hight(object * obj, glm::vec2 coord_in);
+        GLfloat get_obj_hight(abstract_object *obj, glm::vec2 coord_in);
 
         /**
          *  @author Kent, 16-03-23 16:03:43
@@ -276,12 +261,12 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 
         // objects
-        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int,gl3d::object *> );
+        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
 
     private:
         void init();
         void set_attribute(GLuint pro);
-        void draw_object(gl3d::object *obj, GLuint pro);
+        void draw_object(abstract_object *obj, GLuint pro);
         shader_manager * shaders;
         scene_property this_property;
         light_property lights[4];

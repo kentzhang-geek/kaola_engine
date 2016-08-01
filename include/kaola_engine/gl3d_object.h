@@ -43,10 +43,7 @@ namespace gl3d {
     typedef struct obj_property {
         glm::vec3 position;
         gl3d::scale::length_unit scale_unit;
-        GLuint id;
         glm::mat4 rotate_mat;
-        GLuint64 authority;     //64种控制权限，在gl3d_obj_authority.h中查看
-        GLuint64 draw_authority; // 64种绘制权限，在gl3d_obj_authority.h中查看
         glm::vec3 bounding_value_max;
         glm::vec3 bounding_value_min;
         //还有其他属性待加入
@@ -55,16 +52,6 @@ namespace gl3d {
     // 每一个模型，都是一个物件（object）
     class object : public gl3d::abstract_object {
     public:
-        // 描述Object的具体类型，墙，家居还是其他
-        enum tag_obj_type {
-            type_default = 0,
-            type_wall,
-            type_furniture,
-            type_ground,
-            type_special
-        };
-        GL3D_UTILS_PROPERTY(obj_type, tag_obj_type);
-
         /**
          *  @author Kent, 16-02-17 20:02:05
          *
@@ -221,6 +208,7 @@ namespace gl3d {
         glm::mat4 get_scale_mat();
         QVector<gl3d::mesh *> * get_abstract_meshes();
         QMap<unsigned int, gl3d_material *> * get_abstract_mtls();
+        void set_translation_mat(glm::mat4 trans);
 
     private:
         void init();
