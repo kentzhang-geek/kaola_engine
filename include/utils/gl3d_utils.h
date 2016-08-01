@@ -30,4 +30,8 @@
 
 #define GL3D_UTILS_SHADOW_MAP_ORTHO glm::ortho(-20.0,20.0,-20.0,20.0,-30.0, 200.0)
 
+#define IN
+#define OUT
+#define INOUT
+
 #endif // GL3D_UTILS_H
