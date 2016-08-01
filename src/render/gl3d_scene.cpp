@@ -343,7 +343,7 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
 
 void scene::draw_object(gl3d::object *obj, GLuint pro) {
     // set vao
-    GL3D_GL()->glBindVertexArray(obj->vao);
+    GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
     
     // TODO : set matrix

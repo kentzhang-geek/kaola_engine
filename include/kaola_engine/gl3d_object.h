@@ -29,6 +29,9 @@
 // utils
 #include "utils/gl3d_utils.h"
 
+// root class
+#include "kaola_engine/gl3d_abstract_object.h"
+
 using namespace std;
 
 namespace gl3d {
@@ -50,7 +53,7 @@ namespace gl3d {
     } obj_property;
 
     // 每一个模型，都是一个物件（object）
-    class object{
+    class object : public gl3d::abstract_object {
     public:
         // 描述Object的具体类型，墙，家居还是其他
         enum tag_obj_type {
@@ -210,10 +213,18 @@ namespace gl3d {
         // 预先做scale变换
         void pre_scale();
 
+        // 继承父类方法并实现
+        bool is_data_changed();
+        bool is_visible();
+        glm::mat4 get_translation_mat();
+        glm::mat4 get_rotation_mat();
+        glm::mat4 get_scale_mat();
+        QVector<gl3d::mesh *> * get_abstract_meshes();
+        QMap<unsigned int, gl3d_material *> * get_abstract_mtls();
+
     private:
         void init();
         obj_property this_property;
-        GLuint vao;
     };
 }
 
