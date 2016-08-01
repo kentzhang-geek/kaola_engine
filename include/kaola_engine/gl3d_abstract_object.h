@@ -23,12 +23,12 @@ public:
     // public interfaces
     virtual bool is_data_changed() = 0;
     virtual bool is_visible() = 0;
-    virtual glm::mat4 get_translation_mat() = 0;
-    virtual glm::mat4 get_rotation_mat() = 0;
-    virtual glm::mat4 get_scale_mat() = 0;
+    virtual glm::mat4 & get_translation_mat() = 0;
+    virtual glm::mat4 & get_rotation_mat() = 0;
+    virtual glm::mat4 & get_scale_mat() = 0;
     virtual QVector<gl3d::mesh *> * get_abstract_meshes() = 0;
     virtual QMap<unsigned int, gl3d_material *> * get_abstract_mtls() = 0;
-    virtual void set_translation_mat(glm::mat4 trans) = 0;
+    virtual void set_translation_mat(const glm::mat4 & trans) = 0;
 
     // constructor and destructor
     abstract_object();

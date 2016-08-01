@@ -345,15 +345,15 @@ bool object::is_visible() {
     return true;
 }
 
-glm::mat4 object::get_translation_mat() {
+glm::mat4 & object::get_translation_mat() {
     return glm::translate(glm::mat4(1.0), this->this_property.position);
 }
 
-glm::mat4 object::get_rotation_mat() {
+glm::mat4 & object::get_rotation_mat() {
     return this->this_property.rotate_mat;
 }
 
-glm::mat4 object::get_scale_mat() {
+glm::mat4 & object::get_scale_mat() {
     return glm::mat4(1.0);
 }
 
@@ -365,6 +365,6 @@ QMap<unsigned int, gl3d_material *> * object::get_abstract_mtls() {
     return this->get_mtls();
 }
 
-void object::set_translation_mat(glm::mat4 trans) {
+void object::set_translation_mat(const glm::mat4 & trans) {
     this->this_property.position = glm::vec3(trans * glm::vec4(0.0, 0.0, 0.0, 1.0));
 }

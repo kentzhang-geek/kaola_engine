@@ -203,12 +203,12 @@ namespace gl3d {
         // 继承父类方法并实现
         bool is_data_changed();
         bool is_visible();
-        glm::mat4 get_translation_mat();
-        glm::mat4 get_rotation_mat();
-        glm::mat4 get_scale_mat();
+        glm::mat4 & get_translation_mat();
+        glm::mat4 & get_rotation_mat();
+        glm::mat4 & get_scale_mat();
         QVector<gl3d::mesh *> * get_abstract_meshes();
         QMap<unsigned int, gl3d_material *> * get_abstract_mtls();
-        void set_translation_mat(glm::mat4 trans);
+        void set_translation_mat(const glm::mat4 & trans);
 
     private:
         void init();
