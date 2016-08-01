@@ -23,8 +23,10 @@ void abstract_object::buffer_data() {
     GL3D_GL()->glBindVertexArray(this->get_vao());
 
     gl3d::mesh * p_mesh;
-    auto iter = this->get_abstract_meshes()->begin();
-    while (iter != this->get_abstract_meshes()->end()) {
+    QVector<mesh *> mss;
+    this->get_abstract_meshes(mss);
+    auto iter = mss.begin();
+    while (iter != mss.end()) {
         p_mesh = *iter;
         p_mesh->buffer_data();
         iter++;

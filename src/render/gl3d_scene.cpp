@@ -221,8 +221,10 @@ bool scene::draw(bool use_global_shader) {
         use_shader = GL3D_GET_SHADER(this->this_property.global_shader.c_str());
         if (NULL != use_shader) {
             GL3D_GL()->glUseProgram(use_shader->getProgramID());
+
             // globla shader only, do not support specific shader now
             param = GL3D_GET_PARAM(this->this_property.global_shader.c_str());
+
             if (current_obj->get_render_authority() & this->this_property.current_draw_authority) {
                 if (NULL != param) {
                     // set object to user data before set param
@@ -385,9 +387,13 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
                                (pro, "param_x"), 1.0);
     }
 
-    auto iter = obj->get_abstract_meshes()->begin();
+    QVector<mesh *> mss;
+    mss.clear();
+    obj->get_abstract_meshes(mss);
+    QMap<unsigned int, gl3d_material *>  mts;
+    auto iter = mss.begin();
     gl3d::mesh *p_mesh;
-    while (iter != obj->get_abstract_meshes()->end()) {
+    while (iter != mss.end()) {
         p_mesh = *iter;
         // set buffers
         GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
@@ -395,7 +401,9 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         
         // 多重纹理的绑定与绘制
         try {
-            obj->get_abstract_mtls()->value(p_mesh->material_index)->use_this(pro);
+            mts.clear();
+            obj->get_abstract_mtls(mts);
+            mts.value(p_mesh->material_index)->use_this(pro);
             gl3d_texture::set_parami(p_mesh->texture_repeat);
         } catch (std::out_of_range & not_used_smth) {
             //log_c("material_index is %d and out of range", p_mesh->material_index);
