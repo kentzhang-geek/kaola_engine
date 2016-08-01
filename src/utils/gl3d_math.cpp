@@ -115,9 +115,33 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
 }
 
 float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
+    if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
+            < 0.0001) {
+        return 0.0f;
+    }
     float alpha = glm::acos(glm::dot(glm::normalize(pt - l.a), glm::normalize(l.b - l.a)));
     return glm::length(pt - l.a) * glm::sin(alpha);
 }
+
+bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt) {
+    glm::vec3 ptt(pt, 0.0f);
+    line_3d tmpl(glm::vec3(l.a, 0.0f),
+                 glm::vec3(l.b, 0.0f));
+    if (gl3d::math::point_distance_to_line(ptt, tmpl) <= 0.0001) {
+        return false;
+    }
+
+    glm::vec2 dir = l.b - l.a;
+    float tmp = dir.y;
+    dir.y = dir.x;
+    dir.x = -tmp;
+
+    line_2d l2(pt, pt + dir);
+    gl3d::math::get_cross(l, l2, out_pt);
+
+    return true;
+}
+
 
 
 #if 0
