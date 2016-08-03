@@ -24,6 +24,8 @@ private slots:
 
     void on_switch3D_clicked();
 
+    void on_colse_b_clicked();
+
 private:
     Ui::drawhomewin *ui;
     DrawOption *dop;
