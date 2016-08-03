@@ -1,4 +1,5 @@
 #include "kaola_engine/gl3d_abstract_object.h"
+#include "kaola_engine/gl3d_obj_authority.h"
 
 using namespace gl3d;
 
@@ -7,6 +8,9 @@ abstract_object::abstract_object() {
     GL3D_GL()->glGenVertexArrays(1, &this->vao);
     this->pick_flag = false;
     this->obj_type = this->type_default;
+    this->data_buffered = false;
+    this->render_authority = GL3D_SCENE_DRAW_NORMAL;
+    this->control_authority = GL3D_OBJ_ENABLE_NONE;
 }
 
 abstract_object::~abstract_object() {

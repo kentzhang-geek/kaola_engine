@@ -21,7 +21,7 @@ GL3D_SHADER_PARAM(default) {
 }
 
 GL3D_SHADER_PARAM(vector_light) {
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GLuint pro = GL3D_GET_SHADER("vector_light")->getProgramID();
     ::glm::vec4 tmp = glm::vec4(0.0, 0.2, 0.3, 1.0);
     GL3D_SET_VEC4(mtlAmbientColor, tmp, pro);
@@ -38,7 +38,7 @@ GL3D_SHADER_PARAM(vector_light) {
 }
 
 GL3D_SHADER_PARAM(vector_light_toon) {
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GLuint pro = GL3D_GET_SHADER("vector_light")->getProgramID();
     ::glm::vec4 tmp = glm::vec4(0.0, 0.2, 0.3, 1.0);
     GL3D_SET_VEC4(mtlAmbientColor, tmp, pro);
@@ -57,7 +57,7 @@ GL3D_SHADER_PARAM(vector_light_toon) {
 
 GL3D_SHADER_PARAM(multiple_text) {
     GLuint pro = GL3D_GET_SHADER("multiple_text")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     
@@ -74,7 +74,7 @@ GL3D_SHADER_PARAM(multiple_text) {
 
 GL3D_SHADER_PARAM(multiple_text_vector) {
     GLuint pro = GL3D_GET_SHADER("multiple_text_vector")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
@@ -96,8 +96,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
 
     // 计算阴影中心位置
@@ -122,7 +121,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.value(string("alpha"));
+        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -138,7 +137,7 @@ GL3D_SHADER_PARAM(picking_mask) {
     static bool dispath_once = true;
     static GLuint text_obj = 0;
     GLuint pro = GL3D_GET_SHADER("picking_mask")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 只有coding map在3号单元上
     GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_picking_mask"), 5);
@@ -166,12 +165,11 @@ GL3D_SHADER_PARAM(picking_mask) {
 
 GL3D_SHADER_PARAM(shadow_mask) {
     GLuint pro = GL3D_GET_SHADER("shadow_mask")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 计算model matrix
     ::glm::mat4 trans;
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
@@ -199,7 +197,7 @@ GL3D_SHADER_PARAM(shadow_mask) {
 
 GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     GLuint pro = GL3D_GET_SHADER("multiple_text_vector_shadow")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
@@ -222,8 +220,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     GLfloat s_range = 0.0;
     s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
 
     // 计算阴影中心位置
@@ -257,7 +254,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.value(string("alpha"));
+        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -271,7 +268,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
 
 GL3D_SHADER_PARAM(image) {
     GLuint pro = GL3D_GET_SHADER("image")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     gl3d::scene * scene = (gl3d::scene *)this->user_data.value(string("scene"));
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
@@ -294,8 +291,7 @@ GL3D_SHADER_PARAM(image) {
     ::glm::mat4 trans;
     // set norMtx
     ::glm::mat4 norMtx;
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
     // KENT TODO : 这里似乎加上View MTX之后就会变得像手电筒一样
@@ -314,7 +310,7 @@ GL3D_SHADER_PARAM(image) {
 
 GL3D_SHADER_PARAM(skybox) {
     GLuint pro = GL3D_GET_SHADER("skybox")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     
@@ -332,7 +328,7 @@ GL3D_SHADER_PARAM(skybox) {
 
 GL3D_SHADER_PARAM(dm) {
     GLuint pro = GL3D_GET_SHADER("dm")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
@@ -350,8 +346,7 @@ GL3D_SHADER_PARAM(dm) {
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
 
     // 计算阴影中心位置
@@ -385,7 +380,7 @@ GL3D_SHADER_PARAM(dm) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.value(string("alpha"));
+        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -399,7 +394,7 @@ GL3D_SHADER_PARAM(dm) {
 
 GL3D_SHADER_PARAM(dm2) {
     GLuint pro = GL3D_GET_SHADER("dm2")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     
     // 设置材质贴图矩阵
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
@@ -417,8 +412,7 @@ GL3D_SHADER_PARAM(dm2) {
     ::glm::mat4 trans = glm::mat4(1.0);
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
                 gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    trans = ::glm::translate(trans, obj->get_property()->position);
-    trans = trans * obj->get_property()->rotate_mat;
+    trans = obj->get_translation_mat() * obj->get_rotation_mat();
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
 
     // 计算阴影中心位置
@@ -443,7 +437,7 @@ GL3D_SHADER_PARAM(dm2) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)obj->user_data.value(string("alpha"));
+        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -458,7 +452,7 @@ GL3D_SHADER_PARAM(dm2) {
 
 GL3D_SHADER_PARAM(post_process_result) {
     GLuint pro = GL3D_GET_SHADER("post_process_result")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
 

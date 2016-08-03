@@ -17,12 +17,12 @@ bool Surface::is_visible(){
 
 glm::mat4 Surface::get_translation_mat(){
     glm::mat4 ret(*translation);
-    return ret;
+    return glm::mat4(1.0f);
 }
 
 glm::mat4 Surface::get_rotation_mat(){
     glm::mat4 ret(*rotation);
-    return ret;
+    return glm::mat4(1.0f);
 }
 
 glm::mat4 Surface::get_scale_mat(){
@@ -57,7 +57,11 @@ void Surface::get_abstract_meshes(QVector<mesh *> &ms){
         indicies[index++] = *rIndex +currentLen;
     }
 
-    ms.push_back(new gl3d::mesh(point, renderVertices->size(), indicies, renderIndicies->size()));
+    gl3d::mesh * m = new gl3d::mesh(point, renderVertices->size(), indicies, renderIndicies->size());
+    m->recalculate_normals(0.707);
+    m->set_texture_repeat(true);
+    m->buffer_data();
+    ms.push_back(m);
 }
 
 void Surface::get_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt){
