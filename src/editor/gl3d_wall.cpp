@@ -289,8 +289,12 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
     glm::vec4 coord_out;
     coord_out = pv * this->get_property()->rotate_mat * glm::vec4(stpos.x, stpos.y, 0.0f, 1.0f);
     start_pos = glm::vec2(coord_out.x, coord_out.y);
+    start_pos.x = start_pos.x * main_scene->get_width();
+    start_pos.y = start_pos.y * main_scene->get_height();
     coord_out = pv * this->get_property()->rotate_mat * glm::vec4(edpos.x, edpos.y, 0.0f, 1.0f);
     end_pos = glm::vec2(coord_out.x, coord_out.y);
+    end_pos.x = end_pos.x * main_scene->get_width();
+    end_pos.y = end_pos.y * main_scene->get_height();
 }
 
 bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
