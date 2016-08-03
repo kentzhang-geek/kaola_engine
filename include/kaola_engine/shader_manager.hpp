@@ -108,7 +108,7 @@ namespace gl3d {
 }
 
 // 工具宏
-#define GL3D_GET_OBJ() (gl3d::object *)(this->user_data.value(string("object")))
+#define GL3D_GET_OBJ() (gl3d::abstract_object *)(this->user_data.value(string("object")))
 
 #define GL3D_SET_MAT4(matrixName, matrixValue, program) \
 GL3D_GL()->glUniformMatrix4fv \
