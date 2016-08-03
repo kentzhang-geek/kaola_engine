@@ -40,6 +40,7 @@
 
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
+#include <QVector>
 
 using namespace std;
 
@@ -83,9 +84,11 @@ private:
     int wall_temp_id;
     PickupDig *puDig;
     int pickUpObjID;
+    QVector<glm::vec2> *wallsPoints;
+
 
     void openglDrawWall(const int x, const int y);
-    void getWalls();
+    void getWallsPoint();
 };
 
 #endif // MOPENGLVIEW_H
