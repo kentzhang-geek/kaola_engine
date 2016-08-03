@@ -252,8 +252,8 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     gl3d::scene * vr = this->main_scene;
     // set wall
     glm::vec2 pick;
-    vr->coord_ground(glm::vec2(((float)x) / this->width(),
-                               ((float)y) / this->height()),
+    vr->coord_ground(glm::vec2(((float)x),
+                               ((float)y)),
                      pick, 0.0);
     this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
@@ -384,8 +384,8 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
-        vr->coord_ground(glm::vec2(((float)event->x()) / this->width(),
-                                   ((float)event->y()) / this->height()),
+        vr->coord_ground(glm::vec2(((float)event->x()),
+                                   ((float)event->y())),
                          pick, 0.0);
         this->new_wall->set_end_point(pick);
         this->new_wall->calculate_mesh();
@@ -396,7 +396,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                 glm::vec2 tmp((float)event->x(), (float)event->y());
                 float dis = glm::length(tmp - *(it));
                 cout<<"distance test: ----------------"<<dis<<endl;
-                if(dis < 10.0) {
+                if(dis < 20.0f) {
                     vr->coord_ground(*it, pick, 0.0);
                     this->new_wall->set_end_point(pick);
                     this->new_wall->calculate_mesh();
@@ -420,52 +420,52 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
         //set walla
         glm::vec2 picka;
-        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
-                                   (this->drawhome_y1) / this->height()),
-                         picka, 0.0);
+        vr->coord_ground(glm::vec2((this->drawhome_x1),
+                                   (this->drawhome_y1)),
+                         picka, 0.0f);
         this->new_walla = new gl3d::gl3d_wall(picka, picka, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
         vr->add_obj(QPair<int , object *>(this->wall_temp_id + 1, this->new_walla));
-        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
-                                   (this->drawhome_y1) / this->height()),
-                         picka, 0.0);
+        vr->coord_ground(glm::vec2((this->drawhome_x2),
+                                   (this->drawhome_y1)),
+                         picka, 0.0f);
         this->new_walla->set_end_point(picka);
         this->new_walla->calculate_mesh();
 
         //set wallb
         glm::vec2 pickb;
-        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
-                                   (this->drawhome_y1) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x1),
+                                   (this->drawhome_y1)),
                          pickb, 0.0);
         this->new_wallb = new gl3d::gl3d_wall(pickb, pickb, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
         vr->add_obj(QPair<int , object *>(this->wall_temp_id + 2, this->new_wallb));
-        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
-                                   (this->drawhome_y2) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x1),
+                                   (this->drawhome_y2)),
                          pickb, 0.0);
         this->new_wallb->set_end_point(pickb);
         this->new_wallb->calculate_mesh();
 
         //set wallc
         glm::vec2 pickc;
-        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
-                                   (this->drawhome_y1) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x2),
+                                   (this->drawhome_y1)),
                          pickc, 0.0);
         this->new_wallc = new gl3d::gl3d_wall(pickc, pickc, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
         vr->add_obj(QPair<int , object *>(this->wall_temp_id + 3, this->new_wallc));
-        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
-                                   (this->drawhome_y2) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x2),
+                                   (this->drawhome_y2)),
                          pickc, 0.0);
         this->new_wallc->set_end_point(pickc);
         this->new_wallc->calculate_mesh();
 
         //set walld
         glm::vec2 pickd;
-        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
-                                   (this->drawhome_y2) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x1),
+                                   (this->drawhome_y2)),
                          pickd, 0.0);
         this->new_walld = new gl3d::gl3d_wall(pickd, pickd, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
         vr->add_obj(QPair<int , object *>(this->wall_temp_id + 4, this->new_walld));
-        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
-                                   (this->drawhome_y2) / this->height()),
+        vr->coord_ground(glm::vec2((this->drawhome_x2),
+                                   (this->drawhome_y2)),
                          pickd, 0.0);
         this->new_walld->set_end_point(pickd);
         this->new_walld->calculate_mesh();
