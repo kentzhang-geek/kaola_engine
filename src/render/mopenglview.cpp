@@ -241,6 +241,9 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
     }
 
     event->accept();      //接收该事件
+
+    //获取画布上所有墙的顶点（用于吸附）
+    this->getWallsPoint();
 }
 
 extern bool need_capture;
@@ -257,6 +260,9 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
                      pick, 0.0);
     this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
+
+    //处理两堵墙连接处锯齿
+//    gl3d_wall::combine(wall1, wall2);
 }
 
 //获取屏幕上所有的墙
@@ -287,6 +293,9 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
     //左键按下事件
     if(event->button() == Qt::LeftButton) {
+        //获取画布上所有墙的顶点（用于吸附）
+        this->getWallsPoint();
+
         //拾取并新建选项框
         if(now_state == gl3d::gl3d_global_param::normal) {
             need_capture = true;
@@ -331,7 +340,6 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
         //画墙中节点结束
         if(now_state == gl3d::gl3d_global_param::drawwalling) {
-            this->getWallsPoint();
             this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
@@ -395,8 +403,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                 it != this->wallsPoints->end(); it++) {
                 glm::vec2 tmp((float)event->x(), (float)event->y());
                 float dis = glm::length(tmp - *(it));
-                cout<<"distance test: ----------------"<<dis<<endl;
-                if(dis < 20.0f) {
+                if(dis < 18.0f) {
                     vr->coord_ground(*it, pick, 0.0);
                     this->new_wall->set_end_point(pick);
                     this->new_wall->calculate_mesh();
@@ -468,6 +475,13 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                                    (this->drawhome_y2)),
                          pickd, 0.0);
         this->new_walld->set_end_point(pickd);
+
+        //处理两堵墙连接处锯齿
+        gl3d_wall::combine(new_walla, new_wallb);
+        gl3d_wall::combine(new_wallb, new_wallc);
+        gl3d_wall::combine(new_wallc, new_walld);
+        gl3d_wall::combine(new_walld, new_walla);
+
         this->new_walld->calculate_mesh();
 
 
@@ -475,7 +489,10 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
 
     if(event->buttons()&Qt::LeftButton) {
-        cout << "left move: " << event->x() << ", " << event->y() << endl;
+        //获取画布上所有墙的顶点（用于吸附）
+        this->getWallsPoint();
+
+//        cout << "left move: " << event->x() << ", " << event->y() << endl;
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
             //            cout << float(event->x() - this->tmp_point_x) / 100 << endl;
