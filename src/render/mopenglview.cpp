@@ -381,15 +381,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     //画墙中
     if(now_state == gl3d::gl3d_global_param::drawwalling) {
-        if(this->wallsPoints != NULL) {
-            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
-                it != this->wallsPoints->end(); it++) {
-                glm::vec2 tmp((float)event->x(), (float)event->y());
-                float dis = glm::length(tmp - *(it));
-                cout<<"distance test: ----------------"<<dis<<endl;
-            }
-        }
-
         setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
@@ -398,7 +389,20 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                          pick, 0.0);
         this->new_wall->set_end_point(pick);
         this->new_wall->calculate_mesh();
-        //        cout << "move: " << event->x() << ", " << event->y() << endl;
+
+        if(this->wallsPoints != NULL) {
+            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                glm::vec2 tmp((float)event->x(), (float)event->y());
+                float dis = glm::length(tmp - *(it));
+                cout<<"distance test: ----------------"<<dis<<endl;
+                if(dis < 10.0) {
+                    vr->coord_ground(*it, pick, 0.0);
+                    this->new_wall->set_end_point(pick);
+                    this->new_wall->calculate_mesh();
+                }
+            }
+        }
     }
 
     //画房间中
