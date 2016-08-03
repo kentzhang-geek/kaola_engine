@@ -208,6 +208,7 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     int hit = this->height();
 
     this->wall_temp_id = 23333;
+    this->wallsPoints = new QVector<glm::vec2>();
 }
 
 void MOpenGLView::resizeGL(int width, int height) {
@@ -264,7 +265,7 @@ void MOpenGLView::getWallsPoint() {
     for (auto it = this->main_scene->get_objects()->begin();
          it != this->main_scene->get_objects()->end();
          it++) {
-        gl3d::object * obj = *it;
+        gl3d::abstract_object * obj = *it;
         if (obj->get_obj_type() == obj->type_wall) {
             gl3d_wall * w = (gl3d_wall *)obj;
             glm::vec2 p1,p2;
@@ -315,7 +316,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 
         //画墙中节点结束
         if(now_state == gl3d::gl3d_global_param::drawwalling) {
-            getWalls();
+            this->getWallsPoint();
             this->openglDrawWall(event->x(), event->y());
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
@@ -353,6 +354,15 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     //画墙中
     if(now_state == gl3d::gl3d_global_param::drawwalling) {
+        if(this->wallsPoints != NULL) {
+            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                glm::vec2 tmp((float)event->x(), (float)event->y());
+                float dis = glm::length(tmp - *(it));
+                cout<<"distance test: ----------------"<<dis<<endl;
+            }
+        }
+
         setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
