@@ -335,6 +335,8 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 p
     return traw_able;
 }
 
+extern QMap<unsigned int, gl3d_material *> * test_mtl;
+
 void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
@@ -405,7 +407,12 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         // 多重纹理的绑定与绘制
         try {
             mts.clear();
-            obj->get_abstract_mtls(mts);
+            if (obj->get_obj_type() == obj->type_default) {
+                mts = *test_mtl;
+            }
+            else {
+                obj->get_abstract_mtls(mts);
+            }
             mts.value(p_mesh->material_index)->use_this(pro);
             gl3d_texture::set_parami(p_mesh->texture_repeat);
         } catch (std::out_of_range & not_used_smth) {
