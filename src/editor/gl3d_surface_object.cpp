@@ -10,8 +10,8 @@ surface_object::surface_object(Surface *sfc) : object() {
     this->set_repeat(true);
 
     this->get_property()->scale_unit = gl3d::scale::m;
-    this->get_property()->authority = GL3D_OBJ_ENABLE_ALL & (~GL3D_OBJ_ENABLE_CULLING);
-    this->get_property()->draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    this->set_control_authority(GL3D_OBJ_ENABLE_ALL & (~GL3D_OBJ_ENABLE_CULLING));
+    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
     this->set_obj_type(this->type_special);
 }
 

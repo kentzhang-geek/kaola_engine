@@ -43,6 +43,7 @@
 #include "utils/gl3d_global_param.h"
 #include "kaola_engine/gl3d_general_light_source.h"
 #include "kaola_engine/gl3d_mesh.h"
+#include "kaola_engine/gl3d_abstract_object.h"
 #include "kaola_engine/gl3d_object.h"
 #include "kaola_engine/gl3d_viewer.h"
 #include "kaola_engine/gl3d_scene.h"

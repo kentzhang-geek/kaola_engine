@@ -276,6 +276,7 @@ void has_post::rend_main_scene() {
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector_shadow");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    one_scene->get_property()->global_shader = string("multiple_text_vector_shadow");
     one_scene->prepare_canvas(false);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(false);
@@ -324,8 +325,8 @@ void has_post::rend_result() {
     gl3d::scene * one_scene = this->get_attached_scene();
     special_obj * rect = new special_obj(this->canvas);
 
-    rect->get_property()->authority = GL3D_OBJ_ENABLE_DEL;
-    rect->get_property()->draw_authority = GL3D_SCENE_DRAW_RESULT;
+    rect->set_control_authority(GL3D_OBJ_ENABLE_DEL);
+    rect->set_render_authority(GL3D_SCENE_DRAW_RESULT);
 
     gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("post_process_result");
     current_shader_param->user_data.insert(string("scene"), one_scene);

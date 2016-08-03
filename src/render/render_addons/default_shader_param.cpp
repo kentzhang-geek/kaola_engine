@@ -86,7 +86,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     // enable shadow test
-    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"), (obj->get_render_authority() & GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -117,7 +117,7 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
     GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 检查是否固定alpha值
-    if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
+    if (!(obj->get_render_authority() & GL3D_SCENE_DRAW_GROUND)) {
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
@@ -143,7 +143,7 @@ GL3D_SHADER_PARAM(picking_mask) {
     // 只有coding map在3号单元上
     GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_picking_mask"), 5);
     
-    GLuint id = obj->get_property()->id;
+    GLuint id = obj->get_id();
     GLubyte color[4];
     color[0] = id;
     color[1] = id>>8;
@@ -211,7 +211,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
     
     // enable shadow test
-    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"), (obj->get_property()->draw_authority&GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "shadow_enable"),
+                           (obj->get_render_authority() & GL3D_SCENE_DRAW_SHADOW) && GL3D_SCENE_DRAW_SHADOW);
     
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
@@ -251,7 +252,7 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
     GL3D_GL()->glUniform2fv(GL3D_GL()->glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
     
     // 检查是否固定alpha值
-    if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
+    if (!(obj->get_render_authority() & GL3D_SCENE_DRAW_GROUND)) {
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
@@ -379,7 +380,7 @@ GL3D_SHADER_PARAM(dm) {
     GL3D_GL()->glUniform2fv(GL3D_GL()->glGetUniformLocation(pro, "shadow_map_size"), 1, glm::value_ptr(textsize));
     
     // 检查是否固定alpha值
-    if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
+    if (!(obj->get_render_authority() & GL3D_SCENE_DRAW_GROUND)) {
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
@@ -437,7 +438,7 @@ GL3D_SHADER_PARAM(dm2) {
     GL3D_GL()->glUniformMatrix4fv(GL3D_GL()->glGetUniformLocation(pro, "s_mtx"), 1, GL_FALSE, ::glm::value_ptr(depthMVP));
     
     // 检查是否固定alpha值
-    if (!(obj->get_property()->draw_authority & GL3D_SCENE_DRAW_GROUND)) {
+    if (!(obj->get_render_authority() & GL3D_SCENE_DRAW_GROUND)) {
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
         GL3D_GL()->glDepthMask(GL_TRUE);
     }

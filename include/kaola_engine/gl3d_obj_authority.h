@@ -9,6 +9,7 @@
 #ifndef gl3d_obj_authority_h
 #define gl3d_obj_authority_h
 
+// control authority
 #define GL3D_OBJ_ENABLE_ALL 0xffffffffffffffffUL
 #define GL3D_OBJ_ENABLE_NONE 0x00UL
 #define GL3D_OBJ_ENABLE_MOVE (0x01UL << 0)
@@ -18,6 +19,7 @@
 #define GL3D_OBJ_ENABLE_PICKING (0x01UL << 4)
 #define GL3D_OBJ_ENABLE_CULLING (0x01UL << 5)
 
+// render authority
 #define GL3D_SCENE_DRAW_ALL 0xffffffffffffffffUL  // 注意设置参数时不要使用draw all宏
 #define GL3D_SCENE_DRAW_NONE 0x00UL
 #define GL3D_SCENE_DRAW_NORMAL (0x01UL << 0)

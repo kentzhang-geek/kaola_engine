@@ -34,6 +34,7 @@
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
 
+#include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/bounding_box.h"
 #include "editor/gl_utility.h"
 #include "editor/vertex.h"
@@ -57,7 +58,7 @@ namespace klm{
     };
 
 
-    class Surface final{
+    class Surface final : public abstract_object{
     public:
         Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
         ~Surface();
@@ -86,7 +87,6 @@ namespace klm{
         bool getConnectiveVerticies(QVector<Vertex*> &connectiveVertices) const;
         bool getConnectiveIndicies(QVector<GLushort> &connectiveIndicies) const;
 
-        bool isVisible() const;
         void setVisibility(const bool visible);
 
         void setDebug();
@@ -94,6 +94,19 @@ namespace klm{
 
         float getRoughArea() const;
         float getExactArea() const;
+
+//        void getTransformFromParent(glm::mat4 &transform) const;
+
+    //abstract  interfaces
+    public:
+        bool is_data_changed();
+        bool is_visible();
+        glm::mat4 get_translation_mat();
+        glm::mat4 get_rotation_mat();
+        glm::mat4 get_scale_mat();
+        void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
+        void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+        void set_translation_mat(const glm::mat4 & trans);
 
     public:
         static void deleteVertices(QVector<Vertex*>* vertices);
@@ -126,11 +139,14 @@ namespace klm{
         //this transform is used to move this surface
         //to its original coordinates as it passed in for
         //surface construction
-        glm::mat4 *transFromParent;
+//        glm::mat4 *transFromParent;
+        glm::mat4 *rotation;
+        glm::mat4 *translation;
         //this transform makes sure sub-surface will not rotate
         //but able to translate
         glm::vec3 *translateFromParent;
         bool visible;
+        bool updated;
         BoundingBox *boundingBox;
         //this polygon is stored in surface for collission test
         bg_Polygon *collisionTester;

@@ -77,8 +77,8 @@ void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm
     // 默认参数
     ::gl3d::obj_property * obj_pro = obj->get_property();
     obj_pro->scale_unit = gl3d::scale::mm;
-    obj_pro->authority = GL3D_OBJ_ENABLE_CULLING;
-    obj_pro->draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
+    obj->set_control_authority(GL3D_OBJ_ENABLE_CULLING);
+    obj->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
     obj_pro->scale_unit = gl3d::scale::mm;
     // 合并顶点重算法向量
     obj->merge_meshes();

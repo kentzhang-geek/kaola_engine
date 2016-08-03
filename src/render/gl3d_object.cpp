@@ -21,7 +21,7 @@ using namespace std;
  *  Object相关的接口
  */
 void object::init() {
-    this->obj_type = this->type_default;
+    this->set_obj_type(this->type_default);
     this->this_property.position = glm::vec3(0.0);
     this->this_property.rotate_mat = glm::mat4(1.0);
     this->this_property.bounding_value_max = glm::vec3(0.0f);
@@ -32,9 +32,9 @@ void object::init() {
     this->pre_scaled = false;
     this->use_shader = std::string("multiple_text_vector_shadow"); // use multiple_text_vector_shadow shader as default
     this->mtls.clear();
-    this->this_property.authority = GL3D_OBJ_ENABLE_ALL; //使能所有权限
+    this->set_control_authority(GL3D_OBJ_ENABLE_ALL); //使能所有权限
     // 注意默认绘制权限为普通+阴影+倒影。天空盒与地面是特殊绘制
-    this->this_property.draw_authority = GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW;
+    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
 }
 
 object::object() {
@@ -213,7 +213,7 @@ void object::buffer_data() {
 }
 
 bool object::rotate(glm::vec3 axis, GLfloat angle) {
-    if (this->this_property.authority & GL3D_OBJ_ENABLE_ROTATE) {
+    if (this->get_control_authority() & GL3D_OBJ_ENABLE_ROTATE) {
         this->this_property.rotate_mat = glm::rotate(this->this_property.rotate_mat, glm::radians(angle), axis);
         return true;
     }
@@ -221,7 +221,7 @@ bool object::rotate(glm::vec3 axis, GLfloat angle) {
 }
 
 bool object::use_mtl(string file_name, int mtl_id) {
-    if (this->this_property.authority & GL3D_OBJ_ENABLE_CHANGEMTL) {
+    if (this->get_control_authority() & GL3D_OBJ_ENABLE_CHANGEMTL) {
         gl3d_material * mtl = new gl3d_material(file_name);
         this->mtls.erase(this->mtls.find(mtl_id));
         this->mtls.insert(mtl_id, mtl);
@@ -357,12 +357,18 @@ glm::mat4 object::get_scale_mat() {
     return glm::mat4(1.0);
 }
 
-QVector<gl3d::mesh *> * object::get_abstract_meshes() {
-    return this->get_meshes();
+void object::get_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    ms.clear();
+    ms = *(this->get_meshes());
+    return;
 }
 
-QMap<unsigned int, gl3d_material *> * object::get_abstract_mtls() {
-    return this->get_mtls();
+void object::get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    mt.clear();
+    mt = *(this->get_mtls());
+    return;
 }
 
-
+void object::set_translation_mat(const glm::mat4 & trans) {
+    this->this_property.position = glm::vec3(trans * glm::vec4(0.0, 0.0, 0.0, 1.0));
+}
