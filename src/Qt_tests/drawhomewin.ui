@@ -505,8 +505,8 @@ background-color: rgb(28, 29, 32)
                </property>
                <property name="geometry">
                 <rect>
-                 <x>40</x>
-                 <y>180</y>
+                 <x>10</x>
+                 <y>150</y>
                  <width>75</width>
                  <height>52</height>
                 </rect>
@@ -776,17 +776,36 @@ color: rgb(245, 245, 245);
                 <string>自由绘制</string>
                </property>
               </widget>
-              <zorder>drawwall_b</zorder>
-              <zorder>drawhome_titleview</zorder>
-              <zorder>gridLayoutWidget</zorder>
-              <zorder>l_5</zorder>
+              <widget class="QCheckBox" name="checkBox">
+               <property name="geometry">
+                <rect>
+                 <x>100</x>
+                 <y>150</y>
+                 <width>71</width>
+                 <height>51</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../res.qrc">
+                 <normaloff>:/images/drawhome</normaloff>:/images/drawhome</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>48</width>
+                 <height>48</height>
+                </size>
+               </property>
+              </widget>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,20">
+          <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
            <property name="spacing">
             <number>0</number>
            </property>

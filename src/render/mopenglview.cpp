@@ -309,17 +309,19 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         this->tmp_point_x = event->x();
         this->tmp_point_y = event->y();
 
-        //画墙结束
-        if(now_state == gl3d::gl3d_global_param::drawwallend) {
-            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+
+        //画房间节点开始
+        if(now_state == gl3d::gl3d_global_param::drawhome) {
+            this->drawhome_x1 = (float)event->x();
+            this->drawhome_y1 = (float)event->y();
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhomeing;
+        }
+        //画房间节点结束
+        if(now_state == gl3d::gl3d_global_param::drawhomeing) {
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
+            this->wall_temp_id = this->wall_temp_id + 4;
         }
 
-        //画墙中节点结束
-        if(now_state == gl3d::gl3d_global_param::drawwalling) {
-            this->getWallsPoint();
-            this->openglDrawWall(event->x(), event->y());
-            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
-        }
 
         //画墙节点开始
         if(now_state == gl3d::gl3d_global_param::drawwall) {
@@ -327,13 +329,23 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
             //            cout << "left down: " << event->x() << ", " << event->y() << endl;
         }
+        //画墙中节点结束
+        if(now_state == gl3d::gl3d_global_param::drawwalling) {
+            this->getWallsPoint();
+            this->openglDrawWall(event->x(), event->y());
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
+        }
+        //画墙结束
+        if(now_state == gl3d::gl3d_global_param::drawwallend) {
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+        }
 
 
         //右键按下事件
     } else if(event->button() == Qt::RightButton) {
         //        cout << "right down: " << event->x() << ", " << event->y() << endl;
-        //点击右键-取消画墙状态
-        if(now_state == gl3d::gl3d_global_param::drawwall) {
+        //点击右键-取消画墙,画房间状态
+        if(now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
             drawhomewin::on_draw_clear();
         }
         //点击右键-终止画墙连接
@@ -342,6 +354,21 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             delete this->new_wall;
             this->new_wall = NULL;
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+        }
+        //点击右键-终止画房间连接
+        if(now_state == gl3d::gl3d_global_param::drawhomeing) {
+            for (int i = 1; i != 5; i++) {
+                this->main_scene->delete_obj(this->wall_temp_id + i);
+            }
+            delete this->new_walla;
+            delete this->new_wallb;
+            delete this->new_wallc;
+            delete this->new_walld;
+            this->new_walla = NULL;
+            this->new_wallb = NULL;
+            this->new_wallc = NULL;
+            this->new_walld = NULL;
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
         }
     } else if(event->button() == Qt::MidButton) {
         //        cout << "centre down: " << event->x() << ", " << event->y() << endl;
@@ -354,15 +381,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     //画墙中
     if(now_state == gl3d::gl3d_global_param::drawwalling) {
-        if(this->wallsPoints != NULL) {
-            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
-                it != this->wallsPoints->end(); it++) {
-                glm::vec2 tmp((float)event->x(), (float)event->y());
-                float dis = glm::length(tmp - *(it));
-                cout<<"distance test: ----------------"<<dis<<endl;
-            }
-        }
-
         setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
@@ -371,8 +389,90 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                          pick, 0.0);
         this->new_wall->set_end_point(pick);
         this->new_wall->calculate_mesh();
-        //        cout << "move: " << event->x() << ", " << event->y() << endl;
+
+        if(this->wallsPoints != NULL) {
+            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                glm::vec2 tmp((float)event->x(), (float)event->y());
+                float dis = glm::length(tmp - *(it));
+                cout<<"distance test: ----------------"<<dis<<endl;
+                if(dis < 10.0) {
+                    vr->coord_ground(*it, pick, 0.0);
+                    this->new_wall->set_end_point(pick);
+                    this->new_wall->calculate_mesh();
+                }
+            }
+        }
     }
+
+    //画房间中
+    if(now_state == gl3d::gl3d_global_param::drawhomeing) {
+        this->drawhome_x2 = (float)event->x();
+        this->drawhome_y2 = (float)event->y();
+        setCursor(Qt::CrossCursor);
+
+        this->new_walla = NULL;
+        this->new_wallb = NULL;
+        this->new_wallc = NULL;
+        this->new_walld = NULL;
+
+        gl3d::scene * vr = this->main_scene;
+
+        //set walla
+        glm::vec2 picka;
+        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
+                                   (this->drawhome_y1) / this->height()),
+                         picka, 0.0);
+        this->new_walla = new gl3d::gl3d_wall(picka, picka, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
+        vr->add_obj(QPair<int , object *>(this->wall_temp_id + 1, this->new_walla));
+        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
+                                   (this->drawhome_y1) / this->height()),
+                         picka, 0.0);
+        this->new_walla->set_end_point(picka);
+        this->new_walla->calculate_mesh();
+
+        //set wallb
+        glm::vec2 pickb;
+        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
+                                   (this->drawhome_y1) / this->height()),
+                         pickb, 0.0);
+        this->new_wallb = new gl3d::gl3d_wall(pickb, pickb, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
+        vr->add_obj(QPair<int , object *>(this->wall_temp_id + 2, this->new_wallb));
+        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
+                                   (this->drawhome_y2) / this->height()),
+                         pickb, 0.0);
+        this->new_wallb->set_end_point(pickb);
+        this->new_wallb->calculate_mesh();
+
+        //set wallc
+        glm::vec2 pickc;
+        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
+                                   (this->drawhome_y1) / this->height()),
+                         pickc, 0.0);
+        this->new_wallc = new gl3d::gl3d_wall(pickc, pickc, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
+        vr->add_obj(QPair<int , object *>(this->wall_temp_id + 3, this->new_wallc));
+        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
+                                   (this->drawhome_y2) / this->height()),
+                         pickc, 0.0);
+        this->new_wallc->set_end_point(pickc);
+        this->new_wallc->calculate_mesh();
+
+        //set walld
+        glm::vec2 pickd;
+        vr->coord_ground(glm::vec2((this->drawhome_x1) / this->width(),
+                                   (this->drawhome_y2) / this->height()),
+                         pickd, 0.0);
+        this->new_walld = new gl3d::gl3d_wall(pickd, pickd, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
+        vr->add_obj(QPair<int , object *>(this->wall_temp_id + 4, this->new_walld));
+        vr->coord_ground(glm::vec2((this->drawhome_x2) / this->width(),
+                                   (this->drawhome_y2) / this->height()),
+                         pickd, 0.0);
+        this->new_walld->set_end_point(pickd);
+        this->new_walld->calculate_mesh();
+
+
+    }
+
 
     if(event->buttons()&Qt::LeftButton) {
         cout << "left move: " << event->x() << ", " << event->y() << endl;
