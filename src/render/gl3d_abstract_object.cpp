@@ -6,6 +6,7 @@ abstract_object::abstract_object() {
     // gen vao
     GL3D_GL()->glGenVertexArrays(1, &this->vao);
     this->pick_flag = false;
+    this->obj_type = this->type_default;
 }
 
 abstract_object::~abstract_object() {
