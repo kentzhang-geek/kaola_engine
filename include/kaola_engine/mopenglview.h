@@ -67,7 +67,10 @@ public:
         drawwall = 1
     };
     gl3d::gl3d_wall * new_wall;
-
+    gl3d::gl3d_wall * new_walla;
+    gl3d::gl3d_wall * new_wallb;
+    gl3d::gl3d_wall * new_wallc;
+    gl3d::gl3d_wall * new_walld;
 
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -85,6 +88,7 @@ private:
     PickupDig *puDig;
     int pickUpObjID;
     QVector<glm::vec2> *wallsPoints;
+    float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
 
 
     void openglDrawWall(const int x, const int y);

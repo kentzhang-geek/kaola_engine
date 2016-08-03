@@ -85,6 +85,8 @@ public:
 //取消所有按钮选择状态
 void drawhomewin::on_draw_clear() {
     dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
+    dhw->ui->checkBox->setCheckState(Qt::Unchecked);
+
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }
 
@@ -96,11 +98,27 @@ void drawhomewin::on_drawwall_b_stateChanged(int arg1)
         dop->close();
         delete dop;
     } else {
+        dhw->ui->checkBox->setCheckState(Qt::Unchecked);
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         dop = new DrawOption(this->ui->OpenGLCanvas);
         dop->show();
     }
 }
+//画房间功能按钮-change
+void drawhomewin::on_checkBox_stateChanged(int arg1)
+{
+    if(!arg1) {
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        dop->close();
+        delete dop;
+    } else {
+        dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
+        dop = new DrawOption(this->ui->OpenGLCanvas);
+        dop->show();
+    }
+}
+
 
 void drawhomewin::on_switch3D_clicked()
 {
