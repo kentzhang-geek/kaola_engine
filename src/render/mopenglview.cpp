@@ -14,6 +14,18 @@ void MOpenGLView::do_init() {
     //yananli code
     this->setMouseTracking(true);
 
+    //配置画墙时连接点图片
+    connectDot = new QLabel(this);
+    QPixmap pixmap(":/images/con_wall_dot");
+    connectDot->setPixmap(pixmap);
+    connectDot->setMask(pixmap.mask());
+    connectDot->setAutoFillBackground(true);
+    QPalette palette;
+    palette.setColor(QPalette::Background, QColor(101,157,255));
+    connectDot->setPalette(palette);
+    connectDot->close();
+
+
     // set OPENGL context
     timer = new QTimer(this);
     timer->start(100);
@@ -228,6 +240,9 @@ void MOpenGLView::resizeGL(int width, int height) {
 
 //滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
+    //获取画布上所有墙的顶点（用于吸附）
+    this->getWallsPoint();
+
     //滚动的角度，*8就是鼠标滚动的距离
     int numDegrees = event->delta() / 8;
 
@@ -240,9 +255,6 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
     }
 
     event->accept();      //接收该事件
-
-    //获取画布上所有墙的顶点（用于吸附）
-    this->getWallsPoint();
 }
 
 extern bool need_capture;
@@ -388,7 +400,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     //画墙中
     if(now_state == gl3d::gl3d_global_param::drawwalling) {
-        setCursor(Qt::CrossCursor);
+//        setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
         vr->coord_ground(glm::vec2(((float)event->x()),
@@ -406,6 +418,11 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                     vr->coord_ground(*it, pick, 0.0);
                     this->new_wall->set_end_point(pick);
                     this->new_wall->calculate_mesh();
+
+                    connectDot->setGeometry((*it).x - 12, (*it).y - 12, 24, 24);
+                    connectDot->show();
+                } else {
+                    connectDot->close();
                 }
             }
         }
