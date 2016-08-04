@@ -13,6 +13,7 @@
 #include "kaola_engine/gl3d_general_texture.hpp"
 #include "kaola_engine/gl3d_material.hpp"
 #include "utils/gl3d_post_process_template.h"
+#include <QVector>
 
 using namespace std;
 using namespace gl3d;
@@ -140,6 +141,10 @@ void moving::render() {
     return;
 }
 
+GL3D_SHADER_PARAM(lines) {
+    return true;
+}
+
 class test : public render_process {
 public:
     void render() {
@@ -158,8 +163,76 @@ public:
 };
 GL3D_ADD_RENDER_PROCESS(test);
 
+using namespace gl3d;
 class editing : public render_process {
 public:
+    // 暂时没搞定网格
+    void draw_coord() {
+        GLenum err;
+        QVector<gl3d::mesh *> ms;
+        ms.clear();
+        obj_points pt[40];
+        // generate datas
+        GLushort idx[40];
+        for (int i = 0; i < 40; i++)
+            idx[i] = i;
+        float step = 1.0f / 20.0f;
+        for (int i = 0; i < 20; i++) {
+            pt[i * 2 + 0].vertex_x = step * (float)(i - 20);
+            pt[i * 2 + 0].vertex_y = -1.0;
+            pt[i * 2 + 0].vertex_z = 100.0;
+            pt[i * 2 + 1].vertex_x = step * (float)(i - 20);
+            pt[i * 2 + 1].vertex_y = 1.0;
+            pt[i * 2 + 1].vertex_z = 100.0;
+        }
+        ms.push_back(new gl3d::mesh(pt, 40, idx, 40));
+        for (int i = 0; i < 20; i++) {
+            pt[i * 2 + 0].vertex_y = step * (float)(i - 20);
+            pt[i * 2 + 0].vertex_x = -1.0;
+            pt[i * 2 + 0].vertex_z = 100.0;
+            pt[i * 2 + 1].vertex_y = step * (float)(i - 20);
+            pt[i * 2 + 1].vertex_x = 1.0;
+            pt[i * 2 + 1].vertex_z = 100.0;
+        }
+        ms.push_back(new gl3d::mesh(pt, 40, idx, 40));
+        err = GL3D_GL()->glGetError();
+        ms[0]->buffer_data();
+        ms[1]->buffer_data();
+        err = GL3D_GL()->glGetError();
+
+        // get shader
+        Program * use_shader = GL3D_GET_SHADER("lines");
+        GL3D_GL()->glUseProgram(use_shader->getProgramID());
+
+        err = GL3D_GL()->glGetError();
+        for (int i = 0; i < 2; i++) {
+            // set buffers
+            GL3D_GL()->glBindVertexArray(0);
+            err = GL3D_GL()->glGetError();
+            gl3d::scene::set_attribute(use_shader->getProgramID());
+            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, ms[i]->get_vbo());
+            err = GL3D_GL()->glGetError();
+            GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ms[i]->get_idx());
+            err = GL3D_GL()->glGetError();
+            gl3d::scene::set_attribute(use_shader->getProgramID());
+            err = GL3D_GL()->glGetError();
+            GL3D_GL()->glLineWidth(0.1f);
+            GL3D_GL()->glDrawElements(GL_LINES,
+                                      ms[i]->get_num_idx(),
+                                      GL_UNSIGNED_SHORT,
+                                      (GLvoid *)NULL);
+            err = GL3D_GL()->glGetError();
+            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+            GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            GL3D_GL()->glBindVertexArray(0);
+        }
+
+        // clear data
+        delete ms[0];
+        delete ms[1];
+        ms.clear();
+    }
+
     void render() {
         gl3d::scene * one_scene = this->get_attached_scene();
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
@@ -193,6 +266,7 @@ public:
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
+        this->draw_coord();
         return;
     }
 
