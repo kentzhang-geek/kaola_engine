@@ -40,8 +40,8 @@ void gl3d_wall::init() {
     this->get_property()->scale_unit = gl3d::scale::wall;
     this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL
-            | GL3D_OBJ_ENABLE_CHANGEMTL
-            | GL3D_OBJ_ENABLE_PICKING);
+                                | GL3D_OBJ_ENABLE_CHANGEMTL
+                                | GL3D_OBJ_ENABLE_PICKING);
     this->start_point_fixed = false;
     this->end_point_fixed = false;
     this->set_obj_type(this->type_wall);
@@ -112,16 +112,11 @@ void gl3d_wall::release_last_data() {
 
 // 计算坐标
 void gl3d_wall::calculate_mesh() {
-    if (!gl3d_lock::shared_instance()->wall_lock.tryLock()) {
-        // lock wall calculor
+    if (glm::length(this->end_point - this->start_point) < 0.01f) {
         return;
     }
-    // clear last data
-    this->release_last_data();
-
-    if (glm::length(this->start_point - this->end_point) < 0.01f) {
-        // no wall drawed so do not calculate data
-        gl3d_lock::shared_instance()->wall_lock.unlock();
+    if (!gl3d_lock::shared_instance()->wall_lock.tryLock()) {
+        // lock wall calculor
         return;
     }
 
@@ -135,72 +130,91 @@ void gl3d_wall::calculate_mesh() {
     glm::vec2 top_dir = glm::normalize(glm::vec2(direction));
 
     gl3d::math::line_2d l_left(this->start_point + top_dir * this->thickness / 2.0f,
-                            this->end_point + top_dir * this->thickness / 2.0f);
+                               this->end_point + top_dir * this->thickness / 2.0f);
     gl3d::math::line_2d l_right(this->start_point - top_dir * this->thickness / 2.0f,
-                             this->end_point - top_dir * this->thickness / 2.0f);
+                                this->end_point - top_dir * this->thickness / 2.0f);
+    bool cal_other_wall = true;
+    if (glm::min(l_left.length(), l_right.length()) <
+            glm::max(0.01f, this->get_thickness())) {
+        cal_other_wall = false;
+    }
+
 
     // 根据attach状态重算左右边线
-    if (this->start_point_fixed) {
+    if (this->start_point_fixed && cal_other_wall) {
         // 计算附着墙的左右边线
         gl3d_wall * tmp_wall = this->start_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
-        direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
-        direction = rotate_mtx * direction;
-        direction = direction / direction.w;
-        top_dir = glm::normalize(glm::vec2(direction));
-        gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
-                                tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
-        gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
-                                 tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
+        // check another wall length
+        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+            direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
+            direction = rotate_mtx * direction;
+            direction = direction / direction.w;
+            top_dir = glm::normalize(glm::vec2(direction));
+            gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+                                        tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
+            gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+                                         tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
 
-        // 重算left和right的a点
-        if (this->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
-            // 附加到另外墙的start时
-            glm::vec2 pt;
-            if (gl3d::math::get_cross(l_left, tl_right, pt))
-                l_left.a = pt;
-            if (gl3d::math::get_cross(l_right, tl_left, pt))
-                l_right.a = pt;
-        }
-        else {
-            glm::vec2 pt;
-            if (gl3d::math::get_cross(l_left, tl_left, pt))
-                l_left.a = pt;
-            if (gl3d::math::get_cross(l_right, tl_right, pt))
-                l_right.a = pt;
+            // 重算left和right的a点
+            if (this->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                // 附加到另外墙的start时
+                glm::vec2 pt;
+                if (gl3d::math::get_cross(l_left, tl_right, pt)) {
+                    l_left.a = pt;
+                }
+                if (gl3d::math::get_cross(l_right, tl_left, pt)) {
+                    l_right.a = pt;
+                }
+            }
+            else {
+                glm::vec2 pt;
+                if (gl3d::math::get_cross(l_left, tl_left, pt)) {
+                    l_left.a = pt;
+                }
+                if (gl3d::math::get_cross(l_right, tl_right, pt)) {
+                    l_right.a = pt;
+                }
+            }
         }
     }
-    if (this->end_point_fixed) {
+    if (this->end_point_fixed && cal_other_wall) {
         // 重算b点
         // 计算附着墙的左右边线
         gl3d_wall * tmp_wall = this->end_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
-        direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
-        direction = rotate_mtx * direction;
-        direction = direction / direction.w;
-        top_dir = glm::normalize(glm::vec2(direction));
-        gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
-                                tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
-        gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
-                                 tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
+        // check another wall length
+        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+            direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
+            direction = rotate_mtx * direction;
+            direction = direction / direction.w;
+            top_dir = glm::normalize(glm::vec2(direction));
+            gl3d::math::line_2d tl_left(tmp_wall->start_point + top_dir * tmp_wall->thickness / 2.0f,
+                                        tmp_wall->end_point + top_dir * tmp_wall->thickness / 2.0f);
+            gl3d::math::line_2d tl_right(tmp_wall->start_point - top_dir * tmp_wall->thickness / 2.0f,
+                                         tmp_wall->end_point - top_dir * tmp_wall->thickness / 2.0f);
 
-        // 重算left和right的a点
-        if (this->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
-            // 附加到另外墙的start时
-            glm::vec2 pt;
-            if (gl3d::math::get_cross(l_left, tl_left, pt))
-                l_left.b = pt;
-            if (gl3d::math::get_cross(l_right, tl_right, pt))
-                l_right.b = pt;
-        }
-        else {
-            glm::vec2 pt;
-            if (gl3d::math::get_cross(l_left, l_right, pt))
-                l_left.b = pt;
-            if (gl3d::math::get_cross(l_right, tl_left, pt))
-                l_right.b = pt;
+            // 重算left和right的a点
+            if (this->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                // 附加到另外墙的start时
+                glm::vec2 pt;
+                if (gl3d::math::get_cross(l_left, tl_left, pt))
+                    l_left.b = pt;
+                if (gl3d::math::get_cross(l_right, tl_right, pt))
+                    l_right.b = pt;
+            }
+            else {
+                glm::vec2 pt;
+                if (gl3d::math::get_cross(l_left, tl_right, pt))
+                    l_left.b = pt;
+                if (gl3d::math::get_cross(l_right, tl_left, pt))
+                    l_right.b = pt;
+            }
         }
     }
+
+    // clear last data
+    this->release_last_data();
 
     // 根据左右边线得出surface
     QVector<glm::vec3 > points;
@@ -264,8 +278,8 @@ void gl3d_wall::calculate_mesh() {
     p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
     p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL
-            | GL3D_OBJ_ENABLE_CHANGEMTL
-            | GL3D_OBJ_ENABLE_PICKING);
+                                | GL3D_OBJ_ENABLE_CHANGEMTL
+                                | GL3D_OBJ_ENABLE_PICKING);
     this->get_mtls()->insert(0, p_mat);
     this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
 

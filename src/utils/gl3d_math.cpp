@@ -79,7 +79,8 @@ bool gl3d::math::get_cross(const line_2d &l1,
         y = x * (p2.y - p1.y) / (p2.x - p1.x)
                 - (p2.y - p1.y) / (p2.x - p1.x) * p1.x + p1.y;
     }
-    else {
+    if ((p1.x != p2.x) &&
+            (p3.x != p4.x)) {
         float d1 = (p2.y - p1.y) / (p2.x - p1.x);
         float d2 = (p4.y - p3.y) / (p4.x - p3.x);
         x = p1.y - d1 * p1.x - p3.y + d2 * p3.x;
@@ -89,6 +90,10 @@ bool gl3d::math::get_cross(const line_2d &l1,
 
     cross_point.x = x;
     cross_point.y = y;
+    if (!(cross_point == cross_point)) {
+        throw std::runtime_error("fuck cross point");
+    }
+
     return true;
 }
 
