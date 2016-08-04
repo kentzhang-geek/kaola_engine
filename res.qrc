@@ -16,5 +16,6 @@
         <file alias="drawline">images/square_four_angle_point_48px.png</file>
         <file alias="drawhome">images/square_dashed_48px.png</file>
         <file alias="drawquyu">images/square_delicious_45.36px.png</file>
+        <file alias="con_wall_dot">images/point_24px.png</file>
     </qresource>
 </RCC>

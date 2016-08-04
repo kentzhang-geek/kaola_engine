@@ -41,6 +41,8 @@
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
 #include <QVector>
+#include <QLabel>
+#include <QPixmap>
 
 using namespace std;
 
@@ -89,6 +91,8 @@ private:
     int pickUpObjID;
     QVector<glm::vec2> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
+    QLabel *connectDot;
+
 
 
     void openglDrawWall(const int x, const int y);
