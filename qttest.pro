@@ -52,7 +52,8 @@ SOURCES += \
     src/utils/gl3d_math.cpp \
     src/Qt_tests/ui/drawoption.cpp \
     src/editor/gl3d_surface_object.cpp \
-    src/render/gl3d_abstract_object.cpp
+    src/render/gl3d_abstract_object.cpp \
+    src/editor/surface.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -96,7 +97,8 @@ HEADERS  += \
     include/utils/gl3d_math.h \
     src/Qt_tests/ui/drawoption.h \
     include/editor/gl3d_surface_object.h \
-    include/kaola_engine/gl3d_abstract_object.h
+    include/kaola_engine/gl3d_abstract_object.h \
+    include/editor/surface.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

@@ -84,11 +84,11 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     localVertices = new QVector<Vertex*>();
 //    verticesToParent = new QVector<Vertex*>();
     collisionTester = new bg_Polygon();
-    boundingBox = new BoundingBox(points);    
+    boundingBox = new BoundingBox(points);
     glm::vec3 center = boundingBox->getCenter();
     glm::mat4 rotation;
     initNormal = planNormal;
-    GLUtility::getRotation(planNormal, GLUtility::Z_AXIS, rotation);    
+    GLUtility::getRotation(planNormal, GLUtility::Z_AXIS, rotation);
 
     for(QVector<glm::vec3>::const_iterator point = points.begin();
         point != points.end(); ++point){
@@ -102,14 +102,14 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
 
         GLUtility::positionTransform(*vertex, rotation);
 
-        localVertices->push_back(vertex);        
-        collisionTester->outer().push_back(bg_Point((*point).x, (*point).y));        
-    }    
+        localVertices->push_back(vertex);
+        collisionTester->outer().push_back(bg_Point((*point).x, (*point).y));
+    }
 
     delete boundingBox;
 
     boundingBox = new BoundingBox(*localVertices);
-    boundingBox->genTexture(*localVertices);   
+    boundingBox->genTexture(*localVertices);
 
 
     this->rotation = new glm::mat4(glm::inverse(rotation));
@@ -132,9 +132,9 @@ void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
 }
 
 void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
-    glm::mat4* overAllTransform;    
+    glm::mat4* overAllTransform;
 
-    if(translateFromParent == nullptr){        
+    if(translateFromParent == nullptr){
         getTransFromParent(*overAllTransform);
     } else {
         glm::mat4 trans;
@@ -201,7 +201,7 @@ void Surface::getTransFromParent(glm::mat4 &transform) const{
  * TO DO: implement connective surface here
  * @brief Surface::updateVertices
  */
-void Surface::updateVertices(){    
+void Surface::updateVertices(){
     Surface::updateRenderingData(this);
 }
 
@@ -258,7 +258,7 @@ bool Surface::addSubSurface(const QVector<glm::vec3> &points){
     Surface* newSubSurface;
     try{
         newSubSurface = new Surface(points);
-    } catch (SurfaceException &ex){        
+    } catch (SurfaceException &ex){
         return false;
     }
 
@@ -650,7 +650,7 @@ void Surface::tessVertex(const GLvoid *data){
 }
 
 void Surface::deleteVertices(QVector<Vertex*> *vertices) {
-    if(vertices != nullptr){        
+    if(vertices != nullptr){
         for(QVector<Vertex*>::iterator vertex = vertices->begin();
             vertex != vertices->end(); ++vertex){
             delete *vertex;
@@ -658,7 +658,7 @@ void Surface::deleteVertices(QVector<Vertex*> *vertices) {
 
         vertices->empty();
         delete vertices;
-    }    
+    }
 }
 
 void Surface::tessCombine(GLdouble coords[3],
