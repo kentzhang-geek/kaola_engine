@@ -31,7 +31,8 @@ std::string SurfaceException::what() const{
 Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
     : parent(nullptr), visible(false), subSurfaces(nullptr),
       localVerticies(new QVector<Surface::Vertex*>),
-      scale(nullptr), rotation(nullptr),translate(nullptr){
+      scale(nullptr), rotation(nullptr),translate(nullptr),
+      renderingVerticies(nullptr), renderingIndicies(nullptr){
 
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
@@ -112,6 +113,14 @@ Surface::~Surface(){
 
     if(translate != nullptr){
         delete translate;
+    }
+
+    if(renderingVerticies != nullptr){
+        deleteVerticies(renderingVerticies);
+    }
+    if(renderingIndicies != nullptr){
+        renderingIndicies->clear();
+        delete renderingIndicies;
     }
 
 }
@@ -243,7 +252,7 @@ void Surface::updateSurfaceMesh(){}
 
 void Surface::updateConnectionMesh(){}
 
-bool Surface::tesselate(const Surface *surface){
+bool Surface::tesselate(Surface *surface){
     tess_locker.lock();
 
     if(tess == nullptr){
@@ -258,6 +267,8 @@ bool Surface::tesselate(const Surface *surface){
                         (void (__stdcall*)(void)) tessEdge);
         gluTessCallback(tess, GLU_TESS_ERROR,
                         (void (__stdcall*)(void)) tessError);
+        gluTessCallback(tess, GLU_TESS_COMBINE,
+                        (void (__stdcall*)(void)) tessCombine);
     }
     if(targetSurface != nullptr){
         if(TESS_DEBUG){
@@ -267,9 +278,168 @@ bool Surface::tesselate(const Surface *surface){
     }
 
     targetSurface = surface;
+    if(targetSurface->renderingVerticies != nullptr){
+        for(QVector<Surface::Vertex*>::iterator renderVertex = targetSurface->renderingVerticies->begin();
+            renderVertex != targetSurface->renderingVerticies->end(); ++renderVertex){
+            delete (*renderVertex);
+        }
+        targetSurface->renderingVerticies->clear();
+        delete targetSurface->renderingVerticies;
+    }
+    targetSurface->renderingVerticies = new QVector<Surface::Vertex*>;
 
+    if(targetSurface->renderingIndicies != nullptr){
+        targetSurface->renderingIndicies->clear();
+    } else {
+        targetSurface->renderingIndicies = new QVector<GLushort>;
+    }
+
+    QVector<Surface::Vertex*> *verticies  = new QVector<Surface::Vertex*>;
+
+    gluTessBeginPolygon(tess, 0);
+    if(TESS_DEBUG){
+        cout<<"gluTessBeginPolygon(tess, 0);"<<endl;
+    }
+    {
+        gluTessBeginContour(tess);
+        if(TESS_DEBUG){
+            cout<<"\tgluTessBeginContour(tess);"<<endl;
+        }
+
+        targetSurface->getLocalVertices(*verticies);
+        for(QVector<Surface::Vertex*>::iterator vertex = verticies->begin();
+            vertex != verticies->end(); ++vertex){
+            Surface::Vertex* vertexData = new Surface::Vertex(**vertex);
+            GLdouble *vertexDataElement = vertexData->getData();
+            gluTessVertex(tess, vertexDataElement, vertexDataElement);
+            if(TESS_DEBUG){
+                cout<<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
+                cout<<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")"<<endl;
+            }
+        }
+
+        gluTessEndContour(tess);
+        if(TESS_DEBUG){
+            cout<<"gluTessEndContour(tess);"<<endl;
+        }
+
+        for(QVector<Surface*>::iterator subSurface = targetSurface->subSurfaces->begin();
+            subSurface != targetSurface->subSurfaces->end(); ++subSurface){
+            verticies->clear();
+            (*subSurface)->getVerticesOnParent(*verticies);
+
+            gluTessBeginContour(tess);
+            if(TESS_DEBUG){
+                cout<<"gluTessBeginContour(tess);"<<endl;
+            }
+
+            for(QVector<Surface::Vertex*>::iterator vertex = verticies->begin();
+                vertex != verticies->end(); ++vertex){
+                Surface::Vertex* vertexData = new Surface::Vertex(**vertex);
+                targetSurface->boundingBox->generateTexture(*vertexData);
+                GLdouble* vertexDataElement = vertexData->getData();
+                gluTessVertex(tess, vertexDataElement, vertexDataElement);
+                if(TESS_DEBUG){
+                    cout<<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
+                    cout<<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")"<<endl;
+                }
+            }
+
+            gluTessEndContour(tess);
+            if(TESS_DEBUG){
+                cout<<"gluTessEndContour(tess);"<<endl;
+            }
+        }
+    }
+    gluTessEndPolygon(tess);
+    if(TESS_DEBUG){
+        cout<<"gluTessEndPolygon(tess);"<<endl;
+    }
 
     tess_locker.unlock();
+}
+
+void Surface::tessCombine(GLdouble coords[], GLdouble *vertex_data[],
+                          GLfloat weight[], GLdouble **dataOut){
+    GLdouble *vertex;
+    int i;
+    vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
+    vertex[0] = coords[0];
+    vertex[1] = coords[1];
+    vertex[2] = coords[2];
+    for (i = 3; i < 5; i++) {
+        vertex[i] =  weight[0] * vertex_data[0][i];
+        if  (weight[1] > 0)
+            vertex[i] += weight[1] * vertex_data[1][i];
+        if  (weight[2] > 0)
+            vertex[i] += weight[2] * vertex_data[2][i];
+        if  (weight[3] > 0)
+            vertex[i] += weight[3] * vertex_data[3][i];
+    }
+    *dataOut = vertex;
+}
+
+void Surface::tessBegin(GLenum type){
+    if(TESS_DEBUG){
+        cout<<"tessellation process has began for Surface : ("
+            <<targetSurface<<")"<<endl;
+    }
+    return;
+}
+
+void Surface::tessVertex(const GLvoid* data){
+    const GLdouble* vertexData = (const GLdouble*) data;
+    Surface::Vertex* callbackVertex = new Surface::Vertex(
+                vertexData[0], vertexData[1], vertexData[2], vertexData[3], vertexData[4]);
+    bool found = false;
+    int index = 0;
+
+    for(QVector<Surface::Vertex*>::iterator renderingVertex = targetSurface->renderingVerticies->begin();
+        renderingVertex != targetSurface->renderingVerticies->end(); ++renderingVertex){
+        if(callbackVertex->equals(**renderingVertex)){
+            targetSurface->renderingIndicies->push_back(index);
+            found = true;
+            return;
+        }
+        index++;
+    }
+
+    if(!found){
+        targetSurface->renderingVerticies->push_back(callbackVertex);
+        targetSurface->renderingIndicies->push_back(targetSurface->renderingIndicies->size() - 1);
+    }
+}
+
+void Surface::tessEnd(){
+    if(TESS_DEBUG && targetSurface != nullptr){
+        cout<<"tessellation result for :("<<targetSurface<<")"<<endl;
+        cout<<"{"<<endl;
+        for(QVector<Surface::Vertex*>::iterator vertex = targetSurface->renderingVerticies->begin();
+            vertex != targetSurface->renderingVerticies->end(); ++vertex){
+            cout<<"{"<<(*vertex)->x()<<", "<<(*vertex)->y()<<", "<<(*vertex)->z()<<", "
+                <<(*vertex)->w()<<", "<<(*vertex)->h()<<"},"<<endl;
+        }
+        cout<<"}"<<endl;
+
+        cout<<"indices = "<<endl<<"{"<<endl;
+        int cnt = 0;
+        for(QVector<GLushort>::iterator index = targetSurface->renderingIndicies->begin();
+            index != targetSurface->renderingIndicies->end(); ++index){
+            cout<<*index<<",";
+            if(cnt++ % 3 == 0){
+                cout<<endl;
+            }
+        }
+    }
+}
+
+void Surface::tessEdge(){return;}
+
+void Surface::tessError(GLenum type){
+    cout<<"Tessellation Error has been called"<<endl;
+    const GLubyte *errStr;
+    errStr = gluErrorString(type);
+    cout<<"[ERROR] : "<<errStr<<endl;
 }
 
 bool Surface::equalVecr(const glm::vec3 &v1, const glm::vec3 &v2){
@@ -494,11 +664,15 @@ glm::vec3 Surface::BoundingBox::getCenter() const{
                 (zMin + zMax)/2);
 }
 
+void Surface::BoundingBox::generateTexture(Surface::Vertex &vertex) const{
+    vertex.w(vertex.x() - xMin);
+    vertex.h(vertex.y() - yMin);
+}
+
 void Surface::BoundingBox::generateTexture(const QVector<Surface::Vertex*> &verticies) const{
     for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
         vertex != verticies.end(); ++vertex){
-        (*vertex)->w((*vertex)->x() - xMin);
-        (*vertex)->h((*vertex)->y() - yMin);
+        generateTexture(**vertex);
     }
 }
 

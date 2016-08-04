@@ -156,7 +156,7 @@ namespace klm_1{
 
     //methods for tessellation
     private:
-        static bool tesselate(const Surface* surface);
+        static bool tesselate(Surface* surface);
         static void tessCombine(GLdouble coords[3],
                                 GLdouble *vertex_data[4],
                                 GLfloat weight[4], GLdouble **dataOut);
@@ -168,7 +168,8 @@ namespace klm_1{
     private:
         static GLUtesselator *tess;
         static Surface* targetSurface;
-        QVector<Surface::Vertex*> renderingVerticies;
+        QVector<Surface::Vertex*> *renderingVerticies;
+        QVector<GLushort> *renderingIndicies;
 
 
     // utility methods (static)
@@ -231,6 +232,7 @@ namespace klm_1{
             BoundingBox(const QVector<glm::vec3> &vertices);
             ~BoundingBox() = default;
             glm::vec3 getCenter() const;
+            void generateTexture(Surface::Vertex &vertex) const;
             void generateTexture(const QVector<Surface::Vertex*> &verticies) const;
             //reset this bounding box centers to world origin
             void reset();
