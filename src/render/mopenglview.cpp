@@ -477,9 +477,9 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
         //处理两堵墙连接处锯齿
         gl3d_wall::combine(new_walla, new_wallb);
-        gl3d_wall::combine(new_wallb, new_wallc);
+        gl3d_wall::combine(new_wallb, new_walld);
         gl3d_wall::combine(new_wallc, new_walld);
-        gl3d_wall::combine(new_walld, new_walla);
+        gl3d_wall::combine(new_wallc, new_walla);
 
         this->new_walld->calculate_mesh();
     }
