@@ -77,22 +77,8 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     this->ui->OpenGLCanvas->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
-
 #if 1
     // test code , do not commit to repo
-    test_mtl = new QMap<unsigned int, gl3d_material *>();
-    test_mtl->insert(0, new gl3d_material("FieldSquareTile.jpg"));
-    test_mtl->insert(1, new gl3d_material("DSCN6941.jpg"));
-    test_mtl->insert(2, new gl3d_material("_3.jpg"));
-    test_mtl->insert(3, new gl3d_material("_5.jpg"));
-    test_mtl->insert(4, new gl3d_material("_19.jpg"));
-    test_mtl->insert(5, new gl3d_material("_38.jpg"));
-    test_mtl->insert(6, new gl3d_material("_Water_T.jpg"));
-//    for (auto it = test_mtl->begin();
-//         it != test_mtl->end();
-//         it++) {
-//        it.value()->colors.clear(); // no colors for test mtl
-//    }
     QVector<glm::vec3 > points;
     klm::Surface * sfc;
     points.clear();
@@ -104,8 +90,10 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
     points.clear();
     points.push_back(glm::vec3(-0.5f, -0.5f, 0.0f));
+    points.push_back(glm::vec3( 0.0f, -1.2f, 0.0f));
     points.push_back(glm::vec3( 0.5f, -0.5f, 0.0f));
     points.push_back(glm::vec3( 0.5f,  0.5f, 0.0f));
+    points.push_back(glm::vec3( 0.0f,  1.2f, 0.0f));
     points.push_back(glm::vec3(-0.5f,  0.5f, 0.0f));
     sfc->addSubSurface(points);
     sfc->getSubSurface(0)->setHeightToParent(2.0f);
