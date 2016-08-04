@@ -48,7 +48,7 @@
   */
 
 #define TESS_DEBUG false
-//delete after use "static QMutex tess_locker;"
+#define CONN_DEBUG false
 
 #include <string>
 #include "kaola_engine/glheaders.h"
@@ -128,9 +128,13 @@ namespace klm_1{
         void setTranslate(const glm::vec3 &translate);
         glm::mat4 getSurfaceTransform() const;
 
+        bool isConnectiveSurface() const;
     private:                
         void updateSurfaceMesh();
         void updateConnectionMesh();
+
+        QVector<Surface::Vertex*> *connectiveVertices;
+        QVector<GLushort> *connectiveIndices;
 
     private:
         Polygon* parentialShape;

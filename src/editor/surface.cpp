@@ -32,7 +32,8 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
     : parent(nullptr), visible(false), subSurfaces(nullptr),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
-      renderingVerticies(nullptr), renderingIndicies(nullptr){
+      renderingVerticies(nullptr), renderingIndicies(nullptr),
+      connectiveVertices(nullptr), connectiveIndices(nullptr){
 
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
@@ -248,9 +249,112 @@ glm::mat4 Surface::getSurfaceTransform() const{
     return matrix;
 }
 
-void Surface::updateSurfaceMesh(){}
+bool Surface::isConnectiveSurface() const{
+    return getSurfaceTransform() == glm::mat4(1.0f);
+}
 
-void Surface::updateConnectionMesh(){}
+void Surface::updateSurfaceMesh(){
+    Surface::tesselate(this);
+}
+
+void Surface::updateConnectionMesh(){
+    if(isConnectiveSurface()){
+        if(connectiveVerticies != nullptr){
+            deleteVerticies(connectiveVertices);
+        }
+        connectiveVertices = new QVector<Surface::Vertex*>;
+
+        if(connectiveIndices != nullptr){
+            connectiveIndices->clear();
+        } else {
+            connectiveIndices = new QVector<GLushort>;
+        }
+
+        QVector<Surface::Vertex*> base;
+        QVector<Surface::Vertex*> derived;
+
+        getVerticesOnParent(base);
+        getVerticesToParent(derived);
+
+        Surface::Vertex* baseVertex = new Surface::Vertex(*base[0]);
+        Surface::Vertex* derivedVertex = new Surface::Vertex(*derived[0]);
+
+        connectiveVertices->push_back(baseVertex);
+        connectiveVertices->push_back(derivedVertex);
+
+        for(int index = 1; index != base.size(); ++index){
+            Surface::Vertex* vb = new Surface::Vertex(*base[index]);
+            Surface::Vertex* vd = new Surface::Vertex(*derived[index]);
+
+            vb->w(baseVertex->distance(*vb) + baseVertex->w());
+            vb->h(0.0);
+            vd->w(derivedVertex->distance(*vd) + derivedVertex->h());
+            vd->h(vd->distance(*vb));
+
+            connectiveVertices->push_back(vb);
+            connectiveVertices->push_back(vd);
+
+            baseVertex = vb;
+            derivedVertex = vd;
+        }
+
+        int modeBase = connectiveVertices->size();
+
+        for(int index = 0; index < modeBase-2; index +=2){
+            connectiveIndices->push_back(index);
+            connectiveIndices->push_back((index + 3) % modeBase);
+            connectiveIndices->push_back((index + 2) % modeBase);
+            connectiveIndices->push_back(index);
+            connectiveIndices->push_back((index + 1) % modeBase);
+            connectiveIndices->push_back((index + 3) % modeBase);
+        }
+
+        Surface::Vertex* endBaseVertex = new Surface::Vertex(*(connetiveVertices->operator[](0)));
+        Surface::Vertex* endDerivedVertex =  new Surface::Vertex(*(connetiveVertices->operator[](1)));
+
+        endBaseVertex->w(baseVertex->distance(*endBaseVertex) + baseVertex->w());
+        endBaseVertex->h(0.0);
+        endDerivedVertex->w(derivedVertex->distance(*endDerivedVertex) + derivedVertex->w());
+        endDerivedVertex->h(endDerivedVertex->distance(*endBaseVertex));
+
+        int index = connectiveVertices->size();
+
+        connectiveIndices->push_back(index - 2);
+        connectiveIndices->push_back(index + 1);
+        connectiveIndices->push_back(index);
+        connectiveIndices->push_back(index - 2);
+        connectiveIndices->push_back(index - 1);
+        connectiveIndices->push_back(index + 1);
+
+        if(CONN_DEBUG){
+            cout<<"connective surface for ("<<this<<")"<<endl;
+            cout<<"{"<<endl;
+            for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
+                vertex != connectiveVertices->end(); ++vertex){
+                cout<<"{"<<(*vertex)->x()<<","<<(*vertex)->x()<<","
+                   <<(*vertex)->x()<<","<<(*vertex)->x()<<","<<(*vertex)->x()<<"},"<<endl;
+            }
+            cout<<"}"<<endl;
+
+            cout<<"indicies : {"<<endl;
+            int cnt = 0;
+            for(QVector<GLushort>::iterator index = connectiveIndices->begin();
+                index != connectiveIndices->end(); ++index){
+                cout<<*index<<",";
+                if((cnt++ % 3) == 0){
+                    cout<<endl;
+                }
+
+            }
+            cout<<"}"<<endl;
+        }
+
+    } else {
+        if(CONN_DEBUG){
+            cout<<"no connective surface for Surface ("<<this<<")"<<endl;
+        }
+    }
+}
 
 bool Surface::tesselate(Surface *surface){
     tess_locker.lock();
