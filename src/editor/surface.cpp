@@ -259,7 +259,7 @@ void Surface::updateSurfaceMesh(){
 
 void Surface::updateConnectionMesh(){
     if(isConnectiveSurface()){
-        if(connectiveVerticies != nullptr){
+        if(connectiveVertices != nullptr){
             deleteVerticies(connectiveVertices);
         }
         connectiveVertices = new QVector<Surface::Vertex*>;
@@ -309,8 +309,8 @@ void Surface::updateConnectionMesh(){
             connectiveIndices->push_back((index + 3) % modeBase);
         }
 
-        Surface::Vertex* endBaseVertex = new Surface::Vertex(*(connetiveVertices->operator[](0)));
-        Surface::Vertex* endDerivedVertex =  new Surface::Vertex(*(connetiveVertices->operator[](1)));
+        Surface::Vertex* endBaseVertex = new Surface::Vertex(*(connectiveVertices->operator[](0)));
+        Surface::Vertex* endDerivedVertex =  new Surface::Vertex(*(connectiveVertices->operator[](1)));
 
         endBaseVertex->w(baseVertex->distance(*endBaseVertex) + baseVertex->w());
         endBaseVertex->h(0.0);
