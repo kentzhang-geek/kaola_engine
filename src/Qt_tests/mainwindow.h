@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QShowEvent>
-
 #include <iostream>
 #include "drawhomewin.h"
 

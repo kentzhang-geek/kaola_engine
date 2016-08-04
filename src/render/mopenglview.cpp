@@ -120,7 +120,6 @@ void MOpenGLView::paintGL() {
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();
-
 }
 
 void MOpenGLView::initializeGL() {
@@ -262,7 +261,7 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
 
     //处理两堵墙连接处锯齿
-//    gl3d_wall::combine(wall1, wall2);
+    //    gl3d_wall::combine(wall1, wall2);
 }
 
 //获取屏幕上所有的墙
@@ -483,8 +482,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         gl3d_wall::combine(new_walld, new_walla);
 
         this->new_walld->calculate_mesh();
-
-
     }
 
 
@@ -492,7 +489,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //获取画布上所有墙的顶点（用于吸附）
         this->getWallsPoint();
 
-//        cout << "left move: " << event->x() << ", " << event->y() << endl;
+        //        cout << "left move: " << event->x() << ", " << event->y() << endl;
         auto tmp_viewer = this->main_scene->watcher;
         if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
             //            cout << float(event->x() - this->tmp_point_x) / 100 << endl;

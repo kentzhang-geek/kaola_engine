@@ -54,7 +54,8 @@ SOURCES += \
     src/utils/qui/frmmessagebox.cpp \
     src/utils/qui/iconhelper.cpp \
     src/editor/gl3d_surface_object.cpp \
-    src/render/gl3d_abstract_object.cpp
+    src/render/gl3d_abstract_object.cpp \
+    src/Qt_tests/ui/paintedwidget.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -101,7 +102,8 @@ HEADERS  += \
     src/utils/qui/iconhelper.h \
     src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
-    include/kaola_engine/gl3d_abstract_object.h
+    include/kaola_engine/gl3d_abstract_object.h \
+    src/Qt_tests/ui/paintedwidget.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
