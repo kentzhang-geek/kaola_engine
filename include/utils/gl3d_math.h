@@ -12,6 +12,7 @@ namespace gl3d {
         T a;
         T b;
         line(T tag_a, T tag_b) : a(tag_a), b(tag_b) {}
+        float length() {return glm::length(b - a);}
     };
     typedef line<glm::vec2> line_2d;
     typedef line<glm::vec3> line_3d;

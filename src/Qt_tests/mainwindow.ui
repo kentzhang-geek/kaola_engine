@@ -34,42 +34,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>768</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>测试工具栏</string>
-    </property>
-    <addaction name="action_1"/>
-    <addaction name="separator"/>
-    <addaction name="action_3"/>
-    <addaction name="separator"/>
-    <addaction name="action_5"/>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>测试工具栏2</string>
-    </property>
-    <widget class="QMenu" name="menu_2_2">
-     <property name="title">
-      <string>测试工具栏2-2</string>
-     </property>
-     <addaction name="action_2_2_1"/>
-    </widget>
-    <addaction name="action_2_1"/>
-    <addaction name="separator"/>
-    <addaction name="menu_2_2"/>
-   </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
-  </widget>
   <action name="action_1">
    <property name="text">
     <string>测试工具栏1</string>

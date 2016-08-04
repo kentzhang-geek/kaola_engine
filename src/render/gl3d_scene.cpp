@@ -527,6 +527,9 @@ bool scene::move_object(gl3d::abstract_object *obj, glm::vec3 des_pos) {
 }
 
 void scene::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight) {
+    // translate screen coordinate to gl coordinate
+    coord_in.x = coord_in.x / this->get_width();
+    coord_in.y = coord_in.y / this->get_height();
     this->watcher->coord_ground(coord_in, coord_out, hight);
     return;
 }

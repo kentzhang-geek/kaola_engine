@@ -7,75 +7,10 @@ using namespace std;
 
 static QMutex tess_mutex;
 
-bool Surface::is_data_changed(){
-    return updated;
-}
-
-bool Surface::is_visible(){
-    return visible;
-}
-
-glm::mat4 Surface::get_translation_mat(){
-    glm::mat4 ret(*translation);
-    return glm::mat4(1.0f);
-}
-
-glm::mat4 Surface::get_rotation_mat(){
-    glm::mat4 ret(*rotation);
-    return glm::mat4(1.0f);
-}
-
-glm::mat4 Surface::get_scale_mat(){
-    return glm::mat4(1.0);
-}
-
-void Surface::get_abstract_meshes(QVector<mesh *> &ms){
-
-    glm::mat4 transfromParent;
-    getTransFromParent(transfromParent);
-
-    gl3d::obj_points *point = new gl3d::obj_points[renderVertices->size()];
-
-    int index = 0;
-    for(QVector<Vertex*>::iterator vertex = renderVertices->begin();
-        vertex != renderVertices->end(); ++vertex){
-        Vertex* transformedVertex = new Vertex(**vertex);
-        GLUtility::positionTransform(*transformedVertex, transfromParent);
-        point[index].vertex_x = transformedVertex->getX();
-        point[index].vertex_y = transformedVertex->getY();
-        point[index].vertex_z = transformedVertex->getZ();
-        point[index].texture_x = transformedVertex->getW();
-        point[index].texture_y = transformedVertex->getH();
-        index++;
-    }
-
-    index = 0;
-    GLushort currentLen = ms.size();
-    GLushort* indicies = new GLushort[renderIndicies->size()];
-    for(QVector<GLushort>::iterator rIndex = renderIndicies->begin();
-        rIndex != renderIndicies->end(); ++rIndex){
-        indicies[index++] = *rIndex +currentLen;
-    }
-
-    gl3d::mesh * m = new gl3d::mesh(point, renderVertices->size(), indicies, renderIndicies->size());
-    m->recalculate_normals(0.707);
-    m->set_texture_repeat(true);
-    m->buffer_data();
-    ms.push_back(m);
-}
-
-void Surface::get_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt){
-    return;
-}
-
-void Surface::set_translation_mat(const glm::mat4 &trans){
-    return;
-}
-
 Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
     renderVertices(nullptr), renderIndicies(nullptr),
-    translateFromParent(nullptr), debug(false), updated(true),
+    translateFromParent(nullptr), debug(false),
     connectiveVerticies(nullptr), connectiveIndicies(nullptr){
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
@@ -87,7 +22,9 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
 
     localVertices = new QVector<Vertex*>();
 //    verticesToParent = new QVector<Vertex*>();
+
     collisionTester = new bg_Polygon();
+
     boundingBox = new BoundingBox(points);    
     glm::vec3 center = boundingBox->getCenter();
     glm::mat4 rotation;
@@ -98,6 +35,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
         point != points.end(); ++point){
 
         Vertex* vertex = new Vertex(*point);
+//        verticesToParent->push_back(vertex);
 
         vertex = new Vertex(*point);
         vertex->setX(vertex->getX() - center.x);
@@ -116,16 +54,20 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
     boundingBox->genTexture(*localVertices);   
 
 
-    this->rotation = new glm::mat4(glm::inverse(rotation));
-    this->translation = new glm::mat4(glm::translate(center));
+    rotation = glm::inverse(rotation);
+    transFromParent = new glm::mat4(glm::translate(center) * rotation);
     updateVertices();
 }
 
 Surface::~Surface(){
+    if(transFromParent != nullptr){
+        delete transFromParent;
+    }
     if(translateFromParent != nullptr){
         delete translateFromParent;
     }
     deleteVertices(localVertices);
+//    deleteVertices(verticesToParent);
 }
 
 void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
@@ -136,15 +78,12 @@ void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
 }
 
 void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
-    glm::mat4* overAllTransform;    
-
-    if(translateFromParent == nullptr){        
-        getTransFromParent(*overAllTransform);
+    glm::mat4* overAllTransform;
+    if(translateFromParent == nullptr){
+        overAllTransform = new glm::mat4(*transFromParent);
     } else {
-        glm::mat4 trans;
-        getTransFromParent(trans);
         overAllTransform = new glm::mat4(glm::translate(*translateFromParent) *
-                                         trans);
+                                         (*transFromParent));
     }
     for(QVector<Vertex*>::iterator vertex = localVertices->begin();
         vertex != localVertices->end(); ++vertex){
@@ -156,49 +95,30 @@ void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
 }
 
 void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
-    glm::mat4 transfromParent;
-    getTransFromParent(transfromParent);
     for(QVector<Vertex*>::iterator vertex = localVertices->begin();
         vertex != localVertices->end(); ++vertex){
         Vertex* transformedVertex = new Vertex(**vertex);
-        GLUtility::positionTransform(*transformedVertex, transfromParent);
+        GLUtility::positionTransform(*transformedVertex, *transFromParent);
         vertices.push_back(transformedVertex);
     }
 }
 
-//void Surface::getTransformFromParent(glm::mat4 &transform) const{
-//    transform = (*translation) * (*rotation);
-//}
-
 void Surface::getTransFromParent(glm::mat4 &transform) const{
-
-    glm::mat4 existingTrans(1.0f);
-    if(parent != nullptr){
-        parent->getTransFromParent(existingTrans);
+    if(parent == nullptr){
+        if(translateFromParent != nullptr){
+            transform = glm::translate(*translateFromParent) * (*(this->transFromParent));
+        } else {
+            transform = *(this->transFromParent);
+        }
+    } else {
+        glm::mat4 inheritedTransform;
+        parent->getTransFromParent(inheritedTransform);
+        if(translateFromParent != nullptr){
+            transform = inheritedTransform * glm::translate(*translateFromParent) * (*(this->transFromParent));
+        } else {
+            transform = inheritedTransform * (*(this->transFromParent)) ;
+        }
     }
-    glm::mat4 translation(1.0);
-    if(translateFromParent != nullptr){
-        translation = glm::translate(*translateFromParent);
-    }
-
-    transform = existingTrans * translation
-            * (*this->translation)  * (*this->rotation);
-
-//    if(parent == nullptr){
-//        if(translateFromParent != nullptr){
-//            transform = glm::translate(*translateFromParent) * (*(this->translation) * (*(this->rotation)));
-//        } else {
-//            transform = (*(this->translation) * (*(this->rotation));
-//        }
-//    } else {
-//        glm::mat4 inheritedTransform;
-//        parent->getTransFromParent(inheritedTransform);
-//        if(translateFromParent != nullptr){
-//            transform = inheritedTransform * glm::translate(*translateFromParent) * (*(this->transFromParent));
-//        } else {
-//            transform = inheritedTransform * (*(this->transFromParent)) ;
-//        }
-//    }
 }
 
 /**

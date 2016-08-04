@@ -51,6 +51,8 @@ SOURCES += \
     src/utils/gl3d_lock.cpp \
     src/utils/gl3d_math.cpp \
     src/Qt_tests/ui/drawoption.cpp \
+    src/utils/qui/frmmessagebox.cpp \
+    src/utils/qui/iconhelper.cpp \
     src/editor/gl3d_surface_object.cpp \
     src/render/gl3d_abstract_object.cpp
 
@@ -95,12 +97,16 @@ HEADERS  += \
     include/utils/gl3d_lock.h \
     include/utils/gl3d_math.h \
     src/Qt_tests/ui/drawoption.h \
+    src/utils/qui/frmmessagebox.h \
+    src/utils/qui/iconhelper.h \
+    src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
-    src/Qt_tests/drawhomewin.ui
+    src/Qt_tests/drawhomewin.ui \
+    src/utils/qui/frmmessagebox.ui
 
 win32:INCLUDEPATH += include
 
@@ -124,7 +130,9 @@ macx: INCLUDEPATH += LIBS/boost_1_61_0
 macx: INCLUDEPATH += include
 
 RESOURCES += \
-    res.qrc
+    res.qrc \
+    src/utils/qui/rc.qrc \
+    src/utils/qui/rc.qrc
 
 DISTFILES +=
 
