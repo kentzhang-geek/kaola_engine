@@ -168,7 +168,7 @@ public:
             {-100.0, -1.0, 100.0,  // vt
              0.0, 0.0, 0.0,       // normal
              0.0, 0.0, 0.0, 0.0,  // color
-             0.0, 100.0,     // text
+             0.0, 400.0,     // text
              0},
             {-100.0, -1.0, -100.0,  // vt
              0.0, 0.0, 0.0,   // normal
@@ -178,12 +178,12 @@ public:
             {100.0, -1.0, 100.0,   // vt
              0.0, 0.0, 0.0,   // normal
              0.0, 0.0, 0.0, 0.0, // color
-             100.0, 100.0,     // text
+             400.0, 400.0,     // text
              0},
             {100.0, -1.0, -100.0,  // vt
              0.0, 0.0, 0.0,   // normal
              0.0, 0.0, 0.0, 0.0, // color
-             100.0, 0.0,     // text
+             400.0, 0.0,     // text
              0},
         };
 
@@ -221,11 +221,11 @@ public:
         gl3d::scene * one_scene = this->get_attached_scene();
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
 
-        gl3d::shader_param * current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
+        // 选择全局渲染器渲染地面网格
+        gl3d::shader_param *  current_shader_param = GL3D_GET_PARAM("lines");
         current_shader_param->user_data.insert(string("scene"), one_scene);
-        // 选择全局渲染器
-        one_scene->get_property()->global_shader = string("multiple_text_vector");
-        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
+        one_scene->get_property()->global_shader = string("lines");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
         one_scene->prepare_canvas(false);
         object * oo = this->draw_coord();
         one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
@@ -236,20 +236,19 @@ public:
         delete oo;
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
-//        // 选择全局渲染器渲染地面网格
-//        current_shader_param = GL3D_GET_PARAM("lines");
-//        current_shader_param->user_data.insert(string("scene"), one_scene);
-//        one_scene->get_property()->global_shader = string("lines");
-//        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
-//        one_scene->prepare_canvas(false);
+        current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        // 选择全局渲染器
+        one_scene->get_property()->global_shader = string("multiple_text_vector");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
 //        object * oo = this->draw_coord();
 //        one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
-//        GL3D_GL()->glDisable(GL_CULL_FACE);
-//        GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
-//        one_scene->draw(true);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
+        one_scene->draw(true);
 //        one_scene->delete_obj(23123);
 //        delete oo;
-//        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
         current_shader_param = GL3D_GET_PARAM("dm2");
         current_shader_param->user_data.insert(string("scene"), one_scene);
