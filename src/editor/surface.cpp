@@ -189,13 +189,13 @@ glm::mat4 Surface::getTransformFromParent() const{
     return glm::mat4(*this->transformFromParent);
 }
 
-glm::mat4 Surface::getTransformFromWorld() const{
+glm::mat4 Surface::getRenderingTransform() const{
     glm::mat4 matrix;
     if(parent != nullptr){
-        matrix *= parent->getTransformFromWorld();
+        matrix *= parent->getRenderingTransform();
     }
-    matrix *= getSurfaceTransform();
     matrix *= getTransformFromParent();
+    matrix *= getSurfaceTransform();    
     return matrix;
 }
 
@@ -251,6 +251,48 @@ glm::mat4 Surface::getSurfaceTransform() const{
 
 bool Surface::isConnectiveSurface() const{
     return getSurfaceTransform() == glm::mat4(1.0f);
+}
+
+void Surface::setSurfaceMaterial(const string &id){
+    this->surfaceMaterial = id;
+}
+
+std::string Surface::getSurfaceMaterial() const{
+    return surfaceMaterial;
+}
+
+void Surface::setConnectiveMaterial(const string &id){
+    this->connectiveMaterial = id;
+}
+
+std::string Surface::getConnectiveMaterial() const{
+    return connectiveMaterial;
+}
+
+GLfloat Surface::getRoughArea(){
+    if(localVerticies == nullptr || localVerticies->size() == 0){
+        return 0.0f;
+    }
+
+    float ret = 0.0;
+    for(int index = 0; index < (localVerticies->size() -1); ++ index){
+        Surface::Vertex* v1 = localVerticies->operator[](index);
+        Surface::Vertex* v2 = localVerticies->operator[](index + 1);
+        ret += ((v1->x() * v2->x()) - (v1->y() * v2->y()));
+    }
+    Surface::Vertex* v1 = localVerticies->last();
+    Surface::Vertex* v2 = localVerticies->first();
+    ret += ((v1->x() * v2->x()) - (v1->y() * v2->y()));
+    return ret;
+}
+
+GLfloat Surface::getPreciseArea(){
+    float ret = getRoughArea();
+    for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+        subSurface != subSurfaces->end(); ++subSurface){
+        ret -= (*subSurface)->getRoughArea();
+    }
+    return ret;
 }
 
 void Surface::updateSurfaceMesh(){
@@ -459,7 +501,7 @@ bool Surface::tesselate(Surface *surface){
     if(TESS_DEBUG){
         cout<<"gluTessEndPolygon(tess);"<<endl;
     }
-
+    targetSurface = nullptr;
     tess_locker.unlock();
 }
 

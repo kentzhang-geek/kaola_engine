@@ -108,7 +108,7 @@ namespace klm_1{
          * @brief getTransformFromWorld
          * @param ret
          */
-        glm::mat4 getTransformFromWorld() const;
+        glm::mat4 getRenderingTransform() const;
         /**
          * use this method for original vertex coordinates
          */
@@ -129,6 +129,15 @@ namespace klm_1{
         glm::mat4 getSurfaceTransform() const;
 
         bool isConnectiveSurface() const;
+
+        void setSurfaceMaterial(const std::string& id);
+        std::string getSurfaceMaterial() const;
+
+        void setConnectiveMaterial(const std::string& id);
+        std::string getConnectiveMaterial() const;
+
+        GLfloat getRoughArea();
+        GLfloat getPreciseArea();
     private:                
         void updateSurfaceMesh();
         void updateConnectionMesh();
@@ -157,6 +166,8 @@ namespace klm_1{
         glm::vec3* scale;
         glm::mat4* rotation;
         glm::vec3* translate;
+        std::string surfaceMaterial;
+        std::string connectiveMaterial;
 
     //methods for tessellation
     private:
