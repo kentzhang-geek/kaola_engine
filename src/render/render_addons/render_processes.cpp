@@ -168,60 +168,64 @@ class editing : public render_process {
 public:
     // 暂时没搞定网格
     void draw_coord() {
-        GLenum err;
         QVector<gl3d::mesh *> ms;
         ms.clear();
-        obj_points pt[40];
+        obj_points pt[80];
         // generate datas
-        GLushort idx[40];
-        for (int i = 0; i < 40; i++)
+        GLushort idx[80];
+        for (int i = 0; i < 80; i++)
             idx[i] = i;
-        float step = 1.0f / 20.0f;
-        for (int i = 0; i < 20; i++) {
+        float step = 1.0f;
+        for (int i = 0; i < 40; i++) {
             pt[i * 2 + 0].vertex_x = step * (float)(i - 20);
-            pt[i * 2 + 0].vertex_y = -1.0;
-            pt[i * 2 + 0].vertex_z = 100.0;
+            pt[i * 2 + 0].vertex_y = -1.0f;
+            pt[i * 2 + 0].vertex_z = -20.0f;
             pt[i * 2 + 1].vertex_x = step * (float)(i - 20);
-            pt[i * 2 + 1].vertex_y = 1.0;
-            pt[i * 2 + 1].vertex_z = 100.0;
+            pt[i * 2 + 1].vertex_y = -1.0f;
+            pt[i * 2 + 1].vertex_z = 20.0f;
         }
-        ms.push_back(new gl3d::mesh(pt, 40, idx, 40));
-        for (int i = 0; i < 20; i++) {
-            pt[i * 2 + 0].vertex_y = step * (float)(i - 20);
-            pt[i * 2 + 0].vertex_x = -1.0;
-            pt[i * 2 + 0].vertex_z = 100.0;
-            pt[i * 2 + 1].vertex_y = step * (float)(i - 20);
-            pt[i * 2 + 1].vertex_x = 1.0;
-            pt[i * 2 + 1].vertex_z = 100.0;
+        ms.push_back(new gl3d::mesh(pt, 80, idx, 80));
+        for (int i = 0; i < 40; i++) {
+            pt[i * 2 + 0].vertex_x = -20.0f;
+            pt[i * 2 + 0].vertex_y = -1.0f;
+            pt[i * 2 + 0].vertex_z = step * (float)(i - 20);
+            pt[i * 2 + 1].vertex_x = 20.0f;
+            pt[i * 2 + 1].vertex_y = -1.0f;
+            pt[i * 2 + 1].vertex_z = step * (float)(i - 20);
         }
-        ms.push_back(new gl3d::mesh(pt, 40, idx, 40));
-        err = GL3D_GL()->glGetError();
+        ms.push_back(new gl3d::mesh(pt, 80, idx, 80));
         ms[0]->buffer_data();
         ms[1]->buffer_data();
-        err = GL3D_GL()->glGetError();
 
         // get shader
         Program * use_shader = GL3D_GET_SHADER("lines");
         GL3D_GL()->glUseProgram(use_shader->getProgramID());
+        GL3D_GL()->glEnable(GL_LINE_SMOOTH);
+        GL3D_GL()->glEnable(GL_DEPTH_TEST);
+        GL3D_GL()->glDisable(GL_POLYGON_OFFSET_LINE);
 
-        err = GL3D_GL()->glGetError();
+        ::glm::mat4 pvm = *(this->get_attached_scene()->watcher->get_projection_matrix()) *
+                *(this->get_attached_scene()->watcher->get_viewing_matrix());
+        GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                    gl3d::gl3d_global_param::shared_instance()->canvas_width);
+        pvm = pvm * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range));
+        GL3D_GL()->glUniformMatrix4fv
+                (GL3D_GL()->glGetUniformLocation
+                 (use_shader->getProgramID(), "pvmMatrix"),
+                 1, GL_FALSE, glm::value_ptr(pvm));
+
         for (int i = 0; i < 2; i++) {
             // set buffers
             GL3D_GL()->glBindVertexArray(0);
-            err = GL3D_GL()->glGetError();
             gl3d::scene::set_attribute(use_shader->getProgramID());
             GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, ms[i]->get_vbo());
-            err = GL3D_GL()->glGetError();
             GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ms[i]->get_idx());
-            err = GL3D_GL()->glGetError();
             gl3d::scene::set_attribute(use_shader->getProgramID());
-            err = GL3D_GL()->glGetError();
             GL3D_GL()->glLineWidth(0.1f);
             GL3D_GL()->glDrawElements(GL_LINES,
                                       ms[i]->get_num_idx(),
                                       GL_UNSIGNED_SHORT,
                                       (GLvoid *)NULL);
-            err = GL3D_GL()->glGetError();
             GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
             GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             GL3D_GL()->glBindVertexArray(0);

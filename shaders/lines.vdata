@@ -30,5 +30,5 @@ void main() {
 #endif
 
     // gl_Position = vec4(vertex_pos, 1.0);  // TEST positions
-    gl_Position = vec4(vertex_pos, 1.0);
+    gl_Position = pvmMatrix * vec4(vertex_pos, 1.0);
 }

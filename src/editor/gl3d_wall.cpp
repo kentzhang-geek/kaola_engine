@@ -112,6 +112,9 @@ void gl3d_wall::release_last_data() {
 
 // 计算坐标
 void gl3d_wall::calculate_mesh() {
+    if (glm::length(this->end_point - this->start_point) < this->get_thickness()) {
+        return;
+    }
     if (glm::length(this->end_point - this->start_point) < 0.01f) {
         return;
     }
