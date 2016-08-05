@@ -13,6 +13,9 @@ QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions = NULL;
 void MOpenGLView::do_init() {
     //yananli code
     this->setMouseTracking(true);
+    this->combine_wall_pair.first = NULL;
+    this->combine_wall_pair.second = NULL;
+    this->new_wall = NULL;
 
     //配置画墙时连接点图片
     connectDot = new QLabel(this);
@@ -219,7 +222,7 @@ MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
     int hit = this->height();
 
     this->wall_temp_id = 23333;
-    this->wallsPoints = new QVector<glm::vec2>();
+    this->wallsPoints = new QVector<point_wall_pair>();
 }
 
 void MOpenGLView::resizeGL(int width, int height) {
@@ -261,7 +264,7 @@ extern bool need_capture;
 
 //opengl执行画墙
 void MOpenGLView::openglDrawWall(const int x, const int y) {
-    this->new_wall = NULL;
+    gl3d_wall * tmp_wall = this->new_wall;
     this->wall_temp_id = this->wall_temp_id + 1;
     gl3d::scene * vr = this->main_scene;
     // set wall
@@ -271,9 +274,16 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
                      pick, 0.0);
     this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
+    if (tmp_wall != NULL) {
+        gl3d_wall::combine(tmp_wall, this->new_wall);
+    }
 
-    //处理两堵墙连接处锯齿
-    //    gl3d_wall::combine(wall1, wall2);
+    if(this->combine_wall_pair.first != NULL) {
+        //处理两堵墙连接处锯齿
+        gl3d_wall::combine(this->combine_wall_pair.first, this->combine_wall_pair.second);
+        this->combine_wall_pair.first = NULL;
+        this->combine_wall_pair.second = NULL;
+    }
 }
 
 //获取屏幕上所有的墙
@@ -288,8 +298,8 @@ void MOpenGLView::getWallsPoint() {
             glm::vec2 p1,p2;
             w->get_coord_on_screen(this->main_scene,
                                    p1, p2);
-            wallsPoints->push_back(p1);
-            wallsPoints->push_back(p2);
+            wallsPoints->push_back(point_wall_pair(p1, w));
+            wallsPoints->push_back(point_wall_pair(p2, w));
         }
     }
 }
@@ -400,7 +410,8 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     //画墙中
     if(now_state == gl3d::gl3d_global_param::drawwalling) {
-//        setCursor(Qt::CrossCursor);
+        connectDot->close();
+        setCursor(Qt::CrossCursor);
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
         vr->coord_ground(glm::vec2(((float)event->x()),
@@ -410,19 +421,19 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         this->new_wall->calculate_mesh();
 
         if(this->wallsPoints != NULL) {
-            for(QVector<glm::vec2>::iterator it = this->wallsPoints->begin();
+            for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
                 it != this->wallsPoints->end(); it++) {
                 glm::vec2 tmp((float)event->x(), (float)event->y());
-                float dis = glm::length(tmp - *(it));
+                float dis = glm::length(tmp - (*it).first);
                 if(dis < 18.0f) {
-                    vr->coord_ground(*it, pick, 0.0);
+                    vr->coord_ground((*it).first, pick, 0.0);
                     this->new_wall->set_end_point(pick);
                     this->new_wall->calculate_mesh();
+                    this->combine_wall_pair.first = (*it).second;
+                    this->combine_wall_pair.second = this->new_wall;
 
-                    connectDot->setGeometry((*it).x - 12, (*it).y - 12, 24, 24);
+                    connectDot->setGeometry((*it).first.x - 12, (*it).first.y - 12, 24, 24);
                     connectDot->show();
-                } else {
-                    connectDot->close();
                 }
             }
         }
