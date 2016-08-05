@@ -23,42 +23,28 @@ void surface_object::iter_surface(Surface *sfc) {
         }
     }
 
-    // process local verticles
-    // get trans mat
-    glm::mat4 trans_mat(1.0);
-
     // create vertex buffer
-    GLfloat * tmp_data = NULL;
     int pts_len;
     gl3d::obj_points * pts = NULL;
-    sfc->getre(tmp_data, pts_len);
-    pts_len = pts_len / klm_1::Surface::Vertex::VERTEX_SIZE;
+    pts_len = sfc->getRenderingVertices()->size();
     pts = (gl3d::obj_points *)
             malloc(sizeof(gl3d::obj_points) * pts_len);
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
     for (int i = 0; i < pts_len; i++) {
-        glm::vec4 tmp_vert = glm::vec4(
-                    tmp_data[i * 5 + 0],
-                tmp_data[i * 5 + 1],
-                tmp_data[i * 5 + 2],
-                1.0f);
-        tmp_vert = trans_mat * tmp_vert;
-        tmp_vert = tmp_vert / tmp_vert.w;
-        pts[i].vertex_x = tmp_vert.x;
-        pts[i].vertex_y = tmp_vert.y;
-        pts[i].vertex_z = tmp_vert.z;
-        pts[i].texture_x = tmp_data[i * 5 + 3];
-        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+        pts[i].vertex_x = sfc->getRenderingVertices()->at(i)->x();
+        pts[i].vertex_y = sfc->getRenderingVertices()->at(i)->y();
+        pts[i].vertex_z = sfc->getRenderingVertices()->at(i)->z();
+        pts[i].texture_x = sfc->getRenderingVertices()->at(i)->w();
+        pts[i].texture_y = 1.0f - sfc->getRenderingVertices()->at(i)->h();
     }
 
     // create index buffer
     GLushort * idxes = NULL;
     int idx_len;
-    sfc->getRenderingIndicies(idxes, idx_len);
-
-    if (idxes == NULL) {
-        cout << "aaaaa";
-
+    idx_len = sfc->getRenderingIndices()->size();
+    idxes = new GLushort[idx_len];
+    for (int i = 0; i < idx_len; i++) {
+        idxes[i] = sfc->getRenderingIndices()->at(i);
     }
 
     // create new mesh
@@ -67,31 +53,24 @@ void surface_object::iter_surface(Surface *sfc) {
     this->get_meshes()->push_back(m);
 
     // clean env
-    free(pts);
-    free(idxes);
+    delete pts;
+    delete idxes;
 
-    // process conective surface
-    QVector<klm_1::Vertex *> vertexes;
-    QVector<GLushort> indecis;
-    sfc->getConnectiveVerticies(vertexes);
-    sfc->getConnectiveIndicies(indecis);
-    trans_mat = glm::mat4(1.0);
-    if (sfc->getParent() != NULL) {
-        sfc->getParent()->getTransFromParent(trans_mat);
-    }
     // have conective surface , then process meshes
-    if ((vertexes.size() > 0) && (indecis.size() > 0)) {
-        pts = (obj_points *)malloc(sizeof(obj_points) * vertexes.size());
-        memset(pts, 0, sizeof(obj_points) * vertexes.size());
-        idxes = (GLushort *)malloc(sizeof(GLushort) * indecis.size());
-        memset(idxes, 0, sizeof(GLushort) * indecis.size());
-        pts_len = vertexes.size();
-        idx_len = indecis.size();
-        for (int j = 0; j < vertexes.size(); j++) {
+    QVector<Surface::Vertex*> * vertexes = sfc->getConnectiveVerticies();
+    QVector<GLushort> * indecis = sfc->getConnectiveIndicies();
+    if ((vertexes != NULL) && (indecis != NULL)) {
+        pts = (obj_points *)malloc(sizeof(obj_points) * vertexes->size());
+        memset(pts, 0, sizeof(obj_points) * vertexes->size());
+        idxes = (GLushort *)malloc(sizeof(GLushort) * indecis->size());
+        memset(idxes, 0, sizeof(GLushort) * indecis->size());
+        pts_len = vertexes->size();
+        idx_len = indecis->size();
+        for (int j = 0; j < vertexes->size(); j++) {
             glm::vec4 tmp_vert = glm::vec4(
-                        vertexes.at(j)->getX(),
-                        vertexes.at(j)->getY(),
-                        vertexes.at(j)->getZ(),
+                        vertexes->at(j)->getX(),
+                        vertexes->at(j)->getY(),
+                        vertexes->at(j)->getZ(),
                         1.0f);
             tmp_vert = trans_mat * tmp_vert;
             tmp_vert = tmp_vert / tmp_vert.w;
