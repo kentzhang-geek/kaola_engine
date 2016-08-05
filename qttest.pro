@@ -47,14 +47,15 @@ SOURCES += \
     src/editor/bounding_box.cpp \
     src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
-    src/editor/klm_surface.cpp \
+#    src/editor/klm_surface.cpp \
     src/utils/gl3d_lock.cpp \
     src/utils/gl3d_math.cpp \
     src/Qt_tests/ui/drawoption.cpp \
     src/utils/qui/frmmessagebox.cpp \
     src/utils/qui/iconhelper.cpp \
     src/editor/gl3d_surface_object.cpp \
-    src/render/gl3d_abstract_object.cpp
+    src/render/gl3d_abstract_object.cpp \
+    src/editor/surface.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -86,7 +87,7 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-    include/editor/klm_surface.h \
+#    include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     src/Qt_tests/drawhomewin.h \
     include/editor/vertex.h \
@@ -101,7 +102,8 @@ HEADERS  += \
     src/utils/qui/iconhelper.h \
     src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
-    include/kaola_engine/gl3d_abstract_object.h
+    include/kaola_engine/gl3d_abstract_object.h \
+    include/editor/surface.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
