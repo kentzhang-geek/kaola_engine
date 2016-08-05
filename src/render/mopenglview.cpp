@@ -115,8 +115,8 @@ void MOpenGLView::paintGL() {
     // KENT HINT : 用这个接口重新绑定默认渲染目标等等
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
     gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
-    glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    GL3D_GL()->glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     glViewport(0, 0,
                this->main_scene->get_width(),
                this->main_scene->get_height());
@@ -127,8 +127,8 @@ void MOpenGLView::paintGL() {
     GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();
 
     // release default fbo
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    GL3D_GL()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();

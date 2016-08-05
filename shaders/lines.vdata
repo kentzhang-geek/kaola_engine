@@ -12,6 +12,7 @@ varying vec4 color;
 varying vec3 normal;
 varying vec3 point_pos;
 varying vec3 view_vec;
+varying vec2 text_coord;
 
 uniform mat4 translationMatrix;
 uniform mat4 viewingMatrix;
@@ -21,6 +22,7 @@ uniform vec3 eye_pos;
 
 void main() {
     color = vertex_color;
+    text_coord = vertex_tex_coord;
 
 #if 0
     // calculate real normal

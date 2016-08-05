@@ -1,54 +1,53 @@
 #version 100
 precision highp float;
 
-varying vec4 color;
-varying vec3 normal;
-varying vec3 point_pos;
-varying vec3 view_vec;
+// light property
+uniform vec4 mtlAmbientColor;
+uniform vec4 mtlDiffuseColor;
+uniform vec4 mtlSpecularColor;
+uniform float mtlSpecularExponent;
 
-struct directional_light {
-    vec3 direction;
-    vec3 halfplane;
-    vec3 ambient_color;
-    vec4 diffuse_color;
-    vec4 specular_color;
-    vec3 light_position;
-    float luminorm;
-    float luminorm_diffuse;
-    float diffuse_exponent;
-    float specular_exponent;
-    float cutoff_angle;
-};
+varying float df;
+varying float sf;
+varying float cam_pos_distance;
+varying vec2 text_coord;
 
-struct material_properties {
-    vec4 ambient_color;
-    vec4 diffuse_color;
-    vec4 specular_color;
-    float specular_exponent;
-};
+// for texture
+uniform sampler2D gl3d_texture_ambient;
+uniform sampler2D gl3d_texture_diffuse;
+uniform sampler2D gl3d_texture_specular;
 
-const float c_zero = 0.0;
-const float c_one = 1.0;
+uniform bool gl3d_t_ambient_enable;
+uniform bool gl3d_t_diffuse_enable;
+uniform bool gl3d_t_specular_enable;
 
-uniform material_properties material;
-uniform directional_light light;
-uniform vec3 eye_pos;
-uniform sampler2D mText;
+// light
+uniform float shininess;
+uniform float param_x;
+varying vec3 eye_to_pos;
+varying vec3 l_normal;
+varying vec3 in_light;
 
-vec2 sphere_map(vec3 pos, vec3 nrom) {
-    vec3 refle = reflect(pos, nrom);
-    float m = 2.0 * sqrt(refle.x * refle.x +
-                         refle.y * refle.y +
-                         (refle.z + 1.0) * (refle.z + 1.0));
-    return vec2((refle.x/m + 0.5), (refle.y/m + 0.5));
-}
+// shadow
+#define EPSILON 0.0002
+varying vec4 vPos;
+uniform mat4 s_mtx;
+uniform sampler2D gl3d_texture_shadow;
+uniform vec3 shadow_center_input;
+uniform mat4 transmtx;
+uniform bool shadow_enable;
+uniform vec2 shadow_map_size;
 
-vec3 cube_map(vec3 pos, vec3 nrom) {
-    return reflect(pos, nrom);
-}
+// reflection
+uniform float alpha;
+
+// frag unproject
+uniform mat4 unpvm;
 
 void main() {
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);                     // TEST origin Color
+    gl_FragColor = texture2D(gl3d_texture_diffuse, text_coord);
+    gl_FragColor.a = 1.0;
+    // TEST origin Color
 //    gl_FragColor = color;
 
 #if 0

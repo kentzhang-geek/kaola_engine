@@ -141,10 +141,6 @@ void moving::render() {
     return;
 }
 
-GL3D_SHADER_PARAM(lines) {
-    return true;
-}
-
 class test : public render_process {
 public:
     void render() {
@@ -167,74 +163,58 @@ using namespace gl3d;
 class editing : public render_process {
 public:
     // 暂时没搞定网格
-    void draw_coord() {
-        QVector<gl3d::mesh *> ms;
-        ms.clear();
-        obj_points pt[80];
-        // generate datas
-        GLushort idx[80];
-        for (int i = 0; i < 80; i++)
-            idx[i] = i;
-        float step = 1.0f;
-        for (int i = 0; i < 40; i++) {
-            pt[i * 2 + 0].vertex_x = step * (float)(i - 20);
-            pt[i * 2 + 0].vertex_y = -1.0f;
-            pt[i * 2 + 0].vertex_z = -20.0f;
-            pt[i * 2 + 1].vertex_x = step * (float)(i - 20);
-            pt[i * 2 + 1].vertex_y = -1.0f;
-            pt[i * 2 + 1].vertex_z = 20.0f;
-        }
-        ms.push_back(new gl3d::mesh(pt, 80, idx, 80));
-        for (int i = 0; i < 40; i++) {
-            pt[i * 2 + 0].vertex_x = -20.0f;
-            pt[i * 2 + 0].vertex_y = -1.0f;
-            pt[i * 2 + 0].vertex_z = step * (float)(i - 20);
-            pt[i * 2 + 1].vertex_x = 20.0f;
-            pt[i * 2 + 1].vertex_y = -1.0f;
-            pt[i * 2 + 1].vertex_z = step * (float)(i - 20);
-        }
-        ms.push_back(new gl3d::mesh(pt, 80, idx, 80));
-        ms[0]->buffer_data();
-        ms[1]->buffer_data();
+    object * draw_coord() {
+        gl3d::obj_points pt[4] = {
+            {-100.0, -1.0, 100.0,  // vt
+             0.0, 0.0, 0.0,       // normal
+             0.0, 0.0, 0.0, 0.0,  // color
+             0.0, 100.0,     // text
+             0},
+            {-100.0, -1.0, -100.0,  // vt
+             0.0, 0.0, 0.0,   // normal
+             0.0, 0.0, 0.0, 0.0, // color
+             0.0, 0.0,     // text
+             0},
+            {100.0, -1.0, 100.0,   // vt
+             0.0, 0.0, 0.0,   // normal
+             0.0, 0.0, 0.0, 0.0, // color
+             100.0, 100.0,     // text
+             0},
+            {100.0, -1.0, -100.0,  // vt
+             0.0, 0.0, 0.0,   // normal
+             0.0, 0.0, 0.0, 0.0, // color
+             100.0, 0.0,     // text
+             0},
+        };
 
-        // get shader
-        Program * use_shader = GL3D_GET_SHADER("lines");
-        GL3D_GL()->glUseProgram(use_shader->getProgramID());
-        GL3D_GL()->glEnable(GL_LINE_SMOOTH);
-        GL3D_GL()->glEnable(GL_DEPTH_TEST);
-        GL3D_GL()->glDisable(GL_POLYGON_OFFSET_LINE);
+        static GLushort idx[6] = {
+            0, 2, 1,
+            1, 2, 3,
+        };
 
-        ::glm::mat4 pvm = *(this->get_attached_scene()->watcher->get_projection_matrix()) *
-                *(this->get_attached_scene()->watcher->get_viewing_matrix());
-        GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                    gl3d::gl3d_global_param::shared_instance()->canvas_width);
-        pvm = pvm * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range));
-        GL3D_GL()->glUniformMatrix4fv
-                (GL3D_GL()->glGetUniformLocation
-                 (use_shader->getProgramID(), "pvmMatrix"),
-                 1, GL_FALSE, glm::value_ptr(pvm));
+        gl3d::object * obj = new object(pt, 4, idx, 6);
+        obj->set_repeat(true);
+        obj->get_meshes()->at(0)->set_texture_repeat(true);
+        obj->get_meshes()->at(0)->set_material_index(0);
+        obj->get_mtls()->insert(0, new gl3d_material("net.jpg"));
+        obj->get_property()->scale_unit = gl3d::scale::m;
+        obj->set_render_authority(GL3D_SCENE_DRAW_NET);
+        obj->set_control_authority(GL3D_OBJ_ENABLE_DEL);
 
-        for (int i = 0; i < 2; i++) {
-            // set buffers
-            GL3D_GL()->glBindVertexArray(0);
-            gl3d::scene::set_attribute(use_shader->getProgramID());
-            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, ms[i]->get_vbo());
-            GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ms[i]->get_idx());
-            gl3d::scene::set_attribute(use_shader->getProgramID());
-            GL3D_GL()->glLineWidth(0.1f);
-            GL3D_GL()->glDrawElements(GL_LINES,
-                                      ms[i]->get_num_idx(),
-                                      GL_UNSIGNED_SHORT,
-                                      (GLvoid *)NULL);
-            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
-            GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            GL3D_GL()->glBindVertexArray(0);
-        }
+//        shader_param * param = GL3D_GET_PARAM("lines");
+//        gl3d::scene::set_attribute(GL3D_GET_SHADER("lines")->getProgramID());
+//        param->user_data.insert(string("object"), (void *)obj);
+//        param->user_data.insert(string("scene"), this->get_attached_scene());
+//        param->set_param();
+//        // then delete param
+//        param->user_data.erase(param->user_data.find(string("object")));
+//        GL3D_GL()->glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+//        GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+//        this->get_attached_scene()->draw_object(obj,
+//                                                GL3D_GET_SHADER("lines")->getProgramID());
 
-        // clear data
-        delete ms[0];
-        delete ms[1];
-        ms.clear();
+        // send data
+        return obj;
     }
 
     void render() {
@@ -247,10 +227,29 @@ public:
         one_scene->get_property()->global_shader = string("multiple_text_vector");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
         one_scene->prepare_canvas(false);
+        object * oo = this->draw_coord();
+        one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
         GL3D_GL()->glDisable(GL_CULL_FACE);
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
         one_scene->draw(true);
+        one_scene->delete_obj(23123);
+        delete oo;
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+//        // 选择全局渲染器渲染地面网格
+//        current_shader_param = GL3D_GET_PARAM("lines");
+//        current_shader_param->user_data.insert(string("scene"), one_scene);
+//        one_scene->get_property()->global_shader = string("lines");
+//        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
+//        one_scene->prepare_canvas(false);
+//        object * oo = this->draw_coord();
+//        one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
+//        GL3D_GL()->glDisable(GL_CULL_FACE);
+//        GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
+//        one_scene->draw(true);
+//        one_scene->delete_obj(23123);
+//        delete oo;
+//        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
         current_shader_param = GL3D_GET_PARAM("dm2");
         current_shader_param->user_data.insert(string("scene"), one_scene);
@@ -270,7 +269,6 @@ public:
         one_scene->draw(true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
-        this->draw_coord();
         return;
     }
 
