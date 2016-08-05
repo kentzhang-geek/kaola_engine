@@ -11,6 +11,7 @@
 
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
+#include "editor/gl3d_surface_object.h"
 
 using namespace std;
 
@@ -73,6 +74,22 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     this->ui->OpenGLCanvas->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
+
+    QVector<glm::vec3 > pts;
+    pts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+    pts.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
+    pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
+    pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
+    klm_1::Surface * sfc = new klm_1::Surface(pts);
+
+    gl3d::surface_object * oo = new gl3d::surface_object(sfc);
+    oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(1, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(2, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(3, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(4, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(5, new gl3d_material("___101.jpg"));
+    this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
 }
 
 class ray_thread : public QThread {

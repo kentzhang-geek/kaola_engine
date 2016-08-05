@@ -71,6 +71,7 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
     boundingBox->reset();
     boundingBox->generateTexture(*localVerticies);
     transformFromParent = new glm::mat4(glm::translate(center) * glm::inverse(rotation));
+    updateSurfaceMesh();
 }
 
 Surface::~Surface(){
@@ -156,6 +157,7 @@ Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
     } else {
         return nullptr;
     }
+    updateSurfaceMesh();
 }
 
 int Surface::getSurfaceCnt() const{

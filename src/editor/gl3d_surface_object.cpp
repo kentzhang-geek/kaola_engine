@@ -57,8 +57,8 @@ void surface_object::iter_surface(Surface *sfc) {
     delete idxes;
 
     // have conective surface , then process meshes
-    QVector<Surface::Vertex*> * vertexes = sfc->getConnectiveVerticies();
-    QVector<GLushort> * indecis = sfc->getConnectiveIndicies();
+    const QVector<Surface::Vertex*> * vertexes = sfc->getConnectiveVerticies();
+    const QVector<GLushort> * indecis = sfc->getConnectiveIndicies();
     if ((vertexes != NULL) && (indecis != NULL)) {
         pts = (obj_points *)malloc(sizeof(obj_points) * vertexes->size());
         memset(pts, 0, sizeof(obj_points) * vertexes->size());
@@ -67,21 +67,14 @@ void surface_object::iter_surface(Surface *sfc) {
         pts_len = vertexes->size();
         idx_len = indecis->size();
         for (int j = 0; j < vertexes->size(); j++) {
-            glm::vec4 tmp_vert = glm::vec4(
-                        vertexes->at(j)->getX(),
-                        vertexes->at(j)->getY(),
-                        vertexes->at(j)->getZ(),
-                        1.0f);
-            tmp_vert = trans_mat * tmp_vert;
-            tmp_vert = tmp_vert / tmp_vert.w;
-            pts[j].vertex_x = tmp_vert.x;
-            pts[j].vertex_y = tmp_vert.y;
-            pts[j].vertex_z = tmp_vert.z;
-            pts[j].texture_x = vertexes.at(j)->getW();
-            pts[j].texture_y = 1.0f - vertexes.at(j)->getH();
+            pts[j].vertex_x = vertexes->at(j)->x();
+            pts[j].vertex_y = vertexes->at(j)->y();
+            pts[j].vertex_z = vertexes->at(j)->z();
+            pts[j].texture_x = vertexes->at(j)->w();
+            pts[j].texture_y = 1.0f - vertexes->at(j)->h();
         }
-        for (int j = 0; j < indecis.size(); j++) {
-            idxes[j] = indecis.at(j);
+        for (int j = 0; j < indecis->size(); j++) {
+            idxes[j] = indecis->at(j);
         }
         // create new mesh
         gl3d::mesh * m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
