@@ -295,6 +295,22 @@ GLfloat Surface::getPreciseArea(){
     return ret;
 }
 
+const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
+    return renderingVerticies;
+}
+
+const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
+    return connectiveVertices;
+}
+
+const QVector<GLushort>* Surface::getRenderingIndices(){
+    return renderingIndicies;
+}
+
+const QVector<GLushort>* Surface::getConnectiveIndicies(){
+    return connectiveIndices;
+}
+
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);
 }
@@ -373,8 +389,8 @@ void Surface::updateConnectionMesh(){
                                   "connective surface in local coordinate system");
         }
 
-        glm::mat4 transform = parent == nullptr ? getTransformFromParent() :
-                 (parent->getRenderingTransform() * getTransformFromParent());
+        glm::mat4 transform = parent == nullptr ? getTransformFromParent() * getSurfaceTransform() :
+                 (parent->getRenderingTransform() * getTransformFromParent() * getSurfaceTransform());
         for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
             vertex != connectiveVertices->end(); ++vertex){
             Surface::transformVertex(transform, **vertex);

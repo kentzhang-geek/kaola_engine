@@ -138,6 +138,13 @@ namespace klm_1{
 
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
+
+        const QVector<Surface::Vertex*>* getRenderingVertices();
+        const QVector<Surface::Vertex*>* getConnectiveVerticies();
+        const QVector<GLushort>* getRenderingIndices();
+        const QVector<GLushort>* getConnectiveIndicies();
+
+
     private:                
         void updateSurfaceMesh();
         void updateConnectionMesh();
