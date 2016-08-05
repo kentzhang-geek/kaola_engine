@@ -1,0 +1,36 @@
+#version 100
+precision highp float;
+precision highp int;
+
+attribute vec3 vertex_pos;
+attribute vec3 vertex_normal;
+attribute vec4 vertex_color;
+attribute vec2 vertex_tex_coord;
+attribute float vertex_tex_id;
+
+varying vec4 color;
+varying vec3 normal;
+varying vec3 point_pos;
+varying vec3 view_vec;
+varying vec2 text_coord;
+
+uniform mat4 translationMatrix;
+uniform mat4 viewingMatrix;
+uniform mat4 pvmMatrix;
+uniform mat3 normalMtx;
+uniform vec3 eye_pos;
+
+void main() {
+    color = vertex_color;
+    text_coord = vertex_tex_coord;
+
+#if 0
+    // calculate real normal
+    vec4 tmp = vec4((translationMatrix) * vec4(vertex_normal, 1.0));
+    normal = normalize(vec3(tmp.x, tmp.y, tmp.z));
+    point_pos = vec3(translationMatrix * vec4(vertex_pos, 1.0));
+#endif
+
+    // gl_Position = vec4(vertex_pos, 1.0);  // TEST positions
+    gl_Position = pvmMatrix * vec4(vertex_pos, 1.0);
+}

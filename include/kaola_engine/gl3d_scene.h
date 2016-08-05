@@ -263,10 +263,14 @@ namespace gl3d {
         // objects
         GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
 
+        // 设置输入参数位置
+        static void set_attribute(GLuint pro);
+
+        // 绘制单个对象
+        void draw_object(abstract_object *obj, GLuint pro);
+
     private:
         void init();
-        void set_attribute(GLuint pro);
-        void draw_object(abstract_object *obj, GLuint pro);
         shader_manager * shaders;
         scene_property this_property;
         light_property lights[4];

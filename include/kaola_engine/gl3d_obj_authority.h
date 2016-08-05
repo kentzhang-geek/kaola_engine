@@ -30,5 +30,6 @@
 #define GL3D_SCENE_DRAW_RESULT (0x01UL << 5)
 #define GL3D_SCENE_DRAW_SPECIAL (0x01UL << 6)
 #define GL3D_SCENE_DRAW_WALL (0x01UL << 7)
+#define GL3D_SCENE_DRAW_NET (0x01UL << 8)
 
 #endif /* gl3d_obj_authority_h */

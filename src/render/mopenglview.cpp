@@ -16,6 +16,7 @@ void MOpenGLView::do_init() {
     this->combine_wall_pair.first = NULL;
     this->combine_wall_pair.second = NULL;
     this->new_wall = NULL;
+    this->combine_point = glm::vec2(0.0f);
     is_drawwall_start_point = false;
 
     //配置画墙时连接点图片
@@ -119,8 +120,8 @@ void MOpenGLView::paintGL() {
     // KENT HINT : 用这个接口重新绑定默认渲染目标等等
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
     gl3d_global_param::shared_instance()->framebuffer = this->context()->contextHandle()->defaultFramebufferObject();
-    glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    GL3D_GL()->glBindFramebuffer(GL_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
+    GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gl3d_global_param::shared_instance()->framebuffer);
     glViewport(0, 0,
                this->main_scene->get_width(),
                this->main_scene->get_height());
@@ -131,8 +132,8 @@ void MOpenGLView::paintGL() {
     GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();
 
     // release default fbo
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    GL3D_GL()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();
@@ -287,7 +288,7 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
 
     if(this->combine_wall_pair.first != NULL) {
         //处理两堵墙连接处锯齿
-        gl3d_wall::combine(this->combine_wall_pair.first, this->combine_wall_pair.second);
+        gl3d_wall::combine(this->combine_wall_pair.first, this->combine_wall_pair.second, this->combine_point);
         this->combine_wall_pair.first = NULL;
         this->combine_wall_pair.second = NULL;
     }
@@ -456,9 +457,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                     this->new_wall->calculate_mesh();
                     this->combine_wall_pair.first = (*it).second;
                     this->combine_wall_pair.second = this->new_wall;
+                    this->combine_point = pick;
 
                     connectDot->setGeometry((*it).first.x - 12, (*it).first.y - 12, 24, 24);
                     connectDot->show();
+                }
+                else {
+                    this->combine_wall_pair.first  = NULL;
+                    this->combine_wall_pair.second = NULL;
                 }
             }
         }
@@ -532,10 +538,10 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         this->new_walld->set_end_point(pickd);
 
         //处理两堵墙连接处锯齿
-        gl3d_wall::combine(new_walla, new_wallb);
-        gl3d_wall::combine(new_wallb, new_walld);
-        gl3d_wall::combine(new_wallc, new_walld);
-        gl3d_wall::combine(new_wallc, new_walla);
+        gl3d_wall::combine(new_walla, new_wallb, new_walla->get_start_point());
+        gl3d_wall::combine(new_wallb, new_walld, new_wallb->get_end_point());
+        gl3d_wall::combine(new_wallc, new_walld, new_wallc->get_end_point());
+        gl3d_wall::combine(new_wallc, new_walla, new_wallc->get_start_point());
 
         this->new_walld->calculate_mesh();
     }
