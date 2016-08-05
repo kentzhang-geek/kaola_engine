@@ -89,9 +89,11 @@ private:
     int wall_temp_id;
     PickupDig *puDig;
     int pickUpObjID;
-    QVector<glm::vec2> *wallsPoints;
+    typedef QPair<glm::vec2, gl3d_wall *> point_wall_pair;
+    QVector<point_wall_pair> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
     QLabel *connectDot;
+    QPair<gl3d_wall *, gl3d_wall *> combine_wall_pair;
 
 
 
