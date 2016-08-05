@@ -235,6 +235,23 @@ void Surface::setScale(const glm::vec3 &scale){
     }
 }
 
+void Surface::setRotation(const glm::mat4 &rotation){
+    if(this->rotation == nullptr){
+        this->rotation = new glm::mat4(rotation);
+    } else {
+        *(this->rotation) = rotation;
+    }
+}
+
+void Surface::setTranslate(const glm::vec3 &translate){
+    if(this->translate == nullptr){
+        this->translate = new glm::vec3(translate);
+    } else {
+        *(this->translate) = translate;
+    }
+    updateConnectionMesh();
+}
+
 glm::mat4 Surface::getSurfaceTransform() const{
     glm::mat4 matrix = glm::mat4(1.0);
     if(scale != nullptr){
