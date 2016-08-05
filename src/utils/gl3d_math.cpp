@@ -79,7 +79,8 @@ bool gl3d::math::get_cross(const line_2d &l1,
         y = x * (p2.y - p1.y) / (p2.x - p1.x)
                 - (p2.y - p1.y) / (p2.x - p1.x) * p1.x + p1.y;
     }
-    else {
+    if ((p1.x != p2.x) &&
+            (p3.x != p4.x)) {
         float d1 = (p2.y - p1.y) / (p2.x - p1.x);
         float d2 = (p4.y - p3.y) / (p4.x - p3.x);
         x = p1.y - d1 * p1.x - p3.y + d2 * p3.x;
@@ -89,6 +90,10 @@ bool gl3d::math::get_cross(const line_2d &l1,
 
     cross_point.x = x;
     cross_point.y = y;
+    if (!(cross_point == cross_point)) {
+        throw std::runtime_error("fuck cross point");
+    }
+
     return true;
 }
 
@@ -115,9 +120,33 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
 }
 
 float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
+    if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
+            < 0.0001) {
+        return 0.0f;
+    }
     float alpha = glm::acos(glm::dot(glm::normalize(pt - l.a), glm::normalize(l.b - l.a)));
     return glm::length(pt - l.a) * glm::sin(alpha);
 }
+
+bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt) {
+    glm::vec3 ptt(pt, 0.0f);
+    line_3d tmpl(glm::vec3(l.a, 0.0f),
+                 glm::vec3(l.b, 0.0f));
+    if (gl3d::math::point_distance_to_line(ptt, tmpl) <= 0.0001) {
+        return false;
+    }
+
+    glm::vec2 dir = l.b - l.a;
+    float tmp = dir.y;
+    dir.y = dir.x;
+    dir.x = -tmp;
+
+    line_2d l2(pt, pt + dir);
+    gl3d::math::get_cross(l, l2, out_pt);
+
+    return true;
+}
+
 
 
 #if 0

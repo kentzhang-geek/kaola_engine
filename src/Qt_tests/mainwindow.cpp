@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "src/utils/qui/myhelper.h"
 
 using namespace std;
 
@@ -8,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    myHelper::FormInCenter(this);
+    setWindowState(Qt::WindowMaximized);
 }
 
 MainWindow::~MainWindow()

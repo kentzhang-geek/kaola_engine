@@ -61,7 +61,7 @@ GL3D_LOAD_SHADER(hdr_test, hdr_test.vdata, hdr_test.fdata);
 
 GL3D_SHADER_PARAM(hdr_test) {
     GLuint pro = GL3D_GET_SHADER("hdr_test")->getProgramID();
-    gl3d::object * obj = GL3D_GET_OBJ();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
     GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 0.5);
     GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);

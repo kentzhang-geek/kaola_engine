@@ -12,6 +12,7 @@ namespace gl3d {
         T a;
         T b;
         line(T tag_a, T tag_b) : a(tag_a), b(tag_b) {}
+        float length() {return glm::length(b - a);}
     };
     typedef line<glm::vec2> line_2d;
     typedef line<glm::vec3> line_3d;
@@ -34,6 +35,8 @@ namespace gl3d {
 
     float point_distance_to_line(const glm::vec3 pt, const line_3d l);
     float point_distance_to_facet(const triangle_facet & fc, const glm::vec3 & pt);
+
+    bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt);
 
     bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
 

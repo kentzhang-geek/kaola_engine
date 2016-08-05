@@ -40,6 +40,9 @@
 
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
+#include <QVector>
+#include <QLabel>
+#include <QPixmap>
 
 using namespace std;
 
@@ -66,7 +69,10 @@ public:
         drawwall = 1
     };
     gl3d::gl3d_wall * new_wall;
-
+    gl3d::gl3d_wall * new_walla;
+    gl3d::gl3d_wall * new_wallb;
+    gl3d::gl3d_wall * new_wallc;
+    gl3d::gl3d_wall * new_walld;
 
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -83,8 +89,19 @@ private:
     int wall_temp_id;
     PickupDig *puDig;
     int pickUpObjID;
+    typedef QPair<glm::vec2, gl3d_wall *> point_wall_pair;
+    QVector<point_wall_pair> *wallsPoints;
+    float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
+    QLabel *connectDot;
+    QPair<gl3d_wall *, gl3d_wall *> combine_wall_pair;
+    glm::vec2 combine_point;
+    glm::vec2 drawwall_start_point;
+    bool is_drawwall_start_point;
+
+
 
     void openglDrawWall(const int x, const int y);
+    void getWallsPoint();
 };
 
 #endif // MOPENGLVIEW_H

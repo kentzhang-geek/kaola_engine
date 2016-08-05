@@ -395,6 +395,9 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     gl3d::mesh *p_mesh;
     while (iter != mss.end()) {
         p_mesh = *iter;
+        if (!p_mesh->data_buffered) {
+            p_mesh->buffer_data();
+        }
         // set buffers
         GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
         GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
@@ -517,6 +520,9 @@ bool scene::move_object(gl3d::abstract_object *obj, glm::vec3 des_pos) {
 }
 
 void scene::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight) {
+    // translate screen coordinate to gl coordinate
+    coord_in.x = coord_in.x / this->get_width();
+    coord_in.y = coord_in.y / this->get_height();
     this->watcher->coord_ground(coord_in, coord_out, hight);
     return;
 }

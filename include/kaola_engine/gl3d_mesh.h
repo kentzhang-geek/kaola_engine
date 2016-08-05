@@ -84,12 +84,12 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(indecis, GLushort * );
         GL3D_UTILS_PROPERTY(num_idx, unsigned int );
         GL3D_UTILS_PROPERTY(num_pts, unsigned int );
+        GL3D_UTILS_PROPERTY(data_buffered, bool );
+        GL3D_UTILS_PROPERTY(texture_repeat, bool );
+        GL3D_UTILS_PROPERTY(vbo, GLuint );
+        GL3D_UTILS_PROPERTY(idx, GLuint );
 
     private:
-        bool data_buffered;
-        GLuint vbo;
-        GLuint idx;
-        bool texture_repeat;
         void init();
     };
 }
