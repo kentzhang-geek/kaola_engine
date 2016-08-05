@@ -62,8 +62,8 @@
 #include "editor/gl_utility.h"
 
 namespace bg = boost::geometry;
-typedef bg::model::point<float, 2, bg::cs::cartesian> Point;
-typedef bg::model::polygon<Point, false, false> Polygon;
+typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
+typedef bg::model::polygon<bg_Point, false, false> bg_Polygon;
 
 namespace klm_1{
 
@@ -146,8 +146,8 @@ namespace klm_1{
         QVector<GLushort> *connectiveIndices;
 
     private:
-        Polygon* parentialShape;
-        Polygon* independShape;
+        bg_Polygon * parentialShape;
+        bg_Polygon * independShape;
         BoundingBox* boundingBox;
         Surface* parent;
 

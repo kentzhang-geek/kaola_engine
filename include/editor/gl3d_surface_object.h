@@ -8,17 +8,17 @@
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 
-#include "editor/klm_surface.h"
+#include "editor/surface.h"
 #include "utils/gl3d_path_config.h"
 
 using namespace std;
-using namespace klm;
+using namespace klm_1;
 
 namespace gl3d {
 class surface_object : public gl3d::object {
 public:
-    surface_object(klm::Surface * sfc);
-    void iter_surface(klm::Surface * sfc);
+    surface_object(klm_1::Surface * sfc);
+    void iter_surface(klm_1::Surface * sfc);
 private :
     int tmp_idx;
 };

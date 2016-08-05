@@ -16,7 +16,7 @@ surface_object::surface_object(Surface *sfc) : object() {
 }
 
 void surface_object::iter_surface(Surface *sfc) {
-    int cntSubsfc = sfc->getSubSurfaceCnt();
+    int cntSubsfc = sfc->getSurfaceCnt();
     if (cntSubsfc > 0) {
         for (int i = 0; i < cntSubsfc; i++) {
             this->iter_surface(sfc->getSubSurface(i));
@@ -26,14 +26,13 @@ void surface_object::iter_surface(Surface *sfc) {
     // process local verticles
     // get trans mat
     glm::mat4 trans_mat(1.0);
-    sfc->getTransFromParent(trans_mat);
 
     // create vertex buffer
     GLfloat * tmp_data = NULL;
     int pts_len;
     gl3d::obj_points * pts = NULL;
-    sfc->getRenderingVertices(tmp_data, pts_len);
-    pts_len = pts_len / klm::Vertex::VERTEX_SIZE;
+    sfc->getre(tmp_data, pts_len);
+    pts_len = pts_len / klm_1::Surface::Vertex::VERTEX_SIZE;
     pts = (gl3d::obj_points *)
             malloc(sizeof(gl3d::obj_points) * pts_len);
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
@@ -72,7 +71,7 @@ void surface_object::iter_surface(Surface *sfc) {
     free(idxes);
 
     // process conective surface
-    QVector<klm::Vertex *> vertexes;
+    QVector<klm_1::Vertex *> vertexes;
     QVector<GLushort> indecis;
     sfc->getConnectiveVerticies(vertexes);
     sfc->getConnectiveIndicies(indecis);

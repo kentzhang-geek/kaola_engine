@@ -44,8 +44,8 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
         throw SurfaceException("can not create Surface if not all points are on same plane");
     }
 
-    independShape = new Polygon();
-    parentialShape = new Polygon();
+    independShape = new bg_Polygon();
+    parentialShape = new bg_Polygon();
 
     //set verticies given by consturctor to local vertices
     //and get transform from parent
@@ -58,14 +58,14 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
 
         Vertex* vertex = new Vertex(*point);                
 
-        parentialShape->outer().push_back(Point(vertex->x(), vertex->y()));
+        parentialShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
         vertex->x(vertex->x() - center.x);
         vertex->y(vertex->y() - center.y);
         vertex->z(vertex->z() - center.z);
 
         transformVertex(rotation, *vertex);
         localVerticies->push_back(vertex);
-        independShape->outer().push_back(Point(vertex->x(), vertex->y()));
+        independShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
     }           
 
     boundingBox->reset();
