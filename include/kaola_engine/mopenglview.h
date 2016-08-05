@@ -97,7 +97,7 @@ private:
     glm::vec2 combine_point;
     glm::vec2 drawwall_start_point;
     bool is_drawwall_start_point;
-
+    bool is_drawwall_connect;
 
 
     void openglDrawWall(const int x, const int y);
