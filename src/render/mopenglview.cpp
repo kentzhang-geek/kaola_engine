@@ -16,6 +16,7 @@ void MOpenGLView::do_init() {
     this->combine_wall_pair.first = NULL;
     this->combine_wall_pair.second = NULL;
     this->new_wall = NULL;
+    this->combine_point = glm::vec2(0.0f);
 
     //配置画墙时连接点图片
     connectDot = new QLabel(this);
@@ -275,12 +276,12 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
     if (tmp_wall != NULL) {
-        gl3d_wall::combine(tmp_wall, this->new_wall);
+        gl3d_wall::combine(tmp_wall, this->new_wall, tmp_wall->get_end_point());
     }
 
     if(this->combine_wall_pair.first != NULL) {
         //处理两堵墙连接处锯齿
-        gl3d_wall::combine(this->combine_wall_pair.first, this->combine_wall_pair.second);
+        gl3d_wall::combine(this->combine_wall_pair.first, this->combine_wall_pair.second, this->combine_point);
         this->combine_wall_pair.first = NULL;
         this->combine_wall_pair.second = NULL;
     }
@@ -431,9 +432,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                     this->new_wall->calculate_mesh();
                     this->combine_wall_pair.first = (*it).second;
                     this->combine_wall_pair.second = this->new_wall;
+                    this->combine_point = pick;
 
                     connectDot->setGeometry((*it).first.x - 12, (*it).first.y - 12, 24, 24);
                     connectDot->show();
+                }
+                else {
+                    this->combine_wall_pair.first  = NULL;
+                    this->combine_wall_pair.second = NULL;
                 }
             }
         }
@@ -504,10 +510,10 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         this->new_walld->set_end_point(pickd);
 
         //处理两堵墙连接处锯齿
-        gl3d_wall::combine(new_walla, new_wallb);
-        gl3d_wall::combine(new_wallb, new_walld);
-        gl3d_wall::combine(new_wallc, new_walld);
-        gl3d_wall::combine(new_wallc, new_walla);
+        gl3d_wall::combine(new_walla, new_wallb, new_walla->get_start_point());
+        gl3d_wall::combine(new_wallb, new_walld, new_wallb->get_end_point());
+        gl3d_wall::combine(new_wallc, new_walld, new_wallc->get_end_point());
+        gl3d_wall::combine(new_wallc, new_walla, new_wallc->get_start_point());
 
         this->new_walld->calculate_mesh();
     }

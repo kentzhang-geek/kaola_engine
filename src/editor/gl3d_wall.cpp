@@ -326,20 +326,18 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
     end_pos.y = main_scene->get_height() - end_pos.y * main_scene->get_height();
 }
 
-bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
-    float dis = glm::length(wall1->start_point - wall2->start_point);
-    dis = glm::min(dis, (glm::length(wall1->start_point - wall2->end_point)));
-    dis = glm::min(dis, (glm::length(wall1->end_point - wall2->end_point)));
-    dis = glm::min(dis, (glm::length(wall1->end_point - wall2->start_point)));
+bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_point) {
+    float dis = glm::length(combine_point - wall2->start_point);
+    dis = glm::min(dis, (glm::length(wall1->start_point - combine_point)));
+    dis = glm::min(dis, (glm::length(combine_point - wall2->end_point)));
+    dis = glm::min(dis, (glm::length(wall1->end_point - combine_point)));
     if (dis > wall_combine_distance) { // check is there near points
         return false;
     }
 
     // attach wall1
-    float st_dis_tmp = glm::min(glm::length(wall1->start_point - wall2->end_point),
-                                glm::length(wall1->start_point - wall2->start_point));
-    float ed_dis_tmp = glm::min(glm::length(wall1->end_point - wall2->end_point),
-                                glm::length(wall1->end_point - wall2->start_point));
+    float st_dis_tmp = glm::length(wall1->start_point - combine_point);
+    float ed_dis_tmp = glm::length(wall1->end_point - combine_point);
     if (st_dis_tmp > ed_dis_tmp) {
         // 分离之前的attach
         if (wall1->end_point_fixed == true) {
@@ -348,8 +346,8 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
         // 建立新的attach
         wall1->end_point_fixed = true;
         wall1->end_point_attach.attach = wall2;
-        if (glm::length(wall1->end_point - wall2->end_point) >
-                glm::length(wall1->end_point - wall2->start_point)) {
+        if (glm::length(combine_point - wall2->end_point) >
+                glm::length(combine_point - wall2->start_point)) {
             wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
         else {
@@ -364,8 +362,8 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
         // 建立新的attach
         wall1->start_point_fixed = true;
         wall1->start_point_attach.attach = wall2;
-        if (glm::length(wall1->start_point - wall2->end_point) >
-                glm::length(wall1->start_point - wall2->start_point)) {
+        if (glm::length(combine_point - wall2->end_point) >
+                glm::length(combine_point - wall2->start_point)) {
             wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
         else {
@@ -374,10 +372,8 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
     }
 
     // attach wall2
-    st_dis_tmp = glm::min(glm::length(wall2->start_point - wall1->end_point),
-                          glm::length(wall2->start_point - wall1->start_point));
-    ed_dis_tmp = glm::min(glm::length(wall2->end_point - wall1->end_point),
-                          glm::length(wall2->end_point - wall1->start_point));
+    st_dis_tmp = glm::length(wall2->start_point - combine_point);
+    ed_dis_tmp = glm::length(wall2->end_point - combine_point);
     if (st_dis_tmp > ed_dis_tmp) {
         // 分离之前的attach
         if (wall2->end_point_fixed == true) {
@@ -386,8 +382,8 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
         // 建立新的attach
         wall2->end_point_fixed = true;
         wall2->end_point_attach.attach = wall1;
-        if (glm::length(wall2->end_point - wall1->end_point) >
-                glm::length(wall2->end_point - wall1->start_point)) {
+        if (glm::length(combine_point - wall1->end_point) >
+                glm::length(combine_point - wall1->start_point)) {
             wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
         else {
@@ -402,8 +398,8 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2) {
         // 建立新的attach
         wall2->start_point_fixed = true;
         wall2->start_point_attach.attach = wall1;
-        if (glm::length(wall2->start_point - wall1->end_point) >
-                glm::length(wall2->start_point - wall1->start_point)) {
+        if (glm::length(combine_point - wall1->end_point) >
+                glm::length(combine_point - wall1->start_point)) {
             wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
         else {
