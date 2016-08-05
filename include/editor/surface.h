@@ -169,6 +169,7 @@ namespace klm_1{
         std::string surfaceMaterial;
         std::string connectiveMaterial;
 
+
     //methods for tessellation
     private:
         static bool tesselate(Surface* surface);
@@ -179,7 +180,7 @@ namespace klm_1{
         static void tessVertex(const GLvoid *data);
         static void tessEnd();
         static void tessEdge();
-        static void tessError(GLenum type);
+        static void tessError(GLenum type);        
     private:
         static GLUtesselator *tess;
         static Surface* targetSurface;
@@ -202,6 +203,11 @@ namespace klm_1{
                                 glm::mat4 &result);
         static void transformVertex(const glm::mat4 &trans, Surface::Vertex &vertex);
         static void deleteVerticies(QVector<Surface::Vertex*> *vertices);
+
+    private:
+        static void vertexLogger(const QVector<Surface::Vertex*> &verticies,
+                                 const QVector<GLushort> &indicies,
+                                 const std::string title);
     };
 
     //this class is used to preserve coordinate of a Surface;

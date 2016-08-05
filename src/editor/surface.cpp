@@ -369,26 +369,20 @@ void Surface::updateConnectionMesh(){
         connectiveIndices->push_back(index + 1);
 
         if(CONN_DEBUG){
-            cout<<"connective surface for ("<<this<<")"<<endl;
-            cout<<"{"<<endl;
-            for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
-                vertex != connectiveVertices->end(); ++vertex){
-                cout<<"{"<<(*vertex)->x()<<","<<(*vertex)->x()<<","
-                   <<(*vertex)->x()<<","<<(*vertex)->x()<<","<<(*vertex)->x()<<"},"<<endl;
-            }
-            cout<<"}"<<endl;
+            Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
+                                  "connective surface in local coordinate system");
+        }
 
-            cout<<"indicies : {"<<endl;
-            int cnt = 0;
-            for(QVector<GLushort>::iterator index = connectiveIndices->begin();
-                index != connectiveIndices->end(); ++index){
-                cout<<*index<<",";
-                if((cnt++ % 3) == 0){
-                    cout<<endl;
-                }
+        glm::mat4 transform = parent == nullptr ? getTransformFromParent() :
+                 (parent->getRenderingTransform() * getTransformFromParent());
+        for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
+            vertex != connectiveVertices->end(); ++vertex){
+            Surface::transformVertex(transform, **vertex);
+        }
 
-            }
-            cout<<"}"<<endl;
+        if(CONN_DEBUG){
+            Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
+                                  "connective surface in world coordinate system");
         }
 
     } else {
@@ -556,26 +550,21 @@ void Surface::tessVertex(const GLvoid* data){
     }
 }
 
-void Surface::tessEnd(){
-    if(TESS_DEBUG && targetSurface != nullptr){
-        cout<<"tessellation result for :("<<targetSurface<<")"<<endl;
-        cout<<"{"<<endl;
-        for(QVector<Surface::Vertex*>::iterator vertex = targetSurface->renderingVerticies->begin();
-            vertex != targetSurface->renderingVerticies->end(); ++vertex){
-            cout<<"{"<<(*vertex)->x()<<", "<<(*vertex)->y()<<", "<<(*vertex)->z()<<", "
-                <<(*vertex)->w()<<", "<<(*vertex)->h()<<"},"<<endl;
-        }
-        cout<<"}"<<endl;
-
-        cout<<"indices = "<<endl<<"{"<<endl;
-        int cnt = 0;
-        for(QVector<GLushort>::iterator index = targetSurface->renderingIndicies->begin();
-            index != targetSurface->renderingIndicies->end(); ++index){
-            cout<<*index<<",";
-            if(cnt++ % 3 == 0){
-                cout<<endl;
-            }
-        }
+void Surface::tessEnd(){   
+    if(TESS_DEBUG){
+        vertexLogger(*(targetSurface->renderingVerticies),
+                     *(targetSurface->renderingIndicies),
+                     "tessellated result in local coordinate system ");
+    }
+    glm::mat4 transform = targetSurface->getRenderingTransform();
+    for(QVector<Surface::Vertex*>::iterator vertex = targetSurface->renderingVerticies->begin();
+        vertex != targetSurface->renderingVerticies->end(); ++vertex){
+        Surface::transformVertex(transform, **vertex);
+    }
+    if(TESS_DEBUG){
+        vertexLogger(*(targetSurface->renderingVerticies),
+                     *(targetSurface->renderingIndicies),
+                     "tessellated result in world coordinate system ");
     }
 }
 
@@ -673,6 +662,29 @@ void Surface::deleteVerticies(QVector<Surface::Vertex*> *vertices){
     }
     vertices->clear();
     delete vertices;
+}
+
+void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
+                           const QVector<GLushort> &indicies,
+                           const string title){
+    cout<<title<<" : "<<endl;
+    cout<<"{"<<endl;
+    for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
+        vertex != verticies.end(); ++vertex){
+        cout<<"{"<<(*vertex)->x()<<", "<<(*vertex)->y()<<", "<<(*vertex)->z()<<", "
+           <<(*vertex)->w()<<", "<<(*vertex)->h()<<"},"<<endl;
+    }
+    cout<<"}"<<endl;
+
+    cout<<"indices = "<<endl<<"{"<<endl;
+    int cnt = 0;
+    for(QVector<GLushort>::const_iterator index = indicies.begin();
+        index != indicies.end(); ++index){
+        cout<<*index<<",";
+        if(cnt++ % 3 == 0){
+            cout<<endl;
+        }
+    }
 }
 
 Surface::Vertex::Vertex(const Surface::Vertex &another){
