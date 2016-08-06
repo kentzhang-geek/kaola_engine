@@ -59,9 +59,9 @@ void surface_object::iter_surface(Surface *sfc) {
     delete idxes;
 
     // have conective surface , then process meshes
-    vertexes = sfc->getConnectiveVerticies();
-    indecis = sfc->getConnectiveIndicies();
-    if ((vertexes != NULL) && (indecis != NULL)) {
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
         pts = (obj_points *)malloc(sizeof(obj_points) * vertexes->size());
         memset(pts, 0, sizeof(obj_points) * vertexes->size());
         idxes = (GLushort *)malloc(sizeof(GLushort) * indecis->size());
