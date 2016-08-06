@@ -94,8 +94,10 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
         pts.clear();
         pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
+        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
         pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
         pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
+        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
         pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
 
         Surface* ss = sub->addSubSurface(pts);
@@ -105,6 +107,9 @@ void drawhomewin::showEvent(QShowEvent * ev) {
             cout<<"i will be there for you"<<endl;
         }
     }
+
+//    pts.clear();
+//    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
 
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);
     oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));

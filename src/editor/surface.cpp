@@ -274,14 +274,14 @@ void Surface::setTranslate(const glm::vec3 &translate){
 
 glm::mat4 Surface::getSurfaceTransform() const{
     glm::mat4 matrix = glm::mat4(1.0);
-    if(scale != nullptr){
-        matrix *= glm::scale(*scale);
+    if(translate != nullptr){
+        matrix *= glm::translate(*translate);
     }
     if(rotation != nullptr){
         matrix *= (*rotation);
     }
-    if(translate != nullptr){
-        matrix *= glm::translate(*translate);
+    if(scale != nullptr){
+        matrix *= glm::scale(*scale);
     }
     return matrix;
 }
@@ -488,7 +488,8 @@ void Surface::updateConnectionMesh(){
 //        glm::mat4 transform = parent == nullptr ? getTransformFromParent() * getSurfaceTransform() :
 //                 (parent->getRenderingTransform() * getTransformFromParent() * getSurfaceTransform());
         glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) :
-                 (parent->getRenderingTransform() * getTransformFromParent());
+//                 (parent->getRenderingTransform() * getTransformFromParent());
+                                                  parent->getRenderingTransform();
         for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
             vertex != connectiveVertices->end(); ++vertex){
             Surface::transformVertex(transform, **vertex);
