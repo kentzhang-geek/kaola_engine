@@ -89,7 +89,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     pts.push_back(glm::vec3(-2.0,  0.0, 0.0f));
     Surface* sub = sfc->addSubSurface(pts);
     if(sub != nullptr){
-//        sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
+        sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
     }
 
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);

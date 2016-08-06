@@ -200,11 +200,6 @@ glm::mat4 Surface::getTransformFromParent() const{
 
 glm::mat4 Surface::getRenderingTransform() const{
     glm::mat4 matrix(1.0);
-//    if(parent != nullptr){
-//        matrix *= parent->getRenderingTransform();
-//    }
-//    matrix *= getTransformFromParent();
-//    matrix *= getSurfaceTransform();
     if(parent != nullptr){
         matrix =
                 parent->getRenderingTransform() *
@@ -215,11 +210,6 @@ glm::mat4 Surface::getRenderingTransform() const{
                 getTransformFromParent() *
                 getSurfaceTransform();
     }
-//    matrix *= getSurfaceTransform();
-//    matrix *= getTransformFromParent();
-//    if(parent != nullptr){
-//        matrix *= parent->getRenderingTransform();
-//    }
     return matrix;
 }
 
@@ -337,10 +327,16 @@ GLfloat Surface::getPreciseArea(){
 }
 
 const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
-    return renderingVerticies;
+    QVector<Surface::Vertex*> *ret = new QVector<Surface::Vertex*>;
+    glm::mat4 trans = getRenderingTransform();
+    for(QVector<Surface::Vertex*>::iterator vertex = localVerticies->begin();
+        vertex != localVerticies->end(); ++vertex){
+        transformVertex(trans, **vertex);
+    }
+    return ret;
 }
 
-const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
+const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){    
     return connectiveVertices;
 }
 
@@ -612,11 +608,6 @@ void Surface::tessEnd(){
         vertexLogger(*(targetSurface->renderingVerticies),
                      *(targetSurface->renderingIndicies),
                      "tessellated result in local coordinate system ");
-    }
-    glm::mat4 transform = targetSurface->getRenderingTransform();
-    for(QVector<Surface::Vertex*>::iterator vertex = targetSurface->renderingVerticies->begin();
-        vertex != targetSurface->renderingVerticies->end(); ++vertex){
-        Surface::transformVertex(transform, **vertex);
     }
     if(TESS_DEBUG){
         vertexLogger(*(targetSurface->renderingVerticies),
