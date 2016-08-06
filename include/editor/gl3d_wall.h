@@ -67,7 +67,7 @@ public:
     // properties
     GL3D_UTILS_PROPERTY(start_point, glm::vec2);
     GL3D_UTILS_PROPERTY(end_point, glm::vec2);
-    GL3D_UTILS_PROPERTY(thickness, float);
+    GL3D_UTILS_PROPERTY_DECLARE(thickness, float);
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);

@@ -13,6 +13,14 @@
         return this->member_name; \
     }
 
+#define GL3D_UTILS_PROPERTY_DECLARE(member_name, ...) \
+    private: \
+    __VA_ARGS__ member_name;\
+    public: \
+    void set_##member_name(__VA_ARGS__ member_name##_tag); \
+    __VA_ARGS__ get_##member_name() ;
+
+
 #define GL3D_UTILS_PROPERTY_GET_POINTER(member_name, ...) \
     private: \
     __VA_ARGS__ member_name;\

@@ -110,6 +110,20 @@ void gl3d_wall::release_last_data() {
     return;
 }
 
+void gl3d_wall::set_thickness(float thickness_tag) {
+    this->thickness = thickness_tag;
+    if (this->start_point_fixed) {
+        this->start_point_attach.attach->calculate_mesh();
+    }
+    if (this->end_point_fixed) {
+        this->end_point_attach.attach->calculate_mesh();
+    }
+}
+
+float gl3d_wall::get_thickness() {
+    return this->thickness;
+}
+
 // 计算坐标
 void gl3d_wall::calculate_mesh() {
     if (glm::length(this->end_point - this->start_point) < this->get_thickness()) {
@@ -144,12 +158,15 @@ void gl3d_wall::calculate_mesh() {
 
 
     // 根据attach状态重算左右边线
+    glm::vec2 tmp_vec = this->end_point - this->start_point;
     if (this->start_point_fixed && cal_other_wall) {
         // 计算附着墙的左右边线
         gl3d_wall * tmp_wall = this->start_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
         // check another wall length
-        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+        if ((glm::length(tmp) > 0.0001)
+                && (glm::length(tmp) > tmp_wall->get_thickness())
+                && (glm::abs(glm::dot(glm::normalize(tmp), glm::normalize(tmp_vec))) < 0.9)) {
             direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
             direction = rotate_mtx * direction;
             direction = direction / direction.w;
@@ -187,7 +204,9 @@ void gl3d_wall::calculate_mesh() {
         gl3d_wall * tmp_wall = this->end_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
         // check another wall length
-        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+        if ((glm::length(tmp) > 0.0001)
+                && (glm::length(tmp) > tmp_wall->get_thickness())
+                && (glm::abs(glm::dot(glm::normalize(tmp), glm::normalize(tmp_vec))) < 0.9)) {
             direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
             direction = rotate_mtx * direction;
             direction = direction / direction.w;
