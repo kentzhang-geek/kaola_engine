@@ -11,6 +11,7 @@
 
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     QWidget::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo");
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数

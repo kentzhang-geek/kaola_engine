@@ -346,7 +346,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
         // 建立新的attach
         wall1->end_point_fixed = true;
         wall1->end_point_attach.attach = wall2;
-        if (glm::length(combine_point - wall2->end_point) >
+        if (glm::length(combine_point - wall2->end_point) >=
                 glm::length(combine_point - wall2->start_point)) {
             wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
@@ -382,7 +382,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
         // 建立新的attach
         wall2->end_point_fixed = true;
         wall2->end_point_attach.attach = wall1;
-        if (glm::length(combine_point - wall1->end_point) >
+        if (glm::length(combine_point - wall1->end_point) >=
                 glm::length(combine_point - wall1->start_point)) {
             wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
