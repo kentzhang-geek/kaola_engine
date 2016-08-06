@@ -37,7 +37,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     QWidget::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH("D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo");
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
     // 绑定画布的参数
@@ -82,13 +82,23 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
     klm_1::Surface * sfc = new klm_1::Surface(pts);
 
+    pts.clear();
+    pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
+    pts.push_back(glm::vec3(-1.0, -2.0, 0.0f));
+    pts.push_back(glm::vec3(-1.0,  0.0, 0.0f));
+    pts.push_back(glm::vec3(-2.0,  0.0, 0.0f));
+    Surface* sub = sfc->addSubSurface(pts);
+    if(sub != nullptr){
+//        sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
+    }
+
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);
     oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(1, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(2, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(3, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(4, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(5, new gl3d_material("___101.jpg"));
+    oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
+    oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
+    oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
+    oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
+    oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
     this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
 }
 

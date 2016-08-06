@@ -47,8 +47,8 @@
   *
   */
 
-#define TESS_DEBUG false
-#define CONN_DEBUG false
+#define TESS_DEBUG true
+#define CONN_DEBUG true
 
 #include <string>
 #include "kaola_engine/glheaders.h"
@@ -83,7 +83,7 @@ namespace klm_1{
 
     //public methods defined by Surface
     public:
-        Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
+        Surface(const QVector<glm::vec3> &points, const Surface* parent = nullptr) throw(SurfaceException);
         ~Surface();
 
         //sub-surface APIs
@@ -156,7 +156,7 @@ namespace klm_1{
         bg_Polygon * parentialShape;
         bg_Polygon * independShape;
         BoundingBox* boundingBox;
-        Surface* parent;
+        const Surface* parent;
 
         bool visible;
         QVector<Surface*> *subSurfaces;
@@ -258,6 +258,7 @@ namespace klm_1{
     class Surface::BoundingBox final{
         public:
             BoundingBox(const QVector<glm::vec3> &vertices);
+            BoundingBox(const QVector<Surface::Vertex*> &vertices);
             ~BoundingBox() = default;
             glm::vec3 getCenter() const;
             void generateTexture(Surface::Vertex &vertex) const;
