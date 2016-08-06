@@ -282,7 +282,10 @@ glm::mat4 Surface::getSurfaceTransform() const{
 }
 
 bool Surface::isConnectiveSurface() const{
-    return getSurfaceTransform() == glm::mat4(1.0f);
+    glm::mat4 transform = getSurfaceTransform();
+    bool equals = (transform != glm::mat4(1.0f));
+    return equals;
+//    return getSurfaceTransform() == glm::mat4(1.0f);
 }
 
 void Surface::setSurfaceMaterial(const string &id){
@@ -335,6 +338,7 @@ const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
             delete *v;
         }
     }
+    ret.clear();
 
     glm::mat4 trans = getRenderingTransform();
     for(QVector<Surface::Vertex*>::iterator vertex = localVerticies->begin();
@@ -354,6 +358,7 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
             delete *v;
         }
     }
+    ret.clear();
 
     glm::mat4 trans = parent == nullptr ?
                 glm::mat4(1.0) : parent->getRenderingTransform();
@@ -789,7 +794,7 @@ Surface::Vertex::Vertex(const Surface::Vertex &another){
 }
 
 Surface::Vertex::Vertex(const glm::vec3 &point){
-    data = new GLdouble[5];
+    data = new GLdouble[SIZE];
     x(point.x);
     y(point.y);
     z(point.z);
