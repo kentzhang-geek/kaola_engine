@@ -26,25 +26,27 @@ void surface_object::iter_surface(Surface *sfc) {
     // create vertex buffer
     int pts_len;
     gl3d::obj_points * pts = NULL;
-    pts_len = sfc->getRenderingVertices()->size();
+    const QVector<Surface::Vertex*> * vertexes = sfc->getRenderingVertices();
+    pts_len = vertexes->size();
     pts = (gl3d::obj_points *)
             malloc(sizeof(gl3d::obj_points) * pts_len);
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
     for (int i = 0; i < pts_len; i++) {
-        pts[i].vertex_x = sfc->getRenderingVertices()->at(i)->x();
-        pts[i].vertex_y = sfc->getRenderingVertices()->at(i)->y();
-        pts[i].vertex_z = sfc->getRenderingVertices()->at(i)->z();
-        pts[i].texture_x = sfc->getRenderingVertices()->at(i)->w();
-        pts[i].texture_y = 1.0f - sfc->getRenderingVertices()->at(i)->h();
+        pts[i].vertex_x = vertexes->at(i)->x();
+        pts[i].vertex_y = vertexes->at(i)->y();
+        pts[i].vertex_z = vertexes->at(i)->z();
+        pts[i].texture_x = vertexes->at(i)->w();
+        pts[i].texture_y = 1.0f - vertexes->at(i)->h();
     }
 
     // create index buffer
     GLushort * idxes = NULL;
     int idx_len;
-    idx_len = sfc->getRenderingIndices()->size();
+    const QVector<GLushort> * indecis = sfc->getRenderingIndices();
+    idx_len = indecis->size();
     idxes = new GLushort[idx_len];
     for (int i = 0; i < idx_len; i++) {
-        idxes[i] = sfc->getRenderingIndices()->at(i);
+        idxes[i] = indecis->at(i);
     }
 
     // create new mesh
@@ -57,8 +59,8 @@ void surface_object::iter_surface(Surface *sfc) {
     delete idxes;
 
     // have conective surface , then process meshes
-    const QVector<Surface::Vertex*> * vertexes = sfc->getConnectiveVerticies();
-    const QVector<GLushort> * indecis = sfc->getConnectiveIndicies();
+    vertexes = sfc->getConnectiveVerticies();
+    indecis = sfc->getConnectiveIndicies();
     if ((vertexes != NULL) && (indecis != NULL)) {
         pts = (obj_points *)malloc(sizeof(obj_points) * vertexes->size());
         memset(pts, 0, sizeof(obj_points) * vertexes->size());
