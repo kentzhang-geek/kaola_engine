@@ -81,6 +81,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
     pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
     klm_1::Surface * sfc = new klm_1::Surface(pts);
+    sfc->setTranslate(glm::vec3(0.0, 0.0, 0.5));
 
     pts.clear();
     pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
@@ -90,6 +91,19 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     Surface* sub = sfc->addSubSurface(pts);
     if(sub != nullptr){
         sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
+
+        pts.clear();
+        pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
+        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
+        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
+        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
+
+        Surface* ss = sub->addSubSurface(pts);
+        if(ss){
+            ss->setScale(glm::vec3(0.8, 0.8, 0.8));
+            ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
+            cout<<"i will be there for you"<<endl;
+        }
     }
 
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);

@@ -203,9 +203,9 @@ glm::mat4 Surface::getRenderingTransform() const{
     glm::mat4 matrix(1.0);
     if(parent != nullptr){
         matrix =
-                parent->getRenderingTransform() *
-                getSurfaceTransform() *
-                getTransformFromParent();
+                parent->getRenderingTransform() *                
+                getTransformFromParent() *
+                getSurfaceTransform();
     } else {
         matrix =
                 getTransformFromParent() *
@@ -223,23 +223,28 @@ void Surface::getLocalVertices(QVector<Vertex*> &localVertices) const{
 
 void Surface::getVerticesOnParent(QVector<Vertex*> &verticesOnParent) const{
     glm::mat4 trans = getTransformFromParent();
+    cout<<"coordinates on parent"<<endl;
+    int index = 0;
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
         newVertex->z(0.0f);
-        verticesOnParent.push_back(newVertex);
-    }
+        verticesOnParent.push_back(newVertex);        
+    }    
 }
 
 void Surface::getVerticesToParent(QVector<Vertex *> &verticesToParent) const{
-    glm::mat4 trans = getSurfaceTransform() * getTransformFromParent();
+    glm::mat4 trans = getTransformFromParent() * getSurfaceTransform();
+    cout<<"coordinates to parent"<<endl;
+    int index = 0;
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
         verticesToParent.push_back(newVertex);
-    }
+        cout<<"["<<index++<<"] = ("<<newVertex->x()<<","<<newVertex->y()<<","<<newVertex->z()<<")"<<endl;
+    }    
 }
 
 void Surface::setScale(const glm::vec3 &scale){
@@ -337,16 +342,17 @@ const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
             v != ret.end(); ++v){
             delete *v;
         }
-    }
+    }    
     ret.clear();
 
     glm::mat4 trans = getRenderingTransform();
-    for(QVector<Surface::Vertex*>::iterator vertex = localVerticies->begin();
-        vertex != localVerticies->end(); ++vertex){
-        Surface::Vertex* v = new Surface::Vertex(**vertex);
+    for(QVector<Surface::Vertex*>::iterator vertex = renderingVerticies->begin();
+        vertex != renderingVerticies->end(); ++vertex){
+        Surface::Vertex* v = new Surface::Vertex(**vertex);        
         transformVertex(trans, *v);
         ret.push_back(v);
-    }
+    }   
+
     return &ret;
 }
 
@@ -360,15 +366,13 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
     }
     ret.clear();
 
-    glm::mat4 trans = parent == nullptr ?
-                glm::mat4(1.0) : parent->getRenderingTransform();
+//    glm::mat4 trans = getRenderingTransform();
     for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
         vertex != connectiveVertices->end(); ++vertex){
         Surface::Vertex* v = new Surface::Vertex(**vertex);
-        transformVertex(trans, *v);
+//        transformVertex(trans, *v);
         ret.push_back(v);
-    }
-
+    }    
     return &ret;
 }
 
@@ -376,10 +380,10 @@ const QVector<GLushort>* Surface::getRenderingIndices(){
     static QVector<GLushort> ret;
     if(ret.size() != 0){
         ret.clear();
-    }
+    }    
     for(QVector<GLushort>::iterator index = renderingIndicies->begin();
         index != renderingIndicies->end(); ++index){
-        ret.push_back(*index);
+        ret.push_back(*index);        
     }
     return &ret;
 }
@@ -415,12 +419,16 @@ void Surface::updateConnectionMesh(){
 
         QVector<Surface::Vertex*> base;
         QVector<Surface::Vertex*> derived;
-
         getVerticesOnParent(base);
         getVerticesToParent(derived);
 
         Surface::Vertex* baseVertex = new Surface::Vertex(*base[0]);
         Surface::Vertex* derivedVertex = new Surface::Vertex(*derived[0]);
+
+        baseVertex->w(0.0);
+        baseVertex->h(0.0);
+        derivedVertex->w(0.0);
+        derivedVertex->h(derivedVertex->distance(*baseVertex));
 
         connectiveVertices->push_back(baseVertex);
         connectiveVertices->push_back(derivedVertex);
@@ -431,7 +439,7 @@ void Surface::updateConnectionMesh(){
 
             vb->w(baseVertex->distance(*vb) + baseVertex->w());
             vb->h(0.0);
-            vd->w(derivedVertex->distance(*vd) + derivedVertex->h());
+            vd->w(derivedVertex->distance(*vd) + derivedVertex->w());
             vd->h(vd->distance(*vb));
 
             connectiveVertices->push_back(vb);
@@ -462,6 +470,9 @@ void Surface::updateConnectionMesh(){
 
         int index = connectiveVertices->size();
 
+        connectiveVertices->push_back(endBaseVertex);
+        connectiveVertices->push_back(endDerivedVertex);
+
         connectiveIndices->push_back(index - 2);
         connectiveIndices->push_back(index + 1);
         connectiveIndices->push_back(index);
@@ -474,8 +485,10 @@ void Surface::updateConnectionMesh(){
                                   "connective surface in local coordinate system");
         }
 
-        glm::mat4 transform = parent == nullptr ? getTransformFromParent() * getSurfaceTransform() :
-                 (parent->getRenderingTransform() * getTransformFromParent() * getSurfaceTransform());
+//        glm::mat4 transform = parent == nullptr ? getTransformFromParent() * getSurfaceTransform() :
+//                 (parent->getRenderingTransform() * getTransformFromParent() * getSurfaceTransform());
+        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) :
+                 (parent->getRenderingTransform() * getTransformFromParent());
         for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
             vertex != connectiveVertices->end(); ++vertex){
             Surface::transformVertex(transform, **vertex);
@@ -656,11 +669,6 @@ void Surface::tessEnd(){
         vertexLogger(*(targetSurface->renderingVerticies),
                      *(targetSurface->renderingIndicies),
                      "tessellated result in local coordinate system ");
-    }
-    if(TESS_DEBUG){
-        vertexLogger(*(targetSurface->renderingVerticies),
-                     *(targetSurface->renderingIndicies),
-                     "tessellated result in world coordinate system ");
     }
 }
 
