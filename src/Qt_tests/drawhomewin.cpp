@@ -102,14 +102,37 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
         Surface* ss = sub->addSubSurface(pts);
         if(ss){
+            ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
             ss->setScale(glm::vec3(0.8, 0.8, 0.8));
             ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
-            cout<<"i will be there for you"<<endl;
+
+            pts.clear();
+            pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
+            pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
+            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
+            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
+
+
+            Surface* sss = ss->addSubSurface(pts);
+            if(sss != nullptr){
+                sss->setScale(glm::vec3(4.0, 4.0, 4.0));
+                sss->setTranslate(glm::vec3(0.0, 0.15, -5.5f));
+            } else {
+                cout<<"failed to add last sub-surface"<<endl;
+            }
         }
     }
 
-//    pts.clear();
-//    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
+    pts.clear();
+    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
+    pts.push_back(glm::vec3(2.0, 1.0, 0.0));
+    pts.push_back(glm::vec3(2.0, 2.0, 0.0));
+    pts.push_back(glm::vec3(1.0, 2.0, 0.0));
+
+    Surface *seSub = sfc->addSubSurface(pts);
+    if(seSub != nullptr){
+        seSub->setTranslate(glm::vec3(0.4, 0.5, 0.6));
+    }
 
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);
     oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
@@ -118,6 +141,15 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
     oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
     oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
+    oo->get_mtls()->insert(6, new gl3d_material("WoodVeneer.jpg"));
+    oo->get_mtls()->insert(7, new gl3d_material("xin_4005.jpg"));
+    oo->get_mtls()->insert(8, new gl3d_material("_2.jpg"));
+    oo->get_mtls()->insert(9, new gl3d_material("_1.jpg"));
+    oo->get_mtls()->insert(10, new gl3d_material("_3.jpg"));
+    oo->get_mtls()->insert(11, new gl3d_material("_5.jpg"));
+    oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
+    oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
+    oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
     this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
 }
 

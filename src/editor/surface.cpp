@@ -223,8 +223,7 @@ void Surface::getLocalVertices(QVector<Vertex*> &localVertices) const{
 
 void Surface::getVerticesOnParent(QVector<Vertex*> &verticesOnParent) const{
     glm::mat4 trans = getTransformFromParent();
-    cout<<"coordinates on parent"<<endl;
-    int index = 0;
+
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
@@ -236,14 +235,12 @@ void Surface::getVerticesOnParent(QVector<Vertex*> &verticesOnParent) const{
 
 void Surface::getVerticesToParent(QVector<Vertex *> &verticesToParent) const{
     glm::mat4 trans = getTransformFromParent() * getSurfaceTransform();
-    cout<<"coordinates to parent"<<endl;
-    int index = 0;
+
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
-        verticesToParent.push_back(newVertex);
-        cout<<"["<<index++<<"] = ("<<newVertex->x()<<","<<newVertex->y()<<","<<newVertex->z()<<")"<<endl;
+        verticesToParent.push_back(newVertex);       
     }    
 }
 
@@ -290,7 +287,6 @@ bool Surface::isConnectiveSurface() const{
     glm::mat4 transform = getSurfaceTransform();
     bool equals = (transform != glm::mat4(1.0f));
     return equals;
-//    return getSurfaceTransform() == glm::mat4(1.0f);
 }
 
 void Surface::setSurfaceMaterial(const string &id){
@@ -366,11 +362,9 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
     }
     ret.clear();
 
-//    glm::mat4 trans = getRenderingTransform();
     for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
         vertex != connectiveVertices->end(); ++vertex){
         Surface::Vertex* v = new Surface::Vertex(**vertex);
-//        transformVertex(trans, *v);
         ret.push_back(v);
     }    
     return &ret;
@@ -484,12 +478,7 @@ void Surface::updateConnectionMesh(){
             Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
                                   "connective surface in local coordinate system");
         }
-
-//        glm::mat4 transform = parent == nullptr ? getTransformFromParent() * getSurfaceTransform() :
-//                 (parent->getRenderingTransform() * getTransformFromParent() * getSurfaceTransform());
-        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) :
-//                 (parent->getRenderingTransform() * getTransformFromParent());
-                                                  parent->getRenderingTransform();
+        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) : parent->getRenderingTransform();
         for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
             vertex != connectiveVertices->end(); ++vertex){
             Surface::transformVertex(transform, **vertex);

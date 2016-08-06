@@ -47,8 +47,8 @@
   *
   */
 
-#define TESS_DEBUG true
-#define CONN_DEBUG true
+#define TESS_DEBUG false
+#define CONN_DEBUG false
 
 #include <string>
 #include "kaola_engine/glheaders.h"
