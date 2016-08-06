@@ -147,6 +147,11 @@ bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, 
     return true;
 }
 
+QVector<glm::vec2> gl3d::math::generate_area(QVector<line_2d> & lines) {
+    QVector<glm::vec2> ret;
+    // 先做排序得到所有顶点组成的环，然后对环求向量面积，为正则不处理，为负则反向环
+    return ret;
+}
 
 
 #if 0

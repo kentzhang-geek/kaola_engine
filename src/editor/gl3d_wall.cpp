@@ -431,6 +431,80 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
     return true;
 }
 
+
+bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, tag_combine_traits combine_traits) {
+
+    // attach wall1
+    if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
+        (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start)) {
+        // 分离之前的attach
+        if (wall1->end_point_fixed == true) {
+            wall1->seperate(wall1->end_point_attach);
+        }
+        // 建立新的attach
+        wall1->end_point_fixed = true;
+        wall1->end_point_attach.attach = wall2;
+        if (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start) {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+    else {
+        // 分离之前的attach
+        if (wall1->start_point_fixed == true) {
+            wall1->seperate(wall1->start_point_attach);
+        }
+        // 建立新的attach
+        wall1->start_point_fixed = true;
+        wall1->start_point_attach.attach = wall2;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_start) {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+
+    // attach wall2
+    if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
+        (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end)) {
+        // 分离之前的attach
+        if (wall2->end_point_fixed == true) {
+            wall2->seperate(wall2->end_point_attach);
+        }
+        // 建立新的attach
+        wall2->end_point_fixed = true;
+        wall2->end_point_attach.attach = wall1;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end) {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+    else {
+        // 分离之前的attach
+        if (wall2->start_point_fixed == true) {
+            wall2->seperate(wall2->start_point_attach);
+        }
+        // 建立新的attach
+        wall2->start_point_fixed = true;
+        wall2->start_point_attach.attach = wall1;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_start) {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+
+    wall1->calculate_mesh();
+    wall2->calculate_mesh();
+    return true;
+}
+
 float gl3d_wall::get_length() {
     glm::vec2 v = this->end_point - this->start_point;
     return glm::length(v);

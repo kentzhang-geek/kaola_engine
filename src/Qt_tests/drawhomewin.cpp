@@ -34,6 +34,7 @@ drawhomewin::~drawhomewin()
 }
 
 void drawhomewin::showEvent(QShowEvent * ev) {
+//    GL3D_UTILS_THROW("test");
     QWidget::showEvent(ev);
 
     // for test

@@ -3,6 +3,7 @@
 
 #include "kaola_engine/gl3d_out_headers.h"
 #include "utils/gl3d_utils.h"
+#include <QVector>
 
 namespace gl3d {
     namespace math {
@@ -16,6 +17,11 @@ namespace gl3d {
     };
     typedef line<glm::vec2> line_2d;
     typedef line<glm::vec3> line_3d;
+
+    template <typename T>
+    bool equal(T v1, T v2) {
+        return (glm::length(v1 - v2) < 0.0001);
+    }
 
     class triangle_facet {
     public:
@@ -39,6 +45,8 @@ namespace gl3d {
     bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt);
 
     bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
+
+    QVector<glm::vec2> generate_area(QVector<line_2d> &lines);
 
     }
 }

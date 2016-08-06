@@ -4,9 +4,9 @@
 #ifdef _WIN32
 #define GL3D_PATH_SEPRATOR "\\"
 #define GL3D_PATH_SHADER \
-    "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\shaders"
+    "D:\\User\\Desktop\\KLM\\qt_opengl_engine\\shaders"
 #define GL3D_PATH_MODELS \
-    "C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine"
+    "D:\\User\\Desktop\\KLM\\kaolao_cat_demo\\kaola_engine_demo"
 #else
 #define GL3D_PATH_SEPRATOR "/"
 #define GL3D_PATH_SHADER "/Users/gang_liu/Develop/QT_Project/kaolamao/shaders_mac"
