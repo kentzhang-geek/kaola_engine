@@ -290,7 +290,7 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
     this->main_scene->add_obj(QPair<int , object *>(this->wall_temp_id, this->new_wall));
 
     if(this->old_wall != NULL) {
-        gl3d_wall::combine(this->old_wall, this->new_wall, this->new_wall->get_start_point());
+        gl3d_wall::combine(this->old_wall, this->new_wall, gl3d_wall::combine_wall1_end_to_wall2_start);
     }
 }
 
@@ -372,7 +372,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             if(this->combine_start_wall_pair.first != NULL) {
                 this->combine_start_wall_pair.second = this->new_wall;
                 //处理二次吸附两堵墙连接处锯齿
-                gl3d_wall::combine(this->combine_start_wall_pair.first, this->combine_start_wall_pair.second, this->start_combine_point);
+                gl3d_wall::combine(this->combine_start_wall_pair.first, this->combine_start_wall_pair.second, this->new_wall->get_start_point());
                 this->combine_start_wall_pair.first = NULL;
                 this->combine_start_wall_pair.second = NULL;
             }

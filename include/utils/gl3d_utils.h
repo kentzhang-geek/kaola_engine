@@ -38,6 +38,11 @@
 
 #define GL3D_UTILS_SHADOW_MAP_ORTHO glm::ortho(-20.0,20.0,-20.0,20.0,-30.0, 200.0)
 
+#include <QString>
+#define GL3D_UTILS_THROW(...) \
+    throw QString::asprintf("Throw Error at %s : %d ==> ", __FILE__, __LINE__) + QString::asprintf(__VA_ARGS__);
+
+
 #define IN
 #define OUT
 #define INOUT
