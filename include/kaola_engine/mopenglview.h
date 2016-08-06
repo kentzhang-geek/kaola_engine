@@ -94,9 +94,6 @@ private:
     QVector<point_wall_pair> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
     QLabel *connectDot;
-    QPair<gl3d_wall *, gl3d_wall *> combine_wall_pair;
-    QPair<gl3d_wall *, gl3d_wall *> combine_start_wall_pair;
-    glm::vec2 combine_point;
     glm::vec2 drawwall_start_point;
     bool is_drawwall_start_point;
     bool is_drawwall_connect;
