@@ -138,26 +138,27 @@ Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
     }
 
     bool subSurfaceFits =
-            boost::geometry::covered_by((*this->independShape), (*ret->parentialShape));
+            boost::geometry::covered_by((*this->independShape), (*ret->parentialShape)) ||
+            boost::geometry::within((*ret->parentialShape), (*this->independShape));
 
     if(!subSurfaceFits){
-        cout<<"no, boost::geometry::covered_by still not working"<<endl;
-        subSurfaceFits = true;
-    }
+        delete ret;
+        return nullptr;
+    } else {
 
-    for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-        subSurface != subSurfaces->end(); ++subSurface){
+        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+            subSurface != subSurfaces->end(); ++subSurface){
 
-        subSurfaceFits = subSurfaceFits &&
+            subSurfaceFits = subSurfaceFits &&
                 boost::geometry::intersects(
                     (*ret->independShape), (*(*subSurface)->independShape));
 
-        if(!subSurfaceFits){
-            delete ret;
-            return nullptr;
+            if(!subSurfaceFits){
+                delete ret;
+                return nullptr;
+            }
         }
     }
-
     if(subSurfaceFits){        
         subSurfaces->push_back(ret);        
         updateSurfaceMesh();
@@ -327,25 +328,67 @@ GLfloat Surface::getPreciseArea(){
 }
 
 const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
-    QVector<Surface::Vertex*> *ret = new QVector<Surface::Vertex*>;
+    static QVector<Surface::Vertex*> ret;
+    if(ret.size() != 0){
+        for(QVector<Surface::Vertex*>::iterator v = ret.begin();
+            v != ret.end(); ++v){
+            delete *v;
+        }
+    }
+
     glm::mat4 trans = getRenderingTransform();
     for(QVector<Surface::Vertex*>::iterator vertex = localVerticies->begin();
         vertex != localVerticies->end(); ++vertex){
-        transformVertex(trans, **vertex);
+        Surface::Vertex* v = new Surface::Vertex(**vertex);
+        transformVertex(trans, *v);
+        ret.push_back(v);
     }
-    return ret;
+    return &ret;
 }
 
 const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){    
-    return connectiveVertices;
+    static QVector<Surface::Vertex*> ret;
+    if(ret.size() != 0){
+        for(QVector<Surface::Vertex*>::iterator v = ret.begin();
+            v != ret.end(); ++v){
+            delete *v;
+        }
+    }
+
+    glm::mat4 trans = parent == nullptr ?
+                glm::mat4(1.0) : parent->getRenderingTransform();
+    for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
+        vertex != connectiveVertices->end(); ++vertex){
+        Surface::Vertex* v = new Surface::Vertex(**vertex);
+        transformVertex(trans, *v);
+        ret.push_back(v);
+    }
+
+    return &ret;
 }
 
 const QVector<GLushort>* Surface::getRenderingIndices(){
-    return renderingIndicies;
+    static QVector<GLushort> ret;
+    if(ret.size() != 0){
+        ret.clear();
+    }
+    for(QVector<GLushort>::iterator index = renderingIndicies->begin();
+        index != renderingIndicies->end(); ++index){
+        ret.push_back(*index);
+    }
+    return &ret;
 }
 
 const QVector<GLushort>* Surface::getConnectiveIndicies(){
-    return connectiveIndices;
+    static QVector<GLushort> ret;
+    if(ret.size() != 0){
+        ret.clear();
+    }
+    for(QVector<GLushort>::iterator index = connectiveIndices->begin();
+        index != connectiveIndices->end(); ++index){
+        ret.push_back(*index);
+    }
+    return &ret;
 }
 
 void Surface::updateSurfaceMesh(){
