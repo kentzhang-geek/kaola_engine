@@ -12,7 +12,13 @@ namespace gl3d {
     public:
         T a;
         T b;
+        line() : a(glm::vec2(0.0f)), b(glm::vec2(0.0f)) {}
         line(T tag_a, T tag_b) : a(tag_a), b(tag_b) {}
+        line(const line<T> &l) : a(l.a), b(l.b) {}
+        line(const line<T> *l) : a(l->a), b(l->b) {}
+        void swap_ab() {T tmp = this->b;
+                       this->b = this->a;
+                       this->a = tmp;}
         float length() {return glm::length(b - a);}
     };
     typedef line<glm::vec2> line_2d;
@@ -32,6 +38,8 @@ namespace gl3d {
 
         bool is_valid_facet() const;
         bool is_point_in_facet(glm::vec3 pt) const;
+        triangle_facet();
+        triangle_facet(const triangle_facet &f);
         triangle_facet(glm::vec3 ta, glm::vec3 tb, glm::vec3 tc);
         glm::vec3 get_normal() const;
 
@@ -46,7 +54,7 @@ namespace gl3d {
 
     bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
 
-    QVector<glm::vec2> generate_area(QVector<line_2d> &lines);
+    QVector<glm::vec3> generate_area(QVector<line_2d> &lines);
 
     }
 }
