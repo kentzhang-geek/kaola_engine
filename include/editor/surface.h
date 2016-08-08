@@ -62,8 +62,8 @@
 #include "editor/gl_utility.h"
 
 namespace bg = boost::geometry;
-typedef bg::model::point<float, 2, bg::cs::cartesian> Point;
-typedef bg::model::polygon<Point, false, false> Polygon;
+typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
+typedef bg::model::polygon<bg_Point, false, false> bg_Polygon;
 
 namespace klm_1{
 
@@ -83,7 +83,7 @@ namespace klm_1{
 
     //public methods defined by Surface
     public:
-        Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
+        Surface(const QVector<glm::vec3> &points, const Surface* parent = nullptr) throw(SurfaceException);
         ~Surface();
 
         //sub-surface APIs
@@ -138,6 +138,13 @@ namespace klm_1{
 
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
+
+        const QVector<Surface::Vertex*>* getRenderingVertices();
+        const QVector<Surface::Vertex*>* getConnectiveVerticies();
+        const QVector<GLushort>* getRenderingIndices();
+        const QVector<GLushort>* getConnectiveIndicies();
+
+
     private:                
         void updateSurfaceMesh();
         void updateConnectionMesh();
@@ -146,10 +153,10 @@ namespace klm_1{
         QVector<GLushort> *connectiveIndices;
 
     private:
-        Polygon* parentialShape;
-        Polygon* independShape;
+        bg_Polygon * parentialShape;
+        bg_Polygon * independShape;
         BoundingBox* boundingBox;
-        Surface* parent;
+        const Surface* parent;
 
         bool visible;
         QVector<Surface*> *subSurfaces;
@@ -251,6 +258,7 @@ namespace klm_1{
     class Surface::BoundingBox final{
         public:
             BoundingBox(const QVector<glm::vec3> &vertices);
+            BoundingBox(const QVector<Surface::Vertex*> &vertices);
             ~BoundingBox() = default;
             glm::vec3 getCenter() const;
             void generateTexture(Surface::Vertex &vertex) const;

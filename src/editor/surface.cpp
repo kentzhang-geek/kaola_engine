@@ -28,8 +28,8 @@ std::string SurfaceException::what() const{
     return message;
 }
 
-Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
-    : parent(nullptr), visible(false), subSurfaces(nullptr),
+Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(SurfaceException)
+    : parent(parent), visible(false), subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
@@ -44,8 +44,8 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
         throw SurfaceException("can not create Surface if not all points are on same plane");
     }
 
-    independShape = new Polygon();
-    parentialShape = new Polygon();
+    independShape = new bg_Polygon();
+    parentialShape = new bg_Polygon();
 
     //set verticies given by consturctor to local vertices
     //and get transform from parent
@@ -58,19 +58,22 @@ Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException)
 
         Vertex* vertex = new Vertex(*point);                
 
-        parentialShape->outer().push_back(Point(vertex->x(), vertex->y()));
+        parentialShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
         vertex->x(vertex->x() - center.x);
         vertex->y(vertex->y() - center.y);
         vertex->z(vertex->z() - center.z);
 
         transformVertex(rotation, *vertex);
         localVerticies->push_back(vertex);
-        independShape->outer().push_back(Point(vertex->x(), vertex->y()));
+        independShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
     }           
-
-    boundingBox->reset();
-    boundingBox->generateTexture(*localVerticies);
     transformFromParent = new glm::mat4(glm::translate(center) * glm::inverse(rotation));
+
+    delete boundingBox;
+    boundingBox = new Surface::BoundingBox(*localVerticies);
+    boundingBox->generateTexture(*localVerticies);
+
+    updateSurfaceMesh();
 }
 
 Surface::~Surface(){
@@ -129,33 +132,40 @@ Surface::~Surface(){
 Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
     Surface* ret = nullptr;
     try{
-        ret = new Surface(points);
+        ret = new Surface(points, this);
     } catch(SurfaceException &ex){
         return nullptr;
     }
 
     bool subSurfaceFits =
-            boost::geometry::covered_by((*this->independShape), (*ret->parentialShape));
+            boost::geometry::covered_by((*this->independShape), (*ret->parentialShape)) ||
+            boost::geometry::within((*ret->parentialShape), (*this->independShape));
 
-    for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-        subSurface != subSurfaces->end(); ++subSurface){
+    if(!subSurfaceFits){
+        delete ret;
+        return nullptr;
+    } else {
 
-        subSurfaceFits = subSurfaceFits &&
+        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+            subSurface != subSurfaces->end(); ++subSurface){
+
+            subSurfaceFits = subSurfaceFits &&
                 boost::geometry::intersects(
                     (*ret->independShape), (*(*subSurface)->independShape));
 
-        if(!subSurfaceFits){
-            delete ret;
-            return nullptr;
+            if(!subSurfaceFits){
+                delete ret;
+                return nullptr;
+            }
         }
     }
-
-    if(subSurfaceFits){
-        subSurfaces->push_back(ret);
+    if(subSurfaceFits){        
+        subSurfaces->push_back(ret);        
+        updateSurfaceMesh();
         return  ret;
     } else {
         return nullptr;
-    }
+    }    
 }
 
 int Surface::getSurfaceCnt() const{
@@ -190,12 +200,17 @@ glm::mat4 Surface::getTransformFromParent() const{
 }
 
 glm::mat4 Surface::getRenderingTransform() const{
-    glm::mat4 matrix;
+    glm::mat4 matrix(1.0);
     if(parent != nullptr){
-        matrix *= parent->getRenderingTransform();
+        matrix =
+                parent->getRenderingTransform() *                
+                getTransformFromParent() *
+                getSurfaceTransform();
+    } else {
+        matrix =
+                getTransformFromParent() *
+                getSurfaceTransform();
     }
-    matrix *= getTransformFromParent();
-    matrix *= getSurfaceTransform();    
     return matrix;
 }
 
@@ -208,23 +223,25 @@ void Surface::getLocalVertices(QVector<Vertex*> &localVertices) const{
 
 void Surface::getVerticesOnParent(QVector<Vertex*> &verticesOnParent) const{
     glm::mat4 trans = getTransformFromParent();
+
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
         newVertex->z(0.0f);
-        verticesOnParent.push_back(newVertex);
-    }
+        verticesOnParent.push_back(newVertex);        
+    }    
 }
 
 void Surface::getVerticesToParent(QVector<Vertex *> &verticesToParent) const{
-    glm::mat4 trans = getSurfaceTransform() * getTransformFromParent();
+    glm::mat4 trans = getTransformFromParent() * getSurfaceTransform();
+
     for(QVector<Vertex*>::iterator localVertex = this->localVerticies->begin();
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
-        verticesToParent.push_back(newVertex);
-    }
+        verticesToParent.push_back(newVertex);       
+    }    
 }
 
 void Surface::setScale(const glm::vec3 &scale){
@@ -233,24 +250,45 @@ void Surface::setScale(const glm::vec3 &scale){
     } else {
         *(this->scale) = scale;
     }
+    updateConnectionMesh();
+}
+
+void Surface::setRotation(const glm::mat4 &rotation){
+    if(this->rotation == nullptr){
+        this->rotation = new glm::mat4(rotation);
+    } else {
+        *(this->rotation) = rotation;
+    }
+    updateConnectionMesh();
+}
+
+void Surface::setTranslate(const glm::vec3 &translate){
+    if(this->translate == nullptr){
+        this->translate = new glm::vec3(translate);
+    } else {
+        *(this->translate) = translate;
+    }
+    updateConnectionMesh();
 }
 
 glm::mat4 Surface::getSurfaceTransform() const{
     glm::mat4 matrix = glm::mat4(1.0);
-    if(scale != nullptr){
-        matrix = glm::scale(matrix, *scale);
+    if(translate != nullptr){
+        matrix *= glm::translate(*translate);
     }
     if(rotation != nullptr){
-        matrix = (*rotation) * matrix;
+        matrix *= (*rotation);
     }
-    if(translate != nullptr){
-        matrix = glm::translate(matrix, *translate);
+    if(scale != nullptr){
+        matrix *= glm::scale(*scale);
     }
     return matrix;
 }
 
 bool Surface::isConnectiveSurface() const{
-    return getSurfaceTransform() == glm::mat4(1.0f);
+    glm::mat4 transform = getSurfaceTransform();
+    bool equals = (transform != glm::mat4(1.0f));
+    return equals;
 }
 
 void Surface::setSurfaceMaterial(const string &id){
@@ -295,6 +333,69 @@ GLfloat Surface::getPreciseArea(){
     return ret;
 }
 
+const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
+    static QVector<Surface::Vertex*> ret;
+    if(ret.size() != 0){
+        for(QVector<Surface::Vertex*>::iterator v = ret.begin();
+            v != ret.end(); ++v){
+            delete *v;
+        }
+    }    
+    ret.clear();
+
+    glm::mat4 trans = getRenderingTransform();
+    for(QVector<Surface::Vertex*>::iterator vertex = renderingVerticies->begin();
+        vertex != renderingVerticies->end(); ++vertex){
+        Surface::Vertex* v = new Surface::Vertex(**vertex);        
+        transformVertex(trans, *v);
+        ret.push_back(v);
+    }   
+
+    return &ret;
+}
+
+const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){    
+    static QVector<Surface::Vertex*> ret;
+    if(ret.size() != 0){
+        for(QVector<Surface::Vertex*>::iterator v = ret.begin();
+            v != ret.end(); ++v){
+            delete *v;
+        }
+    }
+    ret.clear();
+
+    for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
+        vertex != connectiveVertices->end(); ++vertex){
+        Surface::Vertex* v = new Surface::Vertex(**vertex);
+        ret.push_back(v);
+    }    
+    return &ret;
+}
+
+const QVector<GLushort>* Surface::getRenderingIndices(){
+    static QVector<GLushort> ret;
+    if(ret.size() != 0){
+        ret.clear();
+    }    
+    for(QVector<GLushort>::iterator index = renderingIndicies->begin();
+        index != renderingIndicies->end(); ++index){
+        ret.push_back(*index);        
+    }
+    return &ret;
+}
+
+const QVector<GLushort>* Surface::getConnectiveIndicies(){
+    static QVector<GLushort> ret;
+    if(ret.size() != 0){
+        ret.clear();
+    }
+    for(QVector<GLushort>::iterator index = connectiveIndices->begin();
+        index != connectiveIndices->end(); ++index){
+        ret.push_back(*index);
+    }
+    return &ret;
+}
+
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);
 }
@@ -314,12 +415,16 @@ void Surface::updateConnectionMesh(){
 
         QVector<Surface::Vertex*> base;
         QVector<Surface::Vertex*> derived;
-
         getVerticesOnParent(base);
         getVerticesToParent(derived);
 
         Surface::Vertex* baseVertex = new Surface::Vertex(*base[0]);
         Surface::Vertex* derivedVertex = new Surface::Vertex(*derived[0]);
+
+        baseVertex->w(0.0);
+        baseVertex->h(0.0);
+        derivedVertex->w(0.0);
+        derivedVertex->h(derivedVertex->distance(*baseVertex));
 
         connectiveVertices->push_back(baseVertex);
         connectiveVertices->push_back(derivedVertex);
@@ -330,7 +435,7 @@ void Surface::updateConnectionMesh(){
 
             vb->w(baseVertex->distance(*vb) + baseVertex->w());
             vb->h(0.0);
-            vd->w(derivedVertex->distance(*vd) + derivedVertex->h());
+            vd->w(derivedVertex->distance(*vd) + derivedVertex->w());
             vd->h(vd->distance(*vb));
 
             connectiveVertices->push_back(vb);
@@ -361,6 +466,9 @@ void Surface::updateConnectionMesh(){
 
         int index = connectiveVertices->size();
 
+        connectiveVertices->push_back(endBaseVertex);
+        connectiveVertices->push_back(endDerivedVertex);
+
         connectiveIndices->push_back(index - 2);
         connectiveIndices->push_back(index + 1);
         connectiveIndices->push_back(index);
@@ -372,9 +480,7 @@ void Surface::updateConnectionMesh(){
             Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
                                   "connective surface in local coordinate system");
         }
-
-        glm::mat4 transform = parent == nullptr ? getTransformFromParent() :
-                 (parent->getRenderingTransform() * getTransformFromParent());
+        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) : parent->getRenderingTransform();
         for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
             vertex != connectiveVertices->end(); ++vertex){
             Surface::transformVertex(transform, **vertex);
@@ -460,7 +566,7 @@ bool Surface::tesselate(Surface *surface){
 
         gluTessEndContour(tess);
         if(TESS_DEBUG){
-            cout<<"gluTessEndContour(tess);"<<endl;
+            cout<<"\tgluTessEndContour(tess);"<<endl;
         }
 
         for(QVector<Surface*>::iterator subSurface = targetSurface->subSurfaces->begin();
@@ -470,7 +576,7 @@ bool Surface::tesselate(Surface *surface){
 
             gluTessBeginContour(tess);
             if(TESS_DEBUG){
-                cout<<"gluTessBeginContour(tess);"<<endl;
+                cout<<"\tgluTessBeginContour(tess);"<<endl;
             }
 
             for(QVector<Surface::Vertex*>::iterator vertex = verticies->begin();
@@ -487,7 +593,7 @@ bool Surface::tesselate(Surface *surface){
 
             gluTessEndContour(tess);
             if(TESS_DEBUG){
-                cout<<"gluTessEndContour(tess);"<<endl;
+                cout<<"\tgluTessEndContour(tess);"<<endl;
             }
         }
     }
@@ -546,7 +652,7 @@ void Surface::tessVertex(const GLvoid* data){
 
     if(!found){
         targetSurface->renderingVerticies->push_back(callbackVertex);
-        targetSurface->renderingIndicies->push_back(targetSurface->renderingIndicies->size() - 1);
+        targetSurface->renderingIndicies->push_back(targetSurface->renderingVerticies->size() - 1);
     }
 }
 
@@ -555,16 +661,6 @@ void Surface::tessEnd(){
         vertexLogger(*(targetSurface->renderingVerticies),
                      *(targetSurface->renderingIndicies),
                      "tessellated result in local coordinate system ");
-    }
-    glm::mat4 transform = targetSurface->getRenderingTransform();
-    for(QVector<Surface::Vertex*>::iterator vertex = targetSurface->renderingVerticies->begin();
-        vertex != targetSurface->renderingVerticies->end(); ++vertex){
-        Surface::transformVertex(transform, **vertex);
-    }
-    if(TESS_DEBUG){
-        vertexLogger(*(targetSurface->renderingVerticies),
-                     *(targetSurface->renderingIndicies),
-                     "tessellated result in world coordinate system ");
     }
 }
 
@@ -625,23 +721,23 @@ glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points){
 }
 
 void Surface::getRotation(const glm::vec3 &source,
-                          const glm::vec3 &destation, glm::mat4 &result){
+                          const glm::vec3 &dest, glm::mat4 &matrix){
     glm::vec3 tempSource = source;
     tempSource = glm::normalize(tempSource);
-    if(tempSource == destation){
-        result = glm::mat4(1.0f);
+    if(tempSource == dest){
+        matrix = glm::mat4(1.0f);
     } else {
         GLfloat sourceLen = glm::length(source);
-        GLfloat destLen = glm::length(destation);
+        GLfloat destLen = glm::length(dest);
         if(sourceLen == 0.0f || destLen == 0.0f){
-            result = glm::mat4(1.0f);
+            matrix = glm::mat4(1.0f);
         } else {
-            glm::vec3 crossVec = glm::cross(source, destation);
+            glm::vec3 crossVec = glm::cross(source, dest);
             if(crossVec == NON_NORMAL){
                 crossVec.y = 1.0f;
             }
-            result =glm::rotate(
-                    glm::acos(glm::dot(source, destation)/(sourceLen * destLen)),
+            matrix =glm::rotate(
+                    glm::acos(glm::dot(source, dest)/(sourceLen * destLen)),
                     crossVec);
         }
     }
@@ -685,6 +781,7 @@ void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
             cout<<endl;
         }
     }
+    cout<<"}"<<endl;
 }
 
 Surface::Vertex::Vertex(const Surface::Vertex &another){
@@ -697,7 +794,7 @@ Surface::Vertex::Vertex(const Surface::Vertex &another){
 }
 
 Surface::Vertex::Vertex(const glm::vec3 &point){
-    data = new GLdouble[5];
+    data = new GLdouble[SIZE];
     x(point.x);
     y(point.y);
     z(point.z);
@@ -815,6 +912,16 @@ Surface::BoundingBox::BoundingBox(const QVector<glm::vec3> &verticies){
     }
 }
 
+Surface::BoundingBox::BoundingBox(const QVector<Surface::Vertex*> &verticies){
+    init();
+    for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
+        vertex != verticies.end(); ++vertex){
+        glm::vec3 v((*vertex)->x(), (*vertex)->y(), (*vertex)->z());
+        setMinimal(v);
+        setMaximal(v);
+    }
+}
+
 glm::vec3 Surface::BoundingBox::getCenter() const{
     return glm::vec3(
                 (xMin + xMax)/2,
@@ -848,9 +955,9 @@ void Surface::BoundingBox::init(){
     xMin = numeric_limits<double>::max();
     yMin = numeric_limits<double>::max();
     zMin = numeric_limits<double>::max();
-    xMax = numeric_limits<double>::min();
-    yMax = numeric_limits<double>::min();
-    zMax = numeric_limits<double>::min();
+    xMax = numeric_limits<double>::lowest();
+    yMax = numeric_limits<double>::lowest();
+    zMax = numeric_limits<double>::lowest();
 }
 
 void Surface::BoundingBox::setMinimal(const glm::vec3 &vertex){
