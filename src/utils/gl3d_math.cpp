@@ -126,7 +126,8 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
     return true;
 }
 
-float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
+template<typename POINT, typename LINE>
+float gl3d::math::point_distance_to_line(const POINT & pt, const LINE & l) {
     if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
             < 0.0001) {
         return 0.0f;
@@ -168,7 +169,7 @@ static line_2d math_local_get_line(QVector<line_2d> & lines, glm::vec2 pt) {
     return line_2d(glm::vec2(0.0f), glm::vec2(0.0f));
 }
 
-static void math_local_sort_line(QVector<line_2d> &lines) {
+void gl3d::math::math_local_sort_line(QVector<line_2d> &lines) {
     glm::vec2 pt;
     pt = lines[0].b;
     QVector<line_2d> target;

@@ -47,13 +47,15 @@ namespace gl3d {
 
     bool get_cross(const line_2d &l1, const line_2d &l2, glm::vec2 &cross_point);
 
-    float point_distance_to_line(const glm::vec3 pt, const line_3d l);
+    template<typename POINT, typename LINE>
+    float point_distance_to_line(const POINT & pt, const LINE & l);
     float point_distance_to_facet(const triangle_facet & fc, const glm::vec3 & pt);
 
     bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt);
 
     bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
 
+    void math_local_sort_line(QVector<line_2d> &lines);
     QVector<glm::vec3> generate_area(QVector<line_2d> &lines);
 
     }
