@@ -167,9 +167,11 @@ void viewer::coord_ground_project(glm::vec2 coord_input, glm::vec2 & coord_out, 
     txxx = glm::normalize(txxx);
     glm::vec3 reallazer = txxx;  // 真实射线向量计算OK
 
-    gl3d::math::triangle_facet grd(glm::vec3(0.0f, height, 0.0f),
-                                   glm::vec3(1.0f, height, 0.0f),
-                                   glm::vec3(1.0f, height, 1.0f));
+    glm::vec3 tmp = glm::normalize(this->look_direction);
+
+    gl3d::math::triangle_facet grd(glm::vec3(0.0f, hight, 0.0f),
+                                   glm::vec3(1.0f, hight, 0.0f),
+                                   glm::vec3(1.0f, hight, 1.0f));
 
     glm::vec3 cross_point;
 
