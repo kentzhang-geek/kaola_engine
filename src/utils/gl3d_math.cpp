@@ -126,8 +126,16 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
     return true;
 }
 
-template<typename POINT, typename LINE>
-float gl3d::math::point_distance_to_line(const POINT & pt, const LINE & l) {
+float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
+    if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
+            < 0.0001) {
+        return 0.0f;
+    }
+    float alpha = glm::acos(glm::dot(glm::normalize(pt - l.a), glm::normalize(l.b - l.a)));
+    return glm::length(pt - l.a) * glm::sin(alpha);
+}
+
+float gl3d::math::point_distance_to_line(const glm::vec2 pt, const line_2d l) {
     if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
             < 0.0001) {
         return 0.0f;

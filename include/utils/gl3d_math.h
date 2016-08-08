@@ -47,8 +47,8 @@ namespace gl3d {
 
     bool get_cross(const line_2d &l1, const line_2d &l2, glm::vec2 &cross_point);
 
-    template<typename POINT, typename LINE>
-    float point_distance_to_line(const POINT & pt, const LINE & l);
+    float point_distance_to_line(const glm::vec3 pt, const line_3d l);
+    float point_distance_to_line(const glm::vec2 pt, const line_2d l);
     float point_distance_to_facet(const triangle_facet & fc, const glm::vec3 & pt);
 
     bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt);
