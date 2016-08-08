@@ -81,7 +81,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
     pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
     klm_1::Surface * sfc = new klm_1::Surface(pts);
-    sfc->setTranslate(glm::vec3(0.0, 0.0, 0.5));
+//    sfc->setTranslate(glm::vec3(0.0, 0.0, 0.5));
 
     pts.clear();
     pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
@@ -103,7 +103,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
         Surface* ss = sub->addSubSurface(pts);
         if(ss){
             ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
-            ss->setScale(glm::vec3(0.8, 0.8, 0.8));
+            ss->setScale(glm::vec3(0.8, 0.8, 1.0));
             ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
 
             pts.clear();
@@ -115,12 +115,12 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
             Surface* sss = ss->addSubSurface(pts);
             if(sss != nullptr){
-                sss->setScale(glm::vec3(4.0, 4.0, 4.0));
-                sss->setTranslate(glm::vec3(0.0, 0.15, -5.5f));
+                sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
             } else {
                 cout<<"failed to add last sub-surface"<<endl;
             }
         }
+
     }
 
     pts.clear();
@@ -131,7 +131,8 @@ void drawhomewin::showEvent(QShowEvent * ev) {
 
     Surface *seSub = sfc->addSubSurface(pts);
     if(seSub != nullptr){
-        seSub->setTranslate(glm::vec3(0.4, 0.5, 0.6));
+        seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
+//        seSub->setTranslate(glm::vec3(0.4, 0.5, 0.6));
     }
 
     gl3d::surface_object * oo = new gl3d::surface_object(sfc);

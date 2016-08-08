@@ -250,6 +250,7 @@ void Surface::setScale(const glm::vec3 &scale){
     } else {
         *(this->scale) = scale;
     }
+    updateConnectionMesh();
 }
 
 void Surface::setRotation(const glm::mat4 &rotation){
@@ -258,6 +259,7 @@ void Surface::setRotation(const glm::mat4 &rotation){
     } else {
         *(this->rotation) = rotation;
     }
+    updateConnectionMesh();
 }
 
 void Surface::setTranslate(const glm::vec3 &translate){
