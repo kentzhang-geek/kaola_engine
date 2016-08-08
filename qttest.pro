@@ -103,7 +103,8 @@ HEADERS  += \
     src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h \
-    include/editor/surface.h
+    include/editor/surface.h \
+    include/editor/merchandise.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
@@ -172,3 +173,10 @@ macx: LIBS += -L$$PWD/LIBS/assimp-3.2/lib/ -lassimp
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a
+
+macx: LIBS += -L$$PWD/../../C++/lib/pugixml-1.7/scripts/ -lpugixml
+
+INCLUDEPATH += $$PWD/../../C++/lib/pugixml-1.7/src
+DEPENDPATH += $$PWD/../../C++/lib/pugixml-1.7/src
+
+macx: PRE_TARGETDEPS += $$PWD/../../C++/lib/pugixml-1.7/scripts/libpugixml.a
