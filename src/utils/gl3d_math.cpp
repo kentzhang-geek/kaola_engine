@@ -144,7 +144,7 @@ float gl3d::math::point_distance_to_line(const glm::vec2 pt, const line_2d l) {
     return glm::length(pt - l.a) * glm::sin(alpha);
 }
 
-bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt) {
+bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 & out_pt) {
     glm::vec3 ptt(pt, 0.0f);
     line_3d tmpl(glm::vec3(l.a, 0.0f),
                  glm::vec3(l.b, 0.0f));

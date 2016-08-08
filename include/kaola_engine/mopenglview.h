@@ -92,6 +92,8 @@ private:
     glm::vec2 drawwall_connect_point;
     bool is_drawwall_start_point;
     bool is_drawwall_connect;
+    typedef QPair<glm::vec2, glm::vec2> points_wall;
+    QVector<points_wall> *points_for_walls;
 
     gl3d::gl3d_wall * new_wall;
     gl3d::gl3d_wall * old_wall;
