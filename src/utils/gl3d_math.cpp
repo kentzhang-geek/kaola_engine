@@ -242,8 +242,7 @@ QVector<glm::vec3> gl3d::math::generate_area(QVector<line_2d> & lines) {
     return ret;
 }
 
-
-#if 1
+#if 0
 #include <QString>
 #define GL3D_TEST(...) if (!(__VA_ARGS__)) { \
     QString throw_out = QString::asprintf("test failed at %s : %d \n", __FILE__, __LINE__);\

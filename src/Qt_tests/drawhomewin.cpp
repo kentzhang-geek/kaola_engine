@@ -103,6 +103,9 @@ void drawhomewin::on_drawwall_b_stateChanged(int arg1)
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
         dop = new DrawOption(this->ui->OpenGLCanvas);
         dop->show();
+
+        glm::vec2 cod;
+        this->ui->OpenGLCanvas->main_scene->coord_ground(glm::vec2(600.0f, 400.0f), cod);
     }
 }
 //画房间功能按钮-change
