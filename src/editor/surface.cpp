@@ -2,7 +2,7 @@
 #include <iostream>
 #include <QMutex>
 
-using namespace klm_1;
+using namespace klm;
 using namespace std;
 
 const int Surface::Vertex::X      = 0;

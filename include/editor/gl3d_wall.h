@@ -44,7 +44,7 @@ class Surface;
 }
 
 namespace gl3d {
-    void surface_to_mesh(const klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
+    void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
     class gl3d_wall;
     // 墙的附着状态，用于决定是否需要重算墙角，以及是否可以设置长度
     class gl3d_wall_attach {

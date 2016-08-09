@@ -65,7 +65,7 @@ namespace bg = boost::geometry;
 typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
 typedef bg::model::polygon<bg_Point, false, false> bg_Polygon;
 
-namespace klm_1{
+namespace klm{
 
     class SurfaceException final{
     public:
