@@ -58,6 +58,8 @@ namespace gl3d {
     void math_local_sort_line(QVector<line_2d> &lines);
     QVector<glm::vec3> generate_area(QVector<line_2d> &lines);
 
+    glm::mat4 get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b);
+
     }
 }
 

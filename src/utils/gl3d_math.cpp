@@ -121,7 +121,7 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
     float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
     cosx = glm::abs(cosx);
     dis = dis / cosx;
-    pt = ray.a + (ray.b - ray.a) * dis;
+    pt = ray.a + glm::normalize(ray.b - ray.a) * dis;
 
     return true;
 }
@@ -251,6 +251,17 @@ QVector<glm::vec3> gl3d::math::generate_area(QVector<line_2d> & lines) {
     return ret;
 }
 
+glm::mat4 gl3d::math::get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b) {
+    a = glm::normalize(a);
+    b = glm::normalize(b);
+    float alpha = glm::degrees(glm::acos(glm::dot(a, b)));
+
+    glm::vec3 axis = glm::cross(a, b);
+    axis = glm::normalize(axis);
+
+    return glm::rotate(glm::mat4(1.0f), glm::radians(alpha), axis);
+}
+
 #if 0
 #include <QString>
 #define GL3D_TEST(...) if (!(__VA_ARGS__)) { \
@@ -261,58 +272,28 @@ QVector<glm::vec3> gl3d::math::generate_area(QVector<line_2d> & lines) {
 
 #include <QtTest/QtTest>
 void main() {
-    QVector<line_2d> lss;
-    lss.push_back(line_2d(glm::vec2(1.0f, 2.0f),glm::vec2(2.0f, 1.0f)));
-    lss.push_back(line_2d(glm::vec2(-1.0f, 1.0f),glm::vec2(0.0f, 2.0f)));
-    lss.push_back(line_2d(glm::vec2(1.0f, 0.0f),glm::vec2(2.0f, 1.0f)));
-    lss.push_back(line_2d(glm::vec2(0.0f, 0.0f),glm::vec2(1.0f, 0.0f)));
-    lss.push_back(line_2d(glm::vec2(0.0f, 2.0f),glm::vec2(1.0f, 2.0f)));
-    lss.push_back(line_2d(glm::vec2(0.0f, 0.0f),glm::vec2(-1.0f, 1.0f)));
-    gl3d::math::generate_area(lss);
+    glm::vec3 a(1.0, 2.0, 3.0);
+    glm::vec3 b(3.0, 2.0, 1.0);
+//    glm::vec3 a(1.0, 0.0, 0.0);
+//    glm::vec3 b(0.0, 1.0, 0.0);
+    glm::vec3 ref = glm::normalize(b);
+    glm::mat4 ro = get_rotation_from_a_to_b(a, b);
+    glm::vec4 tmp = ro * glm::vec4(a.x, a.y, a.z, 1.0f);
+    tmp = glm::vec4(glm::normalize(glm::vec3(tmp.x, tmp.y, tmp.z)), 1.0f);
 
-    glm::vec2 p1(0.0, 1.0);
-    glm::vec2 p2(1.0, 1.0);
-    glm::vec2 p3(0.0, 0.0);
-    glm::vec2 p4(0.5, 0.5);
-    glm::vec2 p5(0.0, 2.0);
-    glm::vec2 p6(3.0, 3.0);
-    glm::vec2 p7(3.0, 0.0);
+    line_3d tmp_line(
+                glm::vec3(10.0, 10.0, 10.0),
+                glm::vec3(7.0, 7.0, 7.0)
+                );
 
-    glm::vec2 p8(4.0, 1.0);
-    glm::vec2 p9(5.0, 1.0);
+    triangle_facet tri(
+                glm::vec3(1.0, 0.0, 0.0),
+                glm::vec3(0.0, 0.0, 1.0),
+                glm::vec3(-1.0, 0.0, -1.0)
+                );
 
-    glm::vec2 p10(1.0, 2.0);
-
-    line_2d l1(p5, p2);
-    line_2d l2(p3, p4);
-    line_2d l3(p1, p2);
-    line_2d l4(p6, p7);
-    line_2d l5(p8, p9);
-
-    line_2d l6(p1, p3);
-    line_2d l7(p6, p7);
-
-    line_2d l8(p1, p2);
-    line_2d l9(p8, p9);
-
-    line_2d l10(p2, p3);
-    line_2d l11(p1, p10);
-    glm::vec2 res;
-    bool ib = gl3d::math::get_cross(l2, l1, res);
-    GL3D_TEST(ib == true);
-    ib = gl3d::math::get_cross(l3, l4, res);
-    GL3D_TEST(ib == true);
-    ib = gl3d::math::get_cross(l5, l4, res);
-    GL3D_TEST(ib == true);
-    ib = gl3d::math::get_cross(l6, l7, res);
-    GL3D_TEST(ib == false);
-    ib = gl3d::math::get_cross(l8, l9, res);
-    GL3D_TEST(ib == false);
-    ib = gl3d::math::get_cross(l10, l11, res);
-    GL3D_TEST(ib == false);
-
-    line_3d lll(glm::vec3(0.0), glm::vec3(1.0));
-    glm::vec3 pt(0.1, 0.5, 0.25);
-    float xxqqq = gl3d::math::point_distance_to_line(pt, lll);
+    glm::vec3 pt;
+    bool test = line_cross_facet(tri, tmp_line, pt);
+    test = tri.is_point_in_facet(pt);
 }
 #endif
