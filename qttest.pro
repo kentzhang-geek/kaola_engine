@@ -6,7 +6,7 @@
 
 QT       += core gui opengl
 
-QMAKE_CXXFLAGS += /MP
+win32: QMAKE_CXXFLAGS += /MP
 
 PRECOMPILED_HEADER += \
     include/kaola_engine/gl3d.hpp \
@@ -153,7 +153,8 @@ HEADERS  += \
     src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h \
-    include/editor/surface.h
+    include/editor/surface.h \
+    include/editor/merchandise.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
@@ -222,3 +223,16 @@ macx: LIBS += -L$$PWD/LIBS/assimp-3.2/lib/ -lassimp
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/release/ -lpugixml
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/debug/ -lpugixml
+else:unix: LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/ -lpugixml
+
+INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/src
+DEPENDPATH += $$PWD/LIBS/pugixml-1.7/src
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/release/libpugixml.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/debug/libpugixml.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/release/pugixml.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/debug/pugixml.lib
+else:unix: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a

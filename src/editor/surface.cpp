@@ -32,6 +32,7 @@ Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(
     : parent(parent), visible(false), subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
+      attachedFurniture(new QHash<std::string, Furniture*>),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
       connectiveVertices(nullptr), connectiveIndices(nullptr){
 
@@ -93,10 +94,7 @@ Surface::~Surface(){
     }
 
     if(subSurfaces != nullptr){
-        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-            subSurface != subSurfaces->end(); ++subSurface){
-            delete *subSurface;
-        }
+        qDeleteAll(subSurfaces->begin(), subSurfaces->end());
         subSurfaces->clear();
         delete subSurfaces;
     }
@@ -127,6 +125,11 @@ Surface::~Surface(){
         delete renderingIndicies;
     }
 
+    if(attachedFurniture != nullptr){
+        qDeleteAll(attachedFurniture->begin(), attachedFurniture->end());
+        attachedFurniture->clear();
+        delete attachedFurniture;
+    }
 }
 
 Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
@@ -291,22 +294,6 @@ bool Surface::isConnectiveSurface() const{
     return equals;
 }
 
-void Surface::setSurfaceMaterial(const string &id){
-    this->surfaceMaterial = id;
-}
-
-std::string Surface::getSurfaceMaterial() const{
-    return surfaceMaterial;
-}
-
-void Surface::setConnectiveMaterial(const string &id){
-    this->connectiveMaterial = id;
-}
-
-std::string Surface::getConnectiveMaterial() const{
-    return connectiveMaterial;
-}
-
 GLfloat Surface::getRoughArea(){
     if(localVerticies == nullptr || localVerticies->size() == 0){
         return 0.0f;
@@ -395,6 +382,24 @@ const QVector<GLushort>* Surface::getConnectiveIndicies(){
     }
     return &ret;
 }
+
+Surfacing* Surface::getSurfaceMaterial() const{
+    return surfaceMaterial;
+}
+
+void Surface::setSurfaceMaterial(Surfacing *surfacing){
+    this->surfaceMaterial = surfacing;
+}
+
+Surfacing* Surface::getConnectiveMaterial() const{
+    return connectiveMaterial;
+}
+
+void Surface::setConnectiveMateiral(Surfacing *connective){
+    this->connectiveMaterial = connective;
+}
+
+
 
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);

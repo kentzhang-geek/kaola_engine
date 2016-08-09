@@ -15,13 +15,16 @@
 #include <glm/ext.hpp>
 #include <QMap>
 
-class gl3d::gl3d_material;
-class gl3d::abstract_object;
+#include "kaola_engine/gl3d.hpp"
+
+//class gl3d::gl3d_material;
+//class gl3d::abstract_object;
 
 using namespace std;
 
 namespace klm{
 class Merchandise{
+public:
 
     enum class MerchandiseType{
         Surfacing, Furniture
@@ -69,7 +72,11 @@ public:
     Furniture(const string &id);
     ~Furniture();
     float getPrice() const;
-
+    MerchandiseType getType() const;
+    virtual string getPickID() const;
+    virtual void setPickID(string pickID);
+private:
+    string pickID;
 };
 
 }

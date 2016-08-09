@@ -50,16 +50,21 @@
 #define TESS_DEBUG false
 #define CONN_DEBUG false
 
+#include <QtCore>
+#include <QHash>
+
 #include <string>
 #include "kaola_engine/glheaders.h"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <pugixml.hpp>
 
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/bounding_box.h"
 #include "editor/gl_utility.h"
+#include "merchandise.h"
 
 namespace bg = boost::geometry;
 typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
@@ -128,13 +133,7 @@ namespace klm{
         void setTranslate(const glm::vec3 &translate);
         glm::mat4 getSurfaceTransform() const;
 
-        bool isConnectiveSurface() const;
-
-        void setSurfaceMaterial(const std::string& id);
-        std::string getSurfaceMaterial() const;
-
-        void setConnectiveMaterial(const std::string& id);
-        std::string getConnectiveMaterial() const;
+        bool isConnectiveSurface() const;        
 
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
@@ -144,6 +143,14 @@ namespace klm{
         const QVector<GLushort>* getRenderingIndices();
         const QVector<GLushort>* getConnectiveIndicies();
 
+        Surfacing* getSurfaceMaterial() const;
+        void setSurfaceMaterial(Surfacing * surfacing);
+        Surfacing* getConnectiveMaterial() const;
+        void setConnectiveMateiral(Surfacing* connective);
+
+        void addFurniture(Furniture* furniture);
+        void removeFurniture(Furniture* furniture);
+        Furniture* getFurniture(const std::string pickID);
 
     private:                
         void updateSurfaceMesh();
@@ -173,8 +180,10 @@ namespace klm{
         glm::vec3* scale;
         glm::mat4* rotation;
         glm::vec3* translate;
-        std::string surfaceMaterial;
-        std::string connectiveMaterial;
+
+        Surfacing* surfaceMaterial;
+        Surfacing* connectiveMaterial;
+        QHash<std::string, Furniture*> *attachedFurniture;
 
 
     //methods for tessellation
