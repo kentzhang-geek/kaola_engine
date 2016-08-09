@@ -17,6 +17,8 @@
 
 #include "kaola_engine/gl3d.hpp"
 
+#include "utils/gl3d_utils.h"
+
 //class gl3d::gl3d_material;
 //class gl3d::abstract_object;
 
@@ -27,7 +29,8 @@ class Merchandise{
 public:
 
     enum class MerchandiseType{
-        Surfacing, Furniture
+        Surfacing = 0,
+        Furniture
     };
 
 protected:

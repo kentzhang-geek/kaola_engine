@@ -13,6 +13,17 @@
         return this->member_name; \
     }
 
+#define GL3D_UTILS_PROPERTY_VIRTUAL(member_name, ...) \
+    private: \
+    __VA_ARGS__ member_name;\
+    public: \
+    virtual void set_##member_name(__VA_ARGS__ member_name##_tag) { \
+        this->member_name = member_name##_tag; \
+    } \
+    virtual __VA_ARGS__ get_##member_name() { \
+        return this->member_name; \
+    }
+
 #define GL3D_UTILS_PROPERTY_DECLARE(member_name, ...) \
     private: \
     __VA_ARGS__ member_name;\

@@ -105,7 +105,8 @@ SOURCES += \
     src/utils/qui/iconhelper.cpp \
     src/editor/gl3d_surface_object.cpp \
     src/render/gl3d_abstract_object.cpp \
-    src/editor/surface.cpp
+    src/editor/surface.cpp \
+    src/editor/merchandise.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -224,15 +225,16 @@ DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/release/ -lpugixml
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/debug/ -lpugixml
-else:unix: LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/ -lpugixml
+macx: LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/ -lpugixml
 
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/src
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/release/libpugixml.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/debug/libpugixml.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/release/pugixml.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/debug/pugixml.lib
-else:unix: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
+macx: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
+
+win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/ -lpugixml
+
+INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
+DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
+
+win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/pugixml.lib
