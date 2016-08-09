@@ -68,11 +68,6 @@ public:
         clear = 0,
         drawwall = 1
     };
-    gl3d::gl3d_wall * new_wall;
-    gl3d::gl3d_wall * new_walla;
-    gl3d::gl3d_wall * new_wallb;
-    gl3d::gl3d_wall * new_wallc;
-    gl3d::gl3d_wall * new_walld;
 
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -93,11 +88,19 @@ private:
     QVector<point_wall_pair> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
     QLabel *connectDot;
-    QPair<gl3d_wall *, gl3d_wall *> combine_wall_pair;
-    glm::vec2 combine_point;
     glm::vec2 drawwall_start_point;
+    glm::vec2 drawwall_connect_point;
     bool is_drawwall_start_point;
+    bool is_drawwall_connect;
 
+    gl3d::gl3d_wall * new_wall;
+    gl3d::gl3d_wall * old_wall;
+    gl3d::gl3d_wall * new_walla;
+    gl3d::gl3d_wall * new_wallb;
+    gl3d::gl3d_wall * new_wallc;
+    gl3d::gl3d_wall * new_walld;
+    gl3d::gl3d_wall * connect_wall;
+    gl3d::gl3d_wall * start_connect_wall;
 
 
     void openglDrawWall(const int x, const int y);

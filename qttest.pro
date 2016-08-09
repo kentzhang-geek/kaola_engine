@@ -6,6 +6,56 @@
 
 QT       += core gui opengl
 
+QMAKE_CXXFLAGS += /MP
+
+PRECOMPILED_HEADER += \
+    include/kaola_engine/gl3d.hpp \
+    include/kaola_engine/gl3d_framebuffer.hpp \
+    include/kaola_engine/gl3d_general_texture.hpp \
+    include/kaola_engine/gl3d_image.hpp \
+    include/kaola_engine/gl3d_material.hpp \
+    include/kaola_engine/gl3d_mesh.h \
+    include/kaola_engine/gl3d_obj_authority.h \
+    include/kaola_engine/gl3d_object.h \
+    include/kaola_engine/gl3d_out_headers.h \
+    include/kaola_engine/gl3d_render_process.hpp \
+    include/kaola_engine/gl3d_scene.h \
+    include/kaola_engine/gl3d_texture.hpp \
+    include/kaola_engine/gl3d_viewer.h \
+    include/kaola_engine/glheaders.h \
+    include/kaola_engine/kaola_engine.h \
+    include/kaola_engine/log.h \
+    include/kaola_engine/model_manager.hpp \
+    include/kaola_engine/mopenglview.h \
+    include/kaola_engine/Program.hpp \
+    include/kaola_engine/Shader.hpp \
+    include/kaola_engine/shader_manager.hpp \
+    src/Qt_tests/mainwindow.h \
+    src/Qt_tests/ray_tracer.h \
+    include/utils/gl3d_scale.h \
+    include/utils/gl3d_global_param.h \
+    include/kaola_engine/gl3d_post_process.h \
+    include/utils/gl3d_utils.h \
+    include/utils/gl3d_post_process_template.h \
+    include/kaola_engine/gl3d_general_light_source.h \
+#    include/editor/klm_surface.h \
+    include/editor/bounding_box.h \
+    src/Qt_tests/drawhomewin.h \
+    include/editor/vertex.h \
+    include/utils/gl3d_path_config.h \
+    src/Qt_tests/ui/pickupdig.h \
+    include/editor/gl3d_wall.h \
+    include/editor/gl_utility.h \
+    include/utils/gl3d_lock.h \
+    include/utils/gl3d_math.h \
+    src/Qt_tests/ui/drawoption.h \
+    src/utils/qui/frmmessagebox.h \
+    src/utils/qui/iconhelper.h \
+    src/utils/qui/myhelper.h \
+    include/editor/gl3d_surface_object.h \
+    include/kaola_engine/gl3d_abstract_object.h \
+    include/editor/surface.h
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qttest
@@ -47,7 +97,7 @@ SOURCES += \
     src/editor/bounding_box.cpp \
     src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
-    src/editor/klm_surface.cpp \
+#    src/editor/klm_surface.cpp \
     src/utils/gl3d_lock.cpp \
     src/utils/gl3d_math.cpp \
     src/Qt_tests/ui/drawoption.cpp \
@@ -87,7 +137,7 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-    include/editor/klm_surface.h \
+#    include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     src/Qt_tests/drawhomewin.h \
     include/editor/vertex.h \
@@ -103,8 +153,7 @@ HEADERS  += \
     src/utils/qui/myhelper.h \
     include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h \
-    include/editor/surface.h \
-    include/editor/merchandise.h
+    include/editor/surface.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
@@ -173,10 +222,3 @@ macx: LIBS += -L$$PWD/LIBS/assimp-3.2/lib/ -lassimp
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a
-
-macx: LIBS += -L$$PWD/../../C++/lib/pugixml-1.7/scripts/ -lpugixml
-
-INCLUDEPATH += $$PWD/../../C++/lib/pugixml-1.7/src
-DEPENDPATH += $$PWD/../../C++/lib/pugixml-1.7/src
-
-macx: PRE_TARGETDEPS += $$PWD/../../C++/lib/pugixml-1.7/scripts/libpugixml.a

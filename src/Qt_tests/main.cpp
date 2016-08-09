@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <iostream>
 #include "src/utils/qui/myhelper.h"
+#include <QString>
+#include <QMessageBox>
+#include "utils/gl3d_utils.h"
 
 using namespace std;
 
@@ -19,5 +22,12 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    return a.exec();
+    try {
+        return a.exec();
+    }
+    catch (QString err) {
+        QMessageBox msgBox(QMessageBox::Critical, "Error",
+                              err, 0, NULL);
+        return msgBox.exec();
+    }
 }

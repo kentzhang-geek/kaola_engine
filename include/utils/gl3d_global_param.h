@@ -17,10 +17,9 @@ public:
         normal = 0,
         drawwall = 1,
         drawwalling = 2,
-        drawwallend = 3,
-        pickup = 4,
-        drawhome = 5,
-        drawhomeing = 6
+        pickup = 3,
+        drawhome = 4,
+        drawhomeing = 5
     } current_work_state ;
 private:
     gl3d_global_param();

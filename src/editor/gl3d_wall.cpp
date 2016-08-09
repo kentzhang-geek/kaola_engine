@@ -1,10 +1,11 @@
 #include "utils/gl3d_math.h"
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_lock.h"
-#include "editor/klm_surface.h"
+#include "editor/surface.h"
 
 using namespace std;
 using namespace gl3d;
+using namespace klm;
 
 static const float wall_combine_distance = 1.0f;
 
@@ -110,6 +111,20 @@ void gl3d_wall::release_last_data() {
     return;
 }
 
+void gl3d_wall::set_thickness(float thickness_tag) {
+    this->thickness = thickness_tag;
+    if (this->start_point_fixed) {
+        this->start_point_attach.attach->calculate_mesh();
+    }
+    if (this->end_point_fixed) {
+        this->end_point_attach.attach->calculate_mesh();
+    }
+}
+
+float gl3d_wall::get_thickness() {
+    return this->thickness;
+}
+
 // 计算坐标
 void gl3d_wall::calculate_mesh() {
     if (glm::length(this->end_point - this->start_point) < this->get_thickness()) {
@@ -144,12 +159,15 @@ void gl3d_wall::calculate_mesh() {
 
 
     // 根据attach状态重算左右边线
+    glm::vec2 tmp_vec = this->end_point - this->start_point;
     if (this->start_point_fixed && cal_other_wall) {
         // 计算附着墙的左右边线
         gl3d_wall * tmp_wall = this->start_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
         // check another wall length
-        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+        if ((glm::length(tmp) > 0.0001)
+                && (glm::length(tmp) > tmp_wall->get_thickness())
+                && (glm::abs(glm::dot(glm::normalize(tmp), glm::normalize(tmp_vec))) < 0.9)) {
             direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
             direction = rotate_mtx * direction;
             direction = direction / direction.w;
@@ -187,7 +205,9 @@ void gl3d_wall::calculate_mesh() {
         gl3d_wall * tmp_wall = this->end_point_attach.attach;
         tmp = tmp_wall->end_point - tmp_wall->start_point;
         // check another wall length
-        if ((glm::length(tmp) > 0.0001) && (glm::length(tmp) > tmp_wall->get_thickness())) {
+        if ((glm::length(tmp) > 0.0001)
+                && (glm::length(tmp) > tmp_wall->get_thickness())
+                && (glm::abs(glm::dot(glm::normalize(tmp), glm::normalize(tmp_vec))) < 0.9)) {
             direction = glm::vec4(tmp.x, tmp.y, 0.0f, 1.0f);
             direction = rotate_mtx * direction;
             direction = direction / direction.w;
@@ -229,7 +249,6 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
     points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
     s = new klm::Surface(points);
-    s->setDebug();
     this->sfcs.push_back(s);
     // right
     points.clear();
@@ -238,7 +257,6 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
     points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
     s = new klm::Surface(points);
-    s->setDebug();
     this->sfcs.push_back(s);
     // back
     points.clear();
@@ -346,7 +364,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
         // 建立新的attach
         wall1->end_point_fixed = true;
         wall1->end_point_attach.attach = wall2;
-        if (glm::length(combine_point - wall2->end_point) >
+        if (glm::length(combine_point - wall2->end_point) >=
                 glm::length(combine_point - wall2->start_point)) {
             wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
@@ -382,7 +400,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
         // 建立新的attach
         wall2->end_point_fixed = true;
         wall2->end_point_attach.attach = wall1;
-        if (glm::length(combine_point - wall1->end_point) >
+        if (glm::length(combine_point - wall1->end_point) >=
                 glm::length(combine_point - wall1->start_point)) {
             wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
@@ -400,6 +418,80 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_
         wall2->start_point_attach.attach = wall1;
         if (glm::length(combine_point - wall1->end_point) >
                 glm::length(combine_point - wall1->start_point)) {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+
+    wall1->calculate_mesh();
+    wall2->calculate_mesh();
+    return true;
+}
+
+
+bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, tag_combine_traits combine_traits) {
+
+    // attach wall1
+    if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
+            (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start)) {
+        // 分离之前的attach
+        if (wall1->end_point_fixed == true) {
+            wall1->seperate(wall1->end_point_attach);
+        }
+        // 建立新的attach
+        wall1->end_point_fixed = true;
+        wall1->end_point_attach.attach = wall2;
+        if (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start) {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+    else {
+        // 分离之前的attach
+        if (wall1->start_point_fixed == true) {
+            wall1->seperate(wall1->start_point_attach);
+        }
+        // 建立新的attach
+        wall1->start_point_fixed = true;
+        wall1->start_point_attach.attach = wall2;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_start) {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall1->start_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+
+    // attach wall2
+    if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
+            (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end)) {
+        // 分离之前的attach
+        if (wall2->end_point_fixed == true) {
+            wall2->seperate(wall2->end_point_attach);
+        }
+        // 建立新的attach
+        wall2->end_point_fixed = true;
+        wall2->end_point_attach.attach = wall1;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end) {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
+        }
+        else {
+            wall2->end_point_attach.attach_point = gl3d::gl3d_wall_attach::end_point;
+        }
+    }
+    else {
+        // 分离之前的attach
+        if (wall2->start_point_fixed == true) {
+            wall2->seperate(wall2->start_point_attach);
+        }
+        // 建立新的attach
+        wall2->start_point_fixed = true;
+        wall2->start_point_attach.attach = wall1;
+        if (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_start) {
             wall2->start_point_attach.attach_point = gl3d::gl3d_wall_attach::start_point;
         }
         else {
@@ -441,49 +533,43 @@ bool gl3d_wall::set_length(float len) {
 
 #define BOUND_MAX_DEFAULT 1000.0f
 #define BOUND_MIN_DEFAULT 0.0f
-void gl3d::surface_to_mesh(const klm::Surface * sfc,
+void gl3d::surface_to_mesh(klm::Surface * sfc,
                            QVector<gl3d::mesh *> &vct) {
     // process local verticles
-    // get trans mat
-    glm::mat4 trans_mat(1.0);
-    sfc->getTransFromParent(trans_mat);
-
     // create vertex buffer
     glm::vec3 bnd_max(BOUND_MIN_DEFAULT);
     glm::vec3 bnd_min(BOUND_MAX_DEFAULT);
     GLfloat * tmp_data = NULL;
     int pts_len;
     gl3d::obj_points * pts = NULL;
-    sfc->getRenderingVertices(tmp_data, pts_len);
-    pts_len = pts_len / klm::Vertex::VERTEX_SIZE;
-    pts = (gl3d::obj_points *)
-            malloc(sizeof(gl3d::obj_points) * pts_len);
+
+    const QVector<Surface::Vertex * > * vertexes = sfc->getRenderingVertices();
+    pts_len = vertexes->size();
+    pts = new gl3d::obj_points[pts_len];
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
     for (int i = 0; i < pts_len; i++) {
-        glm::vec4 tmp_vert = glm::vec4(
-                    tmp_data[i * 5 + 0],
-                tmp_data[i * 5 + 1],
-                tmp_data[i * 5 + 2],
-                1.0f);
-        tmp_vert = trans_mat * tmp_vert;
-        tmp_vert = tmp_vert / tmp_vert.w;
-        bnd_max = glm::max(glm::vec3(tmp_vert), bnd_max);
-        bnd_min = glm::min(glm::vec3(tmp_vert), bnd_min);
+        glm::vec3 tmp_vert = glm::vec3(
+                    vertexes->at(i)->x(),
+                    vertexes->at(i)->y(),
+                    vertexes->at(i)->z()
+                    );
+        bnd_max = glm::max(tmp_vert, bnd_max);
+        bnd_min = glm::min(tmp_vert, bnd_min);
         pts[i].vertex_x = tmp_vert.x;
         pts[i].vertex_y = tmp_vert.y;
         pts[i].vertex_z = tmp_vert.z;
-        pts[i].texture_x = tmp_data[i * 5 + 3];
-        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+        pts[i].texture_x = vertexes->at(i)->w();
+        pts[i].texture_y = 1.0f - vertexes->at(i)->h();
     }
 
     // create index buffer
     GLushort * idxes = NULL;
     int idx_len;
-    sfc->getRenderingIndicies(idxes, idx_len);
-
-    if (idxes == NULL) {
-        cout << "aaaaa";
-
+    const QVector<GLushort> * indecis = sfc->getRenderingIndices();
+    idx_len = indecis->size();
+    idxes = new GLushort[idx_len];
+    for (int j = 0; j < indecis->size(); j++) {
+        idxes[j] = indecis->at(j);
     }
 
     // create new mesh
@@ -494,46 +580,39 @@ void gl3d::surface_to_mesh(const klm::Surface * sfc,
     vct.push_back(m);
 
     // clean env
-    free(pts);
-    free(idxes);
+    delete pts;
+    delete idxes;
 
     // process conective surface
-    QVector<klm::Vertex *> vertexes;
-    QVector<GLushort> indecis;
-    sfc->getConnectiveVerticies(vertexes);
-    sfc->getConnectiveIndicies(indecis);
-    trans_mat = glm::mat4(1.0);
-    if (sfc->getParent() != NULL) {
-        sfc->getParent()->getTransFromParent(trans_mat);
-    }
-    bnd_max = glm::vec3(BOUND_MIN_DEFAULT);
-    bnd_min = glm::vec3(BOUND_MAX_DEFAULT);
     // have conective surface , then process meshes
-    if ((vertexes.size() > 0) && (indecis.size() > 0)) {
-        pts = (obj_points *)malloc(sizeof(obj_points) * vertexes.size());
-        memset(pts, 0, sizeof(obj_points) * vertexes.size());
-        idxes = (GLushort *)malloc(sizeof(GLushort) * indecis.size());
-        memset(idxes, 0, sizeof(GLushort) * indecis.size());
-        pts_len = vertexes.size();
-        idx_len = indecis.size();
-        for (int j = 0; j < vertexes.size(); j++) {
-            glm::vec4 tmp_vert = glm::vec4(
-                        vertexes.at(j)->getX(),
-                        vertexes.at(j)->getY(),
-                        vertexes.at(j)->getZ(),
-                        1.0f);
-            tmp_vert = trans_mat * tmp_vert;
-            tmp_vert = tmp_vert / tmp_vert.w;
-            bnd_max = glm::max(glm::vec3(tmp_vert), bnd_max);
-            bnd_min = glm::min(glm::vec3(tmp_vert), bnd_min);
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
+        bnd_max = glm::vec3(BOUND_MIN_DEFAULT);
+        bnd_min = glm::vec3(BOUND_MAX_DEFAULT);
+
+        pts_len = vertexes->size();
+        idx_len = indecis->size();
+        pts = new obj_points[pts_len];
+        idxes = new GLushort[idx_len];
+        memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
+        memset(idxes, 0, sizeof(GLushort) * idx_len);
+        for (int j = 0; j < vertexes->size(); j++) {
+            glm::vec3 tmp_vert = glm::vec3(
+                        vertexes->at(j)->x(),
+                        vertexes->at(j)->y(),
+                        vertexes->at(j)->z()
+                        );
+            bnd_max = glm::max(tmp_vert, bnd_max);
+            bnd_min = glm::min(tmp_vert, bnd_min);
             pts[j].vertex_x = tmp_vert.x;
             pts[j].vertex_y = tmp_vert.y;
             pts[j].vertex_z = tmp_vert.z;
-            pts[j].texture_x = vertexes.at(j)->getW();
-            pts[j].texture_y = 1.0f - vertexes.at(j)->getH();
+            pts[j].texture_x = vertexes->at(j)->w();
+            pts[j].texture_y = 1.0f - vertexes->at(j)->h();
         }
-        for (int j = 0; j < indecis.size(); j++) {
-            idxes[j] = indecis.at(j);
+        for (int j = 0; j < indecis->size(); j++) {
+            idxes[j] = indecis->at(j);
         }
         // create new mesh
         gl3d::mesh * m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
@@ -542,8 +621,15 @@ void gl3d::surface_to_mesh(const klm::Surface * sfc,
         m->set_bounding_value_min(bnd_min);
         vct.push_back(m);
         // clean env
-        free(pts);
-        free(idxes);
+        delete pts;
+        delete idxes;
+    }
+
+    // process sub surface
+    if (sfc->getSurfaceCnt() > 0) {
+        for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
+            surface_to_mesh(sfc->getSubSurface(i), vct);
+        }
     }
     return;
 }

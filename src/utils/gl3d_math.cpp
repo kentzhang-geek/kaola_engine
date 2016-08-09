@@ -7,6 +7,13 @@ triangle_facet::triangle_facet(glm::vec3 ta, glm::vec3 tb, glm::vec3 tc) :
     a(ta), b(tb), c(tc)
 {}
 
+triangle_facet::triangle_facet() :
+    a(glm::vec3(0.0f)), b(glm::vec3(0.0f)), c(glm::vec3(0.0f))
+{}
+
+triangle_facet::triangle_facet(const triangle_facet &f) : a(f.a), b(f.b), c(f.c)
+{}
+
 bool triangle_facet::is_valid_facet() const {
     glm::vec3 td1 = glm::normalize(a - b);
     glm::vec3 td2 = glm::normalize(a - c);
@@ -128,6 +135,15 @@ float gl3d::math::point_distance_to_line(const glm::vec3 pt, const line_3d l) {
     return glm::length(pt - l.a) * glm::sin(alpha);
 }
 
+float gl3d::math::point_distance_to_line(const glm::vec2 pt, const line_2d l) {
+    if (((glm::length(l.a - pt) + glm::length(l.b - pt)) - glm::length(l.b - l.a))
+            < 0.0001) {
+        return 0.0f;
+    }
+    float alpha = glm::acos(glm::dot(glm::normalize(pt - l.a), glm::normalize(l.b - l.a)));
+    return glm::length(pt - l.a) * glm::sin(alpha);
+}
+
 bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt) {
     glm::vec3 ptt(pt, 0.0f);
     line_3d tmpl(glm::vec3(l.a, 0.0f),
@@ -147,7 +163,93 @@ bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, 
     return true;
 }
 
+static line_2d math_local_get_line(QVector<line_2d> & lines, glm::vec2 pt) {
+    for (QVector<line_2d>::iterator it = lines.begin();
+         it != lines.end();
+         it++) {
+        if ((it->a == pt) || (it->b == pt)) {\
+            line_2d ret(it->a, it->b);
+            lines.erase(it);
+            return ret;
+        }
+    }
 
+    return line_2d(glm::vec2(0.0f), glm::vec2(0.0f));
+}
+
+void gl3d::math::math_local_sort_line(QVector<line_2d> &lines) {
+    glm::vec2 pt;
+    pt = lines[0].b;
+    QVector<line_2d> target;
+    target.push_back(math_local_get_line(lines, pt));
+    while(lines.size() > 0) {
+        line_2d t = math_local_get_line(lines, pt);
+        if (t.a == t.b) {
+            // this is not a line!
+            GL3D_UTILS_THROW("We have bad line in area edge loop");
+        }
+        if (t.b == pt) {
+            t.swap_ab();
+        }
+        target.push_back(t);
+        pt = t.b;
+    }
+
+    for (auto it = target.begin();
+         it != target.end();
+         it++) {
+        lines.push_back(*it);
+    }
+}
+
+glm::vec3 math_local_cal_area(QVector<line_2d> &poly) {
+    glm::vec3 ret = glm::vec3(0.0f);
+    for (auto it = poly.begin();
+         it != poly.end();
+         it++) {
+        ret += glm::cross(glm::vec3(it->a.x, it->a.y, 0.0f),
+                          glm::vec3(it->b.x, it->b.y, 0.0f));
+    }
+
+    return ret;
+}
+
+static glm::vec3 math_local_cvt_glm2_to_glm3(glm::vec2 a) {
+    return glm::vec3(a.x, 0.0f, a.y);
+}
+
+QVector<glm::vec3> gl3d::math::generate_area(QVector<line_2d> & lines) {
+    // 先做排序得到所有顶点组成的环，然后对环求向量面积，为正则不处理，为负则反向环
+    QVector<glm::vec3> ret;
+    QVector<line_2d> tmp;
+    for (auto it = lines.begin();
+         it != lines.end();
+         it++) {
+        tmp.push_back(*it);
+    }
+    math_local_sort_line(tmp);
+    glm::vec3 tt = math_local_cal_area(tmp);
+
+    if (tt.z > 0) {
+        // 正向逆时针
+        for (auto it = tmp.begin();
+             it != tmp.end();
+             it++) {
+            ret.push_back(math_local_cvt_glm2_to_glm3(it->a));
+        }
+    }
+    else if (tt.z < 0) {
+        // 正向顺时针需反向
+        for (int i = tmp.size() - 1;
+             i >= 0;
+             i--) {
+            ret.push_back(math_local_cvt_glm2_to_glm3(tmp[i].b));
+        }
+    }
+    else
+        GL3D_UTILS_THROW("get area of polygon failed");
+    return ret;
+}
 
 #if 0
 #include <QString>
@@ -159,6 +261,15 @@ bool gl3d::math::point_project_to_line(const line_2d & l, const glm::vec2 & pt, 
 
 #include <QtTest/QtTest>
 void main() {
+    QVector<line_2d> lss;
+    lss.push_back(line_2d(glm::vec2(1.0f, 2.0f),glm::vec2(2.0f, 1.0f)));
+    lss.push_back(line_2d(glm::vec2(-1.0f, 1.0f),glm::vec2(0.0f, 2.0f)));
+    lss.push_back(line_2d(glm::vec2(1.0f, 0.0f),glm::vec2(2.0f, 1.0f)));
+    lss.push_back(line_2d(glm::vec2(0.0f, 0.0f),glm::vec2(1.0f, 0.0f)));
+    lss.push_back(line_2d(glm::vec2(0.0f, 2.0f),glm::vec2(1.0f, 2.0f)));
+    lss.push_back(line_2d(glm::vec2(0.0f, 0.0f),glm::vec2(-1.0f, 1.0f)));
+    gl3d::math::generate_area(lss);
+
     glm::vec2 p1(0.0, 1.0);
     glm::vec2 p2(1.0, 1.0);
     glm::vec2 p3(0.0, 0.0);

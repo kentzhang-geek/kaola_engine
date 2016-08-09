@@ -12,13 +12,13 @@
 #include "utils/gl3d_path_config.h"
 
 using namespace std;
-using namespace klm_1;
+using namespace klm;
 
 namespace gl3d {
 class surface_object : public gl3d::object {
 public:
-    surface_object(klm_1::Surface * sfc);
-    void iter_surface(klm_1::Surface * sfc);
+    surface_object(klm::Surface * sfc);
+    void iter_surface(klm::Surface * sfc);
 private :
     int tmp_idx;
 };

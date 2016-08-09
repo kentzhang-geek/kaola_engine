@@ -13,6 +13,14 @@
         return this->member_name; \
     }
 
+#define GL3D_UTILS_PROPERTY_DECLARE(member_name, ...) \
+    private: \
+    __VA_ARGS__ member_name;\
+    public: \
+    void set_##member_name(__VA_ARGS__ member_name##_tag); \
+    __VA_ARGS__ get_##member_name() ;
+
+
 #define GL3D_UTILS_PROPERTY_GET_POINTER(member_name, ...) \
     private: \
     __VA_ARGS__ member_name;\
@@ -29,6 +37,11 @@
 #define GL3D_UTILS_WARN(...) std::cout <<  QString::asprintf(__VA_ARGS__).toStdString() << std::endl;
 
 #define GL3D_UTILS_SHADOW_MAP_ORTHO glm::ortho(-20.0,20.0,-20.0,20.0,-30.0, 200.0)
+
+#include <QString>
+#define GL3D_UTILS_THROW(...) \
+    throw QString::asprintf("Throw Error at %s : %d ==> ", __FILE__, __LINE__) + QString::asprintf(__VA_ARGS__);
+
 
 #define IN
 #define OUT

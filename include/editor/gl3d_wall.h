@@ -44,7 +44,7 @@ class Surface;
 }
 
 namespace gl3d {
-    void surface_to_mesh(const klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
+    void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
     class gl3d_wall;
     // 墙的附着状态，用于决定是否需要重算墙角，以及是否可以设置长度
     class gl3d_wall_attach {
@@ -67,7 +67,7 @@ public:
     // properties
     GL3D_UTILS_PROPERTY(start_point, glm::vec2);
     GL3D_UTILS_PROPERTY(end_point, glm::vec2);
-    GL3D_UTILS_PROPERTY(thickness, float);
+    GL3D_UTILS_PROPERTY_DECLARE(thickness, float);
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);
@@ -79,7 +79,16 @@ public:
 
     void get_coord_on_screen(IN scene * main_scene, OUT glm::vec2 &start_pos, OUT glm::vec2 &end_pos);
 
-    static bool combine(INOUT gl3d_wall * wall1, INOUT gl3d_wall * wall2, glm::vec2 combine_point);
+    enum tag_combine_traits {
+        combine_wall1_start_to_wall2_start = 0,
+        combine_wall1_start_to_wall2_end,
+        combine_wall1_end_to_wall2_start,
+        combine_wall1_end_to_wall2_end,
+    };
+
+    static bool combine(gl3d_wall * wall1, gl3d_wall * wall2, tag_combine_traits combine_traits);
+    static bool combine(gl3d_wall * wall1, gl3d_wall * wall2, glm::vec2 combine_point);
+
     void seperate(INOUT gl3d::gl3d_wall_attach & attachment);
 
     gl3d::obj_points bottom_pts[4];

@@ -11,7 +11,7 @@
 
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
-#include "editor/gl3d_surface_object.h"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 
@@ -74,84 +74,6 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     this->ui->OpenGLCanvas->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
-
-    QVector<glm::vec3 > pts;
-    pts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    pts.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
-    pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
-    pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
-    klm_1::Surface * sfc = new klm_1::Surface(pts);
-//    sfc->setTranslate(glm::vec3(0.0, 0.0, 0.5));
-
-    pts.clear();
-    pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
-    pts.push_back(glm::vec3(-1.0, -2.0, 0.0f));
-    pts.push_back(glm::vec3(-1.0,  0.0, 0.0f));
-    pts.push_back(glm::vec3(-2.0,  0.0, 0.0f));
-    Surface* sub = sfc->addSubSurface(pts);
-    if(sub != nullptr){
-        sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
-
-        pts.clear();
-        pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
-        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
-        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
-
-        Surface* ss = sub->addSubSurface(pts);
-        if(ss){
-            ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
-            ss->setScale(glm::vec3(0.8, 0.8, 1.0));
-            ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
-
-            pts.clear();
-            pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
-            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
-
-
-            Surface* sss = ss->addSubSurface(pts);
-            if(sss != nullptr){
-                sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
-            } else {
-                cout<<"failed to add last sub-surface"<<endl;
-            }
-        }
-
-    }
-
-    pts.clear();
-    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 2.0, 0.0));
-    pts.push_back(glm::vec3(1.0, 2.0, 0.0));
-
-    Surface *seSub = sfc->addSubSurface(pts);
-    if(seSub != nullptr){
-        seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
-//        seSub->setTranslate(glm::vec3(0.4, 0.5, 0.6));
-    }
-
-    gl3d::surface_object * oo = new gl3d::surface_object(sfc);
-    oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
-    oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
-    oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
-    oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
-    oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
-    oo->get_mtls()->insert(6, new gl3d_material("WoodVeneer.jpg"));
-    oo->get_mtls()->insert(7, new gl3d_material("xin_4005.jpg"));
-    oo->get_mtls()->insert(8, new gl3d_material("_2.jpg"));
-    oo->get_mtls()->insert(9, new gl3d_material("_1.jpg"));
-    oo->get_mtls()->insert(10, new gl3d_material("_3.jpg"));
-    oo->get_mtls()->insert(11, new gl3d_material("_5.jpg"));
-    oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
-    oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
-    oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
-    this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
 }
 
 class ray_thread : public QThread {
