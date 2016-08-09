@@ -69,7 +69,11 @@ public:
     Furniture(const string &id);
     ~Furniture();
     float getPrice() const;
-
+    MerchandiseType getType() const;
+    virtual string getPickID() const;
+    virtual void setPickID(string pickID);
+private:
+    string pickID;
 };
 
 }

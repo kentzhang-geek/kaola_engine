@@ -2,7 +2,7 @@
 #include <iostream>
 #include <QMutex>
 
-using namespace klm_1;
+using namespace klm;
 using namespace std;
 
 const int Surface::Vertex::X      = 0;
@@ -32,6 +32,7 @@ Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(
     : parent(parent), visible(false), subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
+      attachedFurniture(new QHash<std::string, Furniture*>),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
       connectiveVertices(nullptr), connectiveIndices(nullptr){
 
@@ -127,6 +128,15 @@ Surface::~Surface(){
         delete renderingIndicies;
     }
 
+    if(attachedFurniture != nullptr){
+        for(QHash<std::string, Furniture*>::iterator furniture = attachedFurniture->keyBegin();
+            furniture != attachedFurniture->keyEnd(); ++furniture){
+            delete attachedFurniture->value(*furniture);
+        }
+
+        attachedFurniture->clear();
+        delete attachedFurniture;
+    }
 }
 
 Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
@@ -395,6 +405,24 @@ const QVector<GLushort>* Surface::getConnectiveIndicies(){
     }
     return &ret;
 }
+
+Surfacing* Surface::getSurfaceMaterial() const{
+    return surfaceMaterial;
+}
+
+void Surface::setSurfaceMaterial(Surfacing *surfacing){
+    this->surfaceMaterial = surfacing;
+}
+
+Surfacing* Surface::getConnectiveMaterial() const{
+    return connectiveMaterial;
+}
+
+void Surface::setConnectiveMateiral(Surfacing *connective){
+    this->connectiveMaterial = connective;
+}
+
+
 
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);
