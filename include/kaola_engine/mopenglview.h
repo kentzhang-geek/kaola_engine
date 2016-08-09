@@ -104,6 +104,7 @@ private:
     gl3d::gl3d_wall * connect_wall;
     gl3d::gl3d_wall * start_connect_wall;
 
+    glm::vec2 draw_start_dot;
 
     void openglDrawWall(const int x, const int y);
     void getWallsPoint();
