@@ -50,6 +50,9 @@
 #define TESS_DEBUG false
 #define CONN_DEBUG false
 
+#include <QtCore>
+#include <QHash>
+
 #include <string>
 #include "kaola_engine/glheaders.h"
 #include <boost/geometry/geometry.hpp>
@@ -57,7 +60,6 @@
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <pugixml.hpp>
-#include <QHash>
 
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/bounding_box.h"
@@ -181,7 +183,7 @@ namespace klm{
 
         Surfacing* surfaceMaterial;
         Surfacing* connectiveMaterial;
-        QHash<std::string, Furniture*> attachedFurniture;
+        QHash<std::string, Furniture*> *attachedFurniture;
 
 
     //methods for tessellation

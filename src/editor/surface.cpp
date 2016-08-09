@@ -94,10 +94,7 @@ Surface::~Surface(){
     }
 
     if(subSurfaces != nullptr){
-        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-            subSurface != subSurfaces->end(); ++subSurface){
-            delete *subSurface;
-        }
+        qDeleteAll(subSurfaces->begin(), subSurfaces->end());
         subSurfaces->clear();
         delete subSurfaces;
     }
@@ -129,11 +126,7 @@ Surface::~Surface(){
     }
 
     if(attachedFurniture != nullptr){
-        for(QHash<std::string, Furniture*>::iterator furniture = attachedFurniture->keyBegin();
-            furniture != attachedFurniture->keyEnd(); ++furniture){
-            delete attachedFurniture->value(*furniture);
-        }
-
+        qDeleteAll(attachedFurniture->begin(), attachedFurniture->end());
         attachedFurniture->clear();
         delete attachedFurniture;
     }
@@ -299,22 +292,6 @@ bool Surface::isConnectiveSurface() const{
     glm::mat4 transform = getSurfaceTransform();
     bool equals = (transform != glm::mat4(1.0f));
     return equals;
-}
-
-void Surface::setSurfaceMaterial(const string &id){
-    this->surfaceMaterial = id;
-}
-
-std::string Surface::getSurfaceMaterial() const{
-    return surfaceMaterial;
-}
-
-void Surface::setConnectiveMaterial(const string &id){
-    this->connectiveMaterial = id;
-}
-
-std::string Surface::getConnectiveMaterial() const{
-    return connectiveMaterial;
 }
 
 GLfloat Surface::getRoughArea(){
