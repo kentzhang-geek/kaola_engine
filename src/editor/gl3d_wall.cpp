@@ -45,6 +45,7 @@ void gl3d_wall::init() {
                                 | GL3D_OBJ_ENABLE_PICKING);
     this->start_point_fixed = false;
     this->end_point_fixed = false;
+    this->fixed = false;
     this->set_obj_type(this->type_wall);
 }
 
@@ -68,6 +69,26 @@ gl3d_wall::~gl3d_wall() {
 
     if (this->end_point_fixed) {
         this->seperate(this->end_point_attach);
+    }
+}
+
+glm::vec2 gl3d_wall::get_start_point() {
+    return this->start_point;
+}
+
+void gl3d_wall::set_start_point(glm::vec2 st_tag) {
+    if (!this->fixed) {
+        this->start_point = st_tag;
+    }
+}
+
+glm::vec2 gl3d_wall::get_end_point() {
+    return this->end_point;
+}
+
+void gl3d_wall::set_end_point(glm::vec2 end_point_tag) {
+    if (!this->fixed) {
+        this->end_point = end_point_tag;
     }
 }
 
@@ -101,6 +122,9 @@ void gl3d_wall::release_last_data() {
 }
 
 void gl3d_wall::set_thickness(float thickness_tag) {
+    if (this->fixed) {
+        return;
+    }
     this->thickness = thickness_tag;
     if (this->start_point_fixed) {
         this->start_point_attach.attach->calculate_mesh();
@@ -475,6 +499,9 @@ float gl3d_wall::get_length() {
 }
 
 bool gl3d_wall::set_length(float len) {
+    if (this->fixed) {
+        return false;
+    }
     if (this->start_point_fixed && this->end_point_fixed) {
         return false; // both two side fixed , so set length failed
     }
@@ -662,4 +689,156 @@ void gl3d_wall::clear_abstract_meshes(QVector<gl3d::mesh *> & ms) {
 
 void gl3d_wall::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
     mt.clear();
+}
+
+// get triangles from surfaces
+static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
+    for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
+        get_faces_from_surface(sfc->getSubSurface(i), faces);
+    }
+
+    // process local verticles
+    const QVector<Surface::Vertex * > * vertexes = sfc->getRenderingVertices();
+    const QVector<GLushort> * indecis = sfc->getRenderingIndices();
+    for (int i = 0; i < (indecis->size() / 3); i++) {
+        GLushort b0 = indecis->at(i * 3 + 0);
+        GLushort b1 = indecis->at(i * 3 + 1);
+        GLushort b2 = indecis->at(i * 3 + 2);
+
+        glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                  vertexes->at(b0)->y(),
+                                  vertexes->at(b0)->z());
+        glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                  vertexes->at(b1)->y(),
+                                  vertexes->at(b1)->z());
+        glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                  vertexes->at(b2)->y(),
+                                  vertexes->at(b2)->z());
+        faces.push_back(math::triangle_facet(pta, ptb, ptc));
+    }
+
+    // process conective surface
+    // have conective surface , then process meshes
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
+        for (int i = 0; i < (indecis->size() / 3); i++) {
+            GLushort b0 = indecis->at(i * 3 + 0);
+            GLushort b1 = indecis->at(i * 3 + 1);
+            GLushort b2 = indecis->at(i * 3 + 2);
+
+            glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                      vertexes->at(b0)->y(),
+                                      vertexes->at(b0)->z());
+            glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                      vertexes->at(b1)->y(),
+                                      vertexes->at(b1)->z());
+            glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                      vertexes->at(b2)->y(),
+                                      vertexes->at(b2)->z());
+            faces.push_back(math::triangle_facet(pta, ptb, ptc));
+        }
+    }
+
+    return;
+}
+
+// calculate points which line cross triangles
+typedef QPair<glm::vec3, glm::vec3> point_and_normal;
+using namespace gl3d::math;
+static void cast_ray_to_faces(QVector<math::triangle_facet> &faces,
+                              QVector<point_and_normal> &crosses,
+                              math::line_3d ray_cast) {
+    for (QVector<math::triangle_facet>::iterator it = faces.begin();
+         it != faces.end();
+         it++) {
+        glm::vec3 pt;
+        if (math::line_cross_facet(*it, ray_cast, pt)) {
+            if (it->is_point_in_facet(pt)) {
+                glm::vec3 nor;
+                nor = glm::cross(it->c - it->b, it->a - it->b);
+                nor = glm::normalize(nor);
+                crosses.push_back(point_and_normal(pt, nor));
+            }
+        }
+    }
+
+    return;
+}
+
+bool gl3d_wall::get_coord_on_wall(scene *sce,
+                                  glm::vec2 coord_on_screen,
+                                  glm::vec3 &out_point_on_wall,
+                                  glm::vec3 &out_point_normal) {
+    if (this->sfcs.size() <= 0) {
+        return false;
+    }
+    gl3d::viewer * cam = sce->watcher;
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+                gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    coord_on_screen.y = cam->get_height() - coord_on_screen.y;
+    glm::vec3 coord_in = glm::vec3(coord_on_screen.x, coord_on_screen.y, 0.0);
+    coord_in.z = 1.0;
+    glm::vec3 txxx = glm::unProject(coord_in,
+                                    glm::mat4(1.0),
+                                    (*cam->get_projection_matrix()) *
+                                    (*cam->get_viewing_matrix())
+                                    * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                    glm::vec4(0.0, 0.0,
+                                              cam->get_width(),
+                                              cam->get_height()));
+    coord_in.z = 0.1;
+    txxx = glm::unProject(coord_in,
+                                    glm::mat4(1.0),
+                                    (*cam->get_projection_matrix()) *
+                                    (*cam->get_viewing_matrix())
+                                    * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                    glm::vec4(0.0, 0.0,
+                                              cam->get_width(),
+                                              cam->get_height()));
+
+    glm::vec3 near_pt = cam->get_current_position();
+    txxx = glm::normalize(txxx);
+    math::line_3d ray_cast(near_pt, near_pt + txxx);
+
+    QVector<math::triangle_facet> faces;
+    QVector<point_and_normal> crosses;
+    glm::vec3 target_pt;
+    glm::vec3 o_nor;
+    float dis_to_pt = 0.0f;
+    faces.clear();
+    crosses.clear();
+
+    // get all the facet
+    for (auto it = this->sfcs.begin();
+         it != this->sfcs.end();
+         it++) {
+        get_faces_from_surface(*it, faces);
+    }
+
+    // get all cross points
+    cast_ray_to_faces(faces, crosses, ray_cast);
+
+    // check out real cross
+    if (crosses.size() <  0) {
+        return false;
+    }
+    dis_to_pt = glm::length(crosses.at(0).first - near_pt);
+    target_pt = crosses.at(0).first;
+    for (auto it = crosses.begin();
+         it != crosses.end();
+         it++) {
+        if (glm::length((*it).first - near_pt) < dis_to_pt) {
+            // if has nearer point
+            dis_to_pt = glm::length((*it).first - near_pt);
+            target_pt = (*it).first;
+            // and its normal
+            o_nor = it->second;
+        }
+    }
+
+    out_point_on_wall = target_pt;
+    out_point_normal = o_nor;
+
+    return true;
 }
