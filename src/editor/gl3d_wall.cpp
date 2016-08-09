@@ -92,19 +92,8 @@ void gl3d_wall::release_last_data() {
         delete (*it);
     }
     this->get_sfcs()->clear();
-    for (auto it = this->get_meshes()->begin();
-         it != this->get_meshes()->end();
-         it++) {
-        delete (*it);
-    }
     this->set_number_of_meshes(0);
     this->get_meshes()->clear();
-
-    for (auto it = this->get_mtls()->begin();
-         it != this->get_mtls()->end();
-         it++) {
-        delete it.value();
-    }
     this->get_mtls()->clear();
     this->set_data_buffered(false);
 
@@ -280,31 +269,7 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
     this->sfcs.push_back(new klm::Surface(points));
 
-    // add all the mesh from surface
-    QVector<gl3d::mesh *> mss;
-    for (auto it = this->sfcs.begin();
-         it != this->sfcs.end();
-         it++) {
-        gl3d::surface_to_mesh(*it, mss);
-    }
-    for (auto its = mss.begin(); its != mss.end(); its++) {
-        (*its)->recalculate_normals(0.707);
-        (*its)->set_material_index(0);
-        this->get_meshes()->push_back(*its);
-    }
-    this->set_number_of_meshes(this->get_meshes()->size());
-
-    // mtl
-    gl3d_material * p_mat = new gl3d_material();
-    p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
-    p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
-    this->set_control_authority(GL3D_OBJ_ENABLE_DEL
-                                | GL3D_OBJ_ENABLE_CHANGEMTL
-                                | GL3D_OBJ_ENABLE_PICKING);
-    this->get_mtls()->insert(0, p_mat);
-    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
-
-    this->buffer_data();
+    // will not fill meshes now
 
     gl3d_lock::shared_instance()->wall_lock.unlock();
     return;
@@ -577,6 +542,7 @@ void gl3d::surface_to_mesh(klm::Surface * sfc,
     m->set_material_index(0);
     m->set_bounding_value_max(bnd_max);
     m->set_bounding_value_min(bnd_min);
+    m->set_texture_repeat(true);
     vct.push_back(m);
 
     // clean env
@@ -619,6 +585,7 @@ void gl3d::surface_to_mesh(klm::Surface * sfc,
         m->set_material_index(0);
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
+        m->set_texture_repeat(true);
         vct.push_back(m);
         // clean env
         delete pts;
@@ -638,4 +605,61 @@ void gl3d::surface_to_mesh(klm::Surface * sfc,
 gl3d::gl3d_wall_attach::gl3d_wall_attach() {
     this->attach_point = this->start_point;
     this->attach = NULL;
+}
+
+bool gl3d_wall::is_data_changed() {
+    return true;
+}
+
+bool gl3d_wall::is_visible() {
+    return true;
+}
+
+glm::mat4 gl3d_wall::get_translation_mat() {
+    return object::get_translation_mat();
+}
+
+glm::mat4 gl3d_wall::get_rotation_mat() {
+    return object::get_rotation_mat();
+}
+
+glm::mat4 gl3d_wall::get_scale_mat() {
+    return object::get_scale_mat();
+}
+
+void gl3d_wall::get_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    for (auto it = this->sfcs.begin();
+         it != this->sfcs.end();
+         it++) {
+        gl3d::surface_to_mesh(*it, ms);
+    }
+}
+
+void gl3d_wall::get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    static gl3d_material * mtl = new gl3d_material("_7.jpg");
+    mt.insert(0, mtl);
+    mt.insert(1, mtl);
+    mt.insert(2, mtl);
+    mt.insert(3, mtl);
+    mt.insert(4, mtl);
+    mt.insert(5, mtl);
+    mt.insert(6, mtl);
+}
+
+void gl3d_wall::set_translation_mat(const glm::mat4 & trans) {
+    object::set_translation_mat(trans);
+    return;
+}
+
+void gl3d_wall::clear_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    for (auto it = ms.begin();
+         it != ms.end();
+         it++) {
+        delete (*it);
+    }
+    ms.clear();
+}
+
+void gl3d_wall::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    mt.clear();
 }

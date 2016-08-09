@@ -372,3 +372,13 @@ void object::get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
 void object::set_translation_mat(const glm::mat4 & trans) {
     this->this_property.position = glm::vec3(trans * glm::vec4(0.0, 0.0, 0.0, 1.0));
 }
+
+void object::clear_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    ms.clear();
+    return;
+}
+
+void object::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    mt.clear();
+    return;
+}

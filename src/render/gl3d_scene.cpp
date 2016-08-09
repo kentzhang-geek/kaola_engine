@@ -391,6 +391,8 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     mss.clear();
     obj->get_abstract_meshes(mss);
     QMap<unsigned int, gl3d_material *>  mts;
+    mts.clear();
+    obj->get_abstract_mtls(mts);
     auto iter = mss.begin();
     gl3d::mesh *p_mesh;
     while (iter != mss.end()) {
@@ -404,8 +406,6 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         
         // 多重纹理的绑定与绘制
         try {
-            mts.clear();
-            obj->get_abstract_mtls(mts);
             mts.value(p_mesh->material_index)->use_this(pro);
             gl3d_texture::set_parami(p_mesh->texture_repeat);
         } catch (std::out_of_range & not_used_smth) {
@@ -418,7 +418,9 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
                                   (GLvoid *)NULL);
         iter++;
     }
-    
+    obj->clear_abstract_meshes(mss);
+    obj->clear_abstract_mtls(mts);
+
     GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
     GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     GL3D_GL()->glBindVertexArray(0);

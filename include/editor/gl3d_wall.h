@@ -96,6 +96,18 @@ public:
     float get_length();
     bool set_length(IN float len);
 
+    // 继承抽象模型类方法并实现
+    virtual bool is_data_changed();
+    virtual bool is_visible();
+    virtual glm::mat4 get_translation_mat();
+    virtual glm::mat4 get_rotation_mat();
+    virtual glm::mat4 get_scale_mat();
+    virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
+    virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+    virtual void set_translation_mat(const glm::mat4 & trans);
+    virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms);
+    virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+
 private:
     void release_last_data();
     void init();

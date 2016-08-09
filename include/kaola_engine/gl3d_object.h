@@ -200,15 +200,17 @@ namespace gl3d {
         // 预先做scale变换
         void pre_scale();
 
-        // 继承父类方法并实现
-        bool is_data_changed();
-        bool is_visible();
-        glm::mat4 get_translation_mat();
-        glm::mat4 get_rotation_mat();
-        glm::mat4 get_scale_mat();
-        void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
-        void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
-        void set_translation_mat(const glm::mat4 & trans);
+        // 继承抽象模型类方法并实现
+        virtual bool is_data_changed();
+        virtual bool is_visible();
+        virtual glm::mat4 get_translation_mat();
+        virtual glm::mat4 get_rotation_mat();
+        virtual glm::mat4 get_scale_mat();
+        virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
+        virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+        virtual void set_translation_mat(const glm::mat4 & trans);
+        virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms);
+        virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
 
     private:
         void init();
