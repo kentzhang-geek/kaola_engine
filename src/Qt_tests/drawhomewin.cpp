@@ -12,6 +12,7 @@
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
+#include "resource_and_network/klm_resource_manager.h"
 
 using namespace std;
 
