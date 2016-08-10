@@ -29,12 +29,13 @@ namespace klm {
             static manager *shared_instance();
 
             template<typename T>
-            T * get_res_item(string id);
+            T *get_res_item(string id);
 
-            klm::Merchandise * get_merchandise_item(string id);
+            klm::Merchandise *get_merchandise_item(string id);
 
-            void perform_async_res_load(res_loader *ld);
+            void perform_async_res_load(res_loader *ld, string id);
 
+            void release_all_resources();
 
         private:
             manager();
@@ -46,7 +47,7 @@ namespace klm {
         };
 
         // internal resource item  class , use to acknowledgement resource property
-        class item : public {
+        class item {
         public:
             enum resource_type {
                 res_default_file = 0,
@@ -62,9 +63,5 @@ namespace klm {
         };
     };
 }
-
-using namespace std;
-using namespace klm;
-using namespace gl3d;
 
 #endif // KLM_RESOURCE_MANAGER_H
