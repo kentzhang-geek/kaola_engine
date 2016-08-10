@@ -1,6 +1,7 @@
 #include "editor/surface.h"
 #include <iostream>
 #include <QMutex>
+#include <sstream>
 
 using namespace klm;
 using namespace std;
@@ -17,6 +18,7 @@ Surface* Surface::targetSurface   = nullptr;
 
 const glm::vec3 Surface::NON_NORMAL(0.0, 0.0, 0.0);
 const glm::vec3 Surface::Z_AXIS(0.0, 0.0, 1.0);
+const std::string Surface::FILE_FLOAT_TOKEN = "@";
 
 static QMutex tess_locker;
 
@@ -28,11 +30,20 @@ std::string SurfaceException::what() const{
     return message;
 }
 
+Surface::Surface(const Surface* parent)
+    : parent(parent), subSurfaces(new QVector<Surface*>),
+      localVerticies(new QVector<Surface::Vertex*>),
+      scale(nullptr), rotation(nullptr),translate(nullptr),
+      attachedFurniture(new QMap<std::string, Furniture*>),
+      renderingVerticies(nullptr), renderingIndicies(nullptr),
+      connectiveVertices(nullptr), connectiveIndices(nullptr){
+}
+
 Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(SurfaceException)
     : parent(parent), visible(false), subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
-      attachedFurniture(new QHash<std::string, Furniture*>),
+      attachedFurniture(new QMap<std::string, Furniture*>),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
       connectiveVertices(nullptr), connectiveIndices(nullptr){
 
@@ -294,6 +305,18 @@ bool Surface::isConnectiveSurface() const{
     return equals;
 }
 
+bool Surface::isVisible() const{
+    return visible;
+}
+
+void Surface::makeVisible(){
+    visible = true;
+}
+
+void Surface::hide(){
+    visible = false;
+}
+
 GLfloat Surface::getRoughArea(){
     if(localVerticies == nullptr || localVerticies->size() == 0){
         return 0.0f;
@@ -399,7 +422,52 @@ void Surface::setConnectiveMateiral(Surfacing *connective){
     this->connectiveMaterial = connective;
 }
 
+void Surface::addFurniture(Furniture* furniture){
+    attachedFurniture->insert(furniture->getPickID(), furniture);
+}
 
+int Surface::removeFurniture(const std::string &pickID){
+    return attachedFurniture->remove(pickID);
+}
+
+Furniture* Surface::getFurniture(const string &pickID){
+    return attachedFurniture->value(pickID);
+}
+
+void Surface::save(pugi::xml_node &node){
+    pugi::xml_node surfaceNode = node.append_child(IOUtility::SURFACE.c_str());
+    surfaceNode.append_attribute(IOUtility::NUM_OF_INDICIES.c_str())
+               .set_value(localVerticies->size());
+
+    writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());
+
+    IOUtility::writeMatrix(surfaceNode, *transformFromParent, IOUtility::TRANSFORM_FROM_PPARENT.c_str());
+    surfaceNode.append_attribute(IOUtility::VISIBLE.c_str()).set_value(visible);
+
+    surfaceNode.append_attribute(IOUtility::SURFACE_MATEIRAL.c_str())
+            .set_value(surfaceMaterial == nullptr ? "" : surfaceMaterial->getID().c_str());
+    surfaceNode.append_attribute(IOUtility::SURFACE_MATEIRAL.c_str())
+            .set_value(surfaceMaterial == nullptr ? "" : surfaceMaterial->getID().c_str());
+
+    if(scale != nullptr){
+        IOUtility::writeVector(surfaceNode, *scale, IOUtility::SURFACE_SCALE);
+    }
+    if(rotation != nullptr){
+        IOUtility::writeMatrix(surfaceNode, *rotation, IOUtility::SURFACE_ROTATION);
+    }
+    if(translate != nullptr){
+        IOUtility::writeVector(surfaceNode, *translate, IOUtility::SURFACE_TRANSLATE);
+    }
+
+    if(subSurfaces != nullptr){
+        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+            subSurface != subSurfaces->end(); ++subSurface){
+            (*subSurface)->save(surfaceNode);
+        }
+    }
+
+
+}
 
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);
@@ -765,6 +833,46 @@ void Surface::deleteVerticies(QVector<Surface::Vertex*> *vertices){
     delete vertices;
 }
 
+void Surface::writeVerticies(pugi::xml_node &node, const QVector<Surface::Vertex *> &verticies, const string tag){
+    if(verticies.size() != 0){
+        node.append_attribute(IOUtility::NUM_OF_INDICIES.c_str()).set_value(verticies.size());
+        if(tag.size() != 0){
+            node.append_attribute(IOUtility::USAGE.c_str()).set_value(tag.c_str());
+        }
+        int cnt = 0;
+        for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
+            vertex != verticies.end(); ++vertex){
+            pugi::xml_node vertexNode = node.append_child(IOUtility::VERTEX.c_str());
+            vertexNode.append_attribute(IOUtility::INDEX.c_str()).set_value(cnt++);
+            vertexNode.append_attribute(IOUtility::X.c_str()).set_value((*vertex)->x());
+            vertexNode.append_attribute(IOUtility::Y.c_str()).set_value((*vertex)->y());
+            vertexNode.append_attribute(IOUtility::Z.c_str()).set_value((*vertex)->z());
+            vertexNode.append_attribute(IOUtility::W.c_str()).set_value((*vertex)->w());
+            vertexNode.append_attribute(IOUtility::H.c_str()).set_value((*vertex)->h());
+        }
+    }
+}
+
+void Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex *> &ret){
+    static std::string xpath = "./"+IOUtility::VERTEX;
+    if(ret.size() != 0){
+        qDeleteAll(ret);
+    }
+    int size = node.attribute(IOUtility::NUM_OF_INDICIES.c_str()).as_int();
+    ret.resize(size);
+
+    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());
+    for(pugi::xpath_node vertexNode : vertexNodes){
+        int index = vertexNode.node().attribute(IOUtility::INDEX.c_str()).as_int();
+        Surface::Vertex* vertex = new Surface::Vertex();
+        vertex->x(vertexNode.node().attribute(IOUtility::X.c_str()).as_double());
+        vertex->y(vertexNode.node().attribute(IOUtility::Y.c_str()).as_double());
+        vertex->x(vertexNode.node().attribute(IOUtility::Z.c_str()).as_double());
+        vertex->w(vertexNode.node().attribute(IOUtility::W.c_str()).as_double());
+        vertex->h(vertexNode.node().attribute(IOUtility::H.c_str()).as_double());
+    }
+}
+
 void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
                            const QVector<GLushort> &indicies,
                            const string title){
@@ -787,6 +895,10 @@ void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
         }
     }
     cout<<"}"<<endl;
+}
+
+Surface::Vertex::Vertex(){
+    data = new GLdouble[SIZE];
 }
 
 Surface::Vertex::Vertex(const Surface::Vertex &another){

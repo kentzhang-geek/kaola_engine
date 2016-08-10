@@ -50,8 +50,7 @@
 #define TESS_DEBUG false
 #define CONN_DEBUG false
 
-#include <QtCore>
-#include <QHash>
+#include <QMap>
 
 #include <string>
 #include "kaola_engine/glheaders.h"
@@ -61,6 +60,7 @@
 #include <boost/geometry/index/rtree.hpp>
 #include <pugixml.hpp>
 
+#include "utils/io_utility.h"
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/bounding_box.h"
 #include "editor/gl_utility.h"
@@ -85,7 +85,9 @@ namespace klm{
     public:
         class Vertex;
         class BoundingBox;
-
+    private:
+        //this constructor is used only when loading Surface from file
+        Surface(const Surface* parent = nullptr);
     //public methods defined by Surface
     public:
         Surface(const QVector<glm::vec3> &points, const Surface* parent = nullptr) throw(SurfaceException);
@@ -135,6 +137,9 @@ namespace klm{
 
         bool isConnectiveSurface() const;        
 
+        bool isVisible() const;
+        void makeVisible();
+        void hide();
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
 
@@ -143,16 +148,41 @@ namespace klm{
         const QVector<GLushort>* getRenderingIndices();
         const QVector<GLushort>* getConnectiveIndicies();
 
+        /**
+         * these methods are used for Surfacing Surface and Connective
+         * faces
+         */
         Surfacing* getSurfaceMaterial() const;
         void setSurfaceMaterial(Surfacing * surfacing);
         Surfacing* getConnectiveMaterial() const;
         void setConnectiveMateiral(Surfacing* connective);
 
         void addFurniture(Furniture* furniture);
-        void removeFurniture(Furniture* furniture);
-        Furniture* getFurniture(const std::string pickID);
+        int removeFurniture(const std::string &pickID);
+        Furniture* getFurniture(const std::string &pickID);
 
-    private:                
+        /**
+         * Saveing and loading Surface from pugi node
+         * properties to be saved and loaded from xml
+         * 1- local verticies
+         * 2- local verticies indices
+         * 3- transformFromParent
+         * 4- visibilities
+         * 5- Surfacing
+         * 6- connective Surfacing
+         * 7- sub-Surfaces
+         * 8- scale, rotation and tarnslate for Surface
+         *
+         * properties generated from saved Surface:
+         * 1- renderingVerticies
+         * 2- renderingIndices
+         * 3- connectiveVerticies
+         * 4- connectiveIndicies
+         */
+        void save(pugi::xml_node &node);
+        void load(const pugi::xml_node &node);
+
+    private:
         void updateSurfaceMesh();
         void updateConnectionMesh();
 
@@ -183,8 +213,7 @@ namespace klm{
 
         Surfacing* surfaceMaterial;
         Surfacing* connectiveMaterial;
-        QHash<std::string, Furniture*> *attachedFurniture;
-
+        QMap<std::string, Furniture*> *attachedFurniture;
 
     //methods for tessellation
     private:
@@ -206,6 +235,7 @@ namespace klm{
 
     // utility methods (static)
     public:
+        static const std::string FILE_FLOAT_TOKEN;
         static const glm::vec3 NON_NORMAL;
         static const glm::vec3 Z_AXIS;
 
@@ -218,9 +248,11 @@ namespace klm{
                                 const glm::vec3 &destation,
                                 glm::mat4 &result);
         static void transformVertex(const glm::mat4 &trans, Surface::Vertex &vertex);
-        static void deleteVerticies(QVector<Surface::Vertex*> *vertices);
+        static void deleteVerticies(QVector<Surface::Vertex*> *vertices);        
 
     private:
+        static void writeVerticies(pugi::xml_node &node, const QVector<Surface::Vertex*> &verticies, const string tag = "");
+        static void readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex*> &ret);
         static void vertexLogger(const QVector<Surface::Vertex*> &verticies,
                                  const QVector<GLushort> &indicies,
                                  const std::string title);
@@ -236,6 +268,7 @@ namespace klm{
             static const int H;
             static const int SIZE;
 
+            Vertex();
             Vertex(const Surface::Vertex &another);
             Vertex(const glm::vec3 &point);
             Vertex(GLdouble x, GLdouble y, GLdouble z, GLdouble w = 0, GLdouble h = 0);

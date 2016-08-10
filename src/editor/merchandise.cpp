@@ -2,7 +2,9 @@
 
 using namespace klm;
 
-Merchandise::Merchandise(const string &tid) {
+Merchandise::Merchandise(const string &tid):
+    rotation(new glm::mat4(1.0)),
+    translation(new glm::vec3(0.0, 0.0, 0.0)){
     this->id = tid;
 }
 
