@@ -15,31 +15,29 @@
 
 using namespace std;
 
-extern MOpenGLView * one_view;
+extern MOpenGLView *one_view;
 
-static drawhomewin * dhw = NULL;
+static drawhomewin *dhw = NULL;
 
 drawhomewin::drawhomewin(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::drawhomewin)
-{
+        QWidget(parent),
+        ui(new Ui::drawhomewin) {
     setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
 }
 
-drawhomewin::~drawhomewin()
-{
+drawhomewin::~drawhomewin() {
     delete ui;
 }
 
-void drawhomewin::showEvent(QShowEvent * ev) {
+void drawhomewin::showEvent(QShowEvent *ev) {
     QWidget::showEvent(ev);
 
     // for test
     GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
-    config.background_color = glm::vec3(101.0f/255.0, 157.0f/255.0f, 244.0f/255.0);
+    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
     // 绑定画布的参数
     cout << this->ui->OpenGLCanvas->size().width() << endl;
     cout << this->ui->OpenGLCanvas->size().height() << endl;
@@ -51,9 +49,9 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     this->ui->OpenGLCanvas->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->OpenGLCanvas->main_scene->set_width(
-                this->ui->OpenGLCanvas->size().width());
+            this->ui->OpenGLCanvas->size().width());
     this->ui->OpenGLCanvas->main_scene->set_height(
-                this->ui->OpenGLCanvas->size().height());
+            this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(this->ui->OpenGLCanvas->main_scene);
     // 释放模型加载器
@@ -62,7 +60,7 @@ void drawhomewin::showEvent(QShowEvent * ev) {
     this->ui->OpenGLCanvas->main_scene->prepare_buffer();
 
     // add a light
-    general_light_source * light_1 = new general_light_source();
+    general_light_source *light_1 = new general_light_source();
     glm::vec3 lightp(0.0, 1.8, 0.0);
     //    lightp += glm::vec3(2.0, -1.2, 4.0);
     lightp.y = 2.0f;
@@ -92,9 +90,8 @@ void drawhomewin::on_draw_clear() {
 }
 
 //画墙功能按钮-change
-void drawhomewin::on_drawwall_b_stateChanged(int arg1)
-{
-    if(!arg1) {
+void drawhomewin::on_drawwall_b_stateChanged(int arg1) {
+    if (!arg1) {
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
         dop->close();
         delete dop;
@@ -104,20 +101,11 @@ void drawhomewin::on_drawwall_b_stateChanged(int arg1)
         dop = new DrawOption(this->ui->OpenGLCanvas);
         dop->show();
     }
-
-    // test code
-    gl3d::scene * sce = this->ui->OpenGLCanvas->main_scene;
-    glm::vec2 codin(sce->get_width() / 2.0f, sce->get_height() / 2.0f);
-    int obj_id = sce->get_object_id_by_coordination(codin.x, codin.y);
-    gl3d::abstract_object * obj = sce->get_obj(obj_id);
-    if (obj->get_obj_type() == obj->type_wall) {
-        
-    }
 }
+
 //画房间功能按钮-change
-void drawhomewin::on_checkBox_stateChanged(int arg1)
-{
-    if(!arg1) {
+void drawhomewin::on_checkBox_stateChanged(int arg1) {
+    if (!arg1) {
         gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
         dop->close();
         delete dop;
@@ -130,8 +118,7 @@ void drawhomewin::on_checkBox_stateChanged(int arg1)
 }
 
 
-void drawhomewin::on_switch3D_clicked()
-{
+void drawhomewin::on_switch3D_clicked() {
     static bool flag_edit = false;
     flag_edit = !flag_edit;
     if (flag_edit) {
@@ -142,7 +129,6 @@ void drawhomewin::on_switch3D_clicked()
     }
 }
 
-void drawhomewin::on_colse_b_clicked()
-{
+void drawhomewin::on_colse_b_clicked() {
     this->close();
 }

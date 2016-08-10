@@ -307,8 +307,8 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
     glm::vec2 edpos = this->get_end_point();
 
     glm::mat4 pvm = glm::mat4(1.0);
-    pvm = pvm * *main_scene->watcher->get_projection_matrix();
-    pvm = pvm * *main_scene->watcher->get_viewing_matrix();
+    pvm = pvm * main_scene->watcher->get_projection_matrix();
+    pvm = pvm * main_scene->watcher->get_viewing_matrix();
 
     // set model matrix
     ::glm::mat4 trans = this->get_translation_mat() *
@@ -754,9 +754,9 @@ static void cast_ray_to_faces(QVector<math::triangle_facet> &faces,
          it++) {
         glm::vec3 pt;
         if (math::line_cross_facet(*it, ray_cast, pt)) {
-            if (it->is_point_in_facet(pt)) {
+            if (1) {//it->is_point_in_facet(pt)) {
                 glm::vec3 nor;
-                nor = glm::cross(it->c - it->b, it->a - it->b);
+                nor = glm::cross(it->a - it->b, it->c - it->b);
                 nor = glm::normalize(nor);
                 crosses.push_back(point_and_normal(pt, nor));
             }
@@ -775,36 +775,33 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     }
     gl3d::viewer * cam = sce->watcher;
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-                gl3d::gl3d_global_param::shared_instance()->canvas_width);
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
     coord_on_screen.y = cam->get_height() - coord_on_screen.y;
     glm::vec3 coord_in = glm::vec3(coord_on_screen.x, coord_on_screen.y, 0.0);
     coord_in.z = 1.0;
     glm::vec3 txxx = glm::unProject(coord_in,
                                     glm::mat4(1.0),
-                                    (*cam->get_projection_matrix()) *
-                                    (*cam->get_viewing_matrix())
-                                    * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                    cam->get_projection_matrix() * cam->get_viewing_matrix() * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
                                     glm::vec4(0.0, 0.0,
                                               cam->get_width(),
                                               cam->get_height()));
     coord_in.z = 0.1;
-    txxx = glm::unProject(coord_in,
-                                    glm::mat4(1.0),
-                                    (*cam->get_projection_matrix()) *
-                                    (*cam->get_viewing_matrix())
-                                    * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
-                                    glm::vec4(0.0, 0.0,
-                                              cam->get_width(),
-                                              cam->get_height()));
+    txxx = txxx - glm::unProject(coord_in,
+                                 glm::mat4(1.0),
+                                 cam->get_projection_matrix() * cam->get_viewing_matrix() * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                 glm::vec4(0.0, 0.0,
+                                           cam->get_width(),
+                                           cam->get_height()));
 
     glm::vec3 near_pt = cam->get_current_position();
     txxx = glm::normalize(txxx);
+//    txxx = glm::normalize(cam->get_look_direction());
     math::line_3d ray_cast(near_pt, near_pt + txxx);
 
     QVector<math::triangle_facet> faces;
     QVector<point_and_normal> crosses;
     glm::vec3 target_pt;
-    glm::vec3 o_nor;
+    glm::vec3 o_nor(1.0f);
     float dis_to_pt = 0.0f;
     faces.clear();
     crosses.clear();
@@ -820,18 +817,19 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     cast_ray_to_faces(faces, crosses, ray_cast);
 
     // check out real cross
-    if (crosses.size() <  0) {
+    if (crosses.size() <=  0) {
         return false;
     }
     dis_to_pt = glm::length(crosses.at(0).first - near_pt);
     target_pt = crosses.at(0).first;
+    o_nor = crosses.at(0).second;
     for (auto it = crosses.begin();
          it != crosses.end();
          it++) {
         if (glm::length((*it).first - near_pt) < dis_to_pt) {
             // if has nearer point
             dis_to_pt = glm::length((*it).first - near_pt);
-            target_pt = (*it).first;
+            target_pt = it->first;
             // and its normal
             o_nor = it->second;
         }

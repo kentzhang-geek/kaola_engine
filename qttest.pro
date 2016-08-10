@@ -106,7 +106,8 @@ SOURCES += \
     src/editor/gl3d_surface_object.cpp \
     src/render/gl3d_abstract_object.cpp \
     src/editor/surface.cpp \
-    src/editor/merchandise.cpp
+    src/editor/merchandise.cpp \
+    src/resource_and_network/klm_resource_manager.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -155,7 +156,8 @@ HEADERS  += \
     include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h \
     include/editor/surface.h \
-    include/editor/merchandise.h
+    include/editor/merchandise.h \
+    include/resource_and_network/klm_resource_manager.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
