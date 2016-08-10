@@ -104,6 +104,15 @@ void drawhomewin::on_drawwall_b_stateChanged(int arg1)
         dop = new DrawOption(this->ui->OpenGLCanvas);
         dop->show();
     }
+
+    // test code
+    gl3d::scene * sce = this->ui->OpenGLCanvas->main_scene;
+    glm::vec2 codin(sce->get_width() / 2.0f, sce->get_height() / 2.0f);
+    int obj_id = sce->get_object_id_by_coordination(codin.x, codin.y);
+    gl3d::abstract_object * obj = sce->get_obj(obj_id);
+    if (obj->get_obj_type() == obj->type_wall) {
+        
+    }
 }
 //画房间功能按钮-change
 void drawhomewin::on_checkBox_stateChanged(int arg1)

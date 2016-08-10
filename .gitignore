@@ -2,3 +2,5 @@
 models/
 LIBS/
 include/utils/gl3d_path_config.h
+.idea/
+Makefile
