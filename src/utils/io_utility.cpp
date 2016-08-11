@@ -33,6 +33,7 @@ const string IOUtility::CONNECTIVE_INDICES = "ci";
 const string IOUtility::MERCHANDISE = "Merchandise";
 const string IOUtility::SURFACING = "Surfacing";
 const string IOUtility::FUNITURE = "Furniture";
+const string IOUtility::FURNITURE_ID = "f_id";
 const string IOUtility::MERCHANIDSE_ID = "mid";
 
 const int IOUtility::MATRIX_SIZE = 16;

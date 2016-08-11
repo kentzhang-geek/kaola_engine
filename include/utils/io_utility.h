@@ -59,6 +59,7 @@ public:
     static const string MERCHANDISE;
     static const string SURFACING;
     static const string FUNITURE;
+    static const string FURNITURE_ID;
     static const string MERCHANIDSE_ID;
 
 private:
