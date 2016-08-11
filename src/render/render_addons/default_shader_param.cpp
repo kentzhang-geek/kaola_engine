@@ -281,7 +281,7 @@ GL3D_SHADER_PARAM(image) {
     glm::vec3 light = glm::vec3(0.0, 1.0, -1.0);
     GL3D_SET_VEC3(light_vector, light, pro);
     
-    ::glm::mat4 pvm = *scene->watcher->get_projection_matrix();
+    ::glm::mat4 pvm = scene->watcher->get_projection_matrix();
     glm::vec3 currentpos = scene->watcher->get_scaled_position();
     glm::vec3 lookat = scene->watcher->get_look_direction();
     glm::vec3 headto = scene->watcher->get_head_direction();
@@ -299,7 +299,7 @@ GL3D_SHADER_PARAM(image) {
     norMtx = trans;	
     trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
     // KENT WARN : 这里要注意是z轴向上还是y轴向上
-    trans = ::glm::scale(trans, glm::vec3(1.0, -1.0, 1.0));
+    trans = ::glm::scale(glm::mat4(1.0f), glm::vec3(1.0, -1.0, 1.0)) * trans;
     pvm *= trans;    // final MVP
     
     GL3D_SET_MAT4(pvmImageMatrix, pvm, pro);

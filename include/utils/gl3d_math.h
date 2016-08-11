@@ -51,12 +51,14 @@ namespace gl3d {
     float point_distance_to_line(const glm::vec2 pt, const line_2d l);
     float point_distance_to_facet(const triangle_facet & fc, const glm::vec3 & pt);
 
-    bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 out_pt);
+    bool point_project_to_line(const line_2d & l, const glm::vec2 & pt, glm::vec2 &out_pt);
 
     bool line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 & pt);
 
     void math_local_sort_line(QVector<line_2d> &lines);
     QVector<glm::vec3> generate_area(QVector<line_2d> &lines);
+
+    glm::mat4 get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b);
 
     }
 }

@@ -60,11 +60,11 @@ namespace gl3d {
         // properties
         GL3D_UTILS_PROPERTY(height, GLfloat);
         GL3D_UTILS_PROPERTY(width, GLfloat);
-        GL3D_UTILS_PROPERTY_GET_POINTER(projection_matrix,
+        GL3D_UTILS_PROPERTY(projection_matrix,
                                         ::glm::mat4);
-        GL3D_UTILS_PROPERTY_GET_POINTER(viewing_matrix,
+        GL3D_UTILS_PROPERTY(viewing_matrix,
                                         ::glm::mat4);
-        GL3D_UTILS_PROPERTY_GET_POINTER(translationMatrix,
+        GL3D_UTILS_PROPERTY(translationMatrix,
                                         ::glm::mat4);
         GL3D_UTILS_PROPERTY(top_view_size, GLfloat);
         GL3D_UTILS_PROPERTY(view_mode, _view_mode);

@@ -56,15 +56,20 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\LIBS\assimp-3.2\include;..\LIBS\glm_build;..\LIBS\assimp-3.2\include;..\LIBS\glew-1.13.0\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;release;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;LIBS\assimp-3.2\include;LIBS\glm_build;LIBS\boost_1_61_0;include;LIBS\assimp-3.2\include;D:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src;LIBS\pugixml-1.7\pugixml-1.7\src;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;release;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>None</DebugInformationFormat>
       <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>include\kaola_engine\gl3d.hpp;include\kaola_engine\gl3d_framebuffer.hpp;include\kaola_engine\gl3d_general_texture.hpp;include\kaola_engine\gl3d_image.hpp;include\kaola_engine\gl3d_material.hpp;include\kaola_engine\gl3d_mesh.h;include\kaola_engine\gl3d_obj_authority.h;include\kaola_engine\gl3d_object.h;include\kaola_engine\gl3d_out_headers.h;include\kaola_engine\gl3d_render_process.hpp;include\kaola_engine\gl3d_scene.h;include\kaola_engine\gl3d_texture.hpp;include\kaola_engine\gl3d_viewer.h;include\kaola_engine\glheaders.h;include\kaola_engine\kaola_engine.h;include\kaola_engine\log.h;include\kaola_engine\model_manager.hpp;include\kaola_engine\mopenglview.h;include\kaola_engine\Program.hpp;include\kaola_engine\Shader.hpp;include\kaola_engine\shader_manager.hpp;src\Qt_tests\mainwindow.h;src\Qt_tests\ray_tracer.h;include\utils\gl3d_scale.h;include\utils\gl3d_global_param.h;include\kaola_engine\gl3d_post_process.h;include\utils\gl3d_utils.h;include\utils\gl3d_post_process_template.h;include\kaola_engine\gl3d_general_light_source.h;include\editor\bounding_box.h;src\Qt_tests\drawhomewin.h;include\editor\vertex.h;include\utils\gl3d_path_config.h;src\Qt_tests\ui\pickupdig.h;include\editor\gl3d_wall.h;include\editor\gl_utility.h;include\utils\gl3d_lock.h;include\utils\gl3d_math.h;src\Qt_tests\ui\drawoption.h;src\utils\qui\frmmessagebox.h;src\utils\qui\iconhelper.h;src\utils\qui\myhelper.h;include\editor\gl3d_surface_object.h;include\kaola_engine\gl3d_abstract_object.h;include\editor\surface.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ObjectFileName>release\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>include\kaola_engine\gl3d.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\qttest.pch</PrecompiledHeaderOutputFile>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName></ProgramDataBaseFileName>
@@ -75,8 +80,8 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmain.lib;shell32.lib;assimp-vc130-mtd.lib;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64\glew32.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGL.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgets.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Gui.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\release;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmain.lib;shell32.lib;assimp-vc130-mtd.lib;GlU32.lib;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\pugixml-1.7\pugixml-1.7\scripts\vs2015\Win32_Debug\pugixml.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGL.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgets.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Gui.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\assimp_build\code\release;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\pugixml-1.7\pugixml-1.7\scripts\vs2015\Win32_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -98,15 +103,20 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;..\LIBS\assimp-3.2\include;..\LIBS\glm_build;..\LIBS\assimp-3.2\include;..\LIBS\glew-1.13.0\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;debug;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;LIBS\assimp-3.2\include;LIBS\glm_build;LIBS\boost_1_61_0;include;LIBS\assimp-3.2\include;D:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src;LIBS\pugixml-1.7\pugixml-1.7\src;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtOpenGL;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtWidgets;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtGui;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtANGLE;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\include\QtCore;debug;.;..\..\..\..\Qt\Qt5.6.1\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <ForcedIncludeFiles>include\kaola_engine\gl3d.hpp;include\kaola_engine\gl3d_framebuffer.hpp;include\kaola_engine\gl3d_general_texture.hpp;include\kaola_engine\gl3d_image.hpp;include\kaola_engine\gl3d_material.hpp;include\kaola_engine\gl3d_mesh.h;include\kaola_engine\gl3d_obj_authority.h;include\kaola_engine\gl3d_object.h;include\kaola_engine\gl3d_out_headers.h;include\kaola_engine\gl3d_render_process.hpp;include\kaola_engine\gl3d_scene.h;include\kaola_engine\gl3d_texture.hpp;include\kaola_engine\gl3d_viewer.h;include\kaola_engine\glheaders.h;include\kaola_engine\kaola_engine.h;include\kaola_engine\log.h;include\kaola_engine\model_manager.hpp;include\kaola_engine\mopenglview.h;include\kaola_engine\Program.hpp;include\kaola_engine\Shader.hpp;include\kaola_engine\shader_manager.hpp;src\Qt_tests\mainwindow.h;src\Qt_tests\ray_tracer.h;include\utils\gl3d_scale.h;include\utils\gl3d_global_param.h;include\kaola_engine\gl3d_post_process.h;include\utils\gl3d_utils.h;include\utils\gl3d_post_process_template.h;include\kaola_engine\gl3d_general_light_source.h;include\editor\bounding_box.h;src\Qt_tests\drawhomewin.h;include\editor\vertex.h;include\utils\gl3d_path_config.h;src\Qt_tests\ui\pickupdig.h;include\editor\gl3d_wall.h;include\editor\gl_utility.h;include\utils\gl3d_lock.h;include\utils\gl3d_math.h;src\Qt_tests\ui\drawoption.h;src\utils\qui\frmmessagebox.h;src\utils\qui\iconhelper.h;src\utils\qui\myhelper.h;include\editor\gl3d_surface_object.h;include\kaola_engine\gl3d_abstract_object.h;include\editor\surface.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ObjectFileName>debug\</ObjectFileName>
       <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>include\kaola_engine\gl3d.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\qttest.pch</PrecompiledHeaderOutputFile>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -116,8 +126,8 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmaind.lib;shell32.lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\debug\assimp-vc130-mtd.lib;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64\glew32.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGLd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgetsd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Guid.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\LIBS\assimp_build\code\debug;D:\User\Desktop\KLM\LIBS\glew-1.13.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\qtmaind.lib;shell32.lib;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\assimp_build\code\debug\assimp-vc130-mtd.lib;GlU32.lib;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\pugixml-1.7\pugixml-1.7\scripts\vs2015\Win32_Debug\pugixml.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5OpenGLd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Widgetsd.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Guid.lib;D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Qt\Qt5.6.1\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\assimp_build\code\debug;D:\User\Desktop\KLM\qt_opengl_engine\LIBS\pugixml-1.7\pugixml-1.7\scripts\vs2015\Win32_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -137,68 +147,187 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="kaola_engine\Program.cpp" />
-    <ClCompile Include="kaola_engine\Shader.cpp" />
-    <ClCompile Include="kaola_engine\default_shader_param.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_framebuffer.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_general_texture.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_image.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_material.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_mesh.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_object.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_render_process.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_scene.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_texture.cpp" />
-    <ClCompile Include="kaola_engine\gl3d_viewer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainwindow.cpp" />
-    <ClCompile Include="kaola_engine\model_manager.cpp" />
-    <ClCompile Include="models_cfg.cpp" />
-    <ClCompile Include="kaola_engine\mopenglview.cpp" />
-    <ClCompile Include="kaola_engine\render_processes.cpp" />
-    <ClCompile Include="kaola_engine\shader_list.cpp" />
-    <ClCompile Include="kaola_engine\shader_manager.cpp" />
+    <ClCompile Include="src\render\Program.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="src\editor\bounding_box.cpp" />
+    <ClCompile Include="src\render\render_addons\default_shader_param.cpp" />
+    <ClCompile Include="src\Qt_tests\drawhomewin.cpp" />
+    <ClCompile Include="src\Qt_tests\ui\drawoption.cpp" />
+    <ClCompile Include="src\utils\qui\frmmessagebox.cpp" />
+    <ClCompile Include="src\render\gl3d_abstract_object.cpp" />
+    <ClCompile Include="src\render\gl3d_framebuffer.cpp" />
+    <ClCompile Include="src\render\gl3d_general_light_source.cpp" />
+    <ClCompile Include="src\render\gl3d_general_texture.cpp" />
+    <ClCompile Include="src\utils\gl3d_global_param.cpp" />
+    <ClCompile Include="src\render\gl3d_image.cpp" />
+    <ClCompile Include="src\utils\gl3d_lock.cpp" />
+    <ClCompile Include="src\render\gl3d_material.cpp" />
+    <ClCompile Include="src\utils\gl3d_math.cpp" />
+    <ClCompile Include="src\render\gl3d_mesh.cpp" />
+    <ClCompile Include="src\render\gl3d_object.cpp" />
+    <ClCompile Include="src\render\gl3d_post_process.cpp" />
+    <ClCompile Include="src\render\render_addons\gl3d_post_process_template.cpp" />
+    <ClCompile Include="src\render\gl3d_render_process.cpp" />
+    <ClCompile Include="src\utils\gl3d_scale.cpp" />
+    <ClCompile Include="src\render\gl3d_scene.cpp" />
+    <ClCompile Include="src\editor\gl3d_surface_object.cpp" />
+    <ClCompile Include="src\render\gl3d_texture.cpp" />
+    <ClCompile Include="src\render\gl3d_viewer.cpp" />
+    <ClCompile Include="src\editor\gl3d_wall.cpp" />
+    <ClCompile Include="src\editor\gl_utility.cpp" />
+    <ClCompile Include="src\utils\qui\iconhelper.cpp" />
+    <ClCompile Include="src\Qt_tests\main.cpp" />
+    <ClCompile Include="src\Qt_tests\mainwindow.cpp" />
+    <ClCompile Include="src\editor\merchandise.cpp" />
+    <ClCompile Include="src\render\model_manager.cpp" />
+    <ClCompile Include="src\Qt_tests\models_cfg.cpp" />
+    <ClCompile Include="src\render\mopenglview.cpp" />
+    <ClCompile Include="src\Qt_tests\ui\pickupdig.cpp" />
+    <ClCompile Include="src\render\render_addons\post_processer_1.cpp" />
+    <ClCompile Include="src\Qt_tests\ray_tracer.cpp" />
+    <ClCompile Include="src\render\render_addons\render_processes.cpp" />
+    <ClCompile Include="src\render\render_addons\shader_list.cpp" />
+    <ClCompile Include="src\render\shader_manager.cpp" />
+    <ClCompile Include="src\render\light_system\simple_directional_light.cpp" />
+    <ClCompile Include="src\editor\surface.cpp" />
+    <ClCompile Include="src\editor\vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="kaola_engine\Program.hpp" />
-    <ClInclude Include="kaola_engine\Shader.hpp" />
-    <ClInclude Include="kaola_engine\gl3d.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_framebuffer.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_general_texture.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_image.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_material.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_obj_authority.h" />
-    <ClInclude Include="kaola_engine\gl3d_out_headers.h" />
-    <ClInclude Include="kaola_engine\gl3d_render_process.hpp" />
-    <ClInclude Include="kaola_engine\gl3d_texture.hpp" />
-    <ClInclude Include="kaola_engine\glheaders.h" />
-    <ClInclude Include="kaola_engine\kaola_engine.h" />
-    <ClInclude Include="kaola_engine\log.h" />
-    <CustomBuild Include="mainwindow.h">
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore mainwindow.h -o release\moc_mainwindow.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC mainwindow.h</Message>
+    <ClInclude Include="include\kaola_engine\Program.hpp" />
+    <ClInclude Include="include\kaola_engine\Shader.hpp" />
+    <ClInclude Include="include\editor\bounding_box.h" />
+    <CustomBuild Include="src\Qt_tests\drawhomewin.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\drawhomewin.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\drawhomewin.h -o release\moc_drawhomewin.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC src/Qt_tests/drawhomewin.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_drawhomewin.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\drawhomewin.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\drawhomewin.h -o debug\moc_drawhomewin.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC src/Qt_tests/drawhomewin.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_drawhomewin.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="src\Qt_tests\ui\drawoption.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\ui\drawoption.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\ui\drawoption.h -o release\moc_drawoption.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC src/Qt_tests/ui/drawoption.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_drawoption.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\ui\drawoption.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\ui\drawoption.h -o debug\moc_drawoption.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC src/Qt_tests/ui/drawoption.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_drawoption.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="src\utils\qui\frmmessagebox.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\utils\qui\frmmessagebox.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\utils\qui\frmmessagebox.h -o release\moc_frmmessagebox.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC src/utils/qui/frmmessagebox.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_frmmessagebox.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\utils\qui\frmmessagebox.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\utils\qui\frmmessagebox.h -o debug\moc_frmmessagebox.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC src/utils/qui/frmmessagebox.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_frmmessagebox.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="include\kaola_engine\gl3d.hpp">
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">echo /*-------------------------------------------------------------------- >include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * Precompiled header source file used by Visual Studio.NET to generate>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * the .pch file.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * Due to issues with the dependencies checker within the IDE, it>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * sometimes fails to recompile the PCH file, if we force the IDE to>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * create the PCH file directly from the header file.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * specified, and is used as the common stdafx.cpp. The file is only>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * generated when creating .vcxproj project files, and is not used for>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * command line compilations by nmake.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * WARNING: All changes made in this file will be lost.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo --------------------------------------------------------------------*/>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo #include &quot;gl3d.hpp&quot;>>include\kaola_engine\gl3d.hpp.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">Generating precompiled header source file &apos;include\kaola_engine\gl3d.hpp.cpp&apos; ...</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">include\kaola_engine\gl3d.hpp.cpp;%(Outputs)</Outputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">echo /*-------------------------------------------------------------------- >include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * Precompiled header source file used by Visual Studio.NET to generate>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * the .pch file.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * Due to issues with the dependencies checker within the IDE, it>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * sometimes fails to recompile the PCH file, if we force the IDE to>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * create the PCH file directly from the header file.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * specified, and is used as the common stdafx.cpp. The file is only>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * generated when creating .vcxproj project files, and is not used for>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * command line compilations by nmake.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo *>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo * WARNING: All changes made in this file will be lost.>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo --------------------------------------------------------------------*/>>include\kaola_engine\gl3d.hpp.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;echo #include &quot;gl3d.hpp&quot;>>include\kaola_engine\gl3d.hpp.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Generating precompiled header source file &apos;include\kaola_engine\gl3d.hpp.cpp&apos; ...</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">include\kaola_engine\gl3d.hpp.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="include\kaola_engine\gl3d_abstract_object.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_framebuffer.hpp" />
+    <ClInclude Include="include\kaola_engine\gl3d_general_light_source.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_general_texture.hpp" />
+    <ClInclude Include="include\utils\gl3d_global_param.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_image.hpp" />
+    <ClInclude Include="include\utils\gl3d_lock.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_material.hpp" />
+    <ClInclude Include="include\utils\gl3d_math.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_mesh.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_obj_authority.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_object.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_out_headers.h" />
+    <ClInclude Include="include\utils\gl3d_path_config.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_post_process.h" />
+    <ClInclude Include="include\utils\gl3d_post_process_template.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_render_process.hpp" />
+    <ClInclude Include="include\utils\gl3d_scale.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_scene.h" />
+    <ClInclude Include="include\editor\gl3d_surface_object.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_texture.hpp" />
+    <ClInclude Include="include\utils\gl3d_utils.h" />
+    <ClInclude Include="include\kaola_engine\gl3d_viewer.h" />
+    <ClInclude Include="include\editor\gl3d_wall.h" />
+    <ClInclude Include="include\editor\gl_utility.h" />
+    <ClInclude Include="include\kaola_engine\glheaders.h" />
+    <ClInclude Include="src\utils\qui\iconhelper.h" />
+    <ClInclude Include="include\kaola_engine\kaola_engine.h" />
+    <ClInclude Include="include\kaola_engine\log.h" />
+    <CustomBuild Include="src\Qt_tests\mainwindow.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\mainwindow.h -o release\moc_mainwindow.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC src/Qt_tests/mainwindow.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_mainwindow.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore mainwindow.h -o debug\moc_mainwindow.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC mainwindow.h</Message>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\mainwindow.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\mainwindow.h -o debug\moc_mainwindow.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC src/Qt_tests/mainwindow.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_mainwindow.cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="kaola_engine\model_manager.hpp" />
-    <CustomBuild Include="kaola_engine\mopenglview.h">
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore kaola_engine\mopenglview.h -o release\moc_mopenglview.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC kaola_engine/mopenglview.h</Message>
+    <ClInclude Include="include\editor\merchandise.h" />
+    <ClInclude Include="include\kaola_engine\model_manager.hpp" />
+    <CustomBuild Include="include\kaola_engine\mopenglview.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">include\kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore include\kaola_engine\mopenglview.h -o release\moc_mopenglview.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC include/kaola_engine/mopenglview.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_mopenglview.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glm_build -ID:/User/Desktop/KLM/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/LIBS/glew-1.13.0/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore kaola_engine\mopenglview.h -o debug\moc_mopenglview.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC kaola_engine/mopenglview.h</Message>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">include\kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore include\kaola_engine\mopenglview.h -o debug\moc_mopenglview.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC include/kaola_engine/mopenglview.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_mopenglview.cpp;%(Outputs)</Outputs>
     </CustomBuild>
-    <ClInclude Include="kaola_engine\shader_manager.hpp" />
-    <ClInclude Include="ui_mainwindow.h" />
+    <ClInclude Include="src\utils\qui\myhelper.h" />
+    <CustomBuild Include="src\Qt_tests\ui\pickupdig.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\ui\pickupdig.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\ui\pickupdig.h -o release\moc_pickupdig.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC src/Qt_tests/ui/pickupdig.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_pickupdig.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\ui\pickupdig.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\moc.exe  -DUNICODE -DWIN32 -DWIN64 -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1900 -D_WIN32 -D_WIN64 -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/mkspecs/win32-msvc2015 -ID:/User/Desktop/KLM/qt_opengl_engine -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/glm_build -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/boost_1_61_0 -ID:/User/Desktop/KLM/qt_opengl_engine/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/assimp-3.2/include -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/src -ID:/User/Desktop/KLM/qt_opengl_engine/LIBS/pugixml-1.7/pugixml-1.7/src -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtOpenGL -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtWidgets -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtGui -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtANGLE -ID:/Qt/Qt5.6.1/5.6/msvc2015_64/include/QtCore src\Qt_tests\ui\pickupdig.h -o debug\moc_pickupdig.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC src/Qt_tests/ui/pickupdig.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_pickupdig.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="src\Qt_tests\ray_tracer.h" />
+    <ClInclude Include="include\kaola_engine\shader_manager.hpp" />
+    <ClInclude Include="include\editor\surface.h" />
+    <ClInclude Include="include\editor\vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\kaola_engine\gl3d.hpp.cpp">
+      <ForcedIncludeFiles Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">gl3d.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">Create</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">gl3d.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="debug\moc_drawhomewin.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_drawhomewin.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_drawoption.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_drawoption.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_frmmessagebox.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_frmmessagebox.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="debug\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
     </ClCompile>
@@ -211,48 +340,121 @@
     <ClCompile Include="release\moc_mopenglview.cpp">
       <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="debug\moc_pickupdig.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_pickupdig.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\qrc_rc.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\qrc_rc.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\qrc_res.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\qrc_res.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClInclude Include="ui_drawhomewin.h" />
+    <ClInclude Include="ui_frmmessagebox.h" />
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="mainwindow.ui">
+    <CustomBuild Include="src\Qt_tests\drawhomewin.ui">
       <FileType>Document</FileType>
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">mainwindow.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe mainwindow.ui -o ui_mainwindow.h</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">UIC mainwindow.ui</Message>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\drawhomewin.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\Qt_tests\drawhomewin.ui -o ui_drawhomewin.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">UIC src/Qt_tests/drawhomewin.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">ui_drawhomewin.h;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\drawhomewin.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\Qt_tests\drawhomewin.ui -o ui_drawhomewin.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">UIC src/Qt_tests/drawhomewin.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">ui_drawhomewin.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="src\utils\qui\frmmessagebox.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\utils\qui\frmmessagebox.ui;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\utils\qui\frmmessagebox.ui -o ui_frmmessagebox.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">UIC src/utils/qui/frmmessagebox.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">ui_frmmessagebox.h;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\utils\qui\frmmessagebox.ui;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\utils\qui\frmmessagebox.ui -o ui_frmmessagebox.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">UIC src/utils/qui/frmmessagebox.ui</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">ui_frmmessagebox.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="src\Qt_tests\mainwindow.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\Qt_tests\mainwindow.ui;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\Qt_tests\mainwindow.ui -o ui_mainwindow.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">UIC src/Qt_tests/mainwindow.ui</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">ui_mainwindow.h;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">mainwindow.ui;kaola_engine\mopenglview.h;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe mainwindow.ui -o ui_mainwindow.h</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">UIC mainwindow.ui</Message>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\Qt_tests\mainwindow.ui;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\uic.exe src\Qt_tests\mainwindow.ui -o ui_mainwindow.h</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">UIC src/Qt_tests/mainwindow.ui</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">ui_mainwindow.h;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="kaola_engine\default.fdata" />
-    <None Include="kaola_engine\default.vdata" />
-    <None Include="kaola_engine\dm.fdata" />
-    <None Include="kaola_engine\dm.vdata" />
-    <None Include="kaola_engine\dm2.fdata" />
-    <None Include="kaola_engine\dm2.vdata" />
-    <None Include="kaola_engine\image.fdata" />
-    <None Include="kaola_engine\image.vdata" />
-    <None Include="kaola_engine\multiple_text.fdata" />
-    <None Include="kaola_engine\multiple_text.vdata" />
-    <None Include="kaola_engine\multiple_text_vector.fdata" />
-    <None Include="kaola_engine\multiple_text_vector.vdata" />
-    <None Include="kaola_engine\multiple_text_vector_shadow.fdata" />
-    <None Include="kaola_engine\multiple_text_vector_shadow.vdata" />
-    <None Include="kaola_engine\picking_mask.fdata" />
-    <None Include="kaola_engine\picking_mask.vdata" />
-    <None Include="kaola_engine\shadow_mask.fdata" />
-    <None Include="kaola_engine\shadow_mask.vdata" />
-    <None Include="kaola_engine\skybox.fdata" />
-    <None Include="kaola_engine\skybox.vdata" />
-    <None Include="kaola_engine\text_vector_light.fdata" />
-    <None Include="kaola_engine\text_vector_light.vdata" />
-    <None Include="kaola_engine\vector_light.fdata" />
-    <None Include="kaola_engine\vector_light.vdata" />
-    <None Include="kaola_engine\vector_light_toon.fdata" />
-    <None Include="kaola_engine\vector_light_toon.vdata" />
+    <None Include="images\3d_px.png" />
+    <None Include="images\Action_Redo_32px.png" />
+    <None Include="images\Action_Undo_32px.png" />
+    <None Include="images\Application_Blueprint_32px.png" />
+    <None Include="images\Could_Disk_32px.png" />
+    <None Include="images\File_Receive_32px.png" />
+    <None Include="images\Gnome_System_Shutdown_32px.png" />
+    <None Include="src\utils\qui\image\add-line_horizontal.png" />
+    <None Include="src\utils\qui\image\add-line_vertical.png" />
+    <None Include="src\utils\qui\image\array_down.png" />
+    <None Include="src\utils\qui\image\black.css" />
+    <None Include="src\utils\qui\image\blue.css" />
+    <None Include="images\brush_paint_32px.png" />
+    <None Include="src\utils\qui\image\checkbox_checked.png" />
+    <None Include="src\utils\qui\image\checkbox_unchecked.png" />
+    <None Include="images\comment_user_info_32px.png" />
+    <None Include="images\document_import_picture_32px.png" />
+    <None Include="src\utils\qui\image\error.png" />
+    <None Include="images\export_mail_32px.png" />
+    <None Include="images\file_new_32px.png" />
+    <None Include="src\utils\qui\image\fontawesome-webfont.ttf" />
+    <None Include="src\utils\qui\image\gray.css" />
+    <None Include="src\utils\qui\image\info.png" />
+    <None Include="src\utils\qui\image\navy.css" />
+    <None Include="images\object_flip_horizontal_32px.png" />
+    <None Include="images\point_24px.png" />
+    <None Include="src\utils\qui\image\qt_zh_CN.qm" />
+    <None Include="src\utils\qui\image\question.png" />
+    <None Include="src\utils\qui\image\radio_normal.png" />
+    <None Include="src\utils\qui\image\radio_selected.png" />
+    <CustomBuild Include="src\utils\qui\rc.qrc">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">src\utils\qui\rc.qrc;src\utils\qui\image\blue.css;src\utils\qui\image\gray.css;src\utils\qui\image\fontawesome-webfont.ttf;src\utils\qui\image\radio_normal.png;src\utils\qui\image\sub-line_vertical.png;src\utils\qui\image\checkbox_checked.png;src\utils\qui\image\black.css;src\utils\qui\image\array_down.png;src\utils\qui\image\info.png;src\utils\qui\image\add-line_vertical.png;src\utils\qui\image\checkbox_unchecked.png;src\utils\qui\image\radio_selected.png;src\utils\qui\image\sub-line_horizontal.png;src\utils\qui\image\error.png;src\utils\qui\image\navy.css;src\utils\qui\image\add-line_horizontal.png;src\utils\qui\image\question.png;src\utils\qui\image\qt_zh_CN.qm;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name rc src\utils\qui\rc.qrc -o release\qrc_rc.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name rc src\utils\qui\rc.qrc -o release\qrc_rc.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">RCC src/utils/qui/rc.qrc, RCC src/utils/qui/rc.qrc</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\qrc_rc.cpp;release\qrc_rc.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">src\utils\qui\rc.qrc;src\utils\qui\image\blue.css;src\utils\qui\image\gray.css;src\utils\qui\image\fontawesome-webfont.ttf;src\utils\qui\image\radio_normal.png;src\utils\qui\image\sub-line_vertical.png;src\utils\qui\image\checkbox_checked.png;src\utils\qui\image\black.css;src\utils\qui\image\array_down.png;src\utils\qui\image\info.png;src\utils\qui\image\add-line_vertical.png;src\utils\qui\image\checkbox_unchecked.png;src\utils\qui\image\radio_selected.png;src\utils\qui\image\sub-line_horizontal.png;src\utils\qui\image\error.png;src\utils\qui\image\navy.css;src\utils\qui\image\add-line_horizontal.png;src\utils\qui\image\question.png;src\utils\qui\image\qt_zh_CN.qm;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name rc src\utils\qui\rc.qrc -o debug\qrc_rc.cpp&#x000D;&#x000A;if errorlevel 1 goto VCEnd&#x000D;&#x000A;D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name rc src\utils\qui\rc.qrc -o debug\qrc_rc.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">RCC src/utils/qui/rc.qrc, RCC src/utils/qui/rc.qrc</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\qrc_rc.cpp;debug\qrc_rc.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="res.qrc">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">res.qrc;images\File_Receive_32px.png;images\object_flip_horizontal_32px.png;images\Action_Redo_32px.png;images\Action_Undo_32px.png;images\file_new_32px.png;images\square_delicious_45.36px.png;images\point_24px.png;images\document_import_picture_32px.png;images\Application_Blueprint_32px.png;images\Gnome_System_Shutdown_32px.png;images\Could_Disk_32px.png;images\square_dashed_48px.png;images\brush_paint_32px.png;images\comment_user_info_32px.png;images\3d_px.png;images\export_mail_32px.png;images\square_four_angle_point_48px.png;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name res res.qrc -o release\qrc_res.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">RCC res.qrc</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\qrc_res.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">res.qrc;images\File_Receive_32px.png;images\object_flip_horizontal_32px.png;images\Action_Redo_32px.png;images\Action_Undo_32px.png;images\file_new_32px.png;images\square_delicious_45.36px.png;images\point_24px.png;images\document_import_picture_32px.png;images\Application_Blueprint_32px.png;images\Gnome_System_Shutdown_32px.png;images\Could_Disk_32px.png;images\square_dashed_48px.png;images\brush_paint_32px.png;images\comment_user_info_32px.png;images\3d_px.png;images\export_mail_32px.png;images\square_four_angle_point_48px.png;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">D:\Qt\Qt5.6.1\5.6\msvc2015_64\bin\rcc.exe -name res res.qrc -o debug\qrc_res.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">RCC res.qrc</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\qrc_res.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <None Include="images\square_dashed_48px.png" />
+    <None Include="images\square_delicious_45.36px.png" />
+    <None Include="images\square_four_angle_point_48px.png" />
+    <None Include="src\utils\qui\image\sub-line_horizontal.png" />
+    <None Include="src\utils\qui\image\sub-line_vertical.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
