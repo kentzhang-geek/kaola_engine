@@ -52,8 +52,9 @@ void resource::default_model_loader::do_work(void *object) {
 
     gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
-    this->main_scene->add_obj(QPair<int, gl3d::abstract_object * >(
-            render_id++, obj));
+    this->main_scene->get_objects()->insert(render_id++, obj);
+//    this->main_scene->add_obj(QPair<int, gl3d::abstract_object * >(render_id++, obj));
+    this->main_scene->get_objects()->insert(render_id++, obj);
     gl3d_lock::shared_instance()->render_lock.unlock();
     gl3d_lock::shared_instance()->loader_lock.unlock();
 }
@@ -86,7 +87,8 @@ Merchandise *manager::get_merchandise_item(string id) {
 
 void manager::perform_async_res_load(res_loader * ld, string id) {
     ld->set_obj_res_id(id);
-    ld->start();
+//    ld->start();
+    ld->run();
     return;
 }
 
