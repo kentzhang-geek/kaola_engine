@@ -1,4 +1,6 @@
 #include "resource_and_network/klm_resource_manager.h"
+#include "utils/gl3d_lock.h"
+#include "utils/gl3d_global_param.h"
 #include <QMutex>
 
 using namespace std;
@@ -13,7 +15,7 @@ static inline std::string get_file_name_by_item(resource::item in) {
 }
 
 void res_loader::run() {
-    this->do_work((void *) &manager::shared_instance()->get_res_item(this->get_obj_res_id()));
+    this->do_work((void *) &(manager::shared_instance()->get_res_item(this->get_obj_res_id())));
     return;
 }
 
@@ -24,7 +26,6 @@ void res_loader::do_work(void *object) {
 }
 
 static int render_id = 10086;
-static QMutex loader_lock;
 void resource::default_model_loader::do_work(void *object) {
     std::string * name = (std::string *)object;
     gl3d::object *obj = new gl3d::object((char *)name->c_str());
@@ -39,12 +40,22 @@ void resource::default_model_loader::do_work(void *object) {
     obj->merge_meshes();
     obj->recalculate_normals();
     obj->convert_left_hand_to_right_hand();
-    obj->buffer_data();
+//    obj->buffer_data();
 
-    loader_lock.lock();
+    // for ground
+    if (this->render_code | GL3D_SCENE_DRAW_GROUND) {
+        float * alpha = new float;
+        (*alpha) = 0.90;
+        obj->user_data.clear();
+        obj->user_data.insert(string("alpha"), alpha);
+    }
+
+    gl3d_lock::shared_instance()->loader_lock.lock();
+    gl3d_lock::shared_instance()->render_lock.lock();
     this->main_scene->add_obj(QPair<int, gl3d::abstract_object * >(
             render_id++, obj));
-    loader_lock.unlock();
+    gl3d_lock::shared_instance()->render_lock.unlock();
+    gl3d_lock::shared_instance()->loader_lock.unlock();
 }
 
 manager *manager::shared_instance() {

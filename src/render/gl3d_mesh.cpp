@@ -13,9 +13,8 @@ using namespace gl3d;
 
 void gl3d::mesh::init() {
     memset(this, 0, sizeof(gl3d::mesh));
-    // gen vbo
-    GL3D_GL()->glGenBuffers(1, &this->vbo);
-    GL3D_GL()->glGenBuffers(1, &this->idx);
+    this->vbo = -1;
+    this->idx = -1;
     this->bounding_value_max = glm::vec3(0.0f);
     this->bounding_value_min = glm::vec3(0.0f);
     this->texture_repeat = false;
@@ -24,9 +23,11 @@ void gl3d::mesh::init() {
 }
 
 gl3d::mesh::~mesh() {
-    GL3D_GL()->glDeleteBuffers(1, &this->vbo);
-    GL3D_GL()->glDeleteBuffers(1, &this->idx);
-    
+    if (this->data_buffered) {
+        GL3D_GL()->glDeleteBuffers(1, &this->vbo);
+        GL3D_GL()->glDeleteBuffers(1, &this->idx);
+    }
+
     if (NULL != this->points_data) {
         free(this->points_data);
     }
@@ -136,6 +137,10 @@ gl3d::mesh::mesh(obj_points * pts, int number_of_points,
 }
 
 void gl3d::mesh::buffer_data() {
+    // gen vbo
+    GL3D_GL()->glGenBuffers(1, &this->vbo);
+    GL3D_GL()->glGenBuffers(1, &this->idx);
+    // buffer data
     GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->idx);
     GL3D_GL()->glBufferData(GL_ARRAY_BUFFER, sizeof(obj_points) * this->num_pts, this->points_data, GL_STATIC_DRAW);

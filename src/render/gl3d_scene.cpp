@@ -93,7 +93,7 @@ bool scene::init(scene_property * property) {
 bool scene::add_obj(QPair<int, gl3d::abstract_object *> obj_key_pair) {
     this->objects.insert(obj_key_pair.first, obj_key_pair.second);
     obj_key_pair.second->set_id((GLuint) obj_key_pair.first);
-    obj_key_pair.second->buffer_data();
+//    obj_key_pair.second->buffer_data();
     return true;
 }
 
@@ -339,6 +339,7 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
+    obj->buffer_data();
     
     // TODO : set matrix
     // set MVP

@@ -38,6 +38,24 @@ void gl3d_texture::set_parami(bool repeat) {
     }
 }
 
+gl3d_texture::gl3d_texture(gl3d_image * _img) : gl3d_general_texture(
+        gl3d_general_texture::GL3D_RGBA, 10, 10) {
+    this->init();
+
+    // create image
+    this->img = _img;
+    this->texture_name = _img->name;
+
+    this->set_size_x(this->img->width);
+    this->set_size_y(this->img->height);
+    GLuint ooo = this->get_text_obj();
+    this->buffer_data(this->img->data);
+
+    // 贴图缓存好之后就删除通用内存中的图片数据
+    delete this->img;
+    this->img = NULL;
+}
+
 gl3d_texture::gl3d_texture(char * filename) : gl3d_general_texture(
                                                   gl3d_general_texture::GL3D_RGBA, 10, 10) {
     this->init();
