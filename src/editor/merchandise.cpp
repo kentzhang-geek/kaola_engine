@@ -47,7 +47,7 @@ float Surfacing::getPrice() {
     return 0.0f;
 }
 
-Merchandise::MerchandiseType Surfacing::getType() const {
+Merchandise::MerchandiseType Surfacing::getType() {
     return Merchandise::MerchandiseType::Surfacing;
 }
 
@@ -58,16 +58,16 @@ Furniture::~Furniture() {
     return ;
 }
 
-float Furniture::getPrice() const {
+float Furniture::getPrice()  {
     GL3D_UTILS_THROW("Not implemented yet");
     return 0.0f;
 }
 
-Merchandise::MerchandiseType Furniture::getType() const {
+Merchandise::MerchandiseType Furniture::getType() {
     return MerchandiseType::Furniture;
 }
 
-string Furniture::getPickID() const {
+string Furniture::getPickID() {
     return this->pickID;
 }
 
