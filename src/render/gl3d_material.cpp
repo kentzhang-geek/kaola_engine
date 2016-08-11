@@ -21,38 +21,31 @@ gl3d_material::gl3d_material(aiMaterial * mtl) {
     path = path + string(GL3D_PATH_SEPRATOR);
     string text_file_name;
     aiString text_path;
-    gl3d_texture * ins_text;
-    
+
     // 加载3种类型的贴图
     text_file_name.clear();
     text_path.Clear();
     if(AI_SUCCESS == mtl->GetTexture(aiTextureType_DIFFUSE, 0, &text_path)) {
         // combine absolute file path
         text_file_name = path + string(text_path.C_Str());
-//        ins_text = new gl3d_texture((char *)text_file_name.c_str());
         // KENT WARN : 如果两个text的index相同，则不进行覆盖
-        this->type_to_img_for_texture.insert(diffuse, new gl3d_image((char *)text_file_name.c_str()));
-        //            log_c("OK load texture index is %d, file name is %s", i, text_file_name.c_str());
+        this->type_to_image.insert(diffuse, new gl3d_image((char *)text_file_name.c_str()));
     }
     text_file_name.clear();
     text_path.Clear();
     if(AI_SUCCESS == mtl->GetTexture(aiTextureType_AMBIENT, 0, &text_path)) {
         // combine absolute file path
         text_file_name = path + string(text_path.C_Str());
-//        ins_text = new gl3d_texture((char *)text_file_name.c_str());
         // KENT WARN : 如果两个text的index相同，则不进行覆盖
-        this->type_to_img_for_texture.insert(ambient, new gl3d_image((char *)text_file_name.c_str()));
-        //            log_c("OK load texture index is %d, file name is %s", i, text_file_name.c_str());
+        this->type_to_image.insert(ambient, new gl3d_image((char *)text_file_name.c_str()));
     }
     text_file_name.clear();
     text_path.Clear();
     if(AI_SUCCESS == mtl->GetTexture(aiTextureType_SPECULAR, 0, &text_path)) {
         // combine absolute file path
         text_file_name = path + string(text_path.C_Str());
-//        ins_text = new gl3d_texture((char *)text_file_name.c_str());
         // KENT WARN : 如果两个text的index相同，则不进行覆盖
-        this->type_to_img_for_texture.insert(specular, new gl3d_image((char *)text_file_name.c_str()));
-        //            log_c("OK load texture index is %d, file name is %s", i, text_file_name.c_str());
+        this->type_to_image.insert(specular, new gl3d_image((char *)text_file_name.c_str()));
     }
     
     // 加载3种类型的颜色
@@ -72,7 +65,7 @@ gl3d_material::gl3d_material(aiMaterial * mtl) {
     }
     
     // 设置empty标志
-    if ((this->colors.size() == 0) && (this->type_to_img_for_texture.size() == 0)) {
+    if ((this->colors.size() == 0) && (this->textures.size() == 0)) {
         this->is_empty = true;
         log_c("this mtl is empty!");
     }
@@ -82,6 +75,11 @@ gl3d_material::~gl3d_material() {
     auto iter = this->textures.begin();
     for (; iter != this->textures.end(); iter++) {
         delete iter.value();
+    }
+    for (auto it = this->type_to_image.begin();
+            it != this->type_to_image.end();
+            it++) {
+        delete it.value();
     }
     return;
 }
@@ -149,26 +147,25 @@ void gl3d_material::use_this(GLuint pro) {
     }
 }
 
+void gl3d_material::init() {
+    this->colors.clear();
+    this->textures.clear();
+    this->type_to_image.clear();
+    this->data_buffered = false;
+    this->is_empty = false;
+}
+
 void gl3d_material::buffer_data() {
     if (this->data_buffered) {
         return;
     }
-
-    for (auto it = this->type_to_img_for_texture.begin();
-            it != this->type_to_img_for_texture.end();
+    for (auto it = this->type_to_image.begin();
+            it != this->type_to_image.end();
             it++) {
-        this->textures.insert(it.key(), new gl3d_texture((gl3d_image *)it.value()));
+        this->textures.insert(it.key(), new gl3d_texture(it.value()));
     }
-    this->type_to_img_for_texture.clear();
+    this->type_to_image.clear();
     this->data_buffered = true;
-}
-
-void gl3d_material::init() {
-    this->colors.clear();
-    this->textures.clear();
-    this->type_to_img_for_texture.clear();
-    this->data_buffered  = false;
-    this->is_empty = false;
 }
 
 // 特殊用途的材质贴图

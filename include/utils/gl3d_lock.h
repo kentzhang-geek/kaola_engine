@@ -9,7 +9,6 @@ public:
     static gl3d_lock * shared_instance();
     QMutex render_lock;
     QMutex wall_lock;
-    QMutex gl_data_lock;
     QMutex loader_lock;
 private:
     gl3d_lock();
