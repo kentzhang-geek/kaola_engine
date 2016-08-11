@@ -15,7 +15,7 @@
 
 #include "gl3d_texture.hpp"
 #include "gl3d_general_texture.hpp"
-
+#include "kaola_engine/gl3d_image.hpp"
 #include "gl3d_out_headers.h"
 
 using namespace std;
@@ -32,6 +32,7 @@ namespace gl3d {
         
         QMap<material_type, gl3d_general_texture *> textures;
         QMap<material_type, ::glm::vec3> colors;
+        QMap<material_type, gl3d_image *> type_to_image;
         
         gl3d_material(aiMaterial * mtls);
         gl3d_material(string file_name);
@@ -40,6 +41,8 @@ namespace gl3d {
         ~gl3d_material();
         void use_this(GLuint pro);
         bool is_empty;
+        void buffer_data();
+        bool data_buffered;
     private:
         void init();
     };

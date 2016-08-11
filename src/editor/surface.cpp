@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QMutex>
 #include <sstream>
+#include "resource_and_network/klm_resource_manager.h"
 
 using namespace klm;
 using namespace std;
@@ -32,6 +33,7 @@ std::string SurfaceException::what() const{
 Surface::Surface(const Surface* parent)
     : parent(parent), subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
+      transformFromParent(new glm::mat4(1.0)),boundingBox(nullptr),
       scale(nullptr), rotation(nullptr),translate(nullptr),
       attachedFurniture(new QMap<std::string, Furniture*>),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
@@ -486,21 +488,22 @@ void Surface::save(pugi::xml_node &node){
 
 }
 
-bool Surface::load(const pugi::xml_node &node){
-    if(IOUtility::SURFACE.compare(node.name()) == 0){
+bool Surface::load(const pugi::xml_node &node){    
+    if(IOUtility::SURFACE.compare(std::string(node.name())) == 0){
         if(!readVerticies(node, localVerticies)){
             return false;
         }
 
-        static const string TFPXPath = "./"+IOUtility::TRANSFORM_FROM_PPARENT+"[@"+IOUtility::USAGE+"=\""
+        static const string TFPXPath = "./"+IOUtility::MATRIX+"[@"+IOUtility::USAGE+"=\""
                 +IOUtility::TRANSFORM_FROM_PPARENT+"\"]";
         pugi::xpath_node_set matrixXPathNode = node.select_nodes(TFPXPath.c_str());
-        if(matrixXPathNode.size() != 1){
+        if(matrixXPathNode.size() != 1){            
             return false;
         }
-        if(transformFromParent == nullptr){
-            transformFromParent = new glm::mat4;
-        }
+        if(this->transformFromParent == nullptr){
+            this->transformFromParent = new glm::mat4;
+        }       
+
         IOUtility::readMatrix(matrixXPathNode.first().node(), *transformFromParent);
 
         if(node.attribute(IOUtility::VISIBLE.c_str())){
@@ -514,9 +517,10 @@ bool Surface::load(const pugi::xml_node &node){
         pugi::xpath_node_set furnitureXPathes = node.select_nodes(furnitureXPath.c_str());
         for(pugi::xpath_node furnitureNode : furnitureXPathes){
             //todo: load furniture from resource management
-            Furniture* furniturePtr = nullptr;
+            std::string id = furnitureNode.node().attribute(IOUtility::FURNITURE_ID.c_str()).as_string();
+            Furniture* furniturePtr = (Furniture*)klm::resource::manager::shared_instance()->get_merchandise_item(id);
             if(furniturePtr != nullptr){
-                attachedFurniture->insert(furnitureNode.node().attribute(IOUtility::FURNITURE_ID.c_str()).as_string(), furniturePtr);
+                attachedFurniture->insert(id, furniturePtr);
 
                 static const string furnitureRotXPath = "./"+IOUtility::MATRIX;
                 pugi::xpath_node rotNode = furnitureNode.node().select_node(furnitureRotXPath.c_str());
@@ -535,63 +539,73 @@ bool Surface::load(const pugi::xml_node &node){
                 }
             }
 
-            //sub-surfaces
-            static const string subSurfaceXPath = "./"+IOUtility::SURFACE
-                    +"[@"+IOUtility::NUM_OF_VERTICES+" and @"+IOUtility::VISIBLE+"]";
-            pugi::xpath_node_set subSurfaceNodeSet = node.select_nodes(subSurfaceXPath.c_str());
-            if(subSurfaces == nullptr){
-                subSurfaces = new QVector<Surface*>;
-            }
-            for(pugi::xpath_node subSurfaceNode : subSurfaceNodeSet){
-                Surface* sub = new Surface();
-                if(sub->load(subSurfaceNode.node())){
-                    subSurfaces->push_back(sub);
-                } else {
-                    delete sub;
-                }
-            }
+        }
 
-            static const string surfaceScaleXpath = "./"+IOUtility::VECTOR+"[@"+IOUtility::SURFACE_SCALE+"]";
-            pugi::xpath_node scaleNode = node.select_node(surfaceScaleXpath.c_str());
-            if(scaleNode){
-                glm::vec3 scaleRead;
-                IOUtility::readVector(scaleNode.node(), scaleRead);
-                if(scale != nullptr){
-                    *scale = scaleRead;
-                } else {
-                    scale = new glm::vec3(scaleRead);
-                }
-            }
-
-            static const string surfaceRotXPath = "./"+IOUtility::MATRIX+"[@"+IOUtility::SURFACE_ROTATION+"]";
-            pugi::xpath_node rotNode = node.select_node(surfaceRotXPath.c_str());
-            if(rotNode){
-                glm::mat4 rotRead;
-                IOUtility::readMatrix(rotNode.node(), rotRead);
-                if(rotation != nullptr){
-                    *rotation = rotRead;
-                } else {
-                    rotation = new glm::mat4(rotRead);
-                }
-            }
-
-            static const string surfaceTransXPath = "./"+IOUtility::VECTOR+"[@"+IOUtility::SURFACE_TRANSLATE+"]";
-            pugi::xpath_node tranNode = node.select_node(surfaceTransXPath.c_str());
-            if(tranNode){
-                glm::vec3 transRead;
-                IOUtility::readVector(tranNode.node(), transRead);
-                if(translate != nullptr){
-                    *translate = transRead;
-                } else {
-                    translate = new glm::vec3(transRead);
-                }
+        static const string surfaceScaleXpath = "./"+IOUtility::VECTOR+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_SCALE+"\"]";
+        pugi::xpath_node scaleNode = node.select_node(surfaceScaleXpath.c_str());
+        if(scaleNode){
+            glm::vec3 scaleRead;
+            IOUtility::readVector(scaleNode.node(), scaleRead);
+            if(scale != nullptr){
+                *scale = scaleRead;
+            } else {
+                scale = new glm::vec3(scaleRead);
             }
         }
+
+        static const string surfaceRotXPath =
+                "./"+IOUtility::MATRIX+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_ROTATION+"\"]";
+        pugi::xpath_node rotNode = node.select_node(surfaceRotXPath.c_str());
+        if(rotNode){
+            glm::mat4 rotRead;
+            IOUtility::readMatrix(rotNode.node(), rotRead);
+            if(rotation != nullptr){
+                *rotation = rotRead;
+            } else {
+                rotation = new glm::mat4(rotRead);
+            }
+        }
+
+        static const string surfaceTransXPath = "./"+IOUtility::VECTOR+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_TRANSLATE+"\"]";
+        pugi::xpath_node tranNode = node.select_node(surfaceTransXPath.c_str());
+        if(tranNode){
+            glm::vec3 transRead;
+            IOUtility::readVector(tranNode.node(), transRead);
+            if(translate != nullptr){
+                *translate = transRead;
+            } else {
+                translate = new glm::vec3(transRead);
+            }
+        }
+
+        static const string subSurfaceXPath = "./"+IOUtility::SURFACE
+                    +"[@"+IOUtility::NUM_OF_VERTICES+" and @"+IOUtility::VISIBLE+"]";
+        pugi::xpath_node_set subSurfaceNodeSet = node.select_nodes(subSurfaceXPath.c_str());
+        if(subSurfaces == nullptr){
+            subSurfaces = new QVector<Surface*>;
+        }
+        for(pugi::xpath_node subSurfaceNode : subSurfaceNodeSet){
+            Surface* sub = new Surface(this);
+            if(sub->load(subSurfaceNode.node())){
+                subSurfaces->push_back(sub);
+            } else {
+                delete sub;
+            }
+        }
+
+        if(boundingBox != nullptr){
+            delete boundingBox;
+        }
+        boundingBox = new Surface::BoundingBox(*localVerticies);
+        boundingBox->generateTexture(*localVerticies);
+
+        updateSurfaceMesh();
+        updateConnectionMesh();
 
         return true;
     } else {
         return false;
-    }
+    }    
 }
 
 void Surface::updateSurfaceMesh(){
@@ -981,8 +995,7 @@ void Surface::writeVerticies(pugi::xml_node &node, const QVector<Surface::Vertex
 bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex *> *ret){
     static std::string xpath = "./"+IOUtility::VERTEX + "[" +
             "@"+ IOUtility::X+" and @"+ IOUtility::Y+" and @"+ IOUtility::Z+
-            " and @"+ IOUtility::Z+" and @"+ IOUtility::W+" and @"+ IOUtility::H+
-            " and @"+ IOUtility::INDEX+
+            +" and @"+ IOUtility::W+" and @"+ IOUtility::H+" and @"+ IOUtility::INDEX+
             "]";
 
     pugi::xml_attribute nov = node.attribute(IOUtility::NUM_OF_VERTICES.c_str());
@@ -1002,12 +1015,13 @@ bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex 
     }
 
     pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());
+    std::cout<<"-------------------------------"<<std::endl;
     for(pugi::xpath_node vertexNode : vertexNodes){
         int index = vertexNode.node().attribute(IOUtility::INDEX.c_str()).as_int();
         Surface::Vertex* vertex = new Surface::Vertex();
         vertex->x(vertexNode.node().attribute(IOUtility::X.c_str()).as_double());
         vertex->y(vertexNode.node().attribute(IOUtility::Y.c_str()).as_double());
-        vertex->x(vertexNode.node().attribute(IOUtility::Z.c_str()).as_double());
+        vertex->z(vertexNode.node().attribute(IOUtility::Z.c_str()).as_double());
         vertex->w(vertexNode.node().attribute(IOUtility::W.c_str()).as_double());
         vertex->h(vertexNode.node().attribute(IOUtility::H.c_str()).as_double());
         if(ret->operator [](index) != nullptr){

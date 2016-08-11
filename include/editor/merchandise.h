@@ -33,7 +33,7 @@ public:
         Furniture
     };
 
-protected:
+public:
     Merchandise(const string &id);
     ~Merchandise();
 
@@ -66,7 +66,7 @@ public:
     Surfacing(const string &id);
     ~Surfacing();
     float getPrice();
-    MerchandiseType getType() const;
+    MerchandiseType getType() ;
 
 };
 
@@ -74,9 +74,9 @@ class Furniture : public Merchandise{
 public:
     Furniture(const string &id);
     ~Furniture();
-    float getPrice() const;
-    MerchandiseType getType() const;
-    virtual string getPickID() const;
+    float getPrice() ;
+    MerchandiseType getType() ;
+    virtual string getPickID() ;
     virtual void setPickID(string pickID);
 private:
     string pickID;

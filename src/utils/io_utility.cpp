@@ -1,4 +1,5 @@
 #include "utils//io_utility.h"
+#include <iostream>
 
 using namespace klm;
 using namespace std;
@@ -41,22 +42,40 @@ const int IOUtility::VECTOR_SIZE = 3;
 
 void IOUtility::writeMatrix(pugi::xml_node node, const glm::mat4 &matrix, const string tag){
     pugi::xml_node subNode = node.append_child(MATRIX.c_str());
-    writeFloatsToNode(subNode,glm::value_ptr(matrix), MATRIX_SIZE);    
+    std::string value = "";
+    ostringstream oss;
+    oss
+    <<matrix[0][0]<<VALUE_TOKEN<<matrix[0][1]<<VALUE_TOKEN<<matrix[0][2]<<VALUE_TOKEN<<matrix[0][3]<<VALUE_TOKEN
+    <<matrix[1][0]<<VALUE_TOKEN<<matrix[1][1]<<VALUE_TOKEN<<matrix[1][2]<<VALUE_TOKEN<<matrix[1][3]<<VALUE_TOKEN
+    <<matrix[2][0]<<VALUE_TOKEN<<matrix[2][1]<<VALUE_TOKEN<<matrix[2][2]<<VALUE_TOKEN<<matrix[2][3]<<VALUE_TOKEN
+    <<matrix[3][0]<<VALUE_TOKEN<<matrix[3][1]<<VALUE_TOKEN<<matrix[3][2]<<VALUE_TOKEN<<matrix[3][3];
+    subNode.append_child(pugi::node_pcdata).set_value(oss.str().c_str());
+
     if(tag.size() != 0){
         subNode.append_attribute(USAGE.c_str()).set_value(tag.c_str());
     }
 }
 
 void IOUtility::readMatrix(const pugi::xml_node node, glm::mat4 &matrix){
-    QVector<GLfloat> data;
-    readFloatsFromNode(node, MATRIX, data);
-    if(data.size() == MATRIX_SIZE){
-        GLfloat* matrixData = new GLfloat[MATRIX_SIZE];
-        for(int index = 0 ; index != MATRIX_SIZE; ++index){
-            matrixData[index] = data[index];
+    std::string value = node.child_value();
+
+    int row = 0;
+    int column = 0;
+
+    size_t pos = string::npos;
+    do{
+        pos = value.find(VALUE_TOKEN);
+        if(string::npos != pos){
+            float floatValue = std::atof(value.substr(0, pos).c_str());
+            matrix[row][column++] = floatValue;
+            if(column == 4){
+                column = 0;
+                row++;
+            }
+            value = value.substr(pos + VALUE_TOKEN.size());
         }
-        matrix = glm::make_mat4(matrixData);
-    }
+    }while(string::npos != pos && row != 4);
+
 }
 
 void IOUtility::writeVector(pugi::xml_node node, const glm::vec3 &vector, const string tag){

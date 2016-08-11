@@ -56,11 +56,12 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     this->ui->OpenGLCanvas->main_scene->set_height(
             this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
-    gl3d::model_manager::shared_instance()->init_objs(this->ui->OpenGLCanvas->main_scene);
-    // 释放模型加载器
-    gl3d::model_manager::shared_instance()->release_loaders();
+    klm::resource::manager::shared_instance()->preload_resources(this->ui->OpenGLCanvas->main_scene);
+//    gl3d::model_manager::shared_instance()->init_objs(this->ui->OpenGLCanvas->main_scene);
+//    // 释放模型加载器
+//    gl3d::model_manager::shared_instance()->release_loaders();
 
-    this->ui->OpenGLCanvas->main_scene->prepare_buffer();
+//    this->ui->OpenGLCanvas->main_scene->prepare_buffer();
 
     // add a light
     general_light_source *light_1 = new general_light_source();
@@ -140,24 +141,39 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     pugi::xml_document doc;
     sfc->save(doc);
     doc.save_file("/Users/gang_liu/Desktop/surface.xml");
+//    delete sfc;
 
-    gl3d::surface_object * oo = new gl3d::surface_object(sfc);
-    oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
-    oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
-    oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
-    oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
-    oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
-    oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
-    oo->get_mtls()->insert(6, new gl3d_material("WoodVeneer.jpg"));
-    oo->get_mtls()->insert(7, new gl3d_material("xin_4005.jpg"));
-    oo->get_mtls()->insert(8, new gl3d_material("_2.jpg"));
-    oo->get_mtls()->insert(9, new gl3d_material("_1.jpg"));
-    oo->get_mtls()->insert(10, new gl3d_material("_3.jpg"));
-    oo->get_mtls()->insert(11, new gl3d_material("_5.jpg"));
-    oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
-    oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
-    oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
-    this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
+    pugi::xml_document load_doc;
+    load_doc.load_file("/Users/gang_liu/Desktop/surface.xml");
+    pugi::xml_node surface_node = load_doc.select_node("//surface").node();
+    if(surface_node){
+        std::cout<<"surface_node.name() = "<<surface_node.name()<<std::endl;
+    }
+
+    Surface* mySurface = new Surface;
+
+    if(mySurface->load(surface_node)){        
+
+        gl3d::surface_object * oo = new gl3d::surface_object(mySurface);
+        oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
+        oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
+        oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
+        oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
+        oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
+        oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
+        oo->get_mtls()->insert(6, new gl3d_material("WoodVeneer.jpg"));
+        oo->get_mtls()->insert(7, new gl3d_material("xin_4005.jpg"));
+        oo->get_mtls()->insert(8, new gl3d_material("_2.jpg"));
+        oo->get_mtls()->insert(9, new gl3d_material("_1.jpg"));
+        oo->get_mtls()->insert(10, new gl3d_material("_3.jpg"));
+        oo->get_mtls()->insert(11, new gl3d_material("_5.jpg"));
+        oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
+        oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
+        oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
+        this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
+    } else {
+        std::cout<<"I am not here"<<std::endl;
+    }
 
 }
 

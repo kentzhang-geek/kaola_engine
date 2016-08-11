@@ -33,6 +33,7 @@ gl3d_image::~gl3d_image() {
 
 gl3d_image::gl3d_image(char * f) {
     this->init();
+    this->name = std::string(f);
     
     QString filename(f);
     QImage img(filename);

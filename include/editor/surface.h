@@ -49,6 +49,7 @@
 
 #define TESS_DEBUG false
 #define CONN_DEBUG false
+#define LOADING_DEBUG true
 
 #include <QMap>
 
@@ -85,7 +86,7 @@ namespace klm{
     public:
         class Vertex;
         class BoundingBox;
-    private:
+    public:
         //this constructor is used only when loading Surface from file
         Surface(const Surface* parent = nullptr);
     //public methods defined by Surface

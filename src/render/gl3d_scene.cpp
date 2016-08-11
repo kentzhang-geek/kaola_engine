@@ -339,7 +339,11 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
-    
+    // temporary bug fix, intend to stop wall blink
+    if (obj->get_obj_type() != obj->type_wall)
+        obj->buffer_data();
+
+
     // TODO : set matrix
     // set MVP
     ::glm::mat4 pvm =
