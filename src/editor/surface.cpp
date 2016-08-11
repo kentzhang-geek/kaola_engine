@@ -466,7 +466,6 @@ void Surface::save(pugi::xml_node &node){
         }
     }
 
-
 }
 
 void Surface::updateSurfaceMesh(){

@@ -74,9 +74,6 @@ void IOUtility::readVector(const pugi::xml_node &node, glm::vec3 &vector){
 
 void IOUtility::writeIndicies(pugi::xml_node &node, const QVector<GLushort> &indicies, const string tag){
     ostringstream oss;
-
-//    for(QVector<GLushort>::const_iterator num = indicies.begin();
-//        num != indicies.end(); ++num){
     for(int i = 0; i != indicies.size(); ++i){
         oss<<indicies[i];
         if(i != (indicies.size()-1)){
