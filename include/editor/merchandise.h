@@ -26,8 +26,8 @@ using namespace std;
 
 namespace klm{
 class Merchandise{
-public:
 
+public:
     enum class MerchandiseType{
         Surfacing = 0,
         Furniture

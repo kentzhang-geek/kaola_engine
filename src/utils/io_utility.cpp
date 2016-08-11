@@ -8,6 +8,7 @@ const string IOUtility::MATRIX = "Matrix";
 const string IOUtility::USAGE = "usage";
 const string IOUtility::VECTOR = "Vector";
 const string IOUtility::SURFACE = "surface";
+const string IOUtility::NUM_OF_VERTICES = "nov";
 const string IOUtility::NUM_OF_INDICIES = "noi";
 const string IOUtility::INDEX = "index";
 const string IOUtility::VERTEX = "Vertex";
@@ -29,7 +30,10 @@ const string IOUtility::RENDERING_VERTICIES = "rv";
 const string IOUtility::RENDERING_INDICES = "ri";
 const string IOUtility::CONNECTIVE_VERTICIES = "cv";
 const string IOUtility::CONNECTIVE_INDICES = "ci";
-
+const string IOUtility::MERCHANDISE = "Merchandise";
+const string IOUtility::SURFACING = "Surfacing";
+const string IOUtility::FUNITURE = "Furniture";
+const string IOUtility::MERCHANIDSE_ID = "mid";
 
 const int IOUtility::MATRIX_SIZE = 16;
 const int IOUtility::VECTOR_SIZE = 3;

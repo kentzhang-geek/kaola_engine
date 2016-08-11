@@ -34,6 +34,7 @@ public:
     static const int MATRIX_SIZE;
     static const int VECTOR_SIZE;
     static const string SURFACE;
+    static const string NUM_OF_VERTICES;
     static const string NUM_OF_INDICIES;
     static const string INDEX;
     static const string VERTEX;
@@ -55,6 +56,10 @@ public:
     static const string RENDERING_INDICES;
     static const string CONNECTIVE_VERTICIES;
     static const string CONNECTIVE_INDICES;
+    static const string MERCHANDISE;
+    static const string SURFACING;
+    static const string FUNITURE;
+    static const string MERCHANIDSE_ID;
 
 private:
     static void writeFloatsToNode(pugi::xml_node &node,

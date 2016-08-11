@@ -164,23 +164,23 @@ namespace klm{
         /**
          * Saveing and loading Surface from pugi node
          * properties to be saved and loaded from xml
-         * 1- local verticies
-         * 2- local verticies indices
+         * 1- local verticies         
          * 3- transformFromParent
          * 4- visibilities
          * 5- Surfacing
          * 6- connective Surfacing
+         * 7- Furnitures (and their transformation)
          * 7- sub-Surfaces
          * 8- scale, rotation and tarnslate for Surface
          *
-         * properties generated from saved Surface:
+         * properties generated from saved Surface:(not saved or loaded)
          * 1- renderingVerticies
          * 2- renderingIndices
          * 3- connectiveVerticies
          * 4- connectiveIndicies
          */
         void save(pugi::xml_node &node);
-        void load(const pugi::xml_node &node);
+        bool load(const pugi::xml_node &node);
 
     private:
         void updateSurfaceMesh();
@@ -234,8 +234,7 @@ namespace klm{
 
 
     // utility methods (static)
-    public:
-        static const std::string FILE_FLOAT_TOKEN;
+    public:        
         static const glm::vec3 NON_NORMAL;
         static const glm::vec3 Z_AXIS;
 
@@ -252,7 +251,7 @@ namespace klm{
 
     private:
         static void writeVerticies(pugi::xml_node &node, const QVector<Surface::Vertex*> &verticies, const string tag = "");
-        static void readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex*> &ret);
+        static bool readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex*> *ret);
         static void vertexLogger(const QVector<Surface::Vertex*> &verticies,
                                  const QVector<GLushort> &indicies,
                                  const std::string title);
