@@ -137,6 +137,9 @@ gl3d::mesh::mesh(obj_points * pts, int number_of_points,
 }
 
 void gl3d::mesh::buffer_data() {
+    if (this->data_buffered) {
+        return;
+    }
     // gen vbo
     GL3D_GL()->glGenBuffers(1, &this->vbo);
     GL3D_GL()->glGenBuffers(1, &this->idx);
@@ -221,7 +224,6 @@ gl3d::mesh::mesh(QVector<mesh *> &meshes) {
         _vert_offset_for_index += (*iter)->num_pts;
     }
     
-//    log_c("now merge output %d points and %d indecis", this->num_pts, this->num_idx);
     return;
 }
 

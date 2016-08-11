@@ -55,11 +55,6 @@ void drawhomewin::showEvent(QShowEvent *ev) {
             this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
     klm::resource::manager::shared_instance()->preload_resources(this->ui->OpenGLCanvas->main_scene);
-//    gl3d::model_manager::shared_instance()->init_objs(this->ui->OpenGLCanvas->main_scene);
-//    // 释放模型加载器
-//    gl3d::model_manager::shared_instance()->release_loaders();
-
-//    this->ui->OpenGLCanvas->main_scene->prepare_buffer();
 
     // add a light
     general_light_source *light_1 = new general_light_source();
