@@ -220,7 +220,7 @@ glm::mat4 Surface::getRenderingTransform() const{
     glm::mat4 matrix(1.0);
     if(parent != nullptr){
         matrix =
-                parent->getRenderingTransform() *                
+                parent->getRenderingTransform() *
                 getTransformFromParent() *
                 getSurfaceTransform();
     } else {
@@ -377,11 +377,19 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
     }
     ret.clear();
 
+    glm::mat4 *transform = parent == nullptr ?
+                new glm::mat4(1.0f) :
+                new glm::mat4(parent->getRenderingTransform());
+
     for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
         vertex != connectiveVertices->end(); ++vertex){
         Surface::Vertex* v = new Surface::Vertex(**vertex);
+        transformVertex(*transform, *v);
         ret.push_back(v);
     }    
+
+    delete transform;
+
     return &ret;
 }
 
@@ -691,11 +699,6 @@ void Surface::updateConnectionMesh(){
         if(CONN_DEBUG){
             Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
                                   "connective surface in local coordinate system");
-        }
-        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) : parent->getRenderingTransform();
-        for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
-            vertex != connectiveVertices->end(); ++vertex){
-            Surface::transformVertex(transform, **vertex);
         }
 
         if(CONN_DEBUG){
