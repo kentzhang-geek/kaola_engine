@@ -1014,8 +1014,7 @@ bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex 
         ret->push_back(nullptr);
     }
 
-    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());
-    std::cout<<"-------------------------------"<<std::endl;
+    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());    
     for(pugi::xpath_node vertexNode : vertexNodes){
         int index = vertexNode.node().attribute(IOUtility::INDEX.c_str()).as_int();
         Surface::Vertex* vertex = new Surface::Vertex();

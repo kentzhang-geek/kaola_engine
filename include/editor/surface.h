@@ -49,7 +49,7 @@
 
 #define TESS_DEBUG false
 #define CONN_DEBUG false
-#define LOADING_DEBUG true
+#define LOADING_DEBUG false
 
 #include <QMap>
 

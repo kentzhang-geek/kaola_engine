@@ -84,7 +84,6 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
     pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
     klm::Surface * sfc = new klm::Surface(pts);
-//    sfc->setTranslate(glm::vec3(0.0, 0.0, 0.5));
 
     pts.clear();
     pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
@@ -95,52 +94,51 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     if(sub != nullptr){
         sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
 
-        pts.clear();
-        pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
-        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
-        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
+//        pts.clear();
+//        pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
+//        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
+//        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
+//        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
+//        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
+//        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
 
-        klm::Surface* ss = sub->addSubSurface(pts);
-        if(ss){
-            ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
-            ss->setScale(glm::vec3(0.8, 0.8, 1.0));
-            ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
+//        klm::Surface* ss = sub->addSubSurface(pts);
+//        if(ss){
+//            ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
+//            ss->setScale(glm::vec3(0.8, 0.8, 1.0));
+//            ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
 
-            pts.clear();
-            pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
-            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
+//            pts.clear();
+//            pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
+//            pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
+//            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
+//            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
 
 
-            klm::Surface* sss = ss->addSubSurface(pts);
-            if(sss != nullptr){
-                sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
-            } else {
-                cout<<"failed to add last sub-surface"<<endl;
-            }
-        }
+//            klm::Surface* sss = ss->addSubSurface(pts);
+//            if(sss != nullptr){
+//                sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
+//            } else {
+//                cout<<"failed to add last sub-surface"<<endl;
+//            }
+//        }
 
     }
 
-    pts.clear();
-    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 2.0, 0.0));
-    pts.push_back(glm::vec3(1.0, 2.0, 0.0));
+//    pts.clear();
+//    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
+//    pts.push_back(glm::vec3(2.0, 1.0, 0.0));
+//    pts.push_back(glm::vec3(2.0, 2.0, 0.0));
+//    pts.push_back(glm::vec3(1.0, 2.0, 0.0));
 
-    klm::Surface *seSub = sfc->addSubSurface(pts);
-    if(seSub != nullptr){
-        seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
-//        seSub->setTranslate(glm::vec3(0.4, 0.5, 0.6));
-    }
+//    klm::Surface *seSub = sfc->addSubSurface(pts);
+//    if(seSub != nullptr){
+//        seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
+//    }
 
     pugi::xml_document doc;
     sfc->save(doc);
-    doc.save_file("/Users/gang_liu/Desktop/surface.xml");
+    doc.save_file("/Users/gang_liu/Desktop/surface.xml");    
 //    delete sfc;
 
     pugi::xml_document load_doc;
@@ -153,8 +151,10 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     Surface* mySurface = new Surface;
 
     if(mySurface->load(surface_node)){        
+//        mySurface->setTranslate(glm::vec3(0.0, 0.0, 1.0));
+        sfc->setTranslate(glm::vec3(0.0, 0.5, 1.0));
 
-        gl3d::surface_object * oo = new gl3d::surface_object(mySurface);
+        gl3d::surface_object * oo = new gl3d::surface_object(sfc);
         oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
         oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
         oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
