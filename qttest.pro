@@ -236,9 +236,9 @@ DEPENDPATH += $$PWD/LIBS/pugixml-1.7/src
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
 
-win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/ -lpugixml
+win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/ -lpugixml
 
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/pugixml.lib
+win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/pugixml.lib

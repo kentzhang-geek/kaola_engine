@@ -1,8 +1,7 @@
 #ifndef IOUTILITY_H
 #define IOUTILITY_H
 
-#include <OpenGL/gl3.h>
-#include <OpenGL/gl3ext.h>
+#include "kaola_engine/glheaders.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <pugixml.hpp>

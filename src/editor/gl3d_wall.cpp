@@ -252,46 +252,51 @@ void gl3d_wall::calculate_mesh() {
     // clear last data
     this->release_last_data();
 
-    // 根据左右边线得出surface
-    QVector<glm::vec3 > points;
-    klm::Surface * s;
-    // left
-    points.clear();
-    points.push_back(glm::vec3(l_left.b.x, 0.0f, l_left.b.y));
-    points.push_back(glm::vec3(l_left.a.x, 0.0f, l_left.a.y));
-    points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
-    points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
-    s = new klm::Surface(points);
-    this->sfcs.push_back(s);
-    // right
-    points.clear();
-    points.push_back(glm::vec3(l_right.a.x, 0.0f, l_right.a.y));
-    points.push_back(glm::vec3(l_right.b.x, 0.0f, l_right.b.y));
-    points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
-    points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
-    s = new klm::Surface(points);
-    this->sfcs.push_back(s);
-    // back
-    points.clear();
-    points.push_back(glm::vec3(l_left.a.x, 0.0f, l_left.a.y));
-    points.push_back(glm::vec3(l_right.a.x, 0.0f, l_right.a.y));
-    points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
-    points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
-    this->sfcs.push_back(new klm::Surface(points));
-    // front
-    points.clear();
-    points.push_back(glm::vec3(l_right.b.x, 0.0f, l_right.b.y));
-    points.push_back(glm::vec3(l_left.b.x, 0.0f, l_left.b.y));
-    points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
-    points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
-    this->sfcs.push_back(new klm::Surface(points));
-    // top
-    points.clear();
-    points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
-    points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
-    points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
-    points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
-    this->sfcs.push_back(new klm::Surface(points));
+    try {
+        // 根据左右边线得出surface
+        QVector<glm::vec3> points;
+        klm::Surface *s;
+        // left
+        points.clear();
+        points.push_back(glm::vec3(l_left.b.x, 0.0f, l_left.b.y));
+        points.push_back(glm::vec3(l_left.a.x, 0.0f, l_left.a.y));
+        points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
+        points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
+        s = new klm::Surface(points);
+        this->sfcs.push_back(s);
+        // right
+        points.clear();
+        points.push_back(glm::vec3(l_right.a.x, 0.0f, l_right.a.y));
+        points.push_back(glm::vec3(l_right.b.x, 0.0f, l_right.b.y));
+        points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
+        points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
+        s = new klm::Surface(points);
+        this->sfcs.push_back(s);
+        // back
+        points.clear();
+        points.push_back(glm::vec3(l_left.a.x, 0.0f, l_left.a.y));
+        points.push_back(glm::vec3(l_right.a.x, 0.0f, l_right.a.y));
+        points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
+        points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
+        this->sfcs.push_back(new klm::Surface(points));
+        // front
+        points.clear();
+        points.push_back(glm::vec3(l_right.b.x, 0.0f, l_right.b.y));
+        points.push_back(glm::vec3(l_left.b.x, 0.0f, l_left.b.y));
+        points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
+        points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
+        this->sfcs.push_back(new klm::Surface(points));
+        // top
+        points.clear();
+        points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
+        points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
+        points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
+        points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
+        this->sfcs.push_back(new klm::Surface(points));
+    }
+    catch (SurfaceException &exp) {
+        // do nothing
+    }
 
     // will not fill meshes now
 
