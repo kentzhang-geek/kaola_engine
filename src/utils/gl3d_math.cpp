@@ -37,21 +37,15 @@ bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
         // 与平面距离不为0,则认为不在三角形内
         return false;
     }
-    glm::vec3 ap = pt - this->a;
-    glm::vec3 ab = this->b - this->a;
-    glm::vec3 ac = this->c - this->a;
-    float alpha = glm::acos(glm::dot(glm::normalize(ab), glm::normalize(ac)));
-
-    glm::vec3 tab = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->c))
-            / glm::sin(alpha) * glm::normalize(ab);
-    glm::vec3 tac = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->b))
-            / glm::sin(alpha) * glm::normalize(ac);
-    if (
-            (glm::normalize(tab) == glm::normalize(ab)) &&
-            (glm::normalize(tac) == glm::normalize(ac)) &&
-            (glm::length(tab) <= glm::length(ab)) &&
-            (glm::length(tac) <= glm::length(ac))
-            ) {
+    glm::vec3 tmpa = glm::cross(pt - this->a, this->b - this->a);
+    glm::vec3 tmpb = glm::cross(pt - this->b, this->c - this->b);
+    glm::vec3 tmpc = glm::cross(pt - this->c, this->a - this->c);
+    tmpa = glm::normalize(tmpa);
+    tmpb = glm::normalize(tmpb);
+    tmpc = glm::normalize(tmpc);
+    float tmp  = glm::dot(tmpa, tmpb);
+    float tmp2 = glm::dot(tmpb, tmpc);
+    if ((tmp < (tmp2 + 0.0001)) && (tmp > (tmp2 - 0.0001))) {
         return true;
     }
     else {
@@ -121,7 +115,14 @@ bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, g
     float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
     cosx = glm::abs(cosx);
     dis = dis / cosx;
-    pt = ray.a + glm::normalize(ray.b - ray.a) * dis;
+    glm::vec3 dir;
+    if (glm::dot(f.a - ray.a, ray.b - ray.a) > 0.0f) {
+        dir = glm::normalize(ray.b - ray.a);
+    }
+    else {
+        dir = glm::normalize(ray.a - ray.b);
+    }
+    pt = ray.a + dir * dis;
 
     return true;
 }
