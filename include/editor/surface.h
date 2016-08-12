@@ -50,22 +50,27 @@
 #define TESS_DEBUG false
 #define CONN_DEBUG false
 
+#include <QtCore>
+#include <QHash>
+
 #include <string>
 #include "kaola_engine/glheaders.h"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <pugixml.hpp>
 
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/bounding_box.h"
 #include "editor/gl_utility.h"
+#include "merchandise.h"
 
 namespace bg = boost::geometry;
-typedef bg::model::point<float, 2, bg::cs::cartesian> Point;
-typedef bg::model::polygon<Point, false, false> Polygon;
+typedef bg::model::point<float, 2, bg::cs::cartesian> bg_Point;
+typedef bg::model::polygon<bg_Point, false, false> bg_Polygon;
 
-namespace klm_1{
+namespace klm{
 
     class SurfaceException final{
     public:
@@ -83,7 +88,7 @@ namespace klm_1{
 
     //public methods defined by Surface
     public:
-        Surface(const QVector<glm::vec3> &points) throw(SurfaceException);
+        Surface(const QVector<glm::vec3> &points, const Surface* parent = nullptr) throw(SurfaceException);
         ~Surface();
 
         //sub-surface APIs
@@ -128,16 +133,25 @@ namespace klm_1{
         void setTranslate(const glm::vec3 &translate);
         glm::mat4 getSurfaceTransform() const;
 
-        bool isConnectiveSurface() const;
-
-        void setSurfaceMaterial(const std::string& id);
-        std::string getSurfaceMaterial() const;
-
-        void setConnectiveMaterial(const std::string& id);
-        std::string getConnectiveMaterial() const;
+        bool isConnectiveSurface() const;        
 
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
+
+        const QVector<Surface::Vertex*>* getRenderingVertices();
+        const QVector<Surface::Vertex*>* getConnectiveVerticies();
+        const QVector<GLushort>* getRenderingIndices();
+        const QVector<GLushort>* getConnectiveIndicies();
+
+        Surfacing* getSurfaceMaterial() const;
+        void setSurfaceMaterial(Surfacing * surfacing);
+        Surfacing* getConnectiveMaterial() const;
+        void setConnectiveMateiral(Surfacing* connective);
+
+        void addFurniture(Furniture* furniture);
+        void removeFurniture(Furniture* furniture);
+        Furniture* getFurniture(const std::string pickID);
+
     private:                
         void updateSurfaceMesh();
         void updateConnectionMesh();
@@ -146,10 +160,10 @@ namespace klm_1{
         QVector<GLushort> *connectiveIndices;
 
     private:
-        Polygon* parentialShape;
-        Polygon* independShape;
+        bg_Polygon * parentialShape;
+        bg_Polygon * independShape;
         BoundingBox* boundingBox;
-        Surface* parent;
+        const Surface* parent;
 
         bool visible;
         QVector<Surface*> *subSurfaces;
@@ -166,8 +180,10 @@ namespace klm_1{
         glm::vec3* scale;
         glm::mat4* rotation;
         glm::vec3* translate;
-        std::string surfaceMaterial;
-        std::string connectiveMaterial;
+
+        Surfacing* surfaceMaterial;
+        Surfacing* connectiveMaterial;
+        QHash<std::string, Furniture*> *attachedFurniture;
 
 
     //methods for tessellation
@@ -251,6 +267,7 @@ namespace klm_1{
     class Surface::BoundingBox final{
         public:
             BoundingBox(const QVector<glm::vec3> &vertices);
+            BoundingBox(const QVector<Surface::Vertex*> &vertices);
             ~BoundingBox() = default;
             glm::vec3 getCenter() const;
             void generateTexture(Surface::Vertex &vertex) const;

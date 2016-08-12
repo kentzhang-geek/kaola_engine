@@ -126,7 +126,6 @@ bool object::init(char * filename) {
     this->number_of_meshes = scene->mNumMeshes;
     
     // process meshes
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     for (i = 0; i < scene->mNumMeshes; i++) {
         this->meshes.push_back(new gl3d::mesh((void *)scene->mMeshes[i]));
     }
@@ -158,10 +157,8 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only on mesh for test
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, idx_in, num_of_indecis));
-    GL3D_GL()->glBindVertexArray(0);
-    
+
     return true;
 }
 
@@ -171,10 +168,8 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only one mesh for test
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, indecis, num_of_indecis, txtr, number_of_textures));
-    GL3D_GL()->glBindVertexArray(0);
-    
+
     return true;
 }
 
@@ -197,6 +192,9 @@ void object::buffer_data() {
     this->pre_scale();
 
     // bind vao
+    GLuint tmpvao;
+    GL3D_GL()->glGenVertexArrays(1, &tmpvao);
+    this->set_vao(tmpvao);
     GL3D_GL()->glBindVertexArray(this->get_vao());
 
     gl3d::mesh * p_mesh;
@@ -371,4 +369,14 @@ void object::get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
 
 void object::set_translation_mat(const glm::mat4 & trans) {
     this->this_property.position = glm::vec3(trans * glm::vec4(0.0, 0.0, 0.0, 1.0));
+}
+
+void object::clear_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    ms.clear();
+    return;
+}
+
+void object::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    mt.clear();
+    return;
 }

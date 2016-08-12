@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <string>
-#include "gl3d_image.hpp"
+#include "kaola_engine/gl3d_image.hpp"
 #include "gl3d_general_texture.hpp"
 #include <QVector>
 #include <QMap>
@@ -22,6 +22,7 @@ namespace gl3d {
         std::string texture_name;
         gl3d_image * img;
         gl3d_texture(char * filename);
+        gl3d_texture(gl3d_image * img);
         ~gl3d_texture();
         static void set_parami(bool repeat);
     private:

@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QImage>
+#include <string>
 #include "gl3d_out_headers.h"
 
 namespace gl3d {
@@ -21,6 +22,7 @@ namespace gl3d {
         unsigned int size;
         unsigned int width;
         unsigned int height;
+        std::string name;
         enum color_space {
             CS_RGBA8888 = 0,
         } color_property;

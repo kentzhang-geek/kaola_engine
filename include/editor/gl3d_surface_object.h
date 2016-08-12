@@ -8,7 +8,7 @@
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 
-#include "editor/klm_surface.h"
+#include "editor/surface.h"
 #include "utils/gl3d_path_config.h"
 
 using namespace std;

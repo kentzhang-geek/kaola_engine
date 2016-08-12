@@ -1,10 +1,11 @@
 #include "utils/gl3d_math.h"
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_lock.h"
-#include "editor/klm_surface.h"
+#include "editor/surface.h"
 
 using namespace std;
 using namespace gl3d;
+using namespace klm;
 
 static const float wall_combine_distance = 1.0f;
 
@@ -44,6 +45,7 @@ void gl3d_wall::init() {
                                 | GL3D_OBJ_ENABLE_PICKING);
     this->start_point_fixed = false;
     this->end_point_fixed = false;
+    this->fixed = false;
     this->set_obj_type(this->type_wall);
 }
 
@@ -70,6 +72,26 @@ gl3d_wall::~gl3d_wall() {
     }
 }
 
+glm::vec2 gl3d_wall::get_start_point() {
+    return this->start_point;
+}
+
+void gl3d_wall::set_start_point(glm::vec2 st_tag) {
+    if (!this->fixed) {
+        this->start_point = st_tag;
+    }
+}
+
+glm::vec2 gl3d_wall::get_end_point() {
+    return this->end_point;
+}
+
+void gl3d_wall::set_end_point(glm::vec2 end_point_tag) {
+    if (!this->fixed) {
+        this->end_point = end_point_tag;
+    }
+}
+
 void gl3d_wall::seperate(gl3d::gl3d_wall_attach & attachment) {
     gl3d_wall * attach = attachment.attach;
     if (attachment.attach_point == gl3d::gl3d_wall_attach::start_point) {
@@ -91,19 +113,8 @@ void gl3d_wall::release_last_data() {
         delete (*it);
     }
     this->get_sfcs()->clear();
-    for (auto it = this->get_meshes()->begin();
-         it != this->get_meshes()->end();
-         it++) {
-        delete (*it);
-    }
     this->set_number_of_meshes(0);
     this->get_meshes()->clear();
-
-    for (auto it = this->get_mtls()->begin();
-         it != this->get_mtls()->end();
-         it++) {
-        delete it.value();
-    }
     this->get_mtls()->clear();
     this->set_data_buffered(false);
 
@@ -111,6 +122,9 @@ void gl3d_wall::release_last_data() {
 }
 
 void gl3d_wall::set_thickness(float thickness_tag) {
+    if (this->fixed) {
+        return;
+    }
     this->thickness = thickness_tag;
     if (this->start_point_fixed) {
         this->start_point_attach.attach->calculate_mesh();
@@ -248,7 +262,6 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
     points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
     s = new klm::Surface(points);
-    s->setDebug();
     this->sfcs.push_back(s);
     // right
     points.clear();
@@ -257,7 +270,6 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
     points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
     s = new klm::Surface(points);
-    s->setDebug();
     this->sfcs.push_back(s);
     // back
     points.clear();
@@ -281,31 +293,7 @@ void gl3d_wall::calculate_mesh() {
     points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
     this->sfcs.push_back(new klm::Surface(points));
 
-    // add all the mesh from surface
-    QVector<gl3d::mesh *> mss;
-    for (auto it = this->sfcs.begin();
-         it != this->sfcs.end();
-         it++) {
-        gl3d::surface_to_mesh(*it, mss);
-    }
-    for (auto its = mss.begin(); its != mss.end(); its++) {
-        (*its)->recalculate_normals(0.707);
-        (*its)->set_material_index(0);
-        this->get_meshes()->push_back(*its);
-    }
-    this->set_number_of_meshes(this->get_meshes()->size());
-
-    // mtl
-    gl3d_material * p_mat = new gl3d_material();
-    p_mat->colors.insert(p_mat->diffuse, glm::vec3(1.0));
-    p_mat->colors.insert(p_mat->ambient, glm::vec3(1.0));
-    this->set_control_authority(GL3D_OBJ_ENABLE_DEL
-                                | GL3D_OBJ_ENABLE_CHANGEMTL
-                                | GL3D_OBJ_ENABLE_PICKING);
-    this->get_mtls()->insert(0, p_mat);
-    this->set_render_authority(GL3D_SCENE_DRAW_NORMAL);
-
-    this->buffer_data();
+    // will not fill meshes now
 
     gl3d_lock::shared_instance()->wall_lock.unlock();
     return;
@@ -319,8 +307,8 @@ void gl3d_wall::get_coord_on_screen(gl3d::scene * main_scene,
     glm::vec2 edpos = this->get_end_point();
 
     glm::mat4 pvm = glm::mat4(1.0);
-    pvm = pvm * *main_scene->watcher->get_projection_matrix();
-    pvm = pvm * *main_scene->watcher->get_viewing_matrix();
+    pvm = pvm * main_scene->watcher->get_projection_matrix();
+    pvm = pvm * main_scene->watcher->get_viewing_matrix();
 
     // set model matrix
     ::glm::mat4 trans = this->get_translation_mat() *
@@ -436,7 +424,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, tag_combine_traits
 
     // attach wall1
     if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
-        (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start)) {
+            (combine_traits == gl3d_wall::combine_wall1_end_to_wall2_start)) {
         // 分离之前的attach
         if (wall1->end_point_fixed == true) {
             wall1->seperate(wall1->end_point_attach);
@@ -469,7 +457,7 @@ bool gl3d_wall::combine(gl3d_wall * wall1, gl3d_wall * wall2, tag_combine_traits
 
     // attach wall2
     if ((combine_traits == gl3d_wall::combine_wall1_end_to_wall2_end) ||
-        (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end)) {
+            (combine_traits == gl3d_wall::combine_wall1_start_to_wall2_end)) {
         // 分离之前的attach
         if (wall2->end_point_fixed == true) {
             wall2->seperate(wall2->end_point_attach);
@@ -511,6 +499,9 @@ float gl3d_wall::get_length() {
 }
 
 bool gl3d_wall::set_length(float len) {
+    if (this->fixed) {
+        return false;
+    }
     if (this->start_point_fixed && this->end_point_fixed) {
         return false; // both two side fixed , so set length failed
     }
@@ -534,49 +525,43 @@ bool gl3d_wall::set_length(float len) {
 
 #define BOUND_MAX_DEFAULT 1000.0f
 #define BOUND_MIN_DEFAULT 0.0f
-void gl3d::surface_to_mesh(const klm::Surface * sfc,
+void gl3d::surface_to_mesh(klm::Surface * sfc,
                            QVector<gl3d::mesh *> &vct) {
     // process local verticles
-    // get trans mat
-    glm::mat4 trans_mat(1.0);
-    sfc->getTransFromParent(trans_mat);
-
     // create vertex buffer
     glm::vec3 bnd_max(BOUND_MIN_DEFAULT);
     glm::vec3 bnd_min(BOUND_MAX_DEFAULT);
     GLfloat * tmp_data = NULL;
     int pts_len;
     gl3d::obj_points * pts = NULL;
-    sfc->getRenderingVertices(tmp_data, pts_len);
-    pts_len = pts_len / klm::Vertex::VERTEX_SIZE;
-    pts = (gl3d::obj_points *)
-            malloc(sizeof(gl3d::obj_points) * pts_len);
+
+    const QVector<Surface::Vertex * > * vertexes = sfc->getRenderingVertices();
+    pts_len = vertexes->size();
+    pts = new gl3d::obj_points[pts_len];
     memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
     for (int i = 0; i < pts_len; i++) {
-        glm::vec4 tmp_vert = glm::vec4(
-                    tmp_data[i * 5 + 0],
-                tmp_data[i * 5 + 1],
-                tmp_data[i * 5 + 2],
-                1.0f);
-        tmp_vert = trans_mat * tmp_vert;
-        tmp_vert = tmp_vert / tmp_vert.w;
-        bnd_max = glm::max(glm::vec3(tmp_vert), bnd_max);
-        bnd_min = glm::min(glm::vec3(tmp_vert), bnd_min);
+        glm::vec3 tmp_vert = glm::vec3(
+                    vertexes->at(i)->x(),
+                    vertexes->at(i)->y(),
+                    vertexes->at(i)->z()
+                    );
+        bnd_max = glm::max(tmp_vert, bnd_max);
+        bnd_min = glm::min(tmp_vert, bnd_min);
         pts[i].vertex_x = tmp_vert.x;
         pts[i].vertex_y = tmp_vert.y;
         pts[i].vertex_z = tmp_vert.z;
-        pts[i].texture_x = tmp_data[i * 5 + 3];
-        pts[i].texture_y = 1.0f - tmp_data[i * 5 + 4];
+        pts[i].texture_x = vertexes->at(i)->w();
+        pts[i].texture_y = 1.0f - vertexes->at(i)->h();
     }
 
     // create index buffer
     GLushort * idxes = NULL;
     int idx_len;
-    sfc->getRenderingIndicies(idxes, idx_len);
-
-    if (idxes == NULL) {
-        cout << "aaaaa";
-
+    const QVector<GLushort> * indecis = sfc->getRenderingIndices();
+    idx_len = indecis->size();
+    idxes = new GLushort[idx_len];
+    for (int j = 0; j < indecis->size(); j++) {
+        idxes[j] = indecis->at(j);
     }
 
     // create new mesh
@@ -584,59 +569,61 @@ void gl3d::surface_to_mesh(const klm::Surface * sfc,
     m->set_material_index(0);
     m->set_bounding_value_max(bnd_max);
     m->set_bounding_value_min(bnd_min);
+    m->set_texture_repeat(true);
     vct.push_back(m);
 
     // clean env
-    free(pts);
-    free(idxes);
+    delete pts;
+    delete idxes;
 
     // process conective surface
-    QVector<klm::Vertex *> vertexes;
-    QVector<GLushort> indecis;
-    sfc->getConnectiveVerticies(vertexes);
-    sfc->getConnectiveIndicies(indecis);
-    trans_mat = glm::mat4(1.0);
-    if (sfc->getParent() != NULL) {
-        sfc->getParent()->getTransFromParent(trans_mat);
-    }
-    bnd_max = glm::vec3(BOUND_MIN_DEFAULT);
-    bnd_min = glm::vec3(BOUND_MAX_DEFAULT);
     // have conective surface , then process meshes
-    if ((vertexes.size() > 0) && (indecis.size() > 0)) {
-        pts = (obj_points *)malloc(sizeof(obj_points) * vertexes.size());
-        memset(pts, 0, sizeof(obj_points) * vertexes.size());
-        idxes = (GLushort *)malloc(sizeof(GLushort) * indecis.size());
-        memset(idxes, 0, sizeof(GLushort) * indecis.size());
-        pts_len = vertexes.size();
-        idx_len = indecis.size();
-        for (int j = 0; j < vertexes.size(); j++) {
-            glm::vec4 tmp_vert = glm::vec4(
-                        vertexes.at(j)->getX(),
-                        vertexes.at(j)->getY(),
-                        vertexes.at(j)->getZ(),
-                        1.0f);
-            tmp_vert = trans_mat * tmp_vert;
-            tmp_vert = tmp_vert / tmp_vert.w;
-            bnd_max = glm::max(glm::vec3(tmp_vert), bnd_max);
-            bnd_min = glm::min(glm::vec3(tmp_vert), bnd_min);
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
+        bnd_max = glm::vec3(BOUND_MIN_DEFAULT);
+        bnd_min = glm::vec3(BOUND_MAX_DEFAULT);
+
+        pts_len = vertexes->size();
+        idx_len = indecis->size();
+        pts = new obj_points[pts_len];
+        idxes = new GLushort[idx_len];
+        memset(pts, 0, sizeof(gl3d::obj_points) * pts_len);
+        memset(idxes, 0, sizeof(GLushort) * idx_len);
+        for (int j = 0; j < vertexes->size(); j++) {
+            glm::vec3 tmp_vert = glm::vec3(
+                        vertexes->at(j)->x(),
+                        vertexes->at(j)->y(),
+                        vertexes->at(j)->z()
+                        );
+            bnd_max = glm::max(tmp_vert, bnd_max);
+            bnd_min = glm::min(tmp_vert, bnd_min);
             pts[j].vertex_x = tmp_vert.x;
             pts[j].vertex_y = tmp_vert.y;
             pts[j].vertex_z = tmp_vert.z;
-            pts[j].texture_x = vertexes.at(j)->getW();
-            pts[j].texture_y = 1.0f - vertexes.at(j)->getH();
+            pts[j].texture_x = vertexes->at(j)->w();
+            pts[j].texture_y = 1.0f - vertexes->at(j)->h();
         }
-        for (int j = 0; j < indecis.size(); j++) {
-            idxes[j] = indecis.at(j);
+        for (int j = 0; j < indecis->size(); j++) {
+            idxes[j] = indecis->at(j);
         }
         // create new mesh
         gl3d::mesh * m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
         m->set_material_index(0);
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
+        m->set_texture_repeat(true);
         vct.push_back(m);
         // clean env
-        free(pts);
-        free(idxes);
+        delete pts;
+        delete idxes;
+    }
+
+    // process sub surface
+    if (sfc->getSurfaceCnt() > 0) {
+        for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
+            surface_to_mesh(sfc->getSubSurface(i), vct);
+        }
     }
     return;
 }
@@ -645,4 +632,211 @@ void gl3d::surface_to_mesh(const klm::Surface * sfc,
 gl3d::gl3d_wall_attach::gl3d_wall_attach() {
     this->attach_point = this->start_point;
     this->attach = NULL;
+}
+
+bool gl3d_wall::is_data_changed() {
+    return true;
+}
+
+bool gl3d_wall::is_visible() {
+    return true;
+}
+
+glm::mat4 gl3d_wall::get_translation_mat() {
+    return object::get_translation_mat();
+}
+
+glm::mat4 gl3d_wall::get_rotation_mat() {
+    return object::get_rotation_mat();
+}
+
+glm::mat4 gl3d_wall::get_scale_mat() {
+    return object::get_scale_mat();
+}
+
+void gl3d_wall::get_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    for (auto it = this->sfcs.begin();
+         it != this->sfcs.end();
+         it++) {
+        gl3d::surface_to_mesh(*it, ms);
+    }
+}
+
+void gl3d_wall::get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    static gl3d_material * mtl = new gl3d_material("_7.jpg");
+    mt.insert(0, mtl);
+    mt.insert(1, mtl);
+    mt.insert(2, mtl);
+    mt.insert(3, mtl);
+    mt.insert(4, mtl);
+    mt.insert(5, mtl);
+    mt.insert(6, mtl);
+}
+
+void gl3d_wall::set_translation_mat(const glm::mat4 & trans) {
+    object::set_translation_mat(trans);
+    return;
+}
+
+void gl3d_wall::clear_abstract_meshes(QVector<gl3d::mesh *> & ms) {
+    for (auto it = ms.begin();
+         it != ms.end();
+         it++) {
+        delete (*it);
+    }
+    ms.clear();
+}
+
+void gl3d_wall::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
+    mt.clear();
+}
+
+// get triangles from surfaces
+static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
+    for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
+        get_faces_from_surface(sfc->getSubSurface(i), faces);
+    }
+
+    // process local verticles
+    const QVector<Surface::Vertex * > * vertexes = sfc->getRenderingVertices();
+    const QVector<GLushort> * indecis = sfc->getRenderingIndices();
+    for (int i = 0; i < (indecis->size() / 3); i++) {
+        GLushort b0 = indecis->at(i * 3 + 0);
+        GLushort b1 = indecis->at(i * 3 + 1);
+        GLushort b2 = indecis->at(i * 3 + 2);
+
+        glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                  vertexes->at(b0)->y(),
+                                  vertexes->at(b0)->z());
+        glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                  vertexes->at(b1)->y(),
+                                  vertexes->at(b1)->z());
+        glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                  vertexes->at(b2)->y(),
+                                  vertexes->at(b2)->z());
+        faces.push_back(math::triangle_facet(pta, ptb, ptc));
+    }
+
+    // process conective surface
+    // have conective surface , then process meshes
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
+        for (int i = 0; i < (indecis->size() / 3); i++) {
+            GLushort b0 = indecis->at(i * 3 + 0);
+            GLushort b1 = indecis->at(i * 3 + 1);
+            GLushort b2 = indecis->at(i * 3 + 2);
+
+            glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                      vertexes->at(b0)->y(),
+                                      vertexes->at(b0)->z());
+            glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                      vertexes->at(b1)->y(),
+                                      vertexes->at(b1)->z());
+            glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                      vertexes->at(b2)->y(),
+                                      vertexes->at(b2)->z());
+            faces.push_back(math::triangle_facet(pta, ptb, ptc));
+        }
+    }
+
+    return;
+}
+
+// calculate points which line cross triangles
+typedef QPair<glm::vec3, glm::vec3> point_and_normal;
+using namespace gl3d::math;
+static void cast_ray_to_faces(QVector<math::triangle_facet> &faces,
+                              QVector<point_and_normal> &crosses,
+                              math::line_3d ray_cast) {
+    for (QVector<math::triangle_facet>::iterator it = faces.begin();
+         it != faces.end();
+         it++) {
+        glm::vec3 pt;
+        if (math::line_cross_facet(*it, ray_cast, pt)) {
+            if (1) {//it->is_point_in_facet(pt)) {
+                glm::vec3 nor;
+                nor = glm::cross(it->a - it->b, it->c - it->b);
+                nor = glm::normalize(nor);
+                crosses.push_back(point_and_normal(pt, nor));
+            }
+        }
+    }
+
+    return;
+}
+
+bool gl3d_wall::get_coord_on_wall(scene *sce,
+                                  glm::vec2 coord_on_screen,
+                                  glm::vec3 &out_point_on_wall,
+                                  glm::vec3 &out_point_normal) {
+    if (this->sfcs.size() <= 0) {
+        return false;
+    }
+    gl3d::viewer * cam = sce->watcher;
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    coord_on_screen.y = cam->get_height() - coord_on_screen.y;
+    glm::vec3 coord_in = glm::vec3(coord_on_screen.x, coord_on_screen.y, 0.0);
+    coord_in.z = 1.0;
+    glm::vec3 txxx = glm::unProject(coord_in,
+                                    glm::mat4(1.0),
+                                    cam->get_projection_matrix() * cam->get_viewing_matrix() * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                    glm::vec4(0.0, 0.0,
+                                              cam->get_width(),
+                                              cam->get_height()));
+    coord_in.z = 0.1;
+    txxx = txxx - glm::unProject(coord_in,
+                                 glm::mat4(1.0),
+                                 cam->get_projection_matrix() * cam->get_viewing_matrix() * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                 glm::vec4(0.0, 0.0,
+                                           cam->get_width(),
+                                           cam->get_height()));
+
+    glm::vec3 near_pt = cam->get_current_position();
+    txxx = glm::normalize(txxx);
+//    txxx = glm::normalize(cam->get_look_direction());
+    math::line_3d ray_cast(near_pt, near_pt + txxx);
+
+    QVector<math::triangle_facet> faces;
+    QVector<point_and_normal> crosses;
+    glm::vec3 target_pt;
+    glm::vec3 o_nor(1.0f);
+    float dis_to_pt = 0.0f;
+    faces.clear();
+    crosses.clear();
+
+    // get all the facet
+    for (auto it = this->sfcs.begin();
+         it != this->sfcs.end();
+         it++) {
+        get_faces_from_surface(*it, faces);
+    }
+
+    // get all cross points
+    cast_ray_to_faces(faces, crosses, ray_cast);
+
+    // check out real cross
+    if (crosses.size() <=  0) {
+        return false;
+    }
+    dis_to_pt = glm::length(crosses.at(0).first - near_pt);
+    target_pt = crosses.at(0).first;
+    o_nor = crosses.at(0).second;
+    for (auto it = crosses.begin();
+         it != crosses.end();
+         it++) {
+        if (glm::length((*it).first - near_pt) < dis_to_pt) {
+            // if has nearer point
+            dis_to_pt = glm::length((*it).first - near_pt);
+            target_pt = it->first;
+            // and its normal
+            o_nor = it->second;
+        }
+    }
+
+    out_point_on_wall = target_pt;
+    out_point_normal = o_nor;
+
+    return true;
 }

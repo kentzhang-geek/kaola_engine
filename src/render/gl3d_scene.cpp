@@ -339,7 +339,11 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
-    
+    // temporary bug fix, intend to stop wall blink
+    if (obj->get_obj_type() != obj->type_wall)
+        obj->buffer_data();
+
+
     // TODO : set matrix
     // set MVP
     ::glm::mat4 pvm =
@@ -391,6 +395,8 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     mss.clear();
     obj->get_abstract_meshes(mss);
     QMap<unsigned int, gl3d_material *>  mts;
+    mts.clear();
+    obj->get_abstract_mtls(mts);
     auto iter = mss.begin();
     gl3d::mesh *p_mesh;
     while (iter != mss.end()) {
@@ -404,8 +410,6 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         
         // 多重纹理的绑定与绘制
         try {
-            mts.clear();
-            obj->get_abstract_mtls(mts);
             mts.value(p_mesh->material_index)->use_this(pro);
             gl3d_texture::set_parami(p_mesh->texture_repeat);
         } catch (std::out_of_range & not_used_smth) {
@@ -418,7 +422,9 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
                                   (GLvoid *)NULL);
         iter++;
     }
-    
+    obj->clear_abstract_meshes(mss);
+    obj->clear_abstract_mtls(mts);
+
     GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
     GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     GL3D_GL()->glBindVertexArray(0);
@@ -618,4 +624,32 @@ void scene::draw_stencil() {
     /* Re-enable update of color and depth. */
     GL3D_GL()->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     GL3D_GL()->glEnable(GL_DEPTH_TEST);
+}
+
+glm::vec2 scene::project_point_to_screen(glm::vec3 point_on_world) {
+    glm::mat4 pvm = glm::mat4(1.0);
+    pvm = pvm * this->watcher->get_projection_matrix();
+    pvm = pvm * this->watcher->get_viewing_matrix();
+
+    // set model matrix
+    ::glm::mat4 trans(1.0f);
+    // set norMtx
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+    pvm = pvm * trans;
+
+    glm::vec4 coord_out;
+    coord_out = pvm * glm::vec4(point_on_world.x, point_on_world.y, point_on_world.z, 1.0f);
+    coord_out = (coord_out + 1.0f)/2.0f;
+    glm::vec2 output;
+    output = glm::vec2(coord_out.x, coord_out.y);
+    output.x = output.x * this->get_width();
+    output.y = this->get_height() - output.y * this->get_height();
+    return output;
+}
+
+glm::vec2 scene::project_point_to_screen(glm::vec2 point_on_world_ground) {
+    glm::vec3 pointin = glm::vec3(point_on_world_ground.x, 0.0f, point_on_world_ground.y);
+    return this->project_point_to_screen(pointin);
 }

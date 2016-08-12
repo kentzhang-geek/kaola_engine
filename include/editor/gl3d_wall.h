@@ -44,7 +44,7 @@ class Surface;
 }
 
 namespace gl3d {
-    void surface_to_mesh(const klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
+    void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
     class gl3d_wall;
     // 墙的附着状态，用于决定是否需要重算墙角，以及是否可以设置长度
     class gl3d_wall_attach {
@@ -65,8 +65,8 @@ public:
     ~gl3d_wall();
 
     // properties
-    GL3D_UTILS_PROPERTY(start_point, glm::vec2);
-    GL3D_UTILS_PROPERTY(end_point, glm::vec2);
+    GL3D_UTILS_PROPERTY_DECLARE(start_point, glm::vec2);
+    GL3D_UTILS_PROPERTY_DECLARE(end_point, glm::vec2);
     GL3D_UTILS_PROPERTY_DECLARE(thickness, float);
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
@@ -74,6 +74,7 @@ public:
     GL3D_UTILS_PROPERTY(start_point_attach, gl3d_wall_attach );
     GL3D_UTILS_PROPERTY(end_point_attach, gl3d_wall_attach );
     GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *> );
+    GL3D_UTILS_PROPERTY(fixed, bool);
 
     void calculate_mesh();
 
@@ -95,6 +96,22 @@ public:
 
     float get_length();
     bool set_length(IN float len);
+
+    // 继承抽象模型类方法并实现
+    virtual bool is_data_changed();
+    virtual bool is_visible();
+    virtual glm::mat4 get_translation_mat();
+    virtual glm::mat4 get_rotation_mat();
+    virtual glm::mat4 get_scale_mat();
+    virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
+    virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+    virtual void set_translation_mat(const glm::mat4 & trans);
+    virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms);
+    virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+
+    // 挖洞相关
+    // 获取投射到墙面的点
+    bool get_coord_on_wall(gl3d::scene * sce, glm::vec2 coord_on_screen, glm::vec3 &out_point_on_wall, glm::vec3 &out_point_normal);
 
 private:
     void release_last_data();

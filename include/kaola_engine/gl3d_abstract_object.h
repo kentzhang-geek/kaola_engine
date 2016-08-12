@@ -27,7 +27,9 @@ public:
     virtual glm::mat4 get_rotation_mat() = 0;
     virtual glm::mat4 get_scale_mat() = 0;
     virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
+    virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
     virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
+    virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
     virtual void set_translation_mat(const glm::mat4 & trans) = 0;
 
     // constructor and destructor
