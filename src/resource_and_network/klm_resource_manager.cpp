@@ -145,5 +145,5 @@ void manager::preload_resources(gl3d::scene * sc) {
                                                            GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
                                                            GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
                                  "000000");
-    this->perform_async_res_load(new default_model_loader(sc), "000001");
+//    this->perform_async_res_load(new default_model_loader(sc), "000001");
 }
