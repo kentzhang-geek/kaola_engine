@@ -269,6 +269,10 @@ namespace gl3d {
         // 绘制单个对象
         void draw_object(abstract_object *obj, GLuint pro);
 
+        // project point to screen
+        glm::vec2 project_point_to_screen(glm::vec3 point_on_world);
+        glm::vec2 project_point_to_screen(glm::vec2 point_on_world_ground);
+
     private:
         void init();
         shader_manager * shaders;
