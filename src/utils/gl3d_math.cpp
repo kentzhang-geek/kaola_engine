@@ -218,6 +218,10 @@ static glm::vec3 math_local_cvt_glm2_to_glm3(glm::vec2 a) {
     return glm::vec3(a.x, 0.0f, a.y);
 }
 
+glm::vec3 gl3d::math::convert_vec2_to_vec3(glm::vec2 a) {
+    return glm::vec3(a.x, 0.0f, a.y);
+}
+
 QVector<glm::vec3> gl3d::math::generate_area(QVector<line_2d> & lines) {
     // 先做排序得到所有顶点组成的环，然后对环求向量面积，为正则不处理，为负则反向环
     QVector<glm::vec3> ret;

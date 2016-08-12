@@ -6,8 +6,14 @@
 using namespace std;
 using namespace gl3d;
 using namespace klm;
+using namespace gl3d::math;
 
 static const float wall_combine_distance = 1.0f;
+
+// internal tool
+static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) ;
+
+static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt);
 
 static gl3d::obj_points post_rect[4] = {
     {-1.0, 1.0, 0.0,  // vt
@@ -70,6 +76,21 @@ gl3d_wall::~gl3d_wall() {
     if (this->end_point_fixed) {
         this->seperate(this->end_point_attach);
     }
+
+    for (auto it = this->holes_on_this_wall.begin();
+            it != this->holes_on_this_wall.end();
+            it++) {
+        it.value()->set_on_witch_wall(NULL);
+        delete it.value();
+    }
+    this->holes_on_this_wall.clear();
+
+    for (auto it = this->sfcs.begin();
+            it != this->sfcs.end();
+            it++) {
+        delete *it;
+    }
+    this->sfcs.clear();
 }
 
 glm::vec2 gl3d_wall::get_start_point() {
@@ -299,6 +320,76 @@ void gl3d_wall::calculate_mesh() {
     }
 
     // will not fill meshes now
+    // now need to dig hole
+    try {
+        // get left and right faces
+        QVector<math::triangle_facet> faces_left;
+        QVector<math::triangle_facet> faces_right;
+        faces_left.clear();
+        get_faces_from_surface(this->sfcs.at(0), faces_left);
+        get_faces_from_surface(this->sfcs.at(1), faces_right);
+
+        for (auto it = this->holes_on_this_wall.begin();
+                it != this->holes_on_this_wall.end();
+                it++) {
+            // check hole valid
+            if (!it.value()->is_valid()) {
+                this->holes_on_this_wall.remove(it.key());
+            }
+        }
+
+        for (auto it = this->holes_on_this_wall.begin();
+                it != this->holes_on_this_wall.end();
+                it++) {
+            // generate line group
+            QVector<line_3d> hole_line;
+            hole_line.clear();
+            glm::vec3 pa = it.value()->get_pta();
+            glm::vec3 pb = it.value()->get_ptb();
+            if (glm::length(this->get_start_point() - glm::vec2(pa.x, pa.z)) >=
+                    glm::length(this->get_start_point() - glm::vec2(pb.x, pb.z))) {
+                auto tmppt = pa;
+                pa = pb;
+                pb = tmppt;
+            }
+
+            // TODO : dig hole on wall
+            glm::vec3 dir_3d = convert_vec2_to_vec3(top_dir);
+            QVector<glm::vec3> hole_vertex;
+            glm::vec3 pa_left = pa + dir_3d * this->thickness / 2.0f;
+            glm::vec3 pb_left = pb + dir_3d * this->thickness / 2.0f;
+            glm::vec3 pa_right = pa - dir_3d * this->thickness / 2.0f;
+            glm::vec3 pb_right = pb - dir_3d * this->thickness / 2.0f;
+            pa_left.y = glm::min(pa.y, pb.y);
+            pb_left.y = glm::max(pa.y, pb.y);
+            pa_right.y = glm::min(pa.y, pb.y);
+            pb_right.y = glm::max(pa.y, pb.y);
+            hole_vertex.clear();
+            // dig right wall
+            hole_vertex.push_back(pa_right);
+            hole_vertex.push_back(glm::vec3(pb_right.x, pa_right.y, pb_right.z));
+            hole_vertex.push_back(pb_right);
+            hole_vertex.push_back(glm::vec3(pa_right.x, pb_right.y, pa_right.z));
+            this->sfcs.at(1)->addSubSurface(hole_vertex);
+            hole_vertex.clear();
+            // dig left wall
+            hole_vertex.push_back(pa_right);
+            hole_vertex.push_back(glm::vec3(pa_right.x, pb_right.y, pa_right.z));
+            hole_vertex.push_back(pb_right);
+            hole_vertex.push_back(glm::vec3(pb_right.x, pa_right.y, pb_right.z));
+            this->sfcs.at(0)->addSubSurface(hole_vertex);
+            hole_vertex.clear();
+
+            // push subsurface to dig hole
+            this->sfcs.at(0)->getSubSurface(0)->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+            this->sfcs.at(1)->getSubSurface(0)->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+            // TODO : set sub surface invisible
+        }
+    }
+    catch (SurfaceException &exp) {
+        GL3D_UTILS_THROW("Dig Hole failed ");
+    }
+
 
     gl3d_lock::shared_instance()->wall_lock.unlock();
     return;
@@ -748,6 +839,18 @@ static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_fac
     return;
 }
 
+static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt) {
+    for (auto it = faces.begin();
+            it != faces.end();
+            it++) {
+        if (it->is_point_in_facet(pt)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // calculate points which line cross triangles
 typedef QPair<glm::vec3, glm::vec3> point_and_normal;
 using namespace gl3d::math;
@@ -844,4 +947,69 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     out_point_normal = o_nor;
 
     return true;
+}
+
+int hole::global_hole_id = 1;
+
+void hole::init() {
+    this->pta = glm::vec3(0.0f);
+    this->ptb = glm::vec3(0.0f);
+    this->on_witch_wall = NULL;
+    this->hole_id = this->global_hole_id++;
+    this->sfc = NULL;
+}
+
+hole::hole() {
+    this->init();
+}
+
+hole::hole(const hole &cp) {
+    GL3D_UTILS_THROW("hole should not copy");
+    return;
+}
+
+hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b) {
+    this->init();
+    this->on_witch_wall = w;
+    this->pta = point_a;
+    this->ptb = point_b;
+    if (this->is_valid()) {
+        w->holes_on_this_wall.insert(this->hole_id, this);
+    }
+}
+
+bool hole::is_valid() {
+    QVector<math::triangle_facet> faces;
+    faces.clear();
+    glm::vec3 pa;
+    glm::vec3 pb;
+    pa = convert_vec2_to_vec3(this->on_witch_wall->get_start_point());
+    pb = convert_vec2_to_vec3(this->on_witch_wall->get_end_point());
+
+    // get the facet
+    faces.push_back(triangle_facet(
+            pa,
+            glm::vec3(pb.x, this->on_witch_wall->get_hight(), pb.z),
+            glm::vec3(pa.x, this->on_witch_wall->get_hight(), pa.z)
+    ));
+    faces.push_back(triangle_facet(
+            pa,
+            pb,
+            glm::vec3(pb.x, this->on_witch_wall->get_hight(), pb.z)
+    ));
+
+    bool pa_locate = false;
+    bool pb_locate = false;
+    for (auto it = faces.begin();
+            it != faces.end();
+            it++) {
+        if (it->is_point_in_facet(this->pta)) {
+            pa_locate = true;
+        }
+        if (it->is_point_in_facet(this->ptb)) {
+            pb_locate = true;
+        }
+    }
+
+    return pa_locate && pb_locate;
 }
