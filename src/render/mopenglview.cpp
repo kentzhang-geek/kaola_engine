@@ -378,8 +378,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                                 this->start_connect_wall,
                                 gl3d_wall::combine_wall1_start_to_wall2_start
                                 );
-                }
-                else {
+                } else {
                     // pick up end
                     gl3d_wall::combine(
                                 this->new_wall,
@@ -397,7 +396,6 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if(now_state == gl3d::gl3d_global_param::drawwalling) {
             if(!is_drawwall_connect) {
                 this->old_wall = this->new_wall;
-
                 this->openglDrawWall(event->x(), event->y());
 
                 //新墙连接老墙
@@ -463,6 +461,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         connectDot->setVisible(false);
         is_drawwall_start_point = false;
         this->start_connect_wall = NULL;
+        float conn_dot_tmp_x, conn_dot_tmp_y;
 
         glm::vec2 tmp_pt((float)event->x(), (float)event->y());
 
@@ -471,49 +470,65 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
             for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
                 it != this->wallsPoints->end(); it++) {
                 float dis = glm::length(tmp_pt - (*it).first);
-                if(dis < 20.0f) {
-                    connectDot->setVisible(true);
-                    connectDot->setGeometry((*it).first.x - 12, (*it).first.y - 12, 24, 24);
-                    this->drawwall_start_point = (*it).first;
+                if(dis < 18.0f) {
                     is_drawwall_start_point = true;
-
+                    conn_dot_tmp_x = (*it).first.x;
+                    conn_dot_tmp_y = (*it).first.y;
                     this->start_connect_wall = (*it).second;
-                } else {
-                    //墙体吸附
-                    if(this->points_for_walls != NULL) {
-                        for(QVector<points_wall>::iterator it = this->points_for_walls->begin();
-                            it != this->points_for_walls->end(); it++) {
-                            gl3d::math::line_2d wall_line((*it).first, (*it).second);
-                            float dis = gl3d::math::point_distance_to_line(tmp_pt, wall_line);
-                            if(dis < 18.0f) {
-                                glm::vec2 line_connect_point;
-                                bool sucess = gl3d::math::point_project_to_line(wall_line, tmp_pt, line_connect_point);
-                                if (sucess) {
-                                    if ((glm::length(line_connect_point - wall_line.a)
-                                         + glm::length(line_connect_point - wall_line.b))
-                                            <= (glm::length(wall_line.a - wall_line.b + 0.000f))) {
-                                        this->drawwall_start_point = line_connect_point;
-                                        is_drawwall_start_point = true;
-                                        connectDot->setVisible(true);
-                                        connectDot->setGeometry(
-                                                    line_connect_point.x - 12,
-                                                    line_connect_point.y - 12, 24, 24
-                                                    );
-                                    }
-                                } else {
-                                    this->drawwall_start_point = line_connect_point;
-                                    is_drawwall_start_point = true;
-                                    connectDot->setVisible(true);
-                                    connectDot->setGeometry(
-                                                tmp_pt.x,
-                                                tmp_pt.y - 12, 24, 24
-                                                );
-                                }
-                            }
+                }
+            }
+        }
+
+        //墙体吸附
+        if(this->points_for_walls != NULL && !is_drawwall_start_point) {
+            for(QVector<points_wall>::iterator it = this->points_for_walls->begin();
+                it != this->points_for_walls->end(); it++) {
+                gl3d::math::line_2d wall_line((*it).first, (*it).second);
+                float dis = gl3d::math::point_distance_to_line(tmp_pt, wall_line);
+                if(dis < 18.0f) {
+                    glm::vec2 line_connect_point;
+                    bool sucess = gl3d::math::point_project_to_line(wall_line, tmp_pt, line_connect_point);
+                    if (sucess) {
+                        if ((glm::length(line_connect_point - wall_line.a)
+                             + glm::length(line_connect_point - wall_line.b))
+                                <= (glm::length(wall_line.a - wall_line.b + 0.000f))) {
+                            is_drawwall_start_point = true;
+                            conn_dot_tmp_x = line_connect_point.x;
+                            conn_dot_tmp_y = line_connect_point.y;
                         }
+                    } else {
+                        is_drawwall_start_point = true;
+                        conn_dot_tmp_x = tmp_pt.x;
+                        conn_dot_tmp_y = tmp_pt.y;
+
                     }
                 }
             }
+        }
+
+        //墙顶点直角吸附
+        if(!is_drawwall_start_point && this->wallsPoints != NULL) {
+            for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                float angle_dis_x = glm::length(tmp_pt.x - (*it).first.x);
+                float angle_dis_y = glm::length(tmp_pt.y - (*it).first.y);
+                if(angle_dis_x < 10.0f) {
+                    conn_dot_tmp_x = (*it).first.x;
+                    conn_dot_tmp_y = tmp_pt.y;
+                    is_drawwall_start_point = true;
+                }
+                if(angle_dis_y < 10.0f) {
+                    conn_dot_tmp_x = tmp_pt.x;
+                    conn_dot_tmp_y = (*it).first.y;
+                    is_drawwall_start_point = true;
+                }
+            }
+        }
+
+        if(is_drawwall_start_point) {
+            this->drawwall_start_point = glm::vec2(conn_dot_tmp_x, conn_dot_tmp_y);
+            connectDot->setVisible(true);
+            connectDot->setGeometry(conn_dot_tmp_x - 12, conn_dot_tmp_y - 12, 24, 24);
         }
     }
 
@@ -525,82 +540,100 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         this->connect_wall = NULL;
 
         glm::vec2 tmp_pt((float)event->x(), (float)event->y());
-
-        //墙体垂直和水平吸附
-        float ang_conn_dis_x = glm::length(this->draw_start_dot.x - (float)event->x());
-        float ang_conn_dis_y = glm::length(this->draw_start_dot.y - (float)event->y());
-        if(ang_conn_dis_x < 8) {
-            tmp_pt.x = this->draw_start_dot.x;
-        }
-        if(ang_conn_dis_y < 8) {
-            tmp_pt.y = this->draw_start_dot.y;
-        }
-
-        //持续画墙
         glm::vec2 pick;
         gl3d::scene * vr = this->main_scene;
-        vr->coord_ground(tmp_pt, pick, 0.0);
-        this->new_wall->set_end_point(pick);
-        this->new_wall->calculate_mesh();
+
+        bool is_show_conn_dot = false;
+        float conn_dot_tmp_x, conn_dot_tmp_y;
 
         //墙顶点吸附
         if(this->wallsPoints != NULL) {
             for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
                 it != this->wallsPoints->end(); it++) {
                 float dis = glm::length(tmp_pt - (*it).first);
-                if(dis < 20.0f) {
-                    vr->coord_ground((*it).first, pick, 0.0);
-                    this->new_wall->set_end_point(pick);
-                    this->new_wall->calculate_mesh();
-
-                    connectDot->setVisible(true);
-                    connectDot->setGeometry((*it).first.x - 12, (*it).first.y - 12, 24, 24);
+                if(dis < 18.0f) {
+                    tmp_pt = (*it).first;
+                    is_show_conn_dot = true;
+                    conn_dot_tmp_x = (*it).first.x;
+                    conn_dot_tmp_y = (*it).first.y;
                     is_drawwall_connect = true;
-
                     this->connect_wall = (*it).second;
-                } else {
-                    //墙体吸附
-                    if(this->points_for_walls != NULL) {
-                        for(QVector<points_wall>::iterator it = this->points_for_walls->begin();
-                            it != this->points_for_walls->end(); it++) {
-                            gl3d::math::line_2d wall_line((*it).first, (*it).second);
-                            float dis = gl3d::math::point_distance_to_line(tmp_pt, wall_line);
-                            if(dis < 18.0f) {
-                                glm::vec2 line_connect_point;
-                                bool sucess = gl3d::math::point_project_to_line(wall_line, tmp_pt, line_connect_point);
-                                if (sucess) {
-                                    if ((glm::length(line_connect_point - wall_line.a)
-                                         + glm::length(line_connect_point - wall_line.b))
-                                            <= (glm::length(wall_line.a - wall_line.b + 0.000f))) {
-                                        connectDot->setVisible(true);
-                                        connectDot->setGeometry(
-                                                    line_connect_point.x - 12,
-                                                    line_connect_point.y - 12, 24, 24
-                                                    );
+                }
+            }
+        }
 
-                                        vr->coord_ground(line_connect_point, pick, 0.0);
-                                        this->new_wall->set_end_point(pick);
-                                        this->new_wall->calculate_mesh();
-                                        is_drawwall_connect = true;
-                                    }
-                                } else {
-                                    connectDot->setVisible(true);
-                                    connectDot->setGeometry(
-                                                tmp_pt.x,
-                                                tmp_pt.y - 12, 24, 24
-                                                );
-
-                                    vr->coord_ground(line_connect_point, pick, 0.0);
-                                    this->new_wall->set_end_point(pick);
-                                    this->new_wall->calculate_mesh();
-                                    is_drawwall_connect = true;
-                                }
-                            }
+        //墙体吸附
+        if(this->points_for_walls != NULL && !is_drawwall_connect) {
+            for(QVector<points_wall>::iterator it = this->points_for_walls->begin();
+                it != this->points_for_walls->end(); it++) {
+                gl3d::math::line_2d wall_line((*it).first, (*it).second);
+                float dis = gl3d::math::point_distance_to_line(glm::vec2((float)event->x(), (float)event->y()), wall_line);
+                if(dis < 18.0f) {
+                    glm::vec2 line_connect_point;
+                    bool sucess = gl3d::math::point_project_to_line(wall_line, tmp_pt, line_connect_point);
+                    if (sucess) {
+                        if ((glm::length(line_connect_point - wall_line.a)
+                             + glm::length(line_connect_point - wall_line.b))
+                                <= (glm::length(wall_line.a - wall_line.b + 0.000f))) {
+                            is_show_conn_dot = true;
+                            conn_dot_tmp_x = line_connect_point.x;
+                            conn_dot_tmp_y = line_connect_point.y;
+                            tmp_pt = line_connect_point;
+                            is_drawwall_connect = true;
                         }
+                    } else {
+                        is_show_conn_dot = true;
+                        conn_dot_tmp_x = tmp_pt.x;
+                        conn_dot_tmp_y = tmp_pt.y;
+                        tmp_pt = line_connect_point;
+                        is_drawwall_connect = true;
                     }
                 }
             }
         }
+
+        //墙顶点直角吸附
+        if(this->wallsPoints != NULL && !is_drawwall_connect) {
+            for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                float angle_dis_x = glm::length(tmp_pt.x - (*it).first.x);
+                float angle_dis_y = glm::length(tmp_pt.y - (*it).first.y);
+
+                if(angle_dis_x < 10.0f) {
+                    is_show_conn_dot = true;
+                    conn_dot_tmp_x = (*it).first.x;
+                    conn_dot_tmp_y = tmp_pt.y;
+                    tmp_pt.x = (*it).first.x;
+                }
+
+                if(angle_dis_y < 10.0f) {
+                    is_show_conn_dot = true;
+                    conn_dot_tmp_x = tmp_pt.x;
+                    conn_dot_tmp_y = (*it).first.y;
+                    tmp_pt.y = (*it).first.y;
+                }
+            }
+        }
+
+        //墙体垂直和水平吸附
+        float ang_conn_dis_x = glm::length(this->draw_start_dot.x - (float)event->x());
+        float ang_conn_dis_y = glm::length(this->draw_start_dot.y - (float)event->y());
+        if(ang_conn_dis_x < 16) {
+            tmp_pt.x = this->draw_start_dot.x;
+        }
+        if(ang_conn_dis_y < 16) {
+            tmp_pt.y = this->draw_start_dot.y;
+        }
+
+        if(is_show_conn_dot) {
+            connectDot->setVisible(true);
+            connectDot->setGeometry(conn_dot_tmp_x - 12, conn_dot_tmp_y - 12, 24, 24);
+        }
+
+        //持续画墙
+        vr->coord_ground(tmp_pt, pick, 0.0);
+        this->new_wall->set_end_point(pick);
+        this->new_wall->calculate_mesh();
 
         //重新渲染墙，让连接边及时呈现效果
         if(this->old_wall != NULL) {
