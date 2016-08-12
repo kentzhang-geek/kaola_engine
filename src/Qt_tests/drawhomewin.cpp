@@ -154,7 +154,7 @@ void drawhomewin::showEvent(QShowEvent *ev) {
         mySurface->setTranslate(glm::vec3(0.0, 0.0, 1.0));
 //        sfc->setTranslate(glm::vec3(0.0, 0.5, 1.0));
 
-        gl3d::surface_object * oo = new gl3d::surface_object(sfc);
+        gl3d::surface_object * oo = new gl3d::surface_object(mySurface);
         oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
         oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
         oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
