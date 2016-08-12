@@ -36,6 +36,7 @@ Surface::Surface(const Surface* parent)
       transformFromParent(new glm::mat4(1.0)),boundingBox(nullptr),
       scale(nullptr), rotation(nullptr),translate(nullptr),
       attachedFurniture(new QMap<std::string, Furniture*>),
+      independShape(nullptr), parentialShape(nullptr),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
       connectiveVertices(nullptr), connectiveIndices(nullptr),
       surfaceMaterial(nullptr), connectiveMaterial(nullptr){
@@ -606,6 +607,28 @@ bool Surface::load(const pugi::xml_node &node){
         }
         boundingBox = new Surface::BoundingBox(*localVerticies);
         boundingBox->generateTexture(*localVerticies);
+
+        //finally generate shapes
+        if(independShape != nullptr){
+            delete independShape;
+        }
+        independShape = new bg_Polygon;
+        if(parentialShape != nullptr){
+            delete parentialShape;
+        }
+        parentialShape = new bg_Polygon;
+
+        QVector<Surface::Vertex*> verticies;
+        getLocalVertices(verticies);
+        glm::mat4 transform = getTransformFromParent();
+        for(QVector<Surface::Vertex*>::iterator vertex = verticies.begin();
+            vertex != verticies.end(); ++vertex){
+            Surface::Vertex* v = (*vertex);
+            independShape->outer().push_back(bg_Point(v->x(), v->y()));
+            transformVertex(transform, *v);
+            parentialShape->outer().push_back(bg_Point(v->x(), v->y()));
+            delete v;
+        }
 
         updateSurfaceMesh();
         updateConnectionMesh();
