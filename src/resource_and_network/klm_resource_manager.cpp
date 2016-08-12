@@ -15,7 +15,8 @@ static inline std::string get_file_name_by_item(resource::item in) {
 }
 
 void res_loader::run() {
-    this->do_work((void *) &manager::shared_instance()->get_res_item(this->get_obj_res_id()));
+    std::string res = manager::shared_instance()->get_res_item(this->get_obj_res_id());
+    this->do_work((void *) &res);
     return;
 }
 
