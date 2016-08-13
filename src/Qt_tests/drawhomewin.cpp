@@ -137,6 +137,8 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     }
 
     pugi::xml_document doc;
+    sfc->setTranslate(glm::vec3(0.0, 0.5, 2.0));
+    sfc->setRotation(glm::rotate(glm::mat4(1.0), -0.3f, glm::vec3(0.0f, 1.0f, 0.0f)));
     sfc->save(doc);
     doc.save_file("/Users/gang_liu/Desktop/surface.xml");    
     delete sfc;
@@ -151,7 +153,7 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     Surface* mySurface = new Surface;
 
     if(mySurface->load(surface_node)){        
-        mySurface->setTranslate(glm::vec3(0.0, 0.0, 1.0));
+//        mySurface
 //        sfc->setTranslate(glm::vec3(0.0, 0.5, 1.0));
 
         gl3d::surface_object * oo = new gl3d::surface_object(mySurface);

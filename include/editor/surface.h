@@ -139,7 +139,7 @@ namespace klm{
         bool isConnectiveSurface() const;        
 
         bool isVisible() const;
-        void makeVisible();
+        void show();
         void hide();
         GLfloat getRoughArea();
         GLfloat getPreciseArea();

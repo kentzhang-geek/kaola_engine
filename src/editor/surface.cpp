@@ -313,7 +313,7 @@ bool Surface::isVisible() const{
     return visible;
 }
 
-void Surface::makeVisible(){
+void Surface::show(){
     visible = true;
 }
 
