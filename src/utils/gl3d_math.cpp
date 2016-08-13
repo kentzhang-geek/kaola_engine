@@ -33,6 +33,7 @@ glm::vec3 triangle_facet::get_normal() const {
 }
 
 bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
+    // TODO : this has bug!
     if (0.00001 < gl3d::math::point_distance_to_facet(*this, pt)) {
         // 与平面距离不为0,则认为不在三角形内
         return false;
