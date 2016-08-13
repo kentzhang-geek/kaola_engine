@@ -229,8 +229,47 @@ void drawhomewin::on_colse_b_clicked() {
     this->close();
 }
 
+bool test_ext_check = false;
 void drawhomewin::on_pushButton_clicked() {
     // test code
+    test_ext_check = !test_ext_check;
+#if 0
+    gl3d::scene *sce = this->ui->OpenGLCanvas->main_scene;
+    gl3d::abstract_object *abs_obj = NULL;
+    glm::vec2 codin(sce->get_width() / 2.0f, sce->get_height() / 2.0f);
+    int obj_id = sce->get_object_id_by_coordination(codin.x, codin.y);
+    if (obj_id > 0) {
+        abs_obj = sce->get_obj(obj_id);
+        if (abs_obj->get_obj_type() == abs_obj->type_wall) {
+            gl3d_wall *w = (gl3d_wall *) abs_obj;
+            glm::vec3 pt;
+            glm::vec3 nor;
+            glm::vec2 tmpcod;
+            sce->coord_ground(codin, tmpcod);
+            if (w->get_coord_on_wall(sce, codin, pt, nor)) {
+                object *obj = new object((char *) (gl3d_sandbox_path + GL3D_PATH_SEPRATOR + "armchair.3ds").c_str());
+                obj->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
+                obj->get_property()->scale_unit = gl3d::scale::mm;
+                obj->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
+                obj->pre_scale();
+                obj->merge_meshes();
+                obj->recalculate_normals();
+                obj->convert_left_hand_to_right_hand();
+                obj->get_property()->position = pt;
+                obj->get_property()->rotate_mat = gl3d::math::get_rotation_from_a_to_b(glm::vec3(0.0, 1.0, 0.0), nor);
+                obj->buffer_data();
+                if (NULL != this->ui->OpenGLCanvas->main_scene->get_obj(23148)) {
+                    gl3d::object * tmpobj = (gl3d::object *)this->ui->OpenGLCanvas->main_scene->get_obj(23148);
+                    this->ui->OpenGLCanvas->main_scene->delete_obj(23148);
+                    delete tmpobj;
+                }
+                this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, gl3d::object *>(23148, obj));
+            }
+        }
+    }
+#endif
+
+#if 0
     gl3d::scene *sce = this->ui->OpenGLCanvas->main_scene;
     gl3d::abstract_object *abs_obj = NULL;
     glm::vec2 coda(sce->get_width() / 2.0f, sce->get_height() / 2.0f);
@@ -251,10 +290,11 @@ void drawhomewin::on_pushButton_clicked() {
             float xlen = w->get_length();
             holeb = holea + dir * 0.75f * xlen;
             holea = holea + dir * 0.25f * xlen;
-            holea.y = 0.25f;
-            holeb.y = 0.75f;
+            holea.y = 0.75f;
+            holeb.y = 2.25f;
             hole * h = new hole(w, holea, holeb);
             w->calculate_mesh();
         }
     }
+#endif
 }

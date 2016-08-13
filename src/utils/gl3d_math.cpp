@@ -38,6 +38,14 @@ bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
         // 与平面距离不为0,则认为不在三角形内
         return false;
     }
+
+    float triangle_area = glm::length(glm::cross(this->b - this->a, this->c - this->a));
+    float t1_area = glm::length(glm::cross(this->b - pt, this->a - pt));
+    float t2_area = glm::length(glm::cross(this->c - pt, this->a - pt));
+    float t3_area = glm::length(glm::cross(this->b - pt, this->c - pt));
+
+    return (t1_area + t2_area + t3_area) < (triangle_area + 0.0001);
+#if 0
     glm::vec3 tmpa = glm::cross(pt - this->a, this->b - this->a);
     glm::vec3 tmpb = glm::cross(pt - this->b, this->c - this->b);
     glm::vec3 tmpc = glm::cross(pt - this->c, this->a - this->c);
@@ -52,6 +60,7 @@ bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
     else {
         return false;
     }
+#endif
 }
 
 bool gl3d::math::get_cross(const line_2d &l1,
@@ -106,10 +115,11 @@ float gl3d::math::point_distance_to_facet(const triangle_facet &fc, const glm::v
 }
 
 bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 &pt) {
-    if (0.000001 > glm::dot(
+    // NOTE this BUG FIX ! this should note use absolutly value!
+    if (0.000001 > glm::abs(glm::dot(
                 f.get_normal(),
                 glm::normalize(ray.b - ray.a)
-                )) {
+                ))) {
         return false;
     }
     float dis = gl3d::math::point_distance_to_facet(f, ray.a);

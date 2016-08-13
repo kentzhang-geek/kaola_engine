@@ -331,10 +331,14 @@ void gl3d_wall::calculate_mesh() {
 
         for (auto it = this->holes_on_this_wall.begin();
              it != this->holes_on_this_wall.end();
-             it++) {
+             ) {
             // check hole valid
             if (!it.value()->is_valid()) {
-                this->holes_on_this_wall.remove(it.key());
+                it.value()->set_on_witch_wall(NULL);
+                it = this->holes_on_this_wall.erase(it);
+            }
+            else {
+                it++;
             }
         }
 
@@ -383,7 +387,7 @@ void gl3d_wall::calculate_mesh() {
             klm::Surface *sf = this->sfcs.at(1)->addSubSurface(hole_vertex);
             // TODO : 这里经常会出现加不进去的情况，返回为空很是奇特，会由于subSurfaceFits为false而删除新创建的面
             if (NULL != sf) {
-                sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+                sf->setTranslate(glm::vec3(0.0f, 0.0f, this->thickness));
                 sf->hideSurface();
             }
             hole_vertex.clear();
@@ -404,7 +408,6 @@ void gl3d_wall::calculate_mesh() {
             hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
             sf = this->sfcs.at(0)->addSubSurface(hole_vertex);
             if (NULL != sf) {
-                sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
                 sf->hideSurface();
             }
             hole_vertex.clear();
@@ -884,6 +887,18 @@ static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt)
 typedef QPair<glm::vec3, glm::vec3> point_and_normal;
 using namespace gl3d::math;
 
+static inline bg_Point vec3_to_bg_pt(glm::vec3 pt) {
+    return bg_Point(pt.x, pt.y, pt.z);
+}
+
+static inline bg_Polygon triangle_to_bg_poly(math::triangle_facet f) {
+    bg_Polygon poly;
+    poly.outer().push_back(vec3_to_bg_pt(f.a));
+    poly.outer().push_back(vec3_to_bg_pt(f.b));
+    poly.outer().push_back(vec3_to_bg_pt(f.c));
+    return poly;
+}
+
 static void cast_ray_to_faces(QVector<math::triangle_facet> &faces,
                               QVector<point_and_normal> &crosses,
                               math::line_3d ray_cast) {
@@ -892,6 +907,9 @@ static void cast_ray_to_faces(QVector<math::triangle_facet> &faces,
          it++) {
         glm::vec3 pt;
         if (math::line_cross_facet(*it, ray_cast, pt)) {
+            bg_Point bpt = vec3_to_bg_pt(pt);
+            bg_Polygon poly = triangle_to_bg_poly(*it);
+//            if (bg::within(bpt, poly)) {
             if (it->is_point_in_facet(pt)) {
                 glm::vec3 nor;
                 nor = glm::cross(it->a - it->b, it->c - it->b);
@@ -947,12 +965,14 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     faces.clear();
     crosses.clear();
 
-    // get all the facet
-    for (auto it = this->sfcs.begin();
-         it != this->sfcs.end();
-         it++) {
-        get_faces_from_surface(*it, faces);
-    }
+    // get left and right facet
+    get_faces_from_surface(this->sfcs.at(0), faces);
+    get_faces_from_surface(this->sfcs.at(1), faces);
+//    for (auto it = this->sfcs.begin();
+//         it != this->sfcs.end();
+//         it++) {
+//        get_faces_from_surface(*it, faces);
+//    }
 
     // get all cross points
     cast_ray_to_faces(faces, crosses, ray_cast);
@@ -1015,6 +1035,9 @@ hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b) {
 }
 
 bool hole::is_valid() {
+    if (this->on_witch_wall == NULL) {
+        return false;
+    }
     QVector<math::triangle_facet> faces;
     faces.clear();
     glm::vec3 pa;
