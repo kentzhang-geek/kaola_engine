@@ -323,6 +323,18 @@ void Surface::hideSurface(){
     surfaceVisible = false;
 }
 
+bool Surface::isConnectiveVisible() const{
+    return connectiveVisible;
+}
+
+void Surface::showConnective(){
+    connectiveVisible = true;
+}
+
+void Surface::hideConnective(){
+    connectiveVisible = false;
+}
+
 GLfloat Surface::getRoughArea(){
     if(localVerticies == nullptr || localVerticies->size() == 0){
         return 0.0f;
