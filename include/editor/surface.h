@@ -138,9 +138,14 @@ namespace klm{
 
         bool isConnectiveSurface() const;        
 
-        bool isVisible() const;
-        void makeVisible();
-        void hide();
+        bool isSurfaceVisible() const;
+        void showSurface();
+        void hideSurface();
+
+        bool isConnectiveVisible() const;
+        void showConnective();
+        void hideConnective();
+
         GLfloat getRoughArea();
         GLfloat getPreciseArea();
 
@@ -196,7 +201,9 @@ namespace klm{
         BoundingBox* boundingBox;
         const Surface* parent;
 
-        bool visible;
+        bool surfaceVisible;
+        bool connectiveVisible;
+
         QVector<Surface*> *subSurfaces;
         QVector<Surface::Vertex*> *localVerticies;
 

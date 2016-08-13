@@ -31,18 +31,21 @@ std::string SurfaceException::what() const{
 }
 
 Surface::Surface(const Surface* parent)
-    : parent(parent), subSurfaces(new QVector<Surface*>),
+    : parent(parent), surfaceVisible(true), connectiveVisible(true),
+      subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       transformFromParent(new glm::mat4(1.0)),boundingBox(nullptr),
       scale(nullptr), rotation(nullptr),translate(nullptr),
       attachedFurniture(new QMap<std::string, Furniture*>),
+      independShape(nullptr), parentialShape(nullptr),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
       connectiveVertices(nullptr), connectiveIndices(nullptr),
       surfaceMaterial(nullptr), connectiveMaterial(nullptr){
 }
 
 Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(SurfaceException)
-    : parent(parent), visible(true), subSurfaces(new QVector<Surface*>),
+    : parent(parent), surfaceVisible(true), connectiveVisible(true),
+      subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
       attachedFurniture(new QMap<std::string, Furniture*>),
@@ -308,16 +311,16 @@ bool Surface::isConnectiveSurface() const{
     return equals;
 }
 
-bool Surface::isVisible() const{
-    return visible;
+bool Surface::isSurfaceVisible() const{
+    return surfaceVisible;
 }
 
-void Surface::makeVisible(){
-    visible = true;
+void Surface::showSurface(){
+    surfaceVisible = true;
 }
 
-void Surface::hide(){
-    visible = false;
+void Surface::hideSurface(){
+    surfaceVisible = false;
 }
 
 GLfloat Surface::getRoughArea(){
@@ -451,7 +454,8 @@ void Surface::save(pugi::xml_node &node){
     writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());    
 
     IOUtility::writeMatrix(surfaceNode, *transformFromParent, IOUtility::TRANSFORM_FROM_PPARENT.c_str());
-    surfaceNode.append_attribute(IOUtility::VISIBLE.c_str()).set_value(visible);
+    surfaceNode.append_attribute(IOUtility::SURFACE_VISIBLE.c_str()).set_value(surfaceVisible);
+    surfaceNode.append_attribute(IOUtility::CONNECTIVE_VISIBLE.c_str()).set_value(connectiveVisible);
 
     if(surfaceMaterial != nullptr){
         pugi::xml_node materialNode = surfaceNode.append_child(IOUtility::SURFACE_MATEIRAL.c_str());
@@ -514,8 +518,12 @@ bool Surface::load(const pugi::xml_node &node){
 
         IOUtility::readMatrix(matrixXPathNode.first().node(), *transformFromParent);
 
-        if(node.attribute(IOUtility::VISIBLE.c_str())){
-            visible = node.attribute(IOUtility::VISIBLE.c_str()).as_bool();
+        if(node.attribute(IOUtility::SURFACE_VISIBLE.c_str())){
+            surfaceVisible = node.attribute(IOUtility::SURFACE_VISIBLE.c_str()).as_bool();
+        }
+
+        if(node.attribute(IOUtility::CONNECTIVE_VISIBLE.c_str())){
+            connectiveVisible = node.attribute(IOUtility::CONNECTIVE_VISIBLE.c_str()).as_bool();
         }
 
         if(attachedFurniture != nullptr){
@@ -587,7 +595,7 @@ bool Surface::load(const pugi::xml_node &node){
         }
 
         static const string subSurfaceXPath = "./"+IOUtility::SURFACE
-                    +"[@"+IOUtility::NUM_OF_VERTICES+" and @"+IOUtility::VISIBLE+"]";
+                    +"[@"+IOUtility::NUM_OF_VERTICES+" and @"+IOUtility::SURFACE_VISIBLE+" and@"+IOUtility::CONNECTIVE_VISIBLE+"]";
         pugi::xpath_node_set subSurfaceNodeSet = node.select_nodes(subSurfaceXPath.c_str());
         if(subSurfaces == nullptr){
             subSurfaces = new QVector<Surface*>;
@@ -606,6 +614,28 @@ bool Surface::load(const pugi::xml_node &node){
         }
         boundingBox = new Surface::BoundingBox(*localVerticies);
         boundingBox->generateTexture(*localVerticies);
+
+        //finally generate shapes
+        if(independShape != nullptr){
+            delete independShape;
+        }
+        independShape = new bg_Polygon;
+        if(parentialShape != nullptr){
+            delete parentialShape;
+        }
+        parentialShape = new bg_Polygon;
+
+        QVector<Surface::Vertex*> verticies;
+        getLocalVertices(verticies);
+        glm::mat4 transform = getTransformFromParent();
+        for(QVector<Surface::Vertex*>::iterator vertex = verticies.begin();
+            vertex != verticies.end(); ++vertex){
+            Surface::Vertex* v = (*vertex);
+            independShape->outer().push_back(bg_Point(v->x(), v->y()));
+            transformVertex(transform, *v);
+            parentialShape->outer().push_back(bg_Point(v->x(), v->y()));
+            delete v;
+        }
 
         updateSurfaceMesh();
         updateConnectionMesh();

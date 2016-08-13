@@ -42,7 +42,8 @@ public:
     static const string Z;
     static const string W;
     static const string H;
-    static const string VISIBLE;
+    static const string SURFACE_VISIBLE;
+    static const string CONNECTIVE_VISIBLE;
     static const string SURFACE_MATEIRAL;
     static const string CONNECTIVE_MATERIAL;
     static const string TRANSFORM_FROM_PPARENT;
