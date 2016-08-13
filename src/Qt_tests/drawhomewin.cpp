@@ -73,32 +73,32 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 
 
-    QVector<glm::vec3 > pts;
+    QVector<glm::vec3> pts;
     pts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
     pts.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
     pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
     pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
-    klm::Surface * sfc = new klm::Surface(pts);
+    klm::Surface *sfc = new klm::Surface(pts);
 
     pts.clear();
     pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
     pts.push_back(glm::vec3(-1.0, -2.0, 0.0f));
-    pts.push_back(glm::vec3(-1.0,  0.0, 0.0f));
-    pts.push_back(glm::vec3(-2.0,  0.0, 0.0f));
-    klm::Surface* sub = sfc->addSubSurface(pts);
-    if(sub != nullptr){
+    pts.push_back(glm::vec3(-1.0, 0.0, 0.0f));
+    pts.push_back(glm::vec3(-2.0, 0.0, 0.0f));
+    klm::Surface *sub = sfc->addSubSurface(pts);
+    if (sub != nullptr) {
         sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
 
         pts.clear();
         pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
-        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
-        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
+        pts.push_back(glm::vec3(0.0, -0.7, 0.0));
+        pts.push_back(glm::vec3(0.4, -0.5, 0.0));
+        pts.push_back(glm::vec3(0.4, 0.5, 0.0));
+        pts.push_back(glm::vec3(0.0, 0.7, 0.0));
+        pts.push_back(glm::vec3(-0.4, 0.5, 0.0));
 
-        klm::Surface* ss = sub->addSubSurface(pts);
-        if(ss){
+        klm::Surface *ss = sub->addSubSurface(pts);
+        if (ss) {
             ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
             ss->setScale(glm::vec3(0.8, 0.8, 1.0));
             ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
@@ -106,15 +106,15 @@ void drawhomewin::showEvent(QShowEvent *ev) {
             pts.clear();
             pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
             pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
-            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
+            pts.push_back(glm::vec3(-0.1, 0.0, 0.0));
+            pts.push_back(glm::vec3(-0.2, 0.0, 0.0));
 
 
-            klm::Surface* sss = ss->addSubSurface(pts);
-            if(sss != nullptr){
+            klm::Surface *sss = ss->addSubSurface(pts);
+            if (sss != nullptr) {
                 sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
             } else {
-                cout<<"failed to add last sub-surface"<<endl;
+                cout << "failed to add last sub-surface" << endl;
             }
         }
 
@@ -127,29 +127,29 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     pts.push_back(glm::vec3(1.0, 2.0, 0.0));
 
     klm::Surface *seSub = sfc->addSubSurface(pts);
-    if(seSub != nullptr){
+    if (seSub != nullptr) {
         seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
     }
 
     pugi::xml_document doc;
     sfc->save(doc);
-    doc.save_file("/Users/gang_liu/Desktop/surface.xml");    
+    doc.save_file("/Users/gang_liu/Desktop/surface.xml");
     delete sfc;
 
     pugi::xml_document load_doc;
     load_doc.load_file("/Users/gang_liu/Desktop/surface.xml");
     pugi::xml_node surface_node = load_doc.select_node("//surface").node();
-    if(surface_node){
-        std::cout<<"surface_node.name() = "<<surface_node.name()<<std::endl;
+    if (surface_node) {
+        std::cout << "surface_node.name() = " << surface_node.name() << std::endl;
     }
 
-    Surface* mySurface = new Surface;
+    Surface *mySurface = new Surface;
 
-    if(mySurface->load(surface_node)){        
+    if (mySurface->load(surface_node)) {
         mySurface->setTranslate(glm::vec3(0.0, 0.0, 1.0));
 //        sfc->setTranslate(glm::vec3(0.0, 0.5, 1.0));
 
-        gl3d::surface_object * oo = new gl3d::surface_object(mySurface);
+        gl3d::surface_object *oo = new gl3d::surface_object(mySurface);
         oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
         oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
         oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
@@ -165,7 +165,7 @@ void drawhomewin::showEvent(QShowEvent *ev) {
         oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
         oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
         oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
-        this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));            
+        this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));
     }
 
 }
@@ -227,4 +227,34 @@ void drawhomewin::on_switch3D_clicked() {
 
 void drawhomewin::on_colse_b_clicked() {
     this->close();
+}
+
+void drawhomewin::on_pushButton_clicked() {
+    // test code
+    gl3d::scene *sce = this->ui->OpenGLCanvas->main_scene;
+    gl3d::abstract_object *abs_obj = NULL;
+    glm::vec2 coda(sce->get_width() / 2.0f, sce->get_height() / 2.0f);
+    glm::vec2 codb(sce->get_width() / 4.0f * 3.0f, sce->get_height() / 4.0f * 3.0f);
+    int obj_id = sce->get_object_id_by_coordination(coda.x, coda.y);
+    if (obj_id > 0) {
+        abs_obj = sce->get_obj(obj_id);
+        if (abs_obj->get_obj_type() == abs_obj->type_wall) {
+            gl3d_wall *w = (gl3d_wall *) abs_obj;
+            if (obj_id != sce->get_object_id_by_coordination(codb.x, codb.y)) {
+                return; //check obj
+            }
+            glm::vec3 holea, holeb;
+            holea = math::convert_vec2_to_vec3(w->get_start_point());
+            holeb = math::convert_vec2_to_vec3(w->get_end_point());
+            glm::vec3 dir = holeb - holea;
+            dir = glm::normalize(dir);
+            float xlen = w->get_length();
+            holeb = holea + dir * 0.75f * xlen;
+            holea = holea + dir * 0.25f * xlen;
+            holea.y = 0.25f;
+            holeb.y = 0.75f;
+            hole * h = new hole(w, holea, holeb);
+            w->calculate_mesh();
+        }
+    }
 }

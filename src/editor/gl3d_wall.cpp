@@ -366,23 +366,45 @@ void gl3d_wall::calculate_mesh() {
             pb_right.y = glm::max(pa.y, pb.y);
             hole_vertex.clear();
             // dig right wall
-            hole_vertex.push_back(pa_right);
-            hole_vertex.push_back(glm::vec3(pb_right.x, pa_right.y, pb_right.z));
-            hole_vertex.push_back(pb_right);
-            hole_vertex.push_back(glm::vec3(pa_right.x, pb_right.y, pa_right.z));
+            glm::mat4 model_mat = this->sfcs.at(1)->getRenderingTransform();
+            model_mat = glm::inverse(model_mat);
+            glm::vec4 tmp = model_mat * glm::vec4(pa_right, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pb_right.x, pa_right.y, pb_right.z, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pb_right, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pa_right.x, pb_right.y, pa_right.z, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
             klm::Surface *sf = this->sfcs.at(1)->addSubSurface(hole_vertex);
             // TODO : 这里经常会出现加不进去的情况，返回为空很是奇特，会由于subSurfaceFits为false而删除新创建的面
-            if (NULL != sf)
-                sf->setTranslate(glm::vec3(0.0f, 0.0f, -0.01));
+            if (NULL != sf) {
+                sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+            }
             hole_vertex.clear();
             // dig left wall
-            hole_vertex.push_back(pa_right);
-            hole_vertex.push_back(glm::vec3(pa_right.x, pb_right.y, pa_right.z));
-            hole_vertex.push_back(pb_right);
-            hole_vertex.push_back(glm::vec3(pb_right.x, pa_right.y, pb_right.z));
+            model_mat = this->sfcs.at(0)->getRenderingTransform();
+            model_mat = glm::inverse(model_mat);
+            tmp = model_mat * glm::vec4(pa_right, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pa_right.x, pb_right.y, pa_right.z, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pb_right, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
+            tmp = model_mat * glm::vec4(pb_right.x, pa_right.y, pb_right.z, 1.0f);
+            tmp = tmp / tmp.w;
+            hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
             sf = this->sfcs.at(0)->addSubSurface(hole_vertex);
-            if (NULL != sf)
-                sf->setTranslate(glm::vec3(0.0f, 0.0f, -0.0001));
+            if (NULL != sf) {
+                sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+            }
             hole_vertex.clear();
 
             // TODO : set sub surface invisible
