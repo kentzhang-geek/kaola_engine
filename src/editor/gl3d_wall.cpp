@@ -384,6 +384,7 @@ void gl3d_wall::calculate_mesh() {
             // TODO : 这里经常会出现加不进去的情况，返回为空很是奇特，会由于subSurfaceFits为false而删除新创建的面
             if (NULL != sf) {
                 sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+                sf->hideSurface();
             }
             hole_vertex.clear();
             // dig left wall
@@ -404,6 +405,7 @@ void gl3d_wall::calculate_mesh() {
             sf = this->sfcs.at(0)->addSubSurface(hole_vertex);
             if (NULL != sf) {
                 sf->setTranslate(glm::vec3(0.0f, 0.0f, -this->thickness / 2.0f));
+                sf->hideSurface();
             }
             hole_vertex.clear();
 
@@ -686,12 +688,14 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
     }
 
     // create new mesh
-    gl3d::mesh *m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
-    m->set_material_index(0);
-    m->set_bounding_value_max(bnd_max);
-    m->set_bounding_value_min(bnd_min);
-    m->set_texture_repeat(true);
-    vct.push_back(m);
+    if (sfc->isSurfaceVisible()) {
+        gl3d::mesh *m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
+        m->set_material_index(0);
+        m->set_bounding_value_max(bnd_max);
+        m->set_bounding_value_min(bnd_min);
+        m->set_texture_repeat(true);
+        vct.push_back(m);
+    }
 
     // clean env
     delete pts;
@@ -699,7 +703,7 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
 
     // process conective surface
     // have conective surface , then process meshes
-    if (sfc->isConnectiveSurface()) {
+    if (sfc->isConnectiveSurface() && sfc->isConnectiveVisible()) {
         vertexes = sfc->getConnectiveVerticies();
         indecis = sfc->getConnectiveIndicies();
         bnd_max = glm::vec3(BOUND_MIN_DEFAULT);
@@ -741,7 +745,7 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
     }
 
     // process sub surface
-    if (sfc->getSurfaceCnt() > 0) {
+    if ((sfc->getSurfaceCnt() > 0) && (sfc->isSurfaceVisible())) {
         for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
             surface_to_mesh(sfc->getSubSurface(i), vct);
         }
