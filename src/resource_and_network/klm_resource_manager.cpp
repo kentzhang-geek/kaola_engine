@@ -124,10 +124,10 @@ void manager::test_data_init() {
                                 std::string(get_file_name_by_item(this->id_to_item.value("000003"))));
     this->id_to_merchandise.insert("000003", new klm::Furniture("000003"));
 
-    this->id_to_item.insert("000004", resource::item("000004", "58.jpg", item::res_texture_picture, true));
-    this->id_to_resource.insert("000004",
-                                std::string(get_file_name_by_item(this->id_to_item.value("000004"))));
-    this->id_to_merchandise.insert("000004", new klm::Surfacing("000004"));
+    this->id_to_item.insert("mtl000000", resource::item("mtl000000", "58.jpg", item::res_texture_picture, true));
+    this->id_to_resource.insert("mtl000000",
+                                std::string(get_file_name_by_item(this->id_to_item.value("mtl000000"))));
+    this->id_to_merchandise.insert("mtl000000", new klm::Surfacing("mtl000000"));
 
 //    this->id_to_item.insert("000005", resource::item("000005", "armchair.3ds", item::res_model_3ds, true));
 //    this->id_to_resource.insert("000005",
@@ -143,8 +143,7 @@ void manager::test_data_init() {
 // preload resources like ground and some else
 void manager::preload_resources(gl3d::scene * sc) {
     this->perform_async_res_load(new default_model_loader(sc,
-                                                           GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
-                                                           GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
+                                                          GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
+                                                          GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
                                  "000000");
-//    this->perform_async_res_load(new default_model_loader(sc), "000001");
 }

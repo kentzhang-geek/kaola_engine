@@ -14,6 +14,7 @@
 #include "kaola_engine/gl3d_material.hpp"
 #include "utils/gl3d_post_process_template.h"
 #include <QVector>
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 using namespace gl3d;
@@ -196,7 +197,7 @@ public:
         obj->set_repeat(true);
         obj->get_meshes()->at(0)->set_texture_repeat(true);
         obj->get_meshes()->at(0)->set_material_index(0);
-        obj->get_mtls()->insert(0, new gl3d_material("net.jpg"));
+        obj->get_mtls()->insert(0, new gl3d_material(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + "net.jpg"));
         obj->get_property()->scale_unit = gl3d::scale::m;
         obj->set_render_authority(GL3D_SCENE_DRAW_NET);
         obj->set_control_authority(GL3D_OBJ_ENABLE_DEL);

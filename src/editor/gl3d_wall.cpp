@@ -2,6 +2,7 @@
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_lock.h"
 #include "editor/surface.h"
+#include "resource_and_network/global_material.h"
 
 using namespace std;
 using namespace gl3d;
@@ -284,6 +285,7 @@ void gl3d_wall::calculate_mesh() {
         points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
         points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
         s = new klm::Surface(points);
+        s->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
         this->sfcs.push_back(s);
         // right
         points.clear();
@@ -292,6 +294,7 @@ void gl3d_wall::calculate_mesh() {
         points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
         points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
         s = new klm::Surface(points);
+        s->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
         this->sfcs.push_back(s);
         // back
         points.clear();
@@ -299,21 +302,27 @@ void gl3d_wall::calculate_mesh() {
         points.push_back(glm::vec3(l_right.a.x, 0.0f, l_right.a.y));
         points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
         points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
-        this->sfcs.push_back(new klm::Surface(points));
+        s = new klm::Surface(points);
+        s->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+        this->sfcs.push_back(s);
         // front
         points.clear();
         points.push_back(glm::vec3(l_right.b.x, 0.0f, l_right.b.y));
         points.push_back(glm::vec3(l_left.b.x, 0.0f, l_left.b.y));
         points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
         points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
-        this->sfcs.push_back(new klm::Surface(points));
+        s = new klm::Surface(points);
+        s->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+        this->sfcs.push_back(s);
         // top
         points.clear();
         points.push_back(glm::vec3(l_left.a.x, this->hight, l_left.a.y));
         points.push_back(glm::vec3(l_right.a.x, this->hight, l_right.a.y));
         points.push_back(glm::vec3(l_right.b.x, this->hight, l_right.b.y));
         points.push_back(glm::vec3(l_left.b.x, this->hight, l_left.b.y));
-        this->sfcs.push_back(new klm::Surface(points));
+        s = new klm::Surface(points);
+        s->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+        this->sfcs.push_back(s);
     }
     catch (SurfaceException &exp) {
         // do nothing
@@ -331,7 +340,7 @@ void gl3d_wall::calculate_mesh() {
 
         for (auto it = this->holes_on_this_wall.begin();
              it != this->holes_on_this_wall.end();
-             ) {
+                ) {
             // check hole valid
             if (!it.value()->is_valid()) {
                 it.value()->set_on_witch_wall(NULL);
@@ -387,6 +396,7 @@ void gl3d_wall::calculate_mesh() {
             klm::Surface *sf = this->sfcs.at(1)->addSubSurface(hole_vertex);
             if (NULL != sf) {
                 sf->setTranslate(glm::vec3(0.0f, 0.0f, this->thickness));
+                sf->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
                 sf->hideSurface();
             }
             hole_vertex.clear();
@@ -690,7 +700,9 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
     // create new mesh
     if (sfc->isSurfaceVisible()) {
         gl3d::mesh *m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
-        m->set_material_index(0);
+        global_material_lib::shared_instance()->request_new_mtl(sfc->getSurfaceMaterial()->getID(), NULL, NULL);
+        m->set_material_index(
+                global_material_lib::shared_instance()->get_mtl_id(sfc->getSurfaceMaterial()->getID()));
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
         m->set_texture_repeat(true);
@@ -734,7 +746,9 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
         }
         // create new mesh
         gl3d::mesh *m = new gl3d::mesh(pts, pts_len, idxes, idx_len);
-        m->set_material_index(0);
+        global_material_lib::shared_instance()->request_new_mtl(sfc->getConnectiveMaterial()->getID(), NULL, NULL);
+        m->set_material_index(
+                global_material_lib::shared_instance()->get_mtl_id(sfc->getConnectiveMaterial()->getID()));
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
         m->set_texture_repeat(true);
@@ -788,14 +802,7 @@ void gl3d_wall::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
 }
 
 void gl3d_wall::get_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
-    static gl3d_material *mtl = new gl3d_material("_7.jpg");
-    mt.insert(0, mtl);
-    mt.insert(1, mtl);
-    mt.insert(2, mtl);
-    mt.insert(3, mtl);
-    mt.insert(4, mtl);
-    mt.insert(5, mtl);
-    mt.insert(6, mtl);
+    global_material_lib::shared_instance()->copy_mtls_pair_info(mt);
 }
 
 void gl3d_wall::set_translation_mat(const glm::mat4 &trans) {
