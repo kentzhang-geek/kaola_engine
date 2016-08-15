@@ -1,10 +1,4 @@
 #include "kaola_engine/mopenglview.h"
-#include "kaola_engine/gl3d_out_headers.h"
-#include "kaola_engine/gl3d_render_process.hpp"
-#include "utils/gl3d_global_param.h"
-#include "utils/gl3d_path_config.h"
-#include "utils/gl3d_lock.h"
-#include "utils/gl3d_math.h"
 
 using namespace std;
 
@@ -529,6 +523,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         if(is_drawwall_start_point) {
             this->drawwall_start_point = glm::vec2(conn_dot_tmp_x, conn_dot_tmp_y);
             connectDot->setVisible(true);
+
             connectDot->setGeometry(conn_dot_tmp_x - 12, conn_dot_tmp_y - 12, 24, 24);
         }
     }
@@ -722,6 +717,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                 if(angle_dis_y < 10.0f) {
                     helpLineProcessed = true;
                     is_show_conn_dot = true;
+
                     conn_dot_tmp_x = tmp_pt.x;
                     conn_dot_tmp_y = (*it).first.y;
                     this->drawhome_y1 = (*it).first.y;
