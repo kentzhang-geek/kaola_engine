@@ -537,7 +537,7 @@ background-color: rgb(28, 29, 32)
                  <x>10</x>
                  <y>40</y>
                  <width>241</width>
-                 <height>77</height>
+                 <height>73</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout">
@@ -797,19 +797,6 @@ color: rgb(245, 245, 245);
                  <width>48</width>
                  <height>48</height>
                 </size>
-               </property>
-              </widget>
-              <widget class="QPushButton" name="pushButton">
-               <property name="geometry">
-                <rect>
-                 <x>90</x>
-                 <y>280</y>
-                 <width>93</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>TEST_HOLE</string>
                </property>
               </widget>
              </widget>

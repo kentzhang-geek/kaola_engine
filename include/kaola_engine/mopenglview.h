@@ -38,6 +38,13 @@
 // test draw wall
 #include "editor/gl3d_wall.h"
 
+#include "kaola_engine/gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
+#include "utils/gl3d_lock.h"
+#include "utils/gl3d_math.h"
+
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
 #include <QVector>
