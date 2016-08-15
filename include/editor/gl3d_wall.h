@@ -158,6 +158,7 @@ namespace gl3d {
 
         // create new hole on wall w
         hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b);
+        hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height);
 
         // check is this hole valid to the wall
         bool is_valid();

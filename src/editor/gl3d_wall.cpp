@@ -1031,6 +1031,28 @@ hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b) {
     }
 }
 
+hole::hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height) {
+    this->init();
+
+    // now calculate point a and point b
+    glm::vec3 dir = math::convert_vec2_to_vec3(
+            w->get_end_point() - w->get_start_point()
+    );
+    dir = glm::normalize(dir);
+    this->pta = center_point - dir * width * 0.5f;
+    this->pta.y = min_height;
+    this->ptb = center_point + dir * width * 0.5f;
+    this->ptb.y = max_height;
+
+    this->on_witch_wall = w;
+    if (this->is_valid()) {
+        w->holes_on_this_wall.insert(this->hole_id, this);
+    }
+    else {
+        this->on_witch_wall = NULL;
+    }
+}
+
 bool hole::is_valid() {
     if (this->on_witch_wall == NULL) {
         return false;
