@@ -1,0 +1,4 @@
+#ifndef GLOBAL_MATERIAL_H
+#define GLOBAL_MATERIAL_H
+
+#endif // GLOBAL_MATERIAL_H

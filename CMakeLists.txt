@@ -53,6 +53,8 @@ set(SRCS
         src/editor/surface.cpp
         src/editor/merchandise.cpp
         src/resource_and_network/klm_resource_manager.cpp
+        src/utils/io_utility.cpp
+        src/render/global_material.cpp
         )
 
 set(qttest_MOCS
@@ -104,6 +106,8 @@ set(qttest_MOCS
         include/editor/surface.h
         include/editor/merchandise.h
         include/resource_and_network/klm_resource_manager.h
+        include/utils/io_utility.h
+        include/kaola_engine/global_material.h
         )
 
 include_directories(LIBS/glm_build)
