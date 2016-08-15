@@ -357,7 +357,7 @@ void gl3d_wall::calculate_mesh() {
                 pb = tmppt;
             }
 
-            // TODO : dig hole on wall
+            // Dig holes on wall
             glm::vec3 dir_3d = convert_vec2_to_vec3(top_dir);
             QVector<glm::vec3> hole_vertex;
             glm::vec3 pa_left = pa + dir_3d * this->thickness / 2.0f;
@@ -385,7 +385,6 @@ void gl3d_wall::calculate_mesh() {
             tmp = tmp / tmp.w;
             hole_vertex.push_back(glm::vec3(tmp.x, tmp.y, tmp.z));
             klm::Surface *sf = this->sfcs.at(1)->addSubSurface(hole_vertex);
-            // TODO : 这里经常会出现加不进去的情况，返回为空很是奇特，会由于subSurfaceFits为false而删除新创建的面
             if (NULL != sf) {
                 sf->setTranslate(glm::vec3(0.0f, 0.0f, this->thickness));
                 sf->hideSurface();
@@ -411,8 +410,6 @@ void gl3d_wall::calculate_mesh() {
                 sf->hideSurface();
             }
             hole_vertex.clear();
-
-            // TODO : set sub surface invisible
         }
     }
     catch (SurfaceException &exp) {
