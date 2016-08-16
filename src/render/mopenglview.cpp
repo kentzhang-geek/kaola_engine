@@ -10,9 +10,17 @@ void MOpenGLView::set_palette_init(QLabel *l, QPixmap p) {
     l->setMask(p.mask());
     l->setAutoFillBackground(true);
     QPalette palette;
-    palette.setColor(QPalette::Background, QColor(0, 0, 0, 0));
+    palette.setColor(QPalette::Background, QColor(255, 255, 255));
     l->setPalette(palette);
     l->setVisible(false);
+}
+
+void MOpenGLView::draw_image() {
+    this->main_scene->get_assistant_image()->fill(0);
+    QRect target(100.0, 100.0, 100, 100);
+    QImage image(":/images/openhole_door");
+    QRect source(0.0, 0.0, image.width(), image.height());
+    this->main_scene->get_assistant_drawer()->drawImage(target, image, source);
 }
 
 void MOpenGLView::do_init() {
@@ -55,13 +63,15 @@ void MOpenGLView::do_init() {
 
     // set image for assistant lines
     this->main_scene->set_assistant_image(
-            new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
+                new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
 
     // test painter
     this->main_scene->get_assistant_drawer()->drawLine(1,1,this->width()/2,this->height()/2);
     this->main_scene->get_assistant_drawer()->drawText(12, 12, "What the fuck?");
+
+    this->draw_image();
 }
 
 #define MAX_FILE_SIZE 10000
@@ -919,7 +929,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         l_door->setGeometry((float)event->x() - 50, (float)event->y() - 100, 100, 100);
         l_door->setVisible(true);
 
-//        doorsWindowsImages->push_back();
+        //        doorsWindowsImages->push_back();
     }
 
 

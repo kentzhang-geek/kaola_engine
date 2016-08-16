@@ -13,7 +13,7 @@ namespace gl3d {
             T a;
             T b;
 
-            line() : a(glm::vec2(0.0f)), b(glm::vec2(0.0f)) {}
+            line() : a(T(0.0f)), b(T(0.0f)) {}
 
             line(T tag_a, T tag_b) : a(tag_a), b(tag_b) {}
 

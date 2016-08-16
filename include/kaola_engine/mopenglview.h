@@ -84,6 +84,8 @@ public:
 public slots:
     void view_change();
 private:
+    void draw_image();
+
     string res_path;
     QTimer * timer;
     QTimer * keyTimer;
