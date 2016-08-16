@@ -2,19 +2,19 @@
 
 #include <iostream>
 #include <CGAL/Simple_cartesian.h>
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_2 Point_2;
-typedef Kernel::Segment_2 Segment_2;
+typedef CGAL::Simple_cartesian<double> cg_Kernel;
+typedef cg_Kernel::Point_2 cg_Point_2;
+typedef cg_Kernel::Segment_2 cg_Segment_2;
 int main()
 {
-    Point_2 p(1,1), q(10,10);
+    cg_Point_2 p(1,1), q(10,10);
     std::cout << "p = " << p << std::endl;
     std::cout << "q = " << q.x() << " " << q.y() << std::endl;
     std::cout << "sqdist(p,q) = "
               << CGAL::squared_distance(p,q) << std::endl;
 
-    Segment_2 s(p,q);
-    Point_2 m(5, 9);
+    cg_Segment_2 s(p,q);
+    cg_Point_2 m(5, 9);
 
     std::cout << "m = " << m << std::endl;
     std::cout << "sqdist(Segment_2(p,q), m) = "
