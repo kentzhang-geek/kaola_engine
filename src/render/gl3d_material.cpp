@@ -185,18 +185,15 @@ gl3d_material::gl3d_material() {
 
 gl3d_material::gl3d_material(string file_name) {
     this->init();
-    string path = gl3d_sandbox_path;
-    path = path + string("/") + file_name;
-    gl3d_texture * ins_text;
-    
-    ins_text = new gl3d_texture((char *)path.c_str());
+    string path = file_name;
+
     // KENT WARN : 如果两个text的index相同，则不进行覆盖
-    this->textures.insert(diffuse, ins_text);
+    this->type_to_image.insert(diffuse, new gl3d_image((char *)file_name.c_str()));
     // KENT WARN : 目前只用散射色
 //    this->textures.insert(std::pair<material_type, gl3d_texture *>(ambient, ins_text));
 //    this->textures.insert(std::pair<material_type, gl3d_texture *>(specular, ins_text));
     
-    // KENT WARN : 设置初始颜色为0.2
+    // KENT WARN : 设置初始颜色为0.3
     this->colors.insert(ambient, glm::vec3(0.3));
     this->colors.insert(diffuse, glm::vec3(0.0));
     this->colors.insert(specular, glm::vec3(0.0));

@@ -21,6 +21,7 @@
 #include <QGLWidget>
 #include <QResource>
 #include <QFile>
+#include <QImage>
 
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"

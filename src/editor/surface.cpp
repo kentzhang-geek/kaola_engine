@@ -1,6 +1,8 @@
 #include "editor/surface.h"
 #include <iostream>
 #include <QMutex>
+#include <sstream>
+#include "resource_and_network/klm_resource_manager.h"
 
 using namespace klm;
 using namespace std;
@@ -28,13 +30,28 @@ std::string SurfaceException::what() const{
     return message;
 }
 
+Surface::Surface(const Surface* parent)
+    : parent(parent), surfaceVisible(true), connectiveVisible(true),
+      subSurfaces(new QVector<Surface*>),
+      localVerticies(new QVector<Surface::Vertex*>),
+      transformFromParent(new glm::mat4(1.0)),boundingBox(nullptr),
+      scale(nullptr), rotation(nullptr),translate(nullptr),
+      attachedFurniture(new QMap<std::string, Furniture*>),
+      independShape(nullptr), parentialShape(nullptr),
+      renderingVerticies(nullptr), renderingIndicies(nullptr),
+      connectiveVertices(nullptr), connectiveIndices(nullptr),
+      surfaceMaterial(nullptr), connectiveMaterial(nullptr){
+}
+
 Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(SurfaceException)
-    : parent(parent), visible(false), subSurfaces(new QVector<Surface*>),
+    : parent(parent), surfaceVisible(true), connectiveVisible(true),
+      subSurfaces(new QVector<Surface*>),
       localVerticies(new QVector<Surface::Vertex*>),
       scale(nullptr), rotation(nullptr),translate(nullptr),
-      attachedFurniture(new QHash<std::string, Furniture*>),
+      attachedFurniture(new QMap<std::string, Furniture*>),
       renderingVerticies(nullptr), renderingIndicies(nullptr),
-      connectiveVertices(nullptr), connectiveIndices(nullptr){
+      connectiveVertices(nullptr), connectiveIndices(nullptr),
+      surfaceMaterial(nullptr), connectiveMaterial(nullptr){
 
     if(points.size() < 3){
         throw SurfaceException("can not create Surface using less then three points");
@@ -206,7 +223,7 @@ glm::mat4 Surface::getRenderingTransform() const{
     glm::mat4 matrix(1.0);
     if(parent != nullptr){
         matrix =
-                parent->getRenderingTransform() *                
+                parent->getRenderingTransform() *
                 getTransformFromParent() *
                 getSurfaceTransform();
     } else {
@@ -294,6 +311,30 @@ bool Surface::isConnectiveSurface() const{
     return equals;
 }
 
+bool Surface::isSurfaceVisible() const{
+    return surfaceVisible;
+}
+
+void Surface::showSurface(){
+    surfaceVisible = true;
+}
+
+void Surface::hideSurface(){
+    surfaceVisible = false;
+}
+
+bool Surface::isConnectiveVisible() const{
+    return connectiveVisible;
+}
+
+void Surface::showConnective(){
+    connectiveVisible = true;
+}
+
+void Surface::hideConnective(){
+    connectiveVisible = false;
+}
+
 GLfloat Surface::getRoughArea(){
     if(localVerticies == nullptr || localVerticies->size() == 0){
         return 0.0f;
@@ -351,11 +392,19 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
     }
     ret.clear();
 
+    glm::mat4 *transform = parent == nullptr ?
+                new glm::mat4(1.0f) :
+                new glm::mat4(parent->getRenderingTransform());
+
     for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
         vertex != connectiveVertices->end(); ++vertex){
         Surface::Vertex* v = new Surface::Vertex(**vertex);
+        transformVertex(*transform, *v);
         ret.push_back(v);
     }    
+
+    delete transform;
+
     return &ret;
 }
 
@@ -399,7 +448,215 @@ void Surface::setConnectiveMateiral(Surfacing *connective){
     this->connectiveMaterial = connective;
 }
 
+void Surface::addFurniture(Furniture* furniture){
+    attachedFurniture->insert(furniture->getPickID(), furniture);
+}
 
+int Surface::removeFurniture(const std::string &pickID){
+    return attachedFurniture->remove(pickID);
+}
+
+Furniture* Surface::getFurniture(const string &pickID){
+    return attachedFurniture->value(pickID);
+}
+
+void Surface::save(pugi::xml_node &node){
+    pugi::xml_node surfaceNode = node.append_child(IOUtility::SURFACE.c_str());
+
+    writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());    
+
+    IOUtility::writeMatrix(surfaceNode, *transformFromParent, IOUtility::TRANSFORM_FROM_PPARENT.c_str());
+    surfaceNode.append_attribute(IOUtility::SURFACE_VISIBLE.c_str()).set_value(surfaceVisible);
+    surfaceNode.append_attribute(IOUtility::CONNECTIVE_VISIBLE.c_str()).set_value(connectiveVisible);
+
+    if(surfaceMaterial != nullptr){
+        pugi::xml_node materialNode = surfaceNode.append_child(IOUtility::SURFACE_MATEIRAL.c_str());
+        materialNode.append_attribute(IOUtility::MERCHANIDSE_ID.c_str()).set_value(surfaceMaterial->getID().c_str());
+
+        IOUtility::writeMatrix(materialNode, surfaceMaterial->getRotation());
+        IOUtility::writeVector(materialNode, surfaceMaterial->getTranslation());
+    }
+
+    if(connectiveMaterial != nullptr){
+        pugi::xml_node materialNode = surfaceNode.append_child(IOUtility::CONNECTIVE_MATERIAL.c_str());
+        materialNode.append_attribute(IOUtility::MERCHANIDSE_ID.c_str()).set_value(connectiveMaterial->getID().c_str());
+
+        IOUtility::writeMatrix(materialNode, connectiveMaterial->getRotation());
+        IOUtility::writeVector(materialNode, connectiveMaterial->getTranslation());
+    }
+
+    for(QMap<std::string, Furniture*>::iterator furniture = attachedFurniture->begin();
+        furniture != attachedFurniture->end(); ++furniture){
+        pugi::xml_node furnitureNode = surfaceNode.append_child(IOUtility::FUNITURE.c_str());
+        furnitureNode.append_attribute(IOUtility::FURNITURE_ID.c_str()).set_value((*furniture)->getID().c_str());
+        IOUtility::writeMatrix(furnitureNode, (*furniture)->getRotation());
+        IOUtility::writeVector(furnitureNode, (*furniture)->getTranslation());
+    }
+
+    if(scale != nullptr){
+        IOUtility::writeVector(surfaceNode, *scale, IOUtility::SURFACE_SCALE);
+    }
+    if(rotation != nullptr){
+        IOUtility::writeMatrix(surfaceNode, *rotation, IOUtility::SURFACE_ROTATION);
+    }
+    if(translate != nullptr){
+        IOUtility::writeVector(surfaceNode, *translate, IOUtility::SURFACE_TRANSLATE);
+    }
+
+    if(subSurfaces != nullptr){
+        for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
+            subSurface != subSurfaces->end(); ++subSurface){
+            (*subSurface)->save(surfaceNode);
+        }
+    }
+
+}
+
+bool Surface::load(const pugi::xml_node &node){    
+    if(IOUtility::SURFACE.compare(std::string(node.name())) == 0){
+        if(!readVerticies(node, localVerticies)){
+            return false;
+        }
+
+        static const string TFPXPath = "./"+IOUtility::MATRIX+"[@"+IOUtility::USAGE+"=\""
+                +IOUtility::TRANSFORM_FROM_PPARENT+"\"]";
+        pugi::xpath_node_set matrixXPathNode = node.select_nodes(TFPXPath.c_str());
+        if(matrixXPathNode.size() != 1){            
+            return false;
+        }
+        if(this->transformFromParent == nullptr){
+            this->transformFromParent = new glm::mat4;
+        }       
+
+        IOUtility::readMatrix(matrixXPathNode.first().node(), *transformFromParent);
+
+        if(node.attribute(IOUtility::SURFACE_VISIBLE.c_str())){
+            surfaceVisible = node.attribute(IOUtility::SURFACE_VISIBLE.c_str()).as_bool();
+        }
+
+        if(node.attribute(IOUtility::CONNECTIVE_VISIBLE.c_str())){
+            connectiveVisible = node.attribute(IOUtility::CONNECTIVE_VISIBLE.c_str()).as_bool();
+        }
+
+        if(attachedFurniture != nullptr){
+            attachedFurniture = new QMap<std::string, Furniture*>;
+        }
+        static const string furnitureXPath = "./"+IOUtility::FUNITURE+"[@"+IOUtility::FURNITURE_ID+"]";
+        pugi::xpath_node_set furnitureXPathes = node.select_nodes(furnitureXPath.c_str());
+        for(pugi::xpath_node furnitureNode : furnitureXPathes){
+            //todo: load furniture from resource management
+            std::string id = furnitureNode.node().attribute(IOUtility::FURNITURE_ID.c_str()).as_string();
+            Furniture* furniturePtr = (Furniture*)klm::resource::manager::shared_instance()->get_merchandise_item(id);
+            if(furniturePtr != nullptr){
+                attachedFurniture->insert(id, furniturePtr);
+
+                static const string furnitureRotXPath = "./"+IOUtility::MATRIX;
+                pugi::xpath_node rotNode = furnitureNode.node().select_node(furnitureRotXPath.c_str());
+                if(rotNode){
+                    glm::mat4 rot;
+                    IOUtility::readMatrix(rotNode.node(), rot);
+                    furniturePtr->setRotation(rot);
+                }
+
+                static const string furnitureTranXPath = "./"+IOUtility::VECTOR;
+                pugi::xpath_node tranNode = furnitureNode.node().select_node(furnitureTranXPath.c_str());
+                if(tranNode){
+                    glm::vec3 trans;
+                    IOUtility::readVector(tranNode.node(), trans);
+                    furniturePtr->setTranslateiong(trans);
+                }
+            }
+
+        }
+
+        static const string surfaceScaleXpath = "./"+IOUtility::VECTOR+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_SCALE+"\"]";
+        pugi::xpath_node scaleNode = node.select_node(surfaceScaleXpath.c_str());
+        if(scaleNode){
+            glm::vec3 scaleRead;
+            IOUtility::readVector(scaleNode.node(), scaleRead);
+            if(scale != nullptr){
+                *scale = scaleRead;
+            } else {
+                scale = new glm::vec3(scaleRead);
+            }
+        }
+
+        static const string surfaceRotXPath =
+                "./"+IOUtility::MATRIX+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_ROTATION+"\"]";
+        pugi::xpath_node rotNode = node.select_node(surfaceRotXPath.c_str());
+        if(rotNode){
+            glm::mat4 rotRead;
+            IOUtility::readMatrix(rotNode.node(), rotRead);
+            if(rotation != nullptr){
+                *rotation = rotRead;
+            } else {
+                rotation = new glm::mat4(rotRead);
+            }
+        }
+
+        static const string surfaceTransXPath = "./"+IOUtility::VECTOR+"[@"+IOUtility::USAGE+"=\""+IOUtility::SURFACE_TRANSLATE+"\"]";
+        pugi::xpath_node tranNode = node.select_node(surfaceTransXPath.c_str());
+        if(tranNode){
+            glm::vec3 transRead;
+            IOUtility::readVector(tranNode.node(), transRead);
+            if(translate != nullptr){
+                *translate = transRead;
+            } else {
+                translate = new glm::vec3(transRead);
+            }
+        }
+
+        static const string subSurfaceXPath = "./"+IOUtility::SURFACE
+                    +"[@"+IOUtility::NUM_OF_VERTICES+" and @"+IOUtility::SURFACE_VISIBLE+" and@"+IOUtility::CONNECTIVE_VISIBLE+"]";
+        pugi::xpath_node_set subSurfaceNodeSet = node.select_nodes(subSurfaceXPath.c_str());
+        if(subSurfaces == nullptr){
+            subSurfaces = new QVector<Surface*>;
+        }
+        for(pugi::xpath_node subSurfaceNode : subSurfaceNodeSet){
+            Surface* sub = new Surface(this);
+            if(sub->load(subSurfaceNode.node())){
+                subSurfaces->push_back(sub);
+            } else {
+                delete sub;
+            }
+        }
+
+        if(boundingBox != nullptr){
+            delete boundingBox;
+        }
+        boundingBox = new Surface::BoundingBox(*localVerticies);
+        boundingBox->generateTexture(*localVerticies);
+
+        //finally generate shapes
+        if(independShape != nullptr){
+            delete independShape;
+        }
+        independShape = new bg_Polygon;
+        if(parentialShape != nullptr){
+            delete parentialShape;
+        }
+        parentialShape = new bg_Polygon;
+
+        QVector<Surface::Vertex*> verticies;
+        getLocalVertices(verticies);
+        glm::mat4 transform = getTransformFromParent();
+        for(QVector<Surface::Vertex*>::iterator vertex = verticies.begin();
+            vertex != verticies.end(); ++vertex){
+            Surface::Vertex* v = (*vertex);
+            independShape->outer().push_back(bg_Point(v->x(), v->y()));
+            transformVertex(transform, *v);
+            parentialShape->outer().push_back(bg_Point(v->x(), v->y()));
+            delete v;
+        }
+
+        updateSurfaceMesh();
+        updateConnectionMesh();
+
+        return true;
+    } else {
+        return false;
+    }    
+}
 
 void Surface::updateSurfaceMesh(){
     Surface::tesselate(this);
@@ -484,11 +741,6 @@ void Surface::updateConnectionMesh(){
         if(CONN_DEBUG){
             Surface::vertexLogger(*connectiveVertices, *connectiveIndices,
                                   "connective surface in local coordinate system");
-        }
-        glm::mat4 transform = parent == nullptr ? glm::mat4(1.0f) : parent->getRenderingTransform();
-        for(QVector<Surface::Vertex*>::iterator vertex = connectiveVertices->begin();
-            vertex != connectiveVertices->end(); ++vertex){
-            Surface::transformVertex(transform, **vertex);
         }
 
         if(CONN_DEBUG){
@@ -765,6 +1017,69 @@ void Surface::deleteVerticies(QVector<Surface::Vertex*> *vertices){
     delete vertices;
 }
 
+void Surface::writeVerticies(pugi::xml_node &node, const QVector<Surface::Vertex *> &verticies, const string tag){
+    if(verticies.size() != 0){
+        node.append_attribute(IOUtility::NUM_OF_VERTICES.c_str()).set_value(verticies.size());
+        if(tag.size() != 0){
+            node.append_attribute(IOUtility::USAGE.c_str()).set_value(tag.c_str());
+        }
+        int cnt = 0;
+        for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
+            vertex != verticies.end(); ++vertex){
+            pugi::xml_node vertexNode = node.append_child(IOUtility::VERTEX.c_str());
+            vertexNode.append_attribute(IOUtility::INDEX.c_str()).set_value(cnt++);
+            vertexNode.append_attribute(IOUtility::X.c_str()).set_value((*vertex)->x());
+            vertexNode.append_attribute(IOUtility::Y.c_str()).set_value((*vertex)->y());
+            vertexNode.append_attribute(IOUtility::Z.c_str()).set_value((*vertex)->z());
+            vertexNode.append_attribute(IOUtility::W.c_str()).set_value((*vertex)->w());
+            vertexNode.append_attribute(IOUtility::H.c_str()).set_value((*vertex)->h());
+        }
+    }
+}
+
+bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex *> *ret){
+    static std::string xpath = "./"+IOUtility::VERTEX + "[" +
+            "@"+ IOUtility::X+" and @"+ IOUtility::Y+" and @"+ IOUtility::Z+
+            +" and @"+ IOUtility::W+" and @"+ IOUtility::H+" and @"+ IOUtility::INDEX+
+            "]";
+
+    pugi::xml_attribute nov = node.attribute(IOUtility::NUM_OF_VERTICES.c_str());
+
+    if(ret != nullptr){
+        for(QVector<Surface::Vertex*>::iterator vertex = ret->begin();
+            vertex != ret->end(); ++vertex){
+            delete *vertex;
+        }
+        ret->clear();
+    } else {
+        ret = new QVector<Surface::Vertex*>;
+    }
+
+    for(int i = 0; i != nov.as_int(); ++i){
+        ret->push_back(nullptr);
+    }
+
+    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());    
+    for(pugi::xpath_node vertexNode : vertexNodes){
+        int index = vertexNode.node().attribute(IOUtility::INDEX.c_str()).as_int();
+        Surface::Vertex* vertex = new Surface::Vertex();
+        vertex->x(vertexNode.node().attribute(IOUtility::X.c_str()).as_double());
+        vertex->y(vertexNode.node().attribute(IOUtility::Y.c_str()).as_double());
+        vertex->z(vertexNode.node().attribute(IOUtility::Z.c_str()).as_double());
+        vertex->w(vertexNode.node().attribute(IOUtility::W.c_str()).as_double());
+        vertex->h(vertexNode.node().attribute(IOUtility::H.c_str()).as_double());
+        if(ret->operator [](index) != nullptr){
+            for(QVector<Surface::Vertex*>::iterator v = ret->begin();
+                v != ret->end(); ++v){
+                delete *v;
+            }
+            return false;
+        }
+        ret->operator [](index) = vertex;
+    }
+    return true;
+}
+
 void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
                            const QVector<GLushort> &indicies,
                            const string title){
@@ -787,6 +1102,10 @@ void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
         }
     }
     cout<<"}"<<endl;
+}
+
+Surface::Vertex::Vertex(){
+    data = new GLdouble[SIZE];
 }
 
 Surface::Vertex::Vertex(const Surface::Vertex &another){
