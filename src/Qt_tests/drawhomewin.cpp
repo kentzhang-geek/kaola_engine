@@ -21,8 +21,8 @@ extern MOpenGLView *one_view;
 static drawhomewin *dhw = NULL;
 
 drawhomewin::drawhomewin(QWidget *parent) :
-        QWidget(parent),
-        ui(new Ui::drawhomewin) {
+    QWidget(parent),
+    ui(new Ui::drawhomewin) {
     setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
@@ -50,9 +50,9 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     this->ui->OpenGLCanvas->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->OpenGLCanvas->main_scene->set_width(
-            this->ui->OpenGLCanvas->size().width());
+                this->ui->OpenGLCanvas->size().width());
     this->ui->OpenGLCanvas->main_scene->set_height(
-            this->ui->OpenGLCanvas->size().height());
+                this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
     klm::resource::manager::shared_instance()->preload_resources(this->ui->OpenGLCanvas->main_scene);
 
@@ -80,6 +80,9 @@ public:
 
 //取消所有按钮选择状态
 void drawhomewin::on_draw_clear() {
+    dhw->ui->p_4->setIcon(QIcon(":/images/door"));
+
+
     dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
     dhw->ui->checkBox->setCheckState(Qt::Unchecked);
 
@@ -114,7 +117,6 @@ void drawhomewin::on_checkBox_stateChanged(int arg1) {
     }
 }
 
-
 void drawhomewin::on_switch3D_clicked() {
     static bool flag_edit = false;
     flag_edit = !flag_edit;
@@ -128,4 +130,15 @@ void drawhomewin::on_switch3D_clicked() {
 
 void drawhomewin::on_colse_b_clicked() {
     this->close();
+}
+
+
+
+
+
+//开门功能按钮
+void drawhomewin::on_p_4_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::opendoor;
+    this->ui->p_4->setIcon(QIcon(":/images/doorselectd"));
 }

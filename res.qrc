@@ -23,5 +23,7 @@
         <file alias="window">images/window.png</file>
         <file alias="taquilla">images/taquilla.png</file>
         <file alias="ground_window">images/ground_window.png</file>
+        <file alias="doorselectd">images/door_selectd.png</file>
+        <file alias="openhole_door">images/openhole_door.png</file>
     </qresource>
 </RCC>

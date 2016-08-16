@@ -602,7 +602,7 @@ color: rgb(245, 245, 245);
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QToolButton" name="p_1">
+                 <widget class="QPushButton" name="p_1">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -644,13 +644,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QToolButton" name="p_2">
+                 <widget class="QPushButton" name="p_2">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -695,13 +692,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QToolButton" name="p_3">
+                 <widget class="QPushButton" name="p_3">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -745,9 +739,6 @@ border:0;
                     <width>48</width>
                     <height>48</height>
                    </size>
-                  </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -809,54 +800,6 @@ color: rgb(245, 245, 245);
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_2">
-                <item row="2" column="0">
-                 <widget class="QToolButton" name="p_7">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>48</width>
-                    <height>48</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>48</width>
-                    <height>48</height>
-                   </size>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">#p_7 {
-border-radius: 0;
-background-color: rgb(28, 29, 32);
-border:0;
-}</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../../res.qrc">
-                    <normaloff>:/images/window</normaloff>:/images/window</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>48</width>
-                    <height>48</height>
-                   </size>
-                  </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_8">
                   <property name="font">
@@ -917,8 +860,68 @@ color: rgb(229, 229, 229);
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="label_7">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_7 {
+color: rgb(245, 245, 245);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>双开门</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="label_9">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_9 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>飘窗</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QLabel" name="label_10">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_10 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>落地窗</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="0">
-                 <widget class="QToolButton" name="p_4">
+                 <widget class="QPushButton" name="p_4">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -940,11 +943,21 @@ color: rgb(229, 229, 229);
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">#p_4 {
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
+}
+
+#p_4:hover {
+border-image:url(:/images/doorselectd);
 }</string>
                   </property>
                   <property name="text">
@@ -960,13 +973,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QToolButton" name="p_5">
+                 <widget class="QPushButton" name="p_5">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -987,6 +997,9 @@ border:0;
                     <width>48</width>
                     <height>48</height>
                    </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
                   </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -1011,33 +1024,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLabel" name="label_7">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">#label_7 {
-color: rgb(245, 245, 245);
-}</string>
-                  </property>
-                  <property name="text">
-                   <string>双开门</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QToolButton" name="p_6">
+                 <widget class="QPushButton" name="p_6">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -1058,6 +1048,9 @@ color: rgb(245, 245, 245);
                     <width>48</width>
                     <height>48</height>
                    </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
                   </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
@@ -1082,13 +1075,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QToolButton" name="p_8">
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="p_7">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -1109,6 +1099,57 @@ border:0;
                     <width>48</width>
                     <height>48</height>
                    </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_7 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/window</normaloff>:/images/window</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="p_8">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
                   </property>
                   <property name="styleSheet">
                    <string notr="true">#p_8 {
@@ -1130,33 +1171,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLabel" name="label_9">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">#label_9 {
-color: rgb(229, 229, 229);
-}</string>
-                  </property>
-                  <property name="text">
-                   <string>飘窗</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="QToolButton" name="p_9">
+                 <widget class="QPushButton" name="p_9">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -1178,6 +1196,9 @@ color: rgb(229, 229, 229);
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">#p_9 {
 border-radius: 0;
@@ -1197,29 +1218,6 @@ border:0;
                     <width>48</width>
                     <height>48</height>
                    </size>
-                  </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QLabel" name="label_10">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">#label_10 {
-color: rgb(229, 229, 229);
-}</string>
-                  </property>
-                  <property name="text">
-                   <string>落地窗</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>

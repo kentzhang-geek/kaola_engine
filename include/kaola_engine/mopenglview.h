@@ -115,6 +115,12 @@ private:
 
     void openglDrawWall(const int x, const int y);
     void getWallsPoint();
+
+    QVector<QLabel> *doorsWindowsImages;
+
+    void set_palette_init(QLabel *l, QPixmap p);
+
+    QLabel *l_door;
 };
 
 #endif // MOPENGLVIEW_H
