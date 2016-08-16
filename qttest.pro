@@ -61,7 +61,8 @@ SOURCES += \
     src/editor/merchandise.cpp \
     src/resource_and_network/klm_resource_manager.cpp \
     src/utils/io_utility.cpp \
-    src/resource_and_network/global_material.cpp
+    src/resource_and_network/global_material.cpp \
+    src/editor/design_scheme.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -113,7 +114,8 @@ HEADERS  += \
     include/editor/merchandise.h \
     include/resource_and_network/klm_resource_manager.h \
     include/utils/io_utility.h \
-    include/resource_and_network/global_material.h
+    include/resource_and_network/global_material.h \
+    include/editor/design_scheme.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
@@ -198,3 +200,32 @@ INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
 win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/pugixml.lib
+
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL_Core-vc140-mt-gd-4.8.1
+
+INCLUDEPATH += $$PWD/LIBS/cgal/include
+DEPENDPATH += $$PWD/LIBS/cgal/include
+INCLUDEPATH += $$PWD/LIBS/cgal_lib/include
+DEPENDPATH += $$PWD/LIBS/cgal_lib/include
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL_Core-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL_Core-vc140-mt-gd-4.8.1.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL_Core-vc140-mt-gd-4.8.1
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL_Core-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL_Core-vc140-mt-gd-4.8.1.a
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL-vc140-mt-gd-4.8.1
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL-vc140-mt-gd-4.8.1.a

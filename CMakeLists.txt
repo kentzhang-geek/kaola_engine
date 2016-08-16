@@ -55,6 +55,7 @@ set(SRCS
         src/resource_and_network/klm_resource_manager.cpp
         src/utils/io_utility.cpp
         src/resource_and_network/global_material.cpp
+        src/editor/design_scheme.cpp
         )
 
 set(qttest_MOCS
@@ -108,6 +109,7 @@ set(qttest_MOCS
         include/resource_and_network/klm_resource_manager.h
         include/utils/io_utility.h
         include/resource_and_network/global_material.h
+        include/editor/design_scheme.h
         )
 
 include_directories(LIBS/glm_build)
@@ -115,6 +117,8 @@ include_directories(include)
 include_directories(LIBS/assimp-3.2/include)
 include_directories(LIBS/pugixml-1.7/pugixml-1.7/src)
 include_directories(LIBS/boost_1_61_0)
+include_directories(LIBS/cgal/include)
+include_directories(LIBS/cgal_lib/include)
 include_directories(C:/Users/Kent/Desktop/KLM/build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
