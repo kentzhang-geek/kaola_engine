@@ -42,6 +42,16 @@ void MOpenGLView::do_init() {
 
     // 一行代码用glkit设置好深度测试
     // 一行代码用glkit设置好模板缓冲区
+
+    // set image for assistant lines
+    this->main_scene->set_assistant_image(
+            new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
+    this->main_scene->get_assistant_image()->fill(0);
+    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+
+    // test painter
+    this->main_scene->get_assistant_drawer()->drawLine(1,1,this->width()/2,this->height()/2);
+    this->main_scene->get_assistant_drawer()->drawText(12, 12, "What the fuck?");
 }
 
 #define MAX_FILE_SIZE 10000
@@ -235,6 +245,8 @@ void MOpenGLView::resizeGL(int width, int height) {
     this->main_scene->watcher->calculate_mat();
     gl3d::gl3d_global_param::shared_instance()->canvas_height = (float) height;
     gl3d::gl3d_global_param::shared_instance()->canvas_width = (float) width;
+    this->main_scene->get_assistant_image()->scaledToHeight(height);
+    this->main_scene->get_assistant_image()->scaledToWidth(width);
 }
 
 

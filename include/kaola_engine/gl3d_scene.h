@@ -9,6 +9,8 @@
 // Qt Headers
 #include <QVector>
 #include <QMap>
+#include <QImage>
+#include <QPainter>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -272,6 +274,10 @@ namespace gl3d {
         // project point to screen
         glm::vec2 project_point_to_screen(glm::vec3 point_on_world);
         glm::vec2 project_point_to_screen(glm::vec2 point_on_world_ground);
+
+        // image for draw assistant lines
+    GL3D_UTILS_PROPERTY(assistant_image, QImage *);
+    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
     private:
         void init();
