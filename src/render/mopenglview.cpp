@@ -5,6 +5,24 @@ using namespace std;
 // 全局OpenGL Functions
 QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions = NULL;
 
+void MOpenGLView::set_palette_init(QLabel *l, QPixmap p) {
+    l->setPixmap(p);
+    l->setMask(p.mask());
+    l->setAutoFillBackground(true);
+    QPalette palette;
+    palette.setColor(QPalette::Background, QColor(255, 255, 255));
+    l->setPalette(palette);
+    l->setVisible(false);
+}
+
+void MOpenGLView::draw_image() {
+    this->main_scene->get_assistant_image()->fill(0);
+    QRect target(100.0, 100.0, 100, 100);
+    QImage image(":/images/openhole_door");
+    QRect source(0.0, 0.0, image.width(), image.height());
+    this->main_scene->get_assistant_drawer()->drawImage(target, image, source);
+}
+
 void MOpenGLView::do_init() {
     //yananli code
     this->setMouseTracking(true);
@@ -17,14 +35,14 @@ void MOpenGLView::do_init() {
 
     //配置画墙时连接点图片
     connectDot = new QLabel(this);
-    QPixmap pixmap(":/images/con_wall_dot");
-    connectDot->setPixmap(pixmap);
-    connectDot->setMask(pixmap.mask());
-    connectDot->setAutoFillBackground(true);
-    QPalette palette;
-    palette.setColor(QPalette::Background, QColor(255,255,255));
-    connectDot->setPalette(palette);
-    connectDot->setVisible(false);
+    QPixmap pixmap_dot(":/images/con_wall_dot");
+    this->set_palette_init(connectDot, pixmap_dot);
+
+    l_door = new QLabel(this);
+    QPixmap pixmap_door(":/images/openhole_door");
+    l_door->setScaledContents(true);
+    this->set_palette_init(l_door, pixmap_door);
+
 
 
     // set OPENGL context
@@ -45,13 +63,15 @@ void MOpenGLView::do_init() {
 
     // set image for assistant lines
     this->main_scene->set_assistant_image(
-            new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
+                new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
 
     // test painter
     this->main_scene->get_assistant_drawer()->drawLine(1,1,this->width()/2,this->height()/2);
     this->main_scene->get_assistant_drawer()->drawText(12, 12, "What the fuck?");
+
+    this->draw_image();
 }
 
 #define MAX_FILE_SIZE 10000
@@ -901,6 +921,15 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
             connectDot->setVisible(true);
             connectDot->setGeometry(conn_dot_tmp_x - 12, conn_dot_tmp_y - 12, 24, 24);
         }
+    }
+
+
+    //选择开门位置
+    if(now_state == gl3d::gl3d_global_param::opendoor) {
+        l_door->setGeometry((float)event->x() - 50, (float)event->y() - 100, 100, 100);
+        l_door->setVisible(true);
+
+        //        doorsWindowsImages->push_back();
     }
 
 
