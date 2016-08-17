@@ -47,7 +47,7 @@ void MOpenGLView::do_init() {
 
     // set OPENGL context
     timer = new QTimer(this);
-    timer->start(100);
+    timer->start(50);
 
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
@@ -179,7 +179,7 @@ void MOpenGLView::initializeGL() {
 
     this->setFocusPolicy(Qt::StrongFocus);
     this->keyTimer = new QTimer();
-    this->keyTimer->start(100);
+    this->keyTimer->start(50);
 
     this->connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     this->connect(keyTimer, SIGNAL(timeout()), this, SLOT(view_change()));
@@ -269,6 +269,7 @@ void MOpenGLView::resizeGL(int width, int height) {
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     QPainter * pt = this->main_scene->get_assistant_drawer();
     this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+    this->main_scene->get_assistant_image()->fill(0);
 }
 
 

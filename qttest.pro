@@ -126,6 +126,8 @@ PRECOMPILED_HEADER += $$HEADERS
 
 win32:INCLUDEPATH += include
 
+win32:INCLUDEPATH += LIBS/cgal/auxiliary/gmp/include/
+
 #INCLUDEPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
 #DEPENDPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
 
