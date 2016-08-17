@@ -28,6 +28,8 @@ private slots:
 
     void on_checkBox_stateChanged(int arg1);
 
+    void on_p_4_clicked();
+
 private:
     Ui::drawhomewin *ui;
     DrawOption *dop;

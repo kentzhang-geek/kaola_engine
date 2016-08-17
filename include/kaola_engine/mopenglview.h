@@ -84,6 +84,8 @@ public:
 public slots:
     void view_change();
 private:
+    void draw_image();
+
     string res_path;
     QTimer * timer;
     QTimer * keyTimer;
@@ -116,6 +118,12 @@ private:
 
     void openglDrawWall(const int x, const int y);
     void getWallsPoint();
+
+    QVector<QLabel> *doorsWindowsImages;
+
+    void set_palette_init(QLabel *l, QPixmap p);
+
+    QLabel *l_door;
 };
 
 #endif // MOPENGLVIEW_H
