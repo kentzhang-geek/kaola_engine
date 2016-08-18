@@ -85,7 +85,21 @@ int main(int argc, char ** argv) {
             fit++) {
         if (!fit->is_unbounded()) {
             // has bounded
-            print_face(fit);
+            Arrangement_2::Ccb_halfedge_const_circulator cir = fit->outer_ccb();
+            Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
+            do {
+                cout << "(" << cucir->target()->point() << ") ";
+                cucir++;
+            } while (cucir != cir);
+            cout << endl;
+        }
+    }
+
+    for (Arrangement_2::Edge_const_iterator eit = arr.edges_begin();
+            eit != arr.edges_end();
+            eit++) {
+        if (!eit->face()->is_unbounded()) {
+            cout << "(" << eit->source()->point() << ") (" << eit->target()->point() << ") " << endl;
         }
     }
 
