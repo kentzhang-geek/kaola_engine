@@ -78,45 +78,6 @@ public:
     }
 };
 
-//取消所有按钮选择状态
-void drawhomewin::on_draw_clear() {
-    dhw->ui->p_4->setIcon(QIcon(":/images/door"));
-
-
-    dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
-    dhw->ui->checkBox->setCheckState(Qt::Unchecked);
-
-    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-}
-
-//画墙功能按钮-change
-void drawhomewin::on_drawwall_b_stateChanged(int arg1) {
-    if (!arg1) {
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-        dop->close();
-        delete dop;
-    } else {
-        dhw->ui->checkBox->setCheckState(Qt::Unchecked);
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
-        dop = new DrawOption(this->ui->OpenGLCanvas);
-        dop->show();
-    }
-}
-
-//画房间功能按钮-change
-void drawhomewin::on_checkBox_stateChanged(int arg1) {
-    if (!arg1) {
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-        dop->close();
-        delete dop;
-    } else {
-        dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
-        dop = new DrawOption(this->ui->OpenGLCanvas);
-        dop->show();
-    }
-}
-
 void drawhomewin::on_switch3D_clicked() {
     static bool flag_edit = false;
     flag_edit = !flag_edit;
@@ -134,6 +95,21 @@ void drawhomewin::on_colse_b_clicked() {
 
 
 
+//取消所有按钮选择状态
+void drawhomewin::on_draw_clear() {
+    auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
+    dhw->ui->p_4->setIcon(QIcon(":/images/door"));
+    dhw->ui->p_1->setIcon(QIcon(":/images/drawline"));
+
+    if(now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
+        dhw->dop->close();
+        delete dhw->dop;
+    }
+
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+}
+
 
 
 //开门功能按钮
@@ -141,4 +117,19 @@ void drawhomewin::on_p_4_clicked() {
     this->on_draw_clear();
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::opendoor;
     this->ui->p_4->setIcon(QIcon(":/images/doorselectd"));
+}
+//画墙功能按钮
+void drawhomewin::on_p_1_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+    this->ui->p_1->setIcon(QIcon(":/images/drawwallselectd"));
+    dop = new DrawOption(this->ui->OpenGLCanvas);
+    dop->show();
+}
+//画房间功能按钮
+void drawhomewin::on_p_2_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
+    dop = new DrawOption(this->ui->OpenGLCanvas);
+    dop->show();
 }
