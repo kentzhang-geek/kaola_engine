@@ -250,16 +250,18 @@ void MOpenGLView::resizeGL(int width, int height) {
 
 //滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
+    auto tmp_viewer = this->main_scene->watcher;
+
     //滚动的角度，*8就是鼠标滚动的距离
     int numDegrees = event->delta() / 8;
-
     //滚动的步数，*15就是鼠标滚动的角度
-    int numSteps = numDegrees / 15;
+    int numSteps = tmp_viewer->get_top_view_size() - (numDegrees / 15);
 
-    auto tmp_viewer = this->main_scene->watcher;
     if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-        tmp_viewer->set_top_view_size(tmp_viewer->get_top_view_size() - (float)numSteps);
-        tmp_viewer->calculate_mat();
+        if(numSteps > 0) {
+            tmp_viewer->set_top_view_size((float)numSteps);
+            tmp_viewer->calculate_mat();
+        }
     }
 
     event->accept();      //接收该事件
@@ -368,12 +370,12 @@ glm::vec2 MOpenGLView::wallPeakRightAngleAdsorption(glm::vec2 pt) {
 
             if(angle_dis_x < 15.0f) {
                 points.push_back(pair(glm::vec2((*it).first.x, pt.y),
-                                 glm::vec2((*it).first.x, (*it).first.y)));
+                                      glm::vec2((*it).first.x, (*it).first.y)));
             }
 
             if(angle_dis_y < 15.0f) {
                 points.push_back(pair(glm::vec2(pt.x, (*it).first.y),
-                                 glm::vec2((*it).first.x, (*it).first.y)));
+                                      glm::vec2((*it).first.x, (*it).first.y)));
             }
         }
 
@@ -875,12 +877,14 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
         //墙体吸附
         glm::vec2 wallLinePoint = this->wallLineAdsorption(tmp_pt, 25.0f);
-        this->draw_image(
-                    ":/images/openhole_door",
-                    QRect(wallLinePoint.x - 50,
-                          wallLinePoint.y - 100,
-                          100, 100)
-                    );
+
+        glm::vec2 pa = this->main_scene->project_point_to_screen(glm::vec3(0.0f));
+        glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
+        int _1m = (int)glm::length(pb - pa);
+
+        this->draw_image(":/images/openhole_door",
+                         QRect(wallLinePoint.x - (_1m / 2), wallLinePoint.y - _1m,
+                               _1m, _1m));
 
         //        doorsWindowsImages->push_back();
     }
