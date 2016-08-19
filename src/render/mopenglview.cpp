@@ -5,11 +5,11 @@ using namespace std;
 // 全局OpenGL Functions
 QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions = NULL;
 
-void MOpenGLView::draw_image(QString img, QRect target) {
-    //    this->main_scene->get_assistant_image()->fill(0);
-    QImage image(img);
-    QRect source(0.0, 0.0, image.width(), image.height());
-    this->main_scene->get_assistant_drawer()->drawImage(target, image, source);
+void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
+    QPainter pter(this->main_scene->get_assistant_image());
+    QPixmap pix;
+    pix.load(img);
+    pter.drawPixmap(x, y, w, h, pix);
 }
 
 void MOpenGLView::do_init() {
@@ -42,7 +42,7 @@ void MOpenGLView::do_init() {
     this->main_scene->set_assistant_image(
                 new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
-    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+    //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
 }
 
 #define MAX_FILE_SIZE 10000
@@ -240,8 +240,8 @@ void MOpenGLView::resizeGL(int width, int height) {
     QImage * ori = this->main_scene->get_assistant_image();
     this->main_scene->set_assistant_image(
                 new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
-    QPainter * pt = this->main_scene->get_assistant_drawer();
-    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+    //    QPainter * pt = this->main_scene->get_assistant_drawer();
+    //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
     this->main_scene->get_assistant_image()->fill(0);
 }
 
@@ -400,9 +400,10 @@ glm::vec2 MOpenGLView::wallPeakRightAngleAdsorption(glm::vec2 pt) {
             pen.setWidth(2);
             pen.setBrush(Qt::red);
             pen.setCapStyle(Qt::RoundCap);
-            this->main_scene->get_assistant_drawer()->setPen(pen);
-            this->main_scene->get_assistant_drawer()->drawLine(mixDot.x, mixDot.y,
-                                                               mixPt.x, mixPt.y);
+            QPainter pter(this->main_scene->get_assistant_image());
+            pter.setPen(pen);
+            pter.drawLine(mixDot.x, mixDot.y,
+                          mixPt.x, mixPt.y);
             return mixPt;
         } else {
             return pt;
@@ -602,7 +603,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         if(is_drawwall_start_point) {
             this->drawwall_start_point = conn_dot;
             this->draw_image(":/images/con_wall_dot",
-                             QRect(conn_dot.x - 12, conn_dot.y - 12, 24, 24));
+                             conn_dot.x - 12, conn_dot.y - 12, 24, 24);
         }
     }
 
@@ -672,7 +673,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //是否显示辅助点
         if(is_show_conn_dot) {
             this->draw_image(":/images/con_wall_dot",
-                             QRect(conn_dot.x - 12, conn_dot.y - 12, 24, 24));
+                             conn_dot.x - 12, conn_dot.y - 12, 24, 24);
         }
 
         //持续画墙
@@ -741,7 +742,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //是否显示补助点
         if(is_show_conn_dot) {
             this->draw_image(":/images/con_wall_dot",
-                             QRect(point.x - 12, point.y - 12, 24, 24));
+                             point.x - 12, point.y - 12, 24, 24);
         }
     }
 
@@ -864,7 +865,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //是否显示补助点
         if(is_show_conn_dot) {
             this->draw_image(":/images/con_wall_dot",
-                             QRect(conn_dot.x - 12, conn_dot.y - 12, 24, 24));
+                             conn_dot.x - 12, conn_dot.y - 12, 24, 24);
         }
     }
 
@@ -882,9 +883,8 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
         int _1m = (int)glm::length(pb - pa);
 
-        this->draw_image(":/images/openhole_door",
-                         QRect(wallLinePoint.x - (_1m / 2), wallLinePoint.y - _1m,
-                               _1m, _1m));
+        this->draw_image(":/images/drawquyu",
+                         wallLinePoint.x - (_1m / 2), wallLinePoint.y - _1m, _1m, _1m);
 
         //        doorsWindowsImages->push_back();
     }

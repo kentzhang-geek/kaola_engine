@@ -20,7 +20,6 @@
         <file alias="taquilla">images/taquilla.png</file>
         <file alias="ground_window">images/ground_window.png</file>
         <file alias="doorselectd">images/door_selectd.png</file>
-        <file alias="openhole_door">images/openhole_door.png</file>
         <file alias="con_wall_dot">images/point_24px.png</file>
         <file alias="drawline">images/square_four_angle_point_48px.png</file>
         <file alias="drawhome">images/square_dashed_48px.png</file>

@@ -84,7 +84,7 @@ public:
 public slots:
     void view_change();
 private:
-    void draw_image(QString img, QRect target);
+    void draw_image(QString img, float x, float y, int w, int h);
 
     string res_path;
     QTimer * timer;
