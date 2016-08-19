@@ -277,7 +277,7 @@ namespace gl3d {
 
         // image for draw assistant lines
     GL3D_UTILS_PROPERTY(assistant_image, QImage *);
-    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
+//    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
     private:
         void init();
