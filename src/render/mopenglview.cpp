@@ -46,6 +46,8 @@ void MOpenGLView::do_init() {
 
     // create sketch
     this->sketch = new klm::design::scheme(this->main_scene);
+    this->sketch->set_id(0);
+    this->sketch->set_attached_scene(this->main_scene);
     this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(0, this->sketch));
 }
 
@@ -509,6 +511,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 //新墙连接老墙
                 if(this->old_wall != NULL) {
                     gl3d_wall::combine(this->old_wall, this->new_wall, gl3d_wall::combine_wall1_end_to_wall2_start);
+                    this->sketch->add_wall(this->old_wall);
                 }
             } else {
                 //新墙连接吸附墙

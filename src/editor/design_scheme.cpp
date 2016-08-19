@@ -102,25 +102,21 @@ bool scheme::add_wall(gl3d::gl3d_wall *w) {
     QSet<gl3d_wall *> wall_insert;
     wall_insert.clear();
     wall_insert.insert(w);
-    for (auto wit = this->walls.begin();
-            wit != this->walls.end();
-            wit++) {
-        if (gl3d::gl3d_wall::wall_cross(w, *wit, wall_insert)) {
-            this->walls.remove(*wit);
-            wall_insert.remove(w);
-            this->attached_scene->delete_obj((*wit)->get_id());
-            delete *wit;
+    Q_FOREACH(gl3d_wall *const &wit, this->walls) {
+            if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
+                this->attached_scene->delete_obj(wit->get_id());
+                delete wit;
+                wall_insert.remove(w);
+                this->walls.remove(wit);
+            }
         }
-    }
 
-    for (auto wit = wall_insert.begin();
-            wit != wall_insert.end();
-            wit++) {
-        ++this->wall_id_start;
-        (*wit)->set_id(this->wall_id_start);
-        this->attached_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->wall_id_start, *wit));
-        this->walls.insert(*wit);
-    }
+    Q_FOREACH(gl3d_wall *const &wit, wall_insert) {
+            ++this->wall_id_start;
+            wit->set_id(this->wall_id_start);
+            this->attached_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->wall_id_start, wit));
+            this->walls.insert(wit);
+        }
 
     this->recalculate_rooms();
     return true;
@@ -133,19 +129,16 @@ void scheme::del_wal(gl3d::gl3d_wall *w) {
 }
 
 void scheme::release_rooms() {
-    for (auto it = this->rooms.begin();
-         it != this->rooms.end();
-         it++) {
-        delete *it;
-    }
+    Q_FOREACH(gl3d::room * const &rit, this->rooms) {
+            delete rit;
+        }
     this->rooms.clear();
-    for (auto it = this->walls.begin();
-         it != this->walls.end();
-         it++) {
-        this->attached_scene->delete_obj((*it)->get_id());
-        delete *it;
-    }
+    Q_FOREACH(gl3d::gl3d_wall * const &wit, this->walls) {
+            this->attached_scene->delete_obj(wit->get_id());
+            delete wit;
+        }
     this->walls.clear();
+
     return;
 }
 
@@ -154,23 +147,19 @@ void scheme::delete_room(gl3d::room *r) {
     // get all the rooms in scheme
     QSet<gl3d_wall *> wls;
     wls.clear();
-    for (auto it = r->relate_walls.begin();
-         it != r->relate_walls.end();
-         it++) {
-        wls.insert(*it);
-    }
+    Q_FOREACH(gl3d_wall * const & wit, r->relate_walls) {
+            wls.insert(wit);
+        }
     // delete room
     delete r;
     // check is the wall need to delete
-    for (auto it = wls.begin();
-         it != wls.end();
-         it++) {
-        if ((*it)->get_relate_rooms()->size() == 0) {
-            this->attached_scene->delete_obj((*it)->get_id());
-            this->walls.remove(*it);
-            delete *it;
+    Q_FOREACH(gl3d_wall * const &wit, wls) {
+            if (wit->get_relate_rooms()->size() == 0) {
+                this->attached_scene->delete_obj(wit->get_id());
+                this->walls.remove(wit);
+                delete wit;
+            }
         }
-    }
 
     this->recalculate_rooms();
     return;
@@ -207,29 +196,21 @@ static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
 void scheme::recalculate_rooms() {
     // TODO : test recalculate rooms
     // release old walls
-    for (auto it = this->rooms.begin();
-         it != this->rooms.end();
-         it++) {
-        delete *it;
-    }
+    Q_FOREACH(room * const &rit, this->rooms) {
+            delete rit;
+        }
     // clear relate room for walls
-    for (auto it = this->walls.begin();
-         it != this->walls.end();
-         it++) {
-        (*it)->get_relate_rooms()->clear();
+    Q_FOREACH(gl3d_wall * const &wit, this->walls) {
+            wit->get_relate_rooms()->clear();
     }
 
     // use CGAL to calculate all the areas
     Arrangement_2 arr;
-    for (auto it = this->walls.begin();
-         it != this->walls.end();
-         it++) {
-        // insert all walls
-        gl3d_wall *w = *it;
-        Segment_2 seg_l(Point_2(w->get_start_point().x, w->get_start_point().y),
-                        Point_2(w->get_end_point().x, w->get_end_point().y));
-        CGAL::insert(arr, seg_l);
-    }
+    Q_FOREACH(gl3d_wall * const &wit, this->walls) {
+            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
+                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
+            CGAL::insert(arr, seg_l);
+        }
 
     // generate rooms
     for (Arrangement_2::Face_const_iterator fit = arr.faces_begin();
