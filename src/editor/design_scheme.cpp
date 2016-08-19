@@ -267,7 +267,7 @@ void scheme::recalculate_rooms() {
 }
 
 // test code
-#if 1
+#if 0
 
 void print_ccb(Arrangement_2::Ccb_halfedge_const_circulator circ) {
     Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
