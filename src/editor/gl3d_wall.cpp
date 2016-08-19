@@ -11,9 +11,6 @@ using namespace gl3d::math;
 
 static const float wall_combine_distance = 1.0f;
 
-// internal tool
-static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
-
 static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt);
 
 static gl3d::obj_points post_rect[4] = {
@@ -54,6 +51,7 @@ void gl3d_wall::init() {
     this->end_point_fixed = false;
     this->fixed = false;
     this->set_obj_type(this->type_wall);
+    this->relate_rooms.clear();
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {
@@ -335,8 +333,8 @@ void gl3d_wall::calculate_mesh() {
         QVector<math::triangle_facet> faces_left;
         QVector<math::triangle_facet> faces_right;
         faces_left.clear();
-        get_faces_from_surface(this->sfcs.at(0), faces_left);
-        get_faces_from_surface(this->sfcs.at(1), faces_right);
+        gl3d::get_faces_from_surface(this->sfcs.at(0), faces_left);
+        gl3d::get_faces_from_surface(this->sfcs.at(1), faces_right);
 
         for (auto it = this->holes_on_this_wall.begin();
              it != this->holes_on_this_wall.end();
@@ -824,9 +822,9 @@ void gl3d_wall::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
 }
 
 // get triangles from surfaces
-static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
+void gl3d::get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
     for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
-        get_faces_from_surface(sfc->getSubSurface(i), faces);
+        gl3d::get_faces_from_surface(sfc->getSubSurface(i), faces);
     }
 
     // process local verticles
@@ -970,8 +968,8 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     crosses.clear();
 
     // get left and right facet
-    get_faces_from_surface(this->sfcs.at(0), faces);
-    get_faces_from_surface(this->sfcs.at(1), faces);
+    gl3d::get_faces_from_surface(this->sfcs.at(0), faces);
+    gl3d::get_faces_from_surface(this->sfcs.at(1), faces);
 //    for (auto it = this->sfcs.begin();
 //         it != this->sfcs.end();
 //         it++) {
@@ -1097,4 +1095,102 @@ bool hole::is_valid() {
     }
 
     return pa_locate && pb_locate;
+}
+
+room::room() {
+    this->ground = NULL;
+    this->name = "";
+    this->relate_walls.clear();
+}
+
+room::~room() {
+    if (NULL != this->ground) {
+        delete  this->ground;
+        this->ground = NULL;
+    }
+    for (auto it = this->relate_walls.begin();
+            it != this->relate_walls.end();
+            it++) {
+        (*it)->get_relate_rooms()->remove(this);
+    }
+    this->relate_walls.clear();
+    return;
+}
+
+bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_wall *> &output_walls) {
+    math::line_2d w1_l(wall1->get_start_point(), wall1->get_end_point());
+    math::line_2d w2_l(wall2->get_start_point(), wall2->get_end_point());
+    glm::vec2 cross_pt;
+    if (math::get_cross(w1_l, w2_l, cross_pt)) {
+        if ((w1_l.point_on_line(cross_pt) && w2_l.point_on_line(cross_pt))  // point should on line
+            && (glm::min(w1_l.point_min_distance_to_vertex(cross_pt), w2_l.point_min_distance_to_vertex(cross_pt)) >
+                glm::max(wall1->get_thickness(), wall2->get_thickness()))) // should away from vertex of wall
+        {
+            // now need to cut wall, now wall1 st to cross
+            gl3d_wall * w = wall1;
+            gl3d_wall * n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
+            if (w->start_point_fixed) {
+                if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->start_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->start_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->start_point_attach.attach = w->start_point_attach.attach;
+                n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
+                // renew old wall attach
+                w->set_start_point_fixed(false);
+            }
+            output_walls.insert(n_w);
+            // now cross to wall1 end
+            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(),w->get_hight());
+            if (w->end_point_fixed) {
+                if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->end_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->end_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->end_point_attach.attach = w->end_point_attach.attach;
+                n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
+                // renew old wall attach
+                w->set_end_point_fixed(false);
+            }
+            output_walls.insert(n_w);
+            // now wall2 start to cross
+            w = wall2;
+            n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
+            if (w->start_point_fixed) {
+                if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->start_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->start_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->start_point_attach.attach = w->start_point_attach.attach;
+                n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
+                // renew old wall attach
+                w->set_start_point_fixed(false);
+            }
+            output_walls.insert(n_w);
+            // now cross to wall2 end
+            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(),w->get_hight());
+            if (w->end_point_fixed) {
+                if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->end_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->end_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->end_point_attach.attach = w->end_point_attach.attach;
+                n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
+                // renew old wall attach
+                w->set_end_point_fixed(false);
+            }
+            output_walls.insert(n_w);
+            return  true;
+        }
+    }
+
+    return false;
 }

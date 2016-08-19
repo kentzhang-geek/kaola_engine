@@ -17,6 +17,7 @@ public:
         type_wall,
         type_furniture,
         type_ground,
+        type_scheme,
         type_special
     };
 

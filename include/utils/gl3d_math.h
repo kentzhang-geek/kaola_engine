@@ -33,6 +33,10 @@ namespace gl3d {
                 return (glm::length(this->a - pt) + glm::length(this->b - pt)) <=
                        (glm::length(this->a - this->b) + 0.0001);
             }
+
+            float point_min_distance_to_vertex(T pt) {
+                return glm::min(glm::length(pt - this->a), glm::length(pt - this->b));
+            }
         };
 
         typedef line<glm::vec2> line_2d;

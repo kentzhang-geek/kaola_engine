@@ -23,6 +23,7 @@ GL3D_MODEL_PARAM(168, "floor.3ds") {
     auto obj_pro = this->obj->get_property();
     this->obj->set_control_authority(GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING);
     this->obj->set_render_authority(GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND);
+    // TODO : need to use const alpha to draw ground
     float * alpha = new float;
     (*alpha) = 0.90;
     this->obj->user_data.clear();
