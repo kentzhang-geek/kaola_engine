@@ -121,7 +121,8 @@ GL3D_SHADER_PARAM(multiple_text_vector) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
+        // Const alpha value of ground
+        float alpha = 0.90f; //*(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -254,7 +255,8 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
+        // Const alpha value of ground
+        float alpha = 0.90f; //*(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -380,7 +382,8 @@ GL3D_SHADER_PARAM(dm) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
+        // Const alpha value of ground
+        float alpha = 0.90f; //*(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }
@@ -437,7 +440,8 @@ GL3D_SHADER_PARAM(dm2) {
         GL3D_GL()->glDepthMask(GL_TRUE);
     }
     else {
-        float alpha = *(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
+        // Const alpha value of ground
+        float alpha = 0.90f; //*(float *)((gl3d::object *)obj)->user_data.value(string("alpha"));
         GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), alpha);
         GL3D_GL()->glDepthMask(GL_FALSE);
     }

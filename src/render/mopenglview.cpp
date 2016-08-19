@@ -43,6 +43,10 @@ void MOpenGLView::do_init() {
                 new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+
+    // create sketch
+    this->sketch = new klm::design::scheme(this->main_scene);
+    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(0, this->sketch));
 }
 
 #define MAX_FILE_SIZE 10000

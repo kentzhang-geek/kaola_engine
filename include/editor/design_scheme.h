@@ -2,10 +2,8 @@
 #define DESIGN_SCHEME_H
 
 #include <iostream>
-#include <CGAL/Simple_cartesian.h>
 #include "kaola_engine/gl3d_scene.h"
 #include "kaola_engine/gl3d_abstract_object.h"
-#include "editor/surface.h"
 #include "editor/gl3d_wall.h"
 #include "resource_and_network/global_material.h"
 

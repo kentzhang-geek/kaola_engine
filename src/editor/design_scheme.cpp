@@ -6,6 +6,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <QtGui>
 #include <QtCore>
+#include "editor/surface.h"
 
 using namespace std;
 //typedef CGAL::Quotient<float> Number_type;
@@ -115,7 +116,9 @@ bool scheme::add_wall(gl3d::gl3d_wall *w) {
     for (auto wit = wall_insert.begin();
             wit != wall_insert.end();
             wit++) {
-        (*wit)->set_id(++this->wall_id_start);
+        ++this->wall_id_start;
+        (*wit)->set_id(this->wall_id_start);
+        this->attached_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->wall_id_start, *wit));
         this->walls.insert(*wit);
     }
 
