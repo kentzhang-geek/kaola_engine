@@ -176,7 +176,7 @@ color:rgb(245, 245, 245);
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -231,7 +231,7 @@ background-color: rgb(117, 117, 117);
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -271,7 +271,7 @@ border:0
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -311,7 +311,7 @@ border:0
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -499,38 +499,6 @@ background-image: url(:/images/drawhome_title);
 background-color: rgb(28, 29, 32)
 }</string>
               </property>
-              <widget class="QCheckBox" name="drawwall_b">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="geometry">
-                <rect>
-                 <x>40</x>
-                 <y>120</y>
-                 <width>75</width>
-                 <height>52</height>
-                </rect>
-               </property>
-               <property name="acceptDrops">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-              </widget>
               <widget class="QWidget" name="gridLayoutWidget">
                <property name="geometry">
                 <rect>
@@ -624,11 +592,18 @@ color: rgb(245, 245, 245);
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">#p_1 {
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
+}
+
+#p_1:hover {
+border-image:url(:/images/drawwallselectd);
 }</string>
                   </property>
                   <property name="text">
@@ -767,34 +742,11 @@ color: rgb(245, 245, 245);
                 <string>自由绘制</string>
                </property>
               </widget>
-              <widget class="QCheckBox" name="checkBox">
-               <property name="geometry">
-                <rect>
-                 <x>130</x>
-                 <y>120</y>
-                 <width>71</width>
-                 <height>51</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/drawhome</normaloff>:/images/drawhome</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-              </widget>
               <widget class="QWidget" name="gridLayoutWidget_2">
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>250</y>
+                 <y>170</y>
                  <width>241</width>
                  <height>150</height>
                 </rect>
@@ -1227,7 +1179,7 @@ border:0;
                <property name="geometry">
                 <rect>
                  <x>10</x>
-                 <y>220</y>
+                 <y>140</y>
                  <width>48</width>
                  <height>17</height>
                 </rect>
@@ -1297,7 +1249,7 @@ color: rgb(245, 245, 245);
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
                   <stylestrategy>PreferDefault</stylestrategy>
@@ -1372,7 +1324,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1420,7 +1372,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1461,7 +1413,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1503,7 +1455,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1557,7 +1509,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1598,7 +1550,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="autoFillBackground">

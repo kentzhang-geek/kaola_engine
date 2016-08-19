@@ -84,7 +84,7 @@ public:
 public slots:
     void view_change();
 private:
-    void draw_image();
+    void draw_image(QString img, float x, float y, int w, int h);
 
     string res_path;
     QTimer * timer;
@@ -97,7 +97,6 @@ private:
     typedef QPair<glm::vec2, gl3d_wall *> point_wall_pair;
     QVector<point_wall_pair> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
-    QLabel *connectDot;
     glm::vec2 drawwall_start_point;
     glm::vec2 drawwall_connect_point;
     bool is_drawwall_start_point;
@@ -121,9 +120,9 @@ private:
 
     QVector<QLabel> *doorsWindowsImages;
 
-    void set_palette_init(QLabel *l, QPixmap p);
-
-    QLabel *l_door;
+    glm::vec2 wallLineAdsorption(glm::vec2 pt, float dis_com);
+    glm::vec2 wallPeakAdsorption(glm::vec2 pt, float dis_com);
+    glm::vec2 wallPeakRightAngleAdsorption(glm::vec2 pt);
 };
 
 #endif // MOPENGLVIEW_H

@@ -13,10 +13,6 @@
         <file alias="Disk">images/Could_Disk_32px.png</file>
         <file alias="new_draw">images/file_new_32px.png</file>
         <file alias="userinfo">images/comment_user_info_32px.png</file>
-        <file alias="drawline">images/square_four_angle_point_48px.png</file>
-        <file alias="drawhome">images/square_dashed_48px.png</file>
-        <file alias="drawquyu">images/square_delicious_45.36px.png</file>
-        <file alias="con_wall_dot">images/point_24px.png</file>
         <file alias="door">images/door.png</file>
         <file alias="2door">images/2door.png</file>
         <file alias="movedoor">images/move_door.png</file>
@@ -24,6 +20,10 @@
         <file alias="taquilla">images/taquilla.png</file>
         <file alias="ground_window">images/ground_window.png</file>
         <file alias="doorselectd">images/door_selectd.png</file>
-        <file alias="openhole_door">images/openhole_door.png</file>
+        <file alias="con_wall_dot">images/point_24px.png</file>
+        <file alias="drawline">images/square_four_angle_point_48px.png</file>
+        <file alias="drawhome">images/square_dashed_48px.png</file>
+        <file alias="drawquyu">images/drawquyu.png</file>
+        <file alias="drawwallselectd">images/drawline_selectd.png</file>
     </qresource>
 </RCC>
