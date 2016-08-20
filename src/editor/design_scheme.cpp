@@ -108,26 +108,76 @@ void scheme::set_translation_mat(const glm::mat4 &trans) {
     return;
 }
 
-bool scheme::add_wall(gl3d::gl3d_wall *w) {
+bool scheme::add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end) {
     gl3d_lock::shared_instance()->scheme_lock.lock();
     // TODO : test should cross walls now
     QSet<gl3d_wall *> wall_insert;
     wall_insert.clear();
     wall_insert.insert(w);
+    wall_to_end = NULL;
     this->attached_scene->delete_obj(w->get_id());
     int tid = w->get_id();
-    // TODO : cross walls
+    // TODO : debug cross walls
+    QVector<glm::vec2 > cross_pts;
     Q_FOREACH(gl3d_wall *const &wit, this->walls) {
+            // cut walls in scheme
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
                 tid = wit->get_id();
                 this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
+                glm::vec2 ptin;
+                math::get_cross(
+                        math::line_2d(w->get_start_point(), w->get_end_point()),
+                        math::line_2d(wit->get_start_point(), wit->get_end_point()),
+                        ptin);
+                cross_pts.push_back(ptin);
                 delete wit;
-                wall_insert.remove(w);
             }
         }
 
-    if (!wall_insert.contains(w)) {
+    if (cross_pts.size() > 0) {
+        // cut new wall
+        wall_insert.remove(w);
+        math::sort_vector_by_distance(cross_pts, w->get_start_point());
+        cross_pts.insert(0, w->get_start_point());
+        cross_pts.push_back(w->get_end_point());
+        for (int i = 0; i < (cross_pts.size() - 1); i++) {
+            gl3d_wall * n_w = new gl3d_wall(cross_pts[i], cross_pts[i + 1], w->get_thickness(), w->get_hight());
+            if (i == 0) {
+                // head with start
+                if (w->get_start_point_fixed()) {
+                    if (w->get_start_point_attach()->attach_point == gl3d::gl3d_wall_attach::start_point) {
+                        w->get_start_point_attach()->attach->get_start_point_attach()->attach = n_w;
+                    }
+                    else {
+                        w->get_start_point_attach()->attach->get_end_point_attach()->attach = n_w;
+                    }
+                    n_w->get_start_point_attach()->attach = w->get_start_point_attach()->attach;
+                    n_w->get_start_point_attach()->attach_point = w->get_start_point_attach()->attach_point;
+                    // renew old wall attach
+                    w->set_start_point_fixed(false);
+                    w->get_start_point_attach()->attach = NULL;
+                }
+            }
+            if (i == (cross_pts.size() - 1)) {
+                // tail with end
+                if (w->get_end_point_fixed()) {
+                    if (w->get_end_point_attach()->attach_point == gl3d::gl3d_wall_attach::start_point) {
+                        w->get_end_point_attach()->attach->get_start_point_attach()->attach = n_w;
+                    }
+                    else {
+                        w->get_end_point_attach()->attach->get_end_point_attach()->attach = n_w;
+                    }
+                    n_w->get_end_point_attach()->attach = w->get_end_point_attach()->attach;
+                    n_w->get_end_point_attach()->attach_point = w->get_end_point_attach()->attach_point;
+                    // renew old wall attach
+                    w->set_end_point_fixed(false);
+                    w->get_end_point_attach()->attach = NULL;
+                }
+            }
+            wall_to_end = n_w;
+            wall_insert.insert(n_w);
+        }
         delete w;
     }
 

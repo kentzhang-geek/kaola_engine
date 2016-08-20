@@ -31,7 +31,7 @@ namespace klm {
             GL3D_UTILS_PROPERTY_GET_POINTER(drawing_walls, QSet<gl3d::gl3d_wall *> );
             GL3D_UTILS_PROPERTY(wall_id_start, int);
 
-            bool add_wall(gl3d::gl3d_wall * w);
+            bool add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end);
             void del_wal(gl3d::gl3d_wall * w);
 
             void release_rooms();

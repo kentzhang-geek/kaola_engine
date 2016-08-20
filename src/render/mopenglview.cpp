@@ -511,7 +511,11 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 //新墙连接老墙
                 if(this->old_wall != NULL) {
                     gl3d_wall::combine(this->old_wall, this->new_wall, gl3d_wall::combine_wall1_end_to_wall2_start);
-                    this->sketch->add_wall(this->old_wall);
+                    gl3d_wall * tmppp;
+                    this->sketch->add_wall(this->old_wall, tmppp);
+                    if (tmppp != NULL) {
+                        this->old_wall = tmppp;
+                    }
                 }
             } else {
                 //新墙连接吸附墙

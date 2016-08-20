@@ -1116,17 +1116,17 @@ room::~room() {
     return;
 }
 
-bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_wall *> &output_walls) {
-    math::line_2d w1_l(wall1->get_start_point(), wall1->get_end_point());
-    math::line_2d w2_l(wall2->get_start_point(), wall2->get_end_point());
+bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target, QSet<gl3d_wall *> &output_walls) {
+    math::line_2d cut_l(wall_cutter->get_start_point(), wall_cutter->get_end_point());
+    math::line_2d tar_l(wall_target->get_start_point(), wall_target->get_end_point());
     glm::vec2 cross_pt;
-    if (math::get_cross(w1_l, w2_l, cross_pt)) {
-        if ((w1_l.point_on_line(cross_pt) && w2_l.point_on_line(cross_pt))  // point should on line
-            && (glm::min(w1_l.point_min_distance_to_vertex(cross_pt), w2_l.point_min_distance_to_vertex(cross_pt)) >
-                glm::max(wall1->get_thickness(), wall2->get_thickness()))) // should away from vertex of wall
+    if (math::get_cross(cut_l, tar_l, cross_pt)) {
+        if ((cut_l.point_on_line(cross_pt) && tar_l.point_on_line(cross_pt))  // point should on line
+            && (glm::min(cut_l.point_min_distance_to_vertex(cross_pt), tar_l.point_min_distance_to_vertex(cross_pt)) >
+                glm::max(wall_cutter->get_thickness(), wall_target->get_thickness()))) // should away from vertex of wall
         {
-            // now need to cut wall, now wall1 st to cross
-            gl3d_wall * w = wall1;
+            // now need to cut wall_target, now wall1 st to cross
+            gl3d_wall * w = wall_target;
             gl3d_wall * n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
             if (w->start_point_fixed) {
                 if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
@@ -1143,39 +1143,6 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_w
             }
             output_walls.insert(n_w);
             // now cross to wall1 end
-            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(),w->get_hight());
-            if (w->end_point_fixed) {
-                if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
-                    w->end_point_attach.attach->start_point_attach.attach = n_w;
-                }
-                else {
-                    w->end_point_attach.attach->end_point_attach.attach = n_w;
-                }
-                n_w->end_point_attach.attach = w->end_point_attach.attach;
-                n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
-                // renew old wall attach
-                w->set_end_point_fixed(false);
-                w->set_end_point_attach(gl3d_wall_attach());
-            }
-            output_walls.insert(n_w);
-            // now wall2 start to cross
-            w = wall2;
-            n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
-            if (w->start_point_fixed) {
-                if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
-                    w->start_point_attach.attach->start_point_attach.attach = n_w;
-                }
-                else {
-                    w->start_point_attach.attach->end_point_attach.attach = n_w;
-                }
-                n_w->start_point_attach.attach = w->start_point_attach.attach;
-                n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
-                // renew old wall attach
-                w->set_start_point_fixed(false);
-                w->set_start_point_attach(gl3d_wall_attach());
-            }
-            output_walls.insert(n_w);
-            // now cross to wall2 end
             n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(),w->get_hight());
             if (w->end_point_fixed) {
                 if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {

@@ -96,6 +96,35 @@ namespace gl3d {
                 }
             return false;
         }
+
+        template <typename  T>
+        void sort_vector_by_distance(QVector<T> & vts, T origin) {
+            QVector<T> tmp;
+            tmp.clear();
+
+            Q_FOREACH(T tit, vts) {
+                    tmp.push_back(tit);
+                }
+            vts.clear();
+
+            float dis = glm::length(origin - tmp.at(0));
+            int pos = 0;
+            while (tmp.size() > 0) {
+                dis = glm::length(origin - tmp.at(0));
+                pos = 0;
+                for (int i = 0; i < tmp.size(); i++) {
+                    if (dis > glm::length(origin - tmp.at(i))) {
+                        dis = glm::length(origin - tmp.at(i));
+                        pos = i;
+                    }
+                }
+
+                vts.push_back(tmp.at(pos));
+                tmp.remove(pos);
+            }
+
+            return;
+        }
     }
 }
 

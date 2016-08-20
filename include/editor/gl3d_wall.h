@@ -80,8 +80,8 @@ namespace gl3d {
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);
-    GL3D_UTILS_PROPERTY(start_point_attach, gl3d_wall_attach);
-    GL3D_UTILS_PROPERTY(end_point_attach, gl3d_wall_attach);
+    GL3D_UTILS_PROPERTY_GET_POINTER(start_point_attach, gl3d_wall_attach);
+    GL3D_UTILS_PROPERTY_GET_POINTER(end_point_attach, gl3d_wall_attach);
     GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *>);
     GL3D_UTILS_PROPERTY_GET_POINTER(relate_rooms, QSet<gl3d::room *>);
     GL3D_UTILS_PROPERTY(fixed, bool);
@@ -102,7 +102,7 @@ namespace gl3d {
 
         static bool combine(gl3d_wall *wall1, gl3d_wall *wall2, glm::vec2 combine_point);
 
-        static bool wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_wall *> & output_walls);
+        static bool wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target, QSet<gl3d_wall *> & output_walls);
 
         void seperate(INOUT gl3d::gl3d_wall_attach &attachment);
 
