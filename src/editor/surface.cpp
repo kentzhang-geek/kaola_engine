@@ -959,7 +959,7 @@ glm::vec3 Surface::getNormal(const Surface::Vertex &p1, const Surface::Vertex &p
 }
 
 glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points){
-    if(points.size() <= 3){
+    if(points.size() < 3){
         return NON_NORMAL;
     }
 

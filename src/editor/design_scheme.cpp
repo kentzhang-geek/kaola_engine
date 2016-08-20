@@ -7,10 +7,11 @@
 #include <QtGui>
 #include <QtCore>
 #include "editor/surface.h"
+#include "utils/gl3d_lock.h"
 
 using namespace std;
-//typedef CGAL::Quotient<float> Number_type;
-typedef CGAL::Cartesian<float> Kernel;
+typedef CGAL::Quotient<CGAL::MP_Float> Number_type;
+typedef CGAL::Cartesian<Number_type> Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel> Traits_2;
 typedef Traits_2::Point_2 Point_2;
 typedef Traits_2::X_monotone_curve_2 Segment_2;
@@ -62,12 +63,18 @@ glm::mat4 scheme::get_scale_mat() {
 }
 
 void scheme::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
-    for (auto it = this->rooms.begin();
-         it != this->rooms.end();
-         it++) {
-        gl3d::surface_to_mesh((*it)->ground, ms);
+    if (!gl3d_lock::shared_instance()->scheme_lock.tryLock()) {
+        return;
     }
+    Q_FOREACH(gl3d::room * rit, this->rooms) {
+            gl3d::surface_to_mesh(rit->ground, ms);
+        }
 
+    Q_FOREACH(gl3d::mesh *mit, ms) {
+            mit->set_texture_repeat(true);
+        }
+
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
 }
 
@@ -82,7 +89,11 @@ void scheme::clear_abstract_meshes(QVector<gl3d::mesh *> &ms) {
 }
 
 void scheme::get_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
+    if (!gl3d_lock::shared_instance()->scheme_lock.tryLock()) {
+        return;
+    }
     gl3d::global_material_lib::shared_instance()->copy_mtls_pair_info(mt);
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
 }
 
@@ -98,18 +109,27 @@ void scheme::set_translation_mat(const glm::mat4 &trans) {
 }
 
 bool scheme::add_wall(gl3d::gl3d_wall *w) {
+    gl3d_lock::shared_instance()->scheme_lock.lock();
     // TODO : test should cross walls now
     QSet<gl3d_wall *> wall_insert;
     wall_insert.clear();
     wall_insert.insert(w);
+    this->attached_scene->delete_obj(w->get_id());
+    int tid = w->get_id();
+    // TODO : cross walls
     Q_FOREACH(gl3d_wall *const &wit, this->walls) {
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
+                tid = wit->get_id();
                 this->attached_scene->delete_obj(wit->get_id());
+                this->walls.remove(wit);
                 delete wit;
                 wall_insert.remove(w);
-                this->walls.remove(wit);
             }
         }
+
+    if (!wall_insert.contains(w)) {
+        delete w;
+    }
 
     Q_FOREACH(gl3d_wall *const &wit, wall_insert) {
             ++this->wall_id_start;
@@ -119,16 +139,20 @@ bool scheme::add_wall(gl3d::gl3d_wall *w) {
         }
 
     this->recalculate_rooms();
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return true;
 }
 
 void scheme::del_wal(gl3d::gl3d_wall *w) {
+    gl3d_lock::shared_instance()->scheme_lock.lock();
     this->walls.remove(w);
     this->recalculate_rooms();
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
 }
 
 void scheme::release_rooms() {
+    gl3d_lock::shared_instance()->scheme_lock.lock();
     Q_FOREACH(gl3d::room * const &rit, this->rooms) {
             delete rit;
         }
@@ -139,10 +163,12 @@ void scheme::release_rooms() {
         }
     this->walls.clear();
 
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
 }
 
 void scheme::delete_room(gl3d::room *r) {
+    gl3d_lock::shared_instance()->scheme_lock.lock();
     this->rooms.remove(r);
     // get all the rooms in scheme
     QSet<gl3d_wall *> wls;
@@ -162,6 +188,7 @@ void scheme::delete_room(gl3d::room *r) {
         }
 
     this->recalculate_rooms();
+    gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
 }
 
@@ -171,25 +198,24 @@ gl3d::room *scheme::get_room(glm::vec2 coord_on_screen) {
     this->attached_scene->coord_ground(coord_on_screen, coord_grd);
     // check is point in surface
     QVector<math::triangle_facet> faces;
-    for (auto it = this->rooms.begin();
-         it != this->rooms.end();
-         it++) {
-        faces.clear();
-        gl3d::get_faces_from_surface((*it)->ground, faces);
-        for (auto fit = faces.begin();
-             fit != faces.end();
-             fit++) {
-            if (fit->is_point_in_facet(math::convert_vec2_to_vec3(coord_grd))) {
-                return *it;
-            }
+    Q_FOREACH(room * rit, this->rooms) {
+            faces.clear();
+            gl3d::get_faces_from_surface(rit->ground, faces);
+            Q_FOREACH(math::triangle_facet fit, faces) {
+                    if (fit.is_point_in_facet(math::convert_vec2_to_vec3(coord_grd))) {
+                        return rit;
+                    }
+                }
         }
-    }
 
     return NULL;
 }
 
+// TODO : convert point to vec
 static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
-    glm::vec2 tmp(pt.x(), pt.y());
+    double tx = CGAL::to_double(pt.x());
+    double ty = CGAL::to_double(pt.y());
+    glm::vec2 tmp((float) tx, (float) ty);
     return math::convert_vec2_to_vec3(tmp);
 }
 
@@ -206,9 +232,11 @@ void scheme::recalculate_rooms() {
 
     // use CGAL to calculate all the areas
     Arrangement_2 arr;
+    QVector<math::line_2d> lns;
     Q_FOREACH(gl3d_wall * const &wit, this->walls) {
             Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
                                         Point_2(wit->get_end_point().x, wit->get_end_point().y));
+            lns.push_back(math::line_2d(wit->get_start_point(), wit->get_end_point()));
             CGAL::insert(arr, seg_l);
         }
 
@@ -222,8 +250,12 @@ void scheme::recalculate_rooms() {
             Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
             QVector<glm::vec3> grd;
             grd.clear();
+            QVector<glm::vec3> tmp_test; // TODO : remove this
             do {
-                grd.push_back(arr_point_to_vec3(cucir->target()->point()));
+                glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
+                if (!math::has_near_point_in_vector(grd, pt))
+                    grd.push_back(pt);
+                tmp_test.push_back(pt);
                 cucir++;
             } while (cucir != cir);
             room *r = new room();

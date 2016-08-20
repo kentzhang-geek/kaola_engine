@@ -87,6 +87,15 @@ namespace gl3d {
         glm::mat4 get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b);
 
         glm::vec3 convert_vec2_to_vec3(glm::vec2 a);
+
+        template <typename T>
+        bool has_near_point_in_vector(QVector<T> pts, T pt) {
+            Q_FOREACH(T it, pts) {
+                    if (glm::length(it - pt) < 0.001)
+                        return true;
+                }
+            return false;
+        }
     }
 }
 

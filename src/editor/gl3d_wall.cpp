@@ -1108,11 +1108,10 @@ room::~room() {
         delete  this->ground;
         this->ground = NULL;
     }
-    for (auto it = this->relate_walls.begin();
-            it != this->relate_walls.end();
-            it++) {
-        (*it)->get_relate_rooms()->remove(this);
-    }
+    Q_FOREACH(gl3d_wall *wit, this->relate_walls) {
+            if (this->relate_walls.contains(wit))
+                this->relate_walls.remove(wit);
+        }
     this->relate_walls.clear();
     return;
 }
@@ -1140,6 +1139,7 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_w
                 n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
                 // renew old wall attach
                 w->set_start_point_fixed(false);
+                w->set_start_point_attach(gl3d_wall_attach());
             }
             output_walls.insert(n_w);
             // now cross to wall1 end
@@ -1155,6 +1155,7 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_w
                 n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
                 // renew old wall attach
                 w->set_end_point_fixed(false);
+                w->set_end_point_attach(gl3d_wall_attach());
             }
             output_walls.insert(n_w);
             // now wall2 start to cross
@@ -1171,6 +1172,7 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_w
                 n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
                 // renew old wall attach
                 w->set_start_point_fixed(false);
+                w->set_start_point_attach(gl3d_wall_attach());
             }
             output_walls.insert(n_w);
             // now cross to wall2 end
@@ -1186,6 +1188,7 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall1, gl3d_wall *wall2, QSet<gl3d_w
                 n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
                 // renew old wall attach
                 w->set_end_point_fixed(false);
+                w->set_end_point_attach(gl3d_wall_attach());
             }
             output_walls.insert(n_w);
             return  true;
