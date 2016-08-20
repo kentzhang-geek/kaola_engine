@@ -303,26 +303,31 @@ void scheme::recalculate_rooms() {
             grd.clear();
             QVector<glm::vec3> tmp_test; // TODO : remove this
             do {
-                glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
-                if (!math::has_near_point_in_vector(grd, pt))
-                    grd.push_back(pt);
-                tmp_test.push_back(pt);
+                if (cucir->is_on_outer_ccb()) {
+                    if (!cucir->target()->is_isolated()) {
+                        glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
+                        grd.push_back(pt);
+                        tmp_test.push_back(pt);
+                    }
+                }
                 cucir++;
             } while (cucir != cir);
-            room *r = new room();
-            r->ground = new klm::Surface(grd);
-            r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
-            Q_FOREACH(glm::vec3 pit, grd) {
-                    Q_FOREACH(gl3d_wall * wit, this->walls) {
-                            if (math::line_2d(wit->get_start_point(),
-                                              wit->get_end_point()).point_on_line(
-                                    glm::vec2(pit.x, pit.z))) { // now find related wall and room
-                                wit->get_relate_rooms()->insert(r);
-                                r->relate_walls.insert(wit);
+            if (grd.size() >= 3) {
+                room *r = new room();
+                r->ground = new klm::Surface(grd);
+                r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+                Q_FOREACH(glm::vec3 pit, grd) {
+                        Q_FOREACH(gl3d_wall * wit, this->walls) {
+                                if (math::line_2d(wit->get_start_point(),
+                                                  wit->get_end_point()).point_on_line(
+                                        glm::vec2(pit.x, pit.z))) { // now find related wall and room
+                                    wit->get_relate_rooms()->insert(r);
+                                    r->relate_walls.insert(wit);
+                                }
                             }
-                        }
-                }
-            this->rooms.insert(r);
+                    }
+                this->rooms.insert(r);
+            }
         }
     }
 

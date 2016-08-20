@@ -97,6 +97,11 @@ namespace gl3d {
             return false;
         }
 
+        template  <typename T>
+        bool point_near_point(T pa, T pb) {
+            return glm::length(pa - pb) < 0.001f;
+        }
+
         template <typename  T>
         void sort_vector_by_distance(QVector<T> & vts, T origin) {
             QVector<T> tmp;
