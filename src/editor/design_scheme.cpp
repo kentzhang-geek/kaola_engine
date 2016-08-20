@@ -271,10 +271,11 @@ static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
 
 void scheme::recalculate_rooms() {
     // TODO : test recalculate rooms
-    // release old walls
+    // release old rooms
     Q_FOREACH(room * const &rit, this->rooms) {
             delete rit;
         }
+    this->rooms.clear();
     // clear relate room for walls
     Q_FOREACH(gl3d_wall * const &wit, this->walls) {
             wit->get_relate_rooms()->clear();
@@ -311,20 +312,16 @@ void scheme::recalculate_rooms() {
             room *r = new room();
             r->ground = new klm::Surface(grd);
             r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
-            for (auto it = grd.begin();
-                 it != grd.end();
-                 it++) {
-                for (auto wit = this->walls.begin();
-                     wit != this->walls.end();
-                     wit++) {
-                    if (math::line_2d((*wit)->get_start_point(),
-                                      (*wit)->get_end_point()).point_on_line(
-                            glm::vec2(it->x, it->z))) { // now find related wall and room
-                        (*wit)->get_relate_rooms()->insert(r);
-                        r->relate_walls.insert(*wit);
-                    }
+            Q_FOREACH(glm::vec3 pit, grd) {
+                    Q_FOREACH(gl3d_wall * wit, this->walls) {
+                            if (math::line_2d(wit->get_start_point(),
+                                              wit->get_end_point()).point_on_line(
+                                    glm::vec2(pit.x, pit.z))) { // now find related wall and room
+                                wit->get_relate_rooms()->insert(r);
+                                r->relate_walls.insert(wit);
+                            }
+                        }
                 }
-            }
             this->rooms.insert(r);
         }
     }
