@@ -109,6 +109,11 @@ void scheme::set_translation_mat(const glm::mat4 &trans) {
 }
 
 bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
+    // already in control so do not add again
+    wall_to_end = w;
+    if (this->walls.contains(w)) {
+        return false;
+    }
     gl3d_lock::shared_instance()->scheme_lock.lock();
     // TODO : test should cross walls now
     QSet<gl3d_wall *> wall_insert;

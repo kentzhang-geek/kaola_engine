@@ -494,10 +494,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                                 gl3d_wall::combine_wall1_start_to_wall2_end
                                 );
                 }
-
-
             }
-
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
         //画墙中节点结束
@@ -511,7 +508,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 //新墙连接老墙
                 if(this->old_wall != NULL) {
                     gl3d_wall::combine(this->old_wall, this->new_wall, gl3d_wall::combine_wall1_end_to_wall2_start);
-                    gl3d_wall * tmppp;
+                    gl3d_wall * tmppp = NULL;
                     this->sketch->add_wall(this->old_wall, tmppp);
                     if (tmppp != NULL) {
                         this->old_wall = tmppp;
@@ -521,6 +518,16 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 //新墙连接吸附墙
                 if(this->connect_wall != NULL) {
                     gl3d_wall::combine(this->new_wall, this->connect_wall, this->new_wall->get_end_point());
+                }
+                gl3d_wall * tmppp = NULL;
+                this->sketch->add_wall(this->new_wall, tmppp);
+                if (tmppp != NULL) {
+                    this->new_wall = tmppp;
+                }
+                tmppp = NULL;
+                this->sketch->add_wall(this->connect_wall, tmppp);
+                if (tmppp != NULL) {
+                    this->connect_wall = tmppp;
                 }
 
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
