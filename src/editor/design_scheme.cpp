@@ -317,7 +317,7 @@ void scheme::recalculate_rooms() {
             } while (cucir != cir);
             if (grd.size() >= 3) {
                 r->ground = new klm::Surface(grd);
-                r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+                r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
                 Q_FOREACH(glm::vec3 pit, grd) {
                         Q_FOREACH(gl3d_wall *wit, this->walls) {
                                 if (math::line_2d(wit->get_start_point(),
