@@ -458,6 +458,11 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
         //画房间节点结束
         if(now_state == gl3d::gl3d_global_param::drawhomeing) {
+            gl3d_wall * tmp;
+            this->sketch->add_wall(this->new_walla, tmp);
+            this->sketch->add_wall(this->new_wallb, tmp);
+            this->sketch->add_wall(this->new_wallc, tmp);
+            this->sketch->add_wall(this->new_walld, tmp);
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
             this->wall_temp_id = this->wall_temp_id + 4;
         }

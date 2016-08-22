@@ -1120,6 +1120,13 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target,
     math::line_2d cut_l(wall_cutter->get_start_point(), wall_cutter->get_end_point());
     math::line_2d tar_l(wall_target->get_start_point(), wall_target->get_end_point());
     glm::vec2 cross_pt;
+    // if has point near point, then return false
+    if ((math::point_near_point(cut_l.a, tar_l.a)) ||
+        (math::point_near_point(cut_l.a, tar_l.b)) ||
+        (math::point_near_point(cut_l.b, tar_l.a)) ||
+        (math::point_near_point(cut_l.b, tar_l.b))) {
+        return false;
+    }
     if (math::get_cross(cut_l, tar_l, cross_pt)) {
         if ((cut_l.point_on_line(cross_pt) && tar_l.point_on_line(cross_pt))  // point should on line
             && (glm::min(cut_l.point_min_distance_to_vertex(cross_pt), tar_l.point_min_distance_to_vertex(cross_pt)) >
