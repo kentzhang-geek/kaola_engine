@@ -526,8 +526,6 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
             }
         }
-
-
         //右键按下事件
     } else if(event->button() == Qt::RightButton) {
         //点击右键-取消画墙,画房间状态

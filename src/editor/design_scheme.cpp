@@ -66,7 +66,7 @@ void scheme::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
     if (!gl3d_lock::shared_instance()->scheme_lock.tryLock()) {
         return;
     }
-    Q_FOREACH(gl3d::room * rit, this->rooms) {
+    Q_FOREACH(gl3d::room *rit, this->rooms) {
             gl3d::surface_to_mesh(rit->ground, ms);
         }
 
@@ -108,7 +108,7 @@ void scheme::set_translation_mat(const glm::mat4 &trans) {
     return;
 }
 
-bool scheme::add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end) {
+bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
     gl3d_lock::shared_instance()->scheme_lock.lock();
     // TODO : test should cross walls now
     QSet<gl3d_wall *> wall_insert;
@@ -118,7 +118,7 @@ bool scheme::add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end) {
     this->attached_scene->delete_obj(w->get_id());
     int tid = w->get_id();
     // TODO : debug cross walls
-    QVector<glm::vec2 > cross_pts;
+    QVector<glm::vec2> cross_pts;
     Q_FOREACH(gl3d_wall *const &wit, this->walls) {
             // cut walls in scheme
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
@@ -142,7 +142,7 @@ bool scheme::add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end) {
         cross_pts.insert(0, w->get_start_point());
         cross_pts.push_back(w->get_end_point());
         for (int i = 0; i < (cross_pts.size() - 1); i++) {
-            gl3d_wall * n_w = new gl3d_wall(cross_pts[i], cross_pts[i + 1], w->get_thickness(), w->get_hight());
+            gl3d_wall *n_w = new gl3d_wall(cross_pts[i], cross_pts[i + 1], w->get_thickness(), w->get_hight());
             if (i == 0) {
                 // head with start
                 if (w->get_start_point_fixed()) {
@@ -203,11 +203,11 @@ void scheme::del_wal(gl3d::gl3d_wall *w) {
 
 void scheme::release_rooms() {
     gl3d_lock::shared_instance()->scheme_lock.lock();
-    Q_FOREACH(gl3d::room * const &rit, this->rooms) {
+    Q_FOREACH(gl3d::room *const &rit, this->rooms) {
             delete rit;
         }
     this->rooms.clear();
-    Q_FOREACH(gl3d::gl3d_wall * const &wit, this->walls) {
+    Q_FOREACH(gl3d::gl3d_wall *const &wit, this->walls) {
             this->attached_scene->delete_obj(wit->get_id());
             delete wit;
         }
@@ -223,13 +223,13 @@ void scheme::delete_room(gl3d::room *r) {
     // get all the rooms in scheme
     QSet<gl3d_wall *> wls;
     wls.clear();
-    Q_FOREACH(gl3d_wall * const & wit, r->relate_walls) {
+    Q_FOREACH(gl3d_wall *const &wit, r->relate_walls) {
             wls.insert(wit);
         }
     // delete room
     delete r;
     // check is the wall need to delete
-    Q_FOREACH(gl3d_wall * const &wit, wls) {
+    Q_FOREACH(gl3d_wall *const &wit, wls) {
             if (wit->get_relate_rooms()->size() == 0) {
                 this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
@@ -248,7 +248,7 @@ gl3d::room *scheme::get_room(glm::vec2 coord_on_screen) {
     this->attached_scene->coord_ground(coord_on_screen, coord_grd);
     // check is point in surface
     QVector<math::triangle_facet> faces;
-    Q_FOREACH(room * rit, this->rooms) {
+    Q_FOREACH(room *rit, this->rooms) {
             faces.clear();
             gl3d::get_faces_from_surface(rit->ground, faces);
             Q_FOREACH(math::triangle_facet fit, faces) {
@@ -272,19 +272,19 @@ static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
 void scheme::recalculate_rooms() {
     // TODO : test recalculate rooms
     // release old rooms
-    Q_FOREACH(room * const &rit, this->rooms) {
+    Q_FOREACH(room *const &rit, this->rooms) {
             delete rit;
         }
     this->rooms.clear();
     // clear relate room for walls
-    Q_FOREACH(gl3d_wall * const &wit, this->walls) {
+    Q_FOREACH(gl3d_wall *const &wit, this->walls) {
             wit->get_relate_rooms()->clear();
-    }
+        }
 
     // use CGAL to calculate all the areas
     Arrangement_2 arr;
     QVector<math::line_2d> lns;
-    Q_FOREACH(gl3d_wall * const &wit, this->walls) {
+    Q_FOREACH(gl3d_wall *const &wit, this->walls) {
             Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
                                         Point_2(wit->get_end_point().x, wit->get_end_point().y));
             lns.push_back(math::line_2d(wit->get_start_point(), wit->get_end_point()));
@@ -303,13 +303,15 @@ void scheme::recalculate_rooms() {
             grd.clear();
             QVector<glm::vec3> tmp_test; // TODO : remove this
             do {
-                if (cucir->is_on_outer_ccb()) {
-                    if (!cucir->target()->is_isolated()) {
-                        glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
-                        grd.push_back(pt);
-                        tmp_test.push_back(pt);
-                    }
+                glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
+                if ((grd.size() > 2) && (pt == grd.at(grd.size() - 2))) {
+                    // TODO : process isolated lines
+                    grd.removeLast();
                 }
+                else {
+                    grd.push_back(pt);
+                }
+                tmp_test.push_back(pt);
                 cucir++;
             } while (cucir != cir);
             if (grd.size() >= 3) {
@@ -317,7 +319,7 @@ void scheme::recalculate_rooms() {
                 r->ground = new klm::Surface(grd);
                 r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
                 Q_FOREACH(glm::vec3 pit, grd) {
-                        Q_FOREACH(gl3d_wall * wit, this->walls) {
+                        Q_FOREACH(gl3d_wall *wit, this->walls) {
                                 if (math::line_2d(wit->get_start_point(),
                                                   wit->get_end_point()).point_on_line(
                                         glm::vec2(pit.x, pit.z))) { // now find related wall and room
@@ -327,6 +329,9 @@ void scheme::recalculate_rooms() {
                             }
                     }
                 this->rooms.insert(r);
+            }
+            if (fit->number_of_holes() > 0) {
+                // TODO : process holes
             }
         }
     }
@@ -374,16 +379,14 @@ void print_face(Arrangement_2::Face_const_handle f) {
 
 int main(int argc, char **argv) {
     Arrangement_2 arr;
-    Segment_2 cv[4];
-    Point_2 p1(0.0f, 0.0f), p2(0.0f, 4.0f), p3(4.0f, 0.0f);
-    cv[0] = Segment_2(p1, p2);
-    cv[1] = Segment_2(p2, p3);
-    cv[2] = Segment_2(p3, p1);
-    cv[3] = Segment_2(Point_2(-1.0f, 2.0f), Point_2(4.0f, 2.0f));
-    CGAL::insert(arr, cv[0]);
-    CGAL::insert(arr, cv[1]);
-    CGAL::insert(arr, cv[2]);
-    CGAL::insert(arr, cv[3]);
+    QVector<Segment_2> cvs;
+    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(0.0, 4.0)));
+    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(4.0, 0.0)));
+    cvs.push_back(Segment_2(Point_2(0.0, 4.0), Point_2(4.0, 0.0)));
+    cvs.push_back(Segment_2(Point_2(1.0, 1.0), Point_2(1.0, 2.0)));
+    cvs.push_back(Segment_2(Point_2(1.0, 1.0), Point_2(2.0, 1.0)));
+    cvs.push_back(Segment_2(Point_2(1.0, 2.0), Point_2(2.0, 1.0)));
+    CGAL::insert(arr, cvs.begin(), cvs.end());
 
     for (Arrangement_2::Face_const_iterator fit = arr.faces_begin();
          fit != arr.faces_end();
@@ -396,17 +399,30 @@ int main(int argc, char **argv) {
                 cout << "(" << cucir->target()->point() << ") ";
                 cucir++;
             } while (cucir != cir);
+            if (fit->number_of_holes() > 0) {
+                cout << " has hole : ";
+                for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
+                        hit != fit->holes_end();
+                        hit++) {
+                    Arrangement_2::Ccb_halfedge_const_circulator hcir = *hit;
+                    Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
+                    do {
+                        cout << "(" << hcicur->target()->point() << ") ";
+                        hcicur--;
+                    } while (hcicur != hcir);
+                }
+            }
             cout << endl;
         }
     }
 
-    for (Arrangement_2::Edge_const_iterator eit = arr.edges_begin();
-         eit != arr.edges_end();
-         eit++) {
-        if (!eit->face()->is_unbounded()) {
-            cout << "(" << eit->source()->point() << ") (" << eit->target()->point() << ") " << endl;
-        }
-    }
+//    for (Arrangement_2::Edge_const_iterator eit = arr.edges_begin();
+//         eit != arr.edges_end();
+//         eit++) {
+//        if (!eit->face()->is_unbounded()) {
+//            cout << "(" << eit->source()->point() << ") (" << eit->target()->point() << ") " << endl;
+//        }
+//    }
 
     return 0;
 }
