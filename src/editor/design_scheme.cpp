@@ -295,8 +295,8 @@ void scheme::recalculate_rooms() {
             glm::vec2 st_tmp = wit->get_start_point();
             glm::vec2 ed_tmp = wit->get_end_point();
             float v_length = glm::length(ed_tmp - st_tmp);
-            glm::vec2 st = ed_tmp + (v_length + 0.0001) * glm::normalize(st_tmp - ed_tmp);
-            glm::vec2 ed = st_tmp + (v_length + 0.0001) * glm::normalize(ed_tmp - st_tmp);
+            glm::vec2 st = ed_tmp + (v_length + 0.01) * glm::normalize(st_tmp - ed_tmp);
+            glm::vec2 ed = st_tmp + (v_length + 0.01) * glm::normalize(ed_tmp - st_tmp);
 //            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
 //                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
             Segment_2 seg_l = Segment_2(Point_2(st.x, st.y),
