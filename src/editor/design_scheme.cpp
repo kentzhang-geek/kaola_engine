@@ -301,6 +301,7 @@ void scheme::recalculate_rooms() {
             Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
             QVector<glm::vec3> grd;
             grd.clear();
+            room *r = new room();
             QVector<glm::vec3> tmp_test; // TODO : remove this
             do {
                 glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
@@ -315,7 +316,6 @@ void scheme::recalculate_rooms() {
                 cucir++;
             } while (cucir != cir);
             if (grd.size() >= 3) {
-                room *r = new room();
                 r->ground = new klm::Surface(grd);
                 r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
                 Q_FOREACH(glm::vec3 pit, grd) {
@@ -332,6 +332,37 @@ void scheme::recalculate_rooms() {
             }
             if (fit->number_of_holes() > 0) {
                 // TODO : process holes
+                int i = 0;
+                for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
+                     hit != fit->holes_end();
+                     hit++) {
+                    QVector<glm::vec3> hpts;
+                    hpts.clear();
+                    Arrangement_2::Ccb_halfedge_const_circulator hcir = *hit;
+                    Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
+                    do {
+                        if (hcicur->is_on_outer_ccb()) {
+                            glm::vec3 pt = arr_point_to_vec3(hcicur->target()->point());
+                            if ((hpts.size() > 2) && (pt == hpts.at(hpts.size() - 2))) {
+                                // TODO : process isolated lines
+                                hpts.removeLast();
+                            }
+                            else {
+                                hpts.push_back(pt);
+                            }
+                        }
+                        hcicur--;
+                    } while (hcicur != hcir);
+                    while ((hpts.size() > 2) && (math::point_near_point(hpts[0], hpts[2]))) {
+                        hpts.removeFirst();
+                        hpts.removeFirst();
+                    }
+                    if (hpts.size() > 2) {
+                        r->ground->addSubSurface(hpts);
+                        r->ground->getSubSurface(i)->hideSurface();
+                        i++;
+                    }
+                }
             }
         }
     }
@@ -383,9 +414,9 @@ int main(int argc, char **argv) {
     cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(0.0, 4.0)));
     cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(4.0, 0.0)));
     cvs.push_back(Segment_2(Point_2(0.0, 4.0), Point_2(4.0, 0.0)));
-    cvs.push_back(Segment_2(Point_2(1.0, 1.0), Point_2(1.0, 2.0)));
-    cvs.push_back(Segment_2(Point_2(1.0, 1.0), Point_2(2.0, 1.0)));
-    cvs.push_back(Segment_2(Point_2(1.0, 2.0), Point_2(2.0, 1.0)));
+    cvs.push_back(Segment_2(Point_2(1.0, 0.5), Point_2(1.0, 2.5)));
+    cvs.push_back(Segment_2(Point_2(0.5, 1.0), Point_2(2.5, 1.0)));
+    cvs.push_back(Segment_2(Point_2(0.5, 2.5), Point_2(2.5, 0.5)));
     CGAL::insert(arr, cvs.begin(), cvs.end());
 
     for (Arrangement_2::Face_const_iterator fit = arr.faces_begin();
@@ -401,16 +432,33 @@ int main(int argc, char **argv) {
             } while (cucir != cir);
             if (fit->number_of_holes() > 0) {
                 cout << " has hole : ";
+                QVector<Point_2 > hpts;
                 for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
-                        hit != fit->holes_end();
-                        hit++) {
+                     hit != fit->holes_end();
+                     hit++) {
                     Arrangement_2::Ccb_halfedge_const_circulator hcir = *hit;
                     Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
                     do {
-                        cout << "(" << hcicur->target()->point() << ") ";
+                        if ((hpts.size() > 2) && (hcicur->target()->point() == hpts.at(hpts.size() - 2))) {
+                            // TODO : process isolated lines
+                            hpts.removeLast();
+                        }
+                        else {
+                            hpts.push_back(hcicur->target()->point());
+                        }
+//                        if (hcicur->is_fictitious())
+//                            cout << "(" << hcicur->target()->point() << ") ";
                         hcicur--;
                     } while (hcicur != hcir);
+                    while(hpts.first() == hpts.at(2)) {
+                        hpts.removeFirst();
+                        hpts.removeFirst();
+                    }
+                    Q_FOREACH(Point_2 p, hpts) {
+                            cout << "(" << p << ") ";
+                        }
                 }
+                cout << "; ";
             }
             cout << endl;
         }
