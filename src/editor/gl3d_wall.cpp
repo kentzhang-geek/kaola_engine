@@ -324,6 +324,11 @@ void gl3d_wall::calculate_mesh() {
     }
     catch (SurfaceException &exp) {
         // do nothing
+        Q_FOREACH(klm::Surface * s, this->sfcs) {
+            delete s;
+        }
+        this->sfcs.clear();
+        return;
     }
 
     // will not fill meshes now

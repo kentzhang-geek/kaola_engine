@@ -276,9 +276,17 @@ static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
     return math::convert_vec2_to_vec3(tmp);
 }
 
+static inline glm::vec2 arr_point_to_vec2(Point_2 pt) {
+    double tx = CGAL::to_double(pt.x());
+    double ty = CGAL::to_double(pt.y());
+    glm::vec2 tmp((float) tx, (float) ty);
+    return tmp;
+}
+
 void scheme::recalculate_rooms() {
     // TODO : test recalculate rooms
     // release old rooms
+    bool has_new_sfc = false;
     Q_FOREACH(room *const &rit, this->rooms) {
             delete rit;
         }
@@ -297,10 +305,10 @@ void scheme::recalculate_rooms() {
             float v_length = glm::length(ed_tmp - st_tmp);
             glm::vec2 st = ed_tmp + (v_length + 0.05) * glm::normalize(st_tmp - ed_tmp);
             glm::vec2 ed = st_tmp + (v_length + 0.05) * glm::normalize(ed_tmp - st_tmp);
-//            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
-//                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
-            Segment_2 seg_l = Segment_2(Point_2(st.x, st.y),
-                                        Point_2(ed.x, ed.y));
+            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
+                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
+//            Segment_2 seg_l = Segment_2(Point_2(st.x, st.y),
+//                                        Point_2(ed.x, ed.y));
             lns.push_back(math::line_2d(st, ed));
             CGAL::insert(arr, seg_l);
         }
@@ -309,14 +317,16 @@ void scheme::recalculate_rooms() {
     for (Arrangement_2::Face_const_iterator fit = arr.faces_begin();
          fit != arr.faces_end();
          fit++) {
+        has_new_sfc = false;
         if (!fit->is_unbounded()) {
             // has bounded, now get all vertex to construct the surface
-            Arrangement_2::Ccb_halfedge_const_circulator cir = fit->outer_ccb();
+                Arrangement_2::Ccb_halfedge_const_circulator cir = fit->outer_ccb();
             Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
             QVector<glm::vec3> grd;
             grd.clear();
             room *r = new room();
-            QVector<glm::vec3> tmp_test; // TODO : remove this
+            QVector<math::line_2d> tmp_test; // TODO : remove this
+            tmp_test.clear();
             do {
                 glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
                 if ((grd.size() >= 2) && (pt == grd.at(grd.size() - 2))) {
@@ -324,8 +334,11 @@ void scheme::recalculate_rooms() {
                     grd.removeLast();
                     grd.removeLast();
                 }
-                grd.push_back(pt);
-                tmp_test.push_back(pt);
+                // ignore nabor poitns
+                if ((grd.size() == 0) || (!math::point_near_point(grd.last(), pt)))
+                    grd.push_back(pt);
+                tmp_test.push_back(math::line_2d(arr_point_to_vec2(cucir->source()->point()),
+                                                 arr_point_to_vec2(cucir->target()->point())));
                 cucir++;
             } while (cucir != cir);
             if (grd.size() >= 3) {
@@ -338,21 +351,27 @@ void scheme::recalculate_rooms() {
                     grd.removeFirst();
                     grd.removeFirst();
                 }
-                r->ground = new klm::Surface(grd);
-                r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
-                Q_FOREACH(glm::vec3 pit, grd) {
-                        Q_FOREACH(gl3d_wall *wit, this->walls) {
-                                if (math::line_2d(wit->get_start_point(),
-                                                  wit->get_end_point()).point_on_line(
-                                        glm::vec2(pit.x, pit.z))) { // now find related wall and room
-                                    wit->get_relate_rooms()->insert(r);
-                                    r->relate_walls.insert(wit);
+                try{
+                    r->ground = new klm::Surface(grd);
+                    r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
+                    Q_FOREACH(glm::vec3 pit, grd) {
+                            Q_FOREACH(gl3d_wall * wit, this->walls) {
+                                    if (math::line_2d(wit->get_start_point(),
+                                                      wit->get_end_point()).point_on_line(
+                                            glm::vec2(pit.x, pit.z))) { // now find related wall and room
+                                        wit->get_relate_rooms()->insert(r);
+                                        r->relate_walls.insert(wit);
+                                    }
                                 }
-                            }
-                    }
-                this->rooms.insert(r);
+                        }
+                    this->rooms.insert(r);
+                    has_new_sfc = true;
+                }
+                catch (klm::SurfaceException &e) {
+                    cout << e.what() << endl;
+                }
             }
-            if (fit->number_of_holes() > 0) {
+            if ((has_new_sfc) && (fit->number_of_holes() > 0)) {
                 // TODO : process holes
                 int i = 0;
                 for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
@@ -368,21 +387,31 @@ void scheme::recalculate_rooms() {
                             if ((hpts.size() > 2) && (pt == hpts.at(hpts.size() - 2))) {
                                 // TODO : process isolated lines
                                 hpts.removeLast();
+                                hpts.removeLast();
                             }
-                            else {
+                            if ((hpts.size() == 0) || (!math::point_near_point(hpts.last(), pt)))
                                 hpts.push_back(pt);
-                            }
                         }
                         hcicur--;
                     } while (hcicur != hcir);
-                    while ((hpts.size() > 2) && (math::point_near_point(hpts[0], hpts[2]))) {
+                    while ((hpts.size() > 3) && (math::point_near_point(hpts.at(0), hpts.at(hpts.size() - 2)))) {
+                        hpts.removeLast();
+                        hpts.removeLast();
+                    }
+                    while ((hpts.size() > 3) && (math::point_near_point(hpts.at(1), hpts.last()))) {
                         hpts.removeFirst();
                         hpts.removeFirst();
                     }
+
                     if (hpts.size() > 2) {
-                        r->ground->addSubSurface(hpts);
-                        r->ground->getSubSurface(i)->hideSurface();
-                        i++;
+                        try{
+                            r->ground->addSubSurface(hpts);
+                            r->ground->getSubSurface(i)->hideSurface();
+                            i++;
+                        }
+                        catch (klm::SurfaceException &e) {
+                            cout << e.what() << endl;
+                        }
                     }
                 }
             }
@@ -433,57 +462,84 @@ void print_face(Arrangement_2::Face_const_handle f) {
 int main(int argc, char **argv) {
     Arrangement_2 arr;
     QVector<Segment_2> cvs;
-    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(0.0, 4.0)));
-    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(4.0, 0.0)));
-    cvs.push_back(Segment_2(Point_2(0.0, 4.0), Point_2(4.0, 0.0)));
-    cvs.push_back(Segment_2(Point_2(1.0, 0.5), Point_2(1.0, 2.5)));
-    cvs.push_back(Segment_2(Point_2(0.5, 1.0), Point_2(2.5, 1.0)));
-    cvs.push_back(Segment_2(Point_2(0.5, 2.5), Point_2(2.5, 0.5)));
-    CGAL::insert(arr, cvs.begin(), cvs.end());
+//    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(0.0, 4.0)));
+//    cvs.push_back(Segment_2(Point_2(0.0, 0.0), Point_2(4.0, 0.0)));
+//    cvs.push_back(Segment_2(Point_2(0.0, 4.0), Point_2(4.0, 0.0)));
+//    cvs.push_back(Segment_2(Point_2(1.0, 0.5), Point_2(1.0, 2.5)));
+//    cvs.push_back(Segment_2(Point_2(0.5, 1.0), Point_2(2.5, 1.0)));
+//    cvs.push_back(Segment_2(Point_2(0.5, 2.5), Point_2(2.5, 0.5)));
+//    CGAL::insert(arr, cvs.begin(), cvs.end());
+    Segment_2      s1 (Point_2(4, 1), Point_2(7, 6));
+    Segment_2      s2 (Point_2(1, 6), Point_2(7, 6));
+    Segment_2      s3 (Point_2(4, 1), Point_2(1, 6));
+    Segment_2      s4 (Point_2(1, 3), Point_2(7, 3));
+    Segment_2      s5 (Point_2(1, 3), Point_2(4, 8));
+    Segment_2      s6 (Point_2(4, 8), Point_2(7, 3));
+
+    CGAL::insert (arr, s1);
+    CGAL::insert (arr, s2);
+    CGAL::insert (arr, s3);
+    CGAL::insert (arr, s4);
+    CGAL::insert (arr, s5);
+    CGAL::insert (arr, s6);
 
     for (Arrangement_2::Face_const_iterator fit = arr.faces_begin();
          fit != arr.faces_end();
          fit++) {
-        if (!fit->is_unbounded()) {
-            // has bounded
-            Arrangement_2::Ccb_halfedge_const_circulator cir = fit->outer_ccb();
-            Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
-            do {
-                cout << "(" << cucir->target()->point() << ") ";
-                cucir++;
-            } while (cucir != cir);
-            if (fit->number_of_holes() > 0) {
-                cout << " has hole : ";
-                QVector<Point_2 > hpts;
-                for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
-                     hit != fit->holes_end();
-                     hit++) {
-                    Arrangement_2::Ccb_halfedge_const_circulator hcir = *hit;
-                    Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
-                    do {
-                        if ((hpts.size() > 2) && (hcicur->target()->point() == hpts.at(hpts.size() - 2))) {
-                            // TODO : process isolated lines
-                            hpts.removeLast();
-                        }
-                        else {
-                            hpts.push_back(hcicur->target()->point());
-                        }
-//                        if (hcicur->is_fictitious())
-//                            cout << "(" << hcicur->target()->point() << ") ";
-                        hcicur--;
-                    } while (hcicur != hcir);
-                    while(hpts.first() == hpts.at(2)) {
-                        hpts.removeFirst();
-                        hpts.removeFirst();
-                    }
-                    Q_FOREACH(Point_2 p, hpts) {
-                            cout << "(" << p << ") ";
-                        }
-                }
-                cout << "; ";
+        Arrangement_2::Ccb_halfedge_const_circulator  curr;
+        std::cout << arr.number_of_faces() << " faces:" << std::endl;
+            if (fit->is_unbounded())
+                std::cout << "Unbounded." << std::endl;
+            else {
+                curr = fit->outer_ccb();
+                std::cout << curr->source()->point();
+                do {
+                    std::cout << " --> " << curr->target()->point();
+                    ++curr;
+                } while (curr != fit->outer_ccb());
+                std::cout << std::endl;
             }
-            cout << endl;
-        }
+
+//        if (!fit->is_unbounded()) {
+//            // has bounded
+//            Arrangement_2::Ccb_halfedge_const_circulator cir = fit->outer_ccb();
+//            Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
+//            do {
+//                cout << "(" << cucir->target()->point() << ") ";
+//                cucir++;
+//            } while (cucir != cir);
+//            if (fit->number_of_holes() > 0) {
+//                cout << " has hole : ";
+//                QVector<Point_2 > hpts;
+//                for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
+//                     hit != fit->holes_end();
+//                     hit++) {
+//                    Arrangement_2::Ccb_halfedge_const_circulator hcir = *hit;
+//                    Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
+//                    do {
+//                        if ((hpts.size() > 2) && (hcicur->target()->point() == hpts.at(hpts.size() - 2))) {
+//                            // TODO : process isolated lines
+//                            hpts.removeLast();
+//                        }
+//                        else {
+//                            hpts.push_back(hcicur->target()->point());
+//                        }
+////                        if (hcicur->is_fictitious())
+////                            cout << "(" << hcicur->target()->point() << ") ";
+//                        hcicur--;
+//                    } while (hcicur != hcir);
+//                    while(hpts.first() == hpts.at(2)) {
+//                        hpts.removeFirst();
+//                        hpts.removeFirst();
+//                    }
+//                    Q_FOREACH(Point_2 p, hpts) {
+//                            cout << "(" << p << ") ";
+//                        }
+//                }
+//                cout << "; ";
+//            }
+//            cout << endl;
+//        }
     }
 
 //    for (Arrangement_2::Edge_const_iterator eit = arr.edges_begin();
