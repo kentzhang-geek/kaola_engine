@@ -295,8 +295,8 @@ void scheme::recalculate_rooms() {
             glm::vec2 st_tmp = wit->get_start_point();
             glm::vec2 ed_tmp = wit->get_end_point();
             float v_length = glm::length(ed_tmp - st_tmp);
-            glm::vec2 st = ed_tmp + (v_length + 0.01) * glm::normalize(st_tmp - ed_tmp);
-            glm::vec2 ed = st_tmp + (v_length + 0.01) * glm::normalize(ed_tmp - st_tmp);
+            glm::vec2 st = ed_tmp + (v_length + 0.05) * glm::normalize(st_tmp - ed_tmp);
+            glm::vec2 ed = st_tmp + (v_length + 0.05) * glm::normalize(ed_tmp - st_tmp);
 //            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
 //                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
             Segment_2 seg_l = Segment_2(Point_2(st.x, st.y),
@@ -319,19 +319,22 @@ void scheme::recalculate_rooms() {
             QVector<glm::vec3> tmp_test; // TODO : remove this
             do {
                 glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
-                if ((grd.size() > 2) && (pt == grd.at(grd.size() - 2))) {
+                if ((grd.size() >= 2) && (pt == grd.at(grd.size() - 2))) {
                     // TODO : process isolated lines
                     grd.removeLast();
+                    grd.removeLast();
                 }
-                else {
-                    grd.push_back(pt);
-                }
+                grd.push_back(pt);
                 tmp_test.push_back(pt);
                 cucir++;
             } while (cucir != cir);
             if (grd.size() >= 3) {
-                // remove isolated edges
-                while ((grd.size() >= 3) && (math::point_near_point(grd.at(0), grd.at(2)))) {
+                // TODO : remove isolated edges
+                while ((grd.size() > 3) && (math::point_near_point(grd.at(0), grd.at(grd.size() - 2)))) {
+                    grd.removeLast();
+                    grd.removeLast();
+                }
+                while ((grd.size() > 3) && (math::point_near_point(grd.at(1), grd.last()))) {
                     grd.removeFirst();
                     grd.removeFirst();
                 }
