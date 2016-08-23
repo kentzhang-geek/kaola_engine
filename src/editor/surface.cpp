@@ -963,18 +963,44 @@ glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points){
         return NON_NORMAL;
     }
 
-    glm::vec3 sampleNormal = getNormal(points.back(),
-                                  points.front(),
-                                  points[1]);
+    glm::vec3 sampleNormal = sameLine(points.back(), points.front(), points[1]) ?
+                            NON_NORMAL: getNormal(points.back(),
+                                                  points.front(),
+                                                  points[1]);
     for(int index = 1; index != (points.size() -1); ++index){
-        glm::vec3 testNormal = getNormal(points[index -1],
-                                    points[index],
-                                    points[index + 1]);
-        if(!equalVecr(testNormal,sampleNormal)){
-            return NON_NORMAL;
+        const glm::vec3 &p1 = points[index - 1];
+        const glm::vec3 &p2 = points[index];
+        const glm::vec3 &p3 = points[index + 1];
+
+        if(!sameLine(p1, p2, p3)){
+            glm::vec3 testNormal = getNormal(p1, p2, p3);
+            if(sampleNormal == NON_NORMAL){
+                sampleNormal = testNormal;
+            }
+            if(!equalVecr(testNormal,sampleNormal)){
+                return NON_NORMAL;
+            }
         }
+        return sampleNormal;
     }
-    return sampleNormal;
+
+    //
+//    glm::vec3 sampleNormal = getNormal(points.back(),
+//                                  points.front(),
+//                                  points[1]);
+//    for(int index = 1; index != (points.size() -1); ++index){
+//        glm::vec3 testNormal = getNormal(points[index -1],
+//                                    points[index],
+//                                    points[index + 1]);
+//        if(!equalVecr(testNormal,sampleNormal)){
+//            return NON_NORMAL;
+//        }
+//    }
+//    return sampleNormal;
+}
+
+bool Surface::sameLine(const glm::vec3 &p1, const glm::vec3 &p2, const glm::vec3 &p3){
+    return 0.0 == ((p1.x * (p2.y -p3.y) + p2.x * (p2.y - p1.y) + p3.x * (p1.y - p2.y))/2);
 }
 
 void Surface::getRotation(const glm::vec3 &source,
