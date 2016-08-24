@@ -517,6 +517,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                     this->sketch->add_wall(this->old_wall, tmppp);
                     if (tmppp != NULL) {
                         this->old_wall = tmppp;
+                        this->old_wall->calculate_mesh();
                     }
                 }
             } else {
@@ -528,11 +529,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 this->sketch->add_wall(this->new_wall, tmppp);
                 if (tmppp != NULL) {
                     this->new_wall = tmppp;
+                    this->new_wall->calculate_mesh();
                 }
                 tmppp = NULL;
                 this->sketch->add_wall(this->connect_wall, tmppp);
                 if (tmppp != NULL) {
                     this->connect_wall = tmppp;
+                    this->connect_wall->calculate_mesh();
                 }
 
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;

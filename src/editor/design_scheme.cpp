@@ -113,7 +113,7 @@ void scheme::set_translation_mat(const glm::mat4 &trans) {
 bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
     // already in control so do not add again
     wall_to_end = w;
-    if (this->walls.contains(w)) {
+    if ((w == NULL) || (this->walls.contains(w))) {
         return false;
     }
     gl3d_lock::shared_instance()->scheme_lock.lock();
@@ -126,9 +126,12 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
     int tid = w->get_id();
     // TODO : debug cross walls
     QVector<glm::vec2> cross_pts;
-    Q_FOREACH(gl3d_wall *const &wit, this->walls) {
+    Q_FOREACH(gl3d_wall * wit, this->walls) {
             // process delete wall in wall
-
+            if (gl3d_wall::delete_wall_in_wall(w, wit)) {
+                wall_to_end = NULL;
+                return false;
+            }
             // cut walls in scheme
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
                 tid = wit->get_id();

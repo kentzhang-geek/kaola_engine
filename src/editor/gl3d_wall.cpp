@@ -1132,15 +1132,19 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target,
         (math::point_near_point(cut_l.b, tar_l.b))) {
         return false;
     }
+    // if line parallel , then return
+    if (glm::abs(glm::dot(glm::normalize(cut_l.b - cut_l.a), glm::normalize(tar_l.b - tar_l.a))) > 0.99f)
+        return false;
     if (math::get_cross(cut_l, tar_l, cross_pt)) {
         if ((cut_l.point_on_line(cross_pt) && tar_l.point_on_line(cross_pt))  // point should on line
             && (glm::min(cut_l.point_min_distance_to_vertex(cross_pt), tar_l.point_min_distance_to_vertex(cross_pt)) >
-                glm::max(wall_cutter->get_thickness(), wall_target->get_thickness()))) // should away from vertex of wall
+                glm::max(wall_cutter->get_thickness(),
+                         wall_target->get_thickness()))) // should away from vertex of wall
         {
             // now need to cut wall_target, now wall1 st to cross
             // TODO : should fix wall_target combine
-            gl3d_wall * w = wall_target;
-            gl3d_wall * n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
+            gl3d_wall *w = wall_target;
+            gl3d_wall *n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
             if (w->start_point_fixed) {
                 if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
                     w->start_point_attach.attach->start_point_attach.attach = n_w;
@@ -1180,9 +1184,49 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target,
     return false;
 }
 
-static bool gl3d_wall::delete_wall_in_wall(gl3d_wall *&wall_target, gl3d_wall *&wall_rmver) {
+bool gl3d_wall::delete_wall_in_wall(gl3d_wall *&wall_target, gl3d_wall *&wall_rmver) {
     // TODO : process near point and overlay walls
     line_2d target(wall_target->get_start_point(), wall_target->get_end_point());
     line_2d remver(wall_rmver->get_start_point(), wall_rmver->get_end_point());
 
+    if (remver.point_on_line(target.a) && remver.point_on_line(target.b)) { // should not add wall
+        delete wall_target;
+        wall_target = NULL;
+        return true;
+    }
+
+    // cross lines so return now
+    if (glm::abs(glm::dot(glm::normalize(target.b - target.a), glm::normalize(remver.b - remver.a))) < 0.99f)
+        return false;
+
+    // target covered remover, so change target and then return
+    if (target.point_on_line(remver.a) && target.point_on_line(remver.b)) {
+        if (wall_target->end_point_fixed)
+            wall_target->seperate(wall_target->end_point_attach);
+        if (glm::length(remver.a - target.a) < glm::length(remver.b - target.a))
+            wall_target->set_end_point(remver.a);
+        else
+            wall_target->set_end_point(remver.b);
+
+        return false;
+    }
+
+    if (remver.point_on_line(target.a)) {
+        if (wall_target->get_start_point_fixed())
+            wall_target->seperate(wall_target->start_point_attach);
+        if (glm::length(remver.b - target.b) < glm::length(remver.a - target.b))
+            wall_target->set_start_point(remver.b);
+        else
+            wall_target->set_start_point(remver.a);
+    }
+    else if (remver.point_on_line(target.b)) {
+        if (wall_target->get_end_point_fixed())
+            wall_target->seperate(wall_target->end_point_attach);
+        if (glm::length(remver.b - target.a) < glm::length(remver.a - target.a))
+            wall_target->set_end_point(remver.b);
+        else
+            wall_target->set_end_point(remver.a);
+    }
+
+    return false;
 }

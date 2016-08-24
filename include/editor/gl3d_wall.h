@@ -104,6 +104,9 @@ namespace gl3d {
 
         static bool wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target, QSet<gl3d_wall *> & output_walls);
 
+        // remove target if target is covered , return true if removed , false if not removed
+        static bool delete_wall_in_wall(gl3d_wall * & wall_target, gl3d_wall * & wall_rmver);
+
         void seperate(INOUT gl3d::gl3d_wall_attach &attachment);
 
         gl3d::obj_points bottom_pts[4];
