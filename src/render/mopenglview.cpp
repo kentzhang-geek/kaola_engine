@@ -435,7 +435,8 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             pickUpObjID = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
             if(pickUpObjID > 0) {
                 cout << "click objid: " << pickUpObjID << endl;
-                puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene);
+                puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene,
+                                      this->sketch);
                 puDig->show();
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
             }
