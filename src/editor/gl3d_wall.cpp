@@ -324,9 +324,9 @@ void gl3d_wall::calculate_mesh() {
     }
     catch (SurfaceException &exp) {
         // do nothing
-        Q_FOREACH(klm::Surface * s, this->sfcs) {
-            delete s;
-        }
+        Q_FOREACH(klm::Surface *s, this->sfcs) {
+                delete s;
+            }
         this->sfcs.clear();
         return;
     }
@@ -1110,7 +1110,7 @@ room::room() {
 
 room::~room() {
     if (NULL != this->ground) {
-        delete  this->ground;
+        delete this->ground;
         this->ground = NULL;
     }
     Q_FOREACH(gl3d_wall *wit, this->relate_walls) {
@@ -1157,7 +1157,7 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target,
             }
             output_walls.insert(n_w);
             // now cross to wall1 end
-            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(),w->get_hight());
+            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(), w->get_hight());
             if (w->end_point_fixed) {
                 if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
                     w->end_point_attach.attach->start_point_attach.attach = n_w;
@@ -1173,9 +1173,16 @@ bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target,
                 w->get_start_point_attach()->attach = NULL;
             }
             output_walls.insert(n_w);
-            return  true;
+            return true;
         }
     }
 
     return false;
+}
+
+static bool gl3d_wall::delete_wall_in_wall(gl3d_wall *&wall_target, gl3d_wall *&wall_rmver) {
+    // TODO : process near point and overlay walls
+    line_2d target(wall_target->get_start_point(), wall_target->get_end_point());
+    line_2d remver(wall_rmver->get_start_point(), wall_rmver->get_end_point());
+
 }

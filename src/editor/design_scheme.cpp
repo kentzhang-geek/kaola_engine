@@ -127,6 +127,8 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
     // TODO : debug cross walls
     QVector<glm::vec2> cross_pts;
     Q_FOREACH(gl3d_wall *const &wit, this->walls) {
+            // process delete wall in wall
+
             // cut walls in scheme
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
                 tid = wit->get_id();
