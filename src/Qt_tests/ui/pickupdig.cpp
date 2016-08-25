@@ -1,13 +1,13 @@
 #include "pickupdig.h"
 
-PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene *sc)
-{
+PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch) {
     main_scene = sc;
+    this->sketch = sch;
     this->pickUpObjID = pickUpObjID;
     this->setParent(parent);
     this->setAutoFillBackground(true);
     QPalette palette;
-    palette.setColor(QPalette::Background, QColor(248,248,255));
+    palette.setColor(QPalette::Background, QColor(248, 248, 255));
     this->setPalette(palette);
 
     //定义窗口坐标
@@ -16,12 +16,12 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     setWindowFlags(Qt::FramelessWindowHint);
 
     //根据拾取到的objid获取模型obj
-    pickUpObj = (gl3d::object *)this->main_scene->get_obj(pickUpObjID);
-    wall = (gl3d::gl3d_wall *)pickUpObj;
+    pickUpObj = (gl3d::object *) this->main_scene->get_obj(pickUpObjID);
+    wall = (gl3d::gl3d_wall *) pickUpObj;
 
     initBasicInfo();                                    //初始化信息窗体
 
-    QVBoxLayout* layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
+    QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
     layout->addWidget(baseWidget);                      //加入baseWidget
     layout->setSizeConstraint(QLayout::SetFixedSize);   //设置窗体缩放模式，此处设置为固定大小
     layout->setSpacing(6);                              //窗口部件之间间隔大小
@@ -30,8 +30,7 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
 }
 
 //墙
-void PickupDig::initBasicInfo()
-{
+void PickupDig::initBasicInfo() {
     baseWidget = new QWidget;                           //实例化baseWidget
 
     //控制按钮
@@ -107,7 +106,7 @@ void PickupDig::initBasicInfo()
     hlayout3->addWidget(unitLabel3);
 
 
-    QVBoxLayout* vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
+    QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
     vboxLayout->addLayout(hlayoutButtons);
     vboxLayout->addLayout(hlayout1);
     vboxLayout->addLayout(hlayout2);
@@ -117,42 +116,48 @@ void PickupDig::initBasicInfo()
 }
 
 void PickupDig::slotDoubleSpinbox_Slider() {
-    slider->setValue((int)(spinBox->value()*100));
+    slider->setValue((int) (spinBox->value() * 100));
 
     //改变墙长度
     wall->set_length(float(spinBox->value()));
     wall->calculate_mesh();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox() {
-    spinBox->setValue((double)(slider->value())/100);
+    spinBox->setValue((double) (slider->value()) / 100);
 }
 
 void PickupDig::slotDoubleSpinbox_Slider2() {
-    slider2->setValue((int)(spinBox2->value()*100));
+    slider2->setValue((int) (spinBox2->value() * 100));
 
     //改变墙厚度
     wall->set_thickness(float(spinBox2->value()));
     wall->calculate_mesh();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox2() {
-    spinBox2->setValue((double)(slider2->value())/100);
+    spinBox2->setValue((double) (slider2->value()) / 100);
 }
 
 void PickupDig::slotDoubleSpinbox_Slider3() {
-    slider3->setValue((int)(spinBox3->value()*100));
+    slider3->setValue((int) (spinBox3->value() * 100));
 
     //改变墙高度
     wall->set_hight(float(spinBox3->value()));
     wall->calculate_mesh();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox3() {
-    spinBox3->setValue((double)(slider3->value())/100);
+    spinBox3->setValue((double) (slider3->value()) / 100);
 }
 
 
 //删除拾取的obj对象
-void PickupDig::on_delete_obj(){
-    this->main_scene->delete_obj(pickUpObjID);
+void PickupDig::on_delete_obj() {
+    if (pickUpObj->get_obj_type() != gl3d::abstract_object::type_scheme)
+        this->main_scene->delete_obj(pickUpObjID);
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall)
+        this->sketch->del_wal((gl3d_wall *) pickUpObj);
     delete pickUpObj;
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;

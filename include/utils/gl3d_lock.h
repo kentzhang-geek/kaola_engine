@@ -10,6 +10,8 @@ public:
     QMutex render_lock;
     QMutex wall_lock;
     QMutex loader_lock;
+    QMutex scheme_lock;
+
 private:
     gl3d_lock();
 };

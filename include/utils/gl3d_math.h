@@ -33,6 +33,10 @@ namespace gl3d {
                 return (glm::length(this->a - pt) + glm::length(this->b - pt)) <=
                        (glm::length(this->a - this->b) + 0.0001);
             }
+
+            float point_min_distance_to_vertex(T pt) {
+                return glm::min(glm::length(pt - this->a), glm::length(pt - this->b));
+            }
         };
 
         typedef line<glm::vec2> line_2d;
@@ -83,6 +87,49 @@ namespace gl3d {
         glm::mat4 get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b);
 
         glm::vec3 convert_vec2_to_vec3(glm::vec2 a);
+
+        template <typename T>
+        bool has_near_point_in_vector(QVector<T> pts, T pt) {
+            Q_FOREACH(T it, pts) {
+                    if (glm::length(it - pt) < 0.001)
+                        return true;
+                }
+            return false;
+        }
+
+        template  <typename T>
+        bool point_near_point(T pa, T pb) {
+            return glm::length(pa - pb) < 0.001f;
+        }
+
+        template <typename  T>
+        void sort_vector_by_distance(QVector<T> & vts, T origin) {
+            QVector<T> tmp;
+            tmp.clear();
+
+            Q_FOREACH(T tit, vts) {
+                    tmp.push_back(tit);
+                }
+            vts.clear();
+
+            float dis = glm::length(origin - tmp.at(0));
+            int pos = 0;
+            while (tmp.size() > 0) {
+                dis = glm::length(origin - tmp.at(0));
+                pos = 0;
+                for (int i = 0; i < tmp.size(); i++) {
+                    if (dis > glm::length(origin - tmp.at(i))) {
+                        dis = glm::length(origin - tmp.at(i));
+                        pos = i;
+                    }
+                }
+
+                vts.push_back(tmp.at(pos));
+                tmp.remove(pos);
+            }
+
+            return;
+        }
     }
 }
 

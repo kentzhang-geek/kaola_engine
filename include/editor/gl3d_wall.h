@@ -45,8 +45,10 @@ namespace klm {
 
 namespace gl3d {
     void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
+    void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
 
     class gl3d_wall;
+    class room;
 
     // 墙的附着状态，用于决定是否需要重算墙角，以及是否可以设置长度
     class gl3d_wall_attach {
@@ -78,9 +80,10 @@ namespace gl3d {
     GL3D_UTILS_PROPERTY(hight, float);
     GL3D_UTILS_PROPERTY(start_point_fixed, bool);
     GL3D_UTILS_PROPERTY(end_point_fixed, bool);
-    GL3D_UTILS_PROPERTY(start_point_attach, gl3d_wall_attach);
-    GL3D_UTILS_PROPERTY(end_point_attach, gl3d_wall_attach);
+    GL3D_UTILS_PROPERTY_GET_POINTER(start_point_attach, gl3d_wall_attach);
+    GL3D_UTILS_PROPERTY_GET_POINTER(end_point_attach, gl3d_wall_attach);
     GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *>);
+    GL3D_UTILS_PROPERTY_GET_POINTER(relate_rooms, QSet<gl3d::room *>);
     GL3D_UTILS_PROPERTY(fixed, bool);
         QMap<int, hole *> holes_on_this_wall;
 
@@ -98,6 +101,11 @@ namespace gl3d {
         static bool combine(gl3d_wall *wall1, gl3d_wall *wall2, tag_combine_traits combine_traits);
 
         static bool combine(gl3d_wall *wall1, gl3d_wall *wall2, glm::vec2 combine_point);
+
+        static bool wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target, QSet<gl3d_wall *> & output_walls);
+
+        // remove target if target is covered , return true if removed , false if not removed
+        static bool delete_wall_in_wall(gl3d_wall * & wall_target, gl3d_wall * & wall_rmver);
 
         void seperate(INOUT gl3d::gl3d_wall_attach &attachment);
 
@@ -167,6 +175,15 @@ namespace gl3d {
 
     private:
         void init();
+    };
+
+    class room {
+    public:
+        room();
+        ~room();
+        klm::Surface * ground;
+        QSet<gl3d::gl3d_wall *> relate_walls;
+        std::string name;
     };
 }
 

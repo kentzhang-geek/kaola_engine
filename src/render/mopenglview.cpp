@@ -43,6 +43,12 @@ void MOpenGLView::do_init() {
                 new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+
+    // create sketch
+    this->sketch = new klm::design::scheme(this->main_scene);
+    this->sketch->set_id(0);
+    this->sketch->set_attached_scene(this->main_scene);
+    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(0, this->sketch));
 }
 
 #define MAX_FILE_SIZE 10000
@@ -429,7 +435,8 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             pickUpObjID = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
             if(pickUpObjID > 0) {
                 cout << "click objid: " << pickUpObjID << endl;
-                puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene);
+                puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene,
+                                      this->sketch);
                 puDig->show();
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
             }
@@ -452,6 +459,11 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
         //画房间节点结束
         if(now_state == gl3d::gl3d_global_param::drawhomeing) {
+            gl3d_wall * tmp;
+            this->sketch->add_wall(this->new_walla, tmp);
+            this->sketch->add_wall(this->new_wallb, tmp);
+            this->sketch->add_wall(this->new_wallc, tmp);
+            this->sketch->add_wall(this->new_walld, tmp);
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
             this->wall_temp_id = this->wall_temp_id + 4;
         }
@@ -488,10 +500,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                                 gl3d_wall::combine_wall1_start_to_wall2_end
                                 );
                 }
-
-
             }
-
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwalling;
         }
         //画墙中节点结束
@@ -505,18 +514,34 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 //新墙连接老墙
                 if(this->old_wall != NULL) {
                     gl3d_wall::combine(this->old_wall, this->new_wall, gl3d_wall::combine_wall1_end_to_wall2_start);
+                    gl3d_wall * tmppp = NULL;
+                    this->sketch->add_wall(this->old_wall, tmppp);
+                    if (tmppp != NULL) {
+                        this->old_wall = tmppp;
+                        this->old_wall->calculate_mesh();
+                    }
                 }
             } else {
                 //新墙连接吸附墙
                 if(this->connect_wall != NULL) {
                     gl3d_wall::combine(this->new_wall, this->connect_wall, this->new_wall->get_end_point());
                 }
+                gl3d_wall * tmppp = NULL;
+                this->sketch->add_wall(this->new_wall, tmppp);
+                if (tmppp != NULL) {
+                    this->new_wall = tmppp;
+                    this->new_wall->calculate_mesh();
+                }
+                tmppp = NULL;
+                this->sketch->add_wall(this->connect_wall, tmppp);
+                if (tmppp != NULL) {
+                    this->connect_wall = tmppp;
+                    this->connect_wall->calculate_mesh();
+                }
 
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
             }
         }
-
-
         //右键按下事件
     } else if(event->button() == Qt::RightButton) {
         //点击右键-取消画墙,画房间状态
