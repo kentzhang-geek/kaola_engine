@@ -45,6 +45,7 @@
 #include "utils/gl3d_lock.h"
 #include "utils/gl3d_math.h"
 #include "editor/design_scheme.h"
+#include "resource_and_network/klm_resource_manager.h"
 
 //yananli includes ----------------------------------------
 #include <QWheelEvent>

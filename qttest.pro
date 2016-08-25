@@ -62,7 +62,8 @@ SOURCES += \
     src/resource_and_network/klm_resource_manager.cpp \
     src/utils/io_utility.cpp \
     src/resource_and_network/global_material.cpp \
-    src/editor/design_scheme.cpp
+    src/editor/design_scheme.cpp \
+    src/Qt_tests/commands.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -115,7 +116,8 @@ HEADERS  += \
     include/resource_and_network/klm_resource_manager.h \
     include/utils/io_utility.h \
     include/resource_and_network/global_material.h \
-    include/editor/design_scheme.h
+    include/editor/design_scheme.h \
+    src/Qt_tests/commands.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
