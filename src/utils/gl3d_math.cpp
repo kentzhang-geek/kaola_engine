@@ -73,6 +73,11 @@ bool gl3d::math::get_cross(const line_2d &l1,
 
     float x = 0.0;
     float y = 0.0;
+
+    // check paralym
+    if (glm::abs(glm::dot(glm::normalize(l1.b - l1.a), glm::normalize(l2.b - l2.a))) > 0.98f) {
+        return false;
+    }
     if (glm::normalize(p2 - p1) == glm::normalize(p4 - p3)) {
         return false;
     }

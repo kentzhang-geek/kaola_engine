@@ -251,6 +251,7 @@ namespace klm{
                                    const Surface::Vertex &p2,
                                    const Surface::Vertex &p3);
         static glm::vec3 getPlanNormal(const QVector<glm::vec3> &points);
+        static bool sameLine(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3 &p3);
         static void getRotation(const glm::vec3 &source,
                                 const glm::vec3 &destation,
                                 glm::mat4 &result);

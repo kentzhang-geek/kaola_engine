@@ -11,9 +11,6 @@ using namespace gl3d::math;
 
 static const float wall_combine_distance = 1.0f;
 
-// internal tool
-static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
-
 static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt);
 
 static gl3d::obj_points post_rect[4] = {
@@ -54,6 +51,7 @@ void gl3d_wall::init() {
     this->end_point_fixed = false;
     this->fixed = false;
     this->set_obj_type(this->type_wall);
+    this->relate_rooms.clear();
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {
@@ -326,6 +324,11 @@ void gl3d_wall::calculate_mesh() {
     }
     catch (SurfaceException &exp) {
         // do nothing
+        Q_FOREACH(klm::Surface *s, this->sfcs) {
+                delete s;
+            }
+        this->sfcs.clear();
+        return;
     }
 
     // will not fill meshes now
@@ -335,8 +338,8 @@ void gl3d_wall::calculate_mesh() {
         QVector<math::triangle_facet> faces_left;
         QVector<math::triangle_facet> faces_right;
         faces_left.clear();
-        get_faces_from_surface(this->sfcs.at(0), faces_left);
-        get_faces_from_surface(this->sfcs.at(1), faces_right);
+        gl3d::get_faces_from_surface(this->sfcs.at(0), faces_left);
+        gl3d::get_faces_from_surface(this->sfcs.at(1), faces_right);
 
         for (auto it = this->holes_on_this_wall.begin();
              it != this->holes_on_this_wall.end();
@@ -824,9 +827,9 @@ void gl3d_wall::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
 }
 
 // get triangles from surfaces
-static void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
+void gl3d::get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
     for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
-        get_faces_from_surface(sfc->getSubSurface(i), faces);
+        gl3d::get_faces_from_surface(sfc->getSubSurface(i), faces);
     }
 
     // process local verticles
@@ -970,8 +973,8 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
     crosses.clear();
 
     // get left and right facet
-    get_faces_from_surface(this->sfcs.at(0), faces);
-    get_faces_from_surface(this->sfcs.at(1), faces);
+    gl3d::get_faces_from_surface(this->sfcs.at(0), faces);
+    gl3d::get_faces_from_surface(this->sfcs.at(1), faces);
 //    for (auto it = this->sfcs.begin();
 //         it != this->sfcs.end();
 //         it++) {
@@ -1097,4 +1100,133 @@ bool hole::is_valid() {
     }
 
     return pa_locate && pb_locate;
+}
+
+room::room() {
+    this->ground = NULL;
+    this->name = "";
+    this->relate_walls.clear();
+}
+
+room::~room() {
+    if (NULL != this->ground) {
+        delete this->ground;
+        this->ground = NULL;
+    }
+    Q_FOREACH(gl3d_wall *wit, this->relate_walls) {
+            if (this->relate_walls.contains(wit))
+                this->relate_walls.remove(wit);
+        }
+    this->relate_walls.clear();
+    return;
+}
+
+bool gl3d::gl3d_wall::wall_cross(gl3d_wall *wall_cutter, gl3d_wall *wall_target, QSet<gl3d_wall *> &output_walls) {
+    math::line_2d cut_l(wall_cutter->get_start_point(), wall_cutter->get_end_point());
+    math::line_2d tar_l(wall_target->get_start_point(), wall_target->get_end_point());
+    glm::vec2 cross_pt;
+    // if has point near point, then return false
+    if ((math::point_near_point(cut_l.a, tar_l.a)) ||
+        (math::point_near_point(cut_l.a, tar_l.b)) ||
+        (math::point_near_point(cut_l.b, tar_l.a)) ||
+        (math::point_near_point(cut_l.b, tar_l.b))) {
+        return false;
+    }
+    // if line parallel , then return
+    if (glm::abs(glm::dot(glm::normalize(cut_l.b - cut_l.a), glm::normalize(tar_l.b - tar_l.a))) > 0.99f)
+        return false;
+    if (math::get_cross(cut_l, tar_l, cross_pt)) {
+        if ((cut_l.point_on_line(cross_pt) && tar_l.point_on_line(cross_pt))  // point should on line
+            && (glm::min(cut_l.point_min_distance_to_vertex(cross_pt), tar_l.point_min_distance_to_vertex(cross_pt)) >
+                glm::max(wall_cutter->get_thickness(),
+                         wall_target->get_thickness()))) // should away from vertex of wall
+        {
+            // now need to cut wall_target, now wall1 st to cross
+            // TODO : should fix wall_target combine
+            gl3d_wall *w = wall_target;
+            gl3d_wall *n_w = new gl3d_wall(w->get_start_point(), cross_pt, w->get_thickness(), w->get_hight());
+            if (w->start_point_fixed) {
+                if (w->start_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->start_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->start_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->start_point_attach.attach = w->start_point_attach.attach;
+                n_w->start_point_attach.attach_point = w->start_point_attach.attach_point;
+                n_w->set_start_point_fixed(true);
+                // renew old wall attach
+                w->set_start_point_fixed(false);
+                w->get_start_point_attach()->attach = NULL;
+            }
+            output_walls.insert(n_w);
+            // now cross to wall1 end
+            n_w = new gl3d_wall(cross_pt, w->get_end_point(), w->get_thickness(), w->get_hight());
+            if (w->end_point_fixed) {
+                if (w->end_point_attach.attach_point == gl3d::gl3d_wall_attach::start_point) {
+                    w->end_point_attach.attach->start_point_attach.attach = n_w;
+                }
+                else {
+                    w->end_point_attach.attach->end_point_attach.attach = n_w;
+                }
+                n_w->end_point_attach.attach = w->end_point_attach.attach;
+                n_w->end_point_attach.attach_point = w->end_point_attach.attach_point;
+                n_w->set_end_point_fixed(true);
+                // renew old wall attach
+                w->set_end_point_fixed(false);
+                w->get_start_point_attach()->attach = NULL;
+            }
+            output_walls.insert(n_w);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool gl3d_wall::delete_wall_in_wall(gl3d_wall *&wall_target, gl3d_wall *&wall_rmver) {
+    // TODO : process near point and overlay walls
+    line_2d target(wall_target->get_start_point(), wall_target->get_end_point());
+    line_2d remver(wall_rmver->get_start_point(), wall_rmver->get_end_point());
+
+    if (remver.point_on_line(target.a) && remver.point_on_line(target.b)) { // should not add wall
+        delete wall_target;
+        wall_target = NULL;
+        return true;
+    }
+
+    // cross lines so return now
+    if (glm::abs(glm::dot(glm::normalize(target.b - target.a), glm::normalize(remver.b - remver.a))) < 0.99f)
+        return false;
+
+    // target covered remover, so change target and then return
+    if (target.point_on_line(remver.a) && target.point_on_line(remver.b)) {
+        if (wall_target->end_point_fixed)
+            wall_target->seperate(wall_target->end_point_attach);
+        if (glm::length(remver.a - target.a) < glm::length(remver.b - target.a))
+            wall_target->set_end_point(remver.a);
+        else
+            wall_target->set_end_point(remver.b);
+
+        return false;
+    }
+
+    if (remver.point_on_line(target.a)) {
+        if (wall_target->get_start_point_fixed())
+            wall_target->seperate(wall_target->start_point_attach);
+        if (glm::length(remver.b - target.b) < glm::length(remver.a - target.b))
+            wall_target->set_start_point(remver.b);
+        else
+            wall_target->set_start_point(remver.a);
+    }
+    else if (remver.point_on_line(target.b)) {
+        if (wall_target->get_end_point_fixed())
+            wall_target->seperate(wall_target->end_point_attach);
+        if (glm::length(remver.b - target.a) < glm::length(remver.a - target.a))
+            wall_target->set_end_point(remver.b);
+        else
+            wall_target->set_end_point(remver.a);
+    }
+
+    return false;
 }

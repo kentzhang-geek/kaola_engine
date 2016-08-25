@@ -25,9 +25,10 @@ public:
 public:
     virtual void undo();
     virtual void redo();
+    gl3d_wall* mModel;
 
 private:
-    QVector<gl3d::gl3d_wall>* mModels;
+    QVector<gl3d::gl3d_wall *>* mModels;
 };
 
 #endif // COMMANDS_H

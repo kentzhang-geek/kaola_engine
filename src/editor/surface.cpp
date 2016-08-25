@@ -957,24 +957,91 @@ glm::vec3 Surface::getNormal(const Surface::Vertex &p1, const Surface::Vertex &p
 
     return normal;
 }
+//
+//int main() {
+//    glm::vec3 vp1(0.0f, 0.0f, -1.0f);
+//    glm::vec3 vp2(0.0f);
+//    glm::vec3 vp3(1.0f, 0.0f, 0.0f);
+//
+//    glm::vec3 lineOne = vp1 - vp2;
+//    glm::vec3 lineTwo = vp3 - vp2;
+//    glm::vec3 normal = glm::cross(lineTwo, lineOne);
+//    normal = glm::normalize(normal);
+//
+//    return 0;
+//}
 
-glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points){
-    if(points.size() <= 3){
-        return NON_NORMAL;
-    }
+static inline bool is_point_at_same_face(glm::vec3 pa, glm::vec3 pb, glm::vec3 pc) {
+    return glm::abs(glm::dot(glm::cross(pb - pa, pc - pa), pb - pc)) > 0.01f;
+}
 
-    glm::vec3 sampleNormal = getNormal(points.back(),
-                                  points.front(),
-                                  points[1]);
-    for(int index = 1; index != (points.size() -1); ++index){
-        glm::vec3 testNormal = getNormal(points[index -1],
-                                    points[index],
-                                    points[index + 1]);
-        if(!equalVecr(testNormal,sampleNormal)){
+// TODO : 换成验证的同时求平均法向量的算法
+glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points) {
+    for (int i = 0; i < (points.size() - 2); i++) {
+        if (is_point_at_same_face(points[i], points[i+1], points[i+2])) {
             return NON_NORMAL;
         }
     }
-    return sampleNormal;
+    if (is_point_at_same_face(points[0], points[1], points.last()))
+        return NON_NORMAL;
+    if (is_point_at_same_face(points[0], points.last(), points.at(points.size() - 2)))
+        return NON_NORMAL;
+
+    glm::vec3 normal(0.0f);
+    for (int i = 0; i < (points.size() - 1); i++) {
+        normal += glm::cross(points.at(i), points.at(i+1));
+    }
+    normal += glm::cross(points.last(), points.first());
+
+    return glm::normalize(normal);
+}
+
+//glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points){
+//    if(points.size() < 3){
+//        return NON_NORMAL;
+//    }
+//
+//    glm::vec3 sampleNormal = sameLine(points.back(), points.front(), points[1]) ?
+//                            NON_NORMAL: getNormal(points.back(),
+//                                                  points.front(),
+//                                                  points[1]);
+//    for(int index = 1; index != (points.size() -1); ++index){
+//        const glm::vec3 &p1 = points[index - 1];
+//        const glm::vec3 &p2 = points[index];
+//        const glm::vec3 &p3 = points[index + 1];
+//
+//        if(!sameLine(p1, p2, p3)){
+//            glm::vec3 testNormal = getNormal(p1, p2, p3);
+//            if(sampleNormal == NON_NORMAL){
+//                sampleNormal = testNormal;
+//            }
+//            if(!equalVecr(testNormal,sampleNormal)){
+//                return NON_NORMAL;
+//            }
+//        }
+//    }
+//    return sampleNormal;
+
+    //
+//    glm::vec3 sampleNormal = getNormal(points.back(),
+//                                  points.front(),
+//                                  points[1]);
+//    for(int index = 1; index != (points.size() -1); ++index){
+//        glm::vec3 testNormal = getNormal(points[index -1],
+//                                    points[index],
+//                                    points[index + 1]);
+//        if(!equalVecr(testNormal,sampleNormal)){
+//            return NON_NORMAL;
+//        }
+//    }
+//    return sampleNormal;
+//}
+
+bool Surface::sameLine(const glm::vec3 &p1, const glm::vec3 &p2, const glm::vec3 &p3){
+//    return 0.0 == ((p1.x * (p2.y -p3.y) + p2.x * (p2.y - p1.y) + p3.x * (p1.y - p2.y))/2);
+    float test = glm::abs(glm::dot(glm::normalize(p2 - p1),
+                                   glm::normalize(p3 - p1)));
+    return test > 0.98;
 }
 
 void Surface::getRotation(const glm::vec3 &source,

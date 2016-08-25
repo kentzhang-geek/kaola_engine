@@ -98,15 +98,11 @@ bool scene::add_obj(QPair<int, gl3d::abstract_object *> obj_key_pair) {
 }
 
 bool scene::delete_obj(int key) {
-    if (!this->objects.contains(key))
-        return true;
-    abstract_object * obj = this->get_obj(key);
-    if (obj->get_control_authority() & GL3D_OBJ_ENABLE_DEL) {
-        this->objects.erase(this->objects.find(key));
-        return true;
+    if (this->objects.contains(key)) {
+        this->objects.remove(key);
     }
     
-    return false;
+    return true;
 }
 
 gl3d::abstract_object * scene::get_obj(int key) {
