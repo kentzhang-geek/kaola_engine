@@ -25,5 +25,6 @@
         <file alias="drawhome">images/square_dashed_48px.png</file>
         <file alias="drawquyu">images/drawquyu.png</file>
         <file alias="drawwallselectd">images/drawline_selectd.png</file>
+        <file alias="drawhomeselectd">images/drawhome_selectd.png</file>
     </qresource>
 </RCC>

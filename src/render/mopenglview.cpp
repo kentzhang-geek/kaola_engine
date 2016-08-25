@@ -559,6 +559,25 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
+    //默认----------------------------------------------------------------
+    if(now_state == gl3d::gl3d_global_param::normal) {
+        glm::vec2 tmp_pt((float)event->x(), (float)event->y());
+
+        //墙顶点吸附
+        if(this->wallsPoints->length() != 0) {
+            setCursor(Qt::ArrowCursor);
+            for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
+                it != this->wallsPoints->end(); it++) {
+                float dis = glm::length(tmp_pt - (*it).first);
+                if(dis < 15.0f) {
+                    setCursor(Qt::SizeAllCursor);
+
+
+                }
+            }
+        }
+    }
+
     //画墙----------------------------------------------------------------
     if(now_state == gl3d::gl3d_global_param::drawwall) {
         setCursor(Qt::CrossCursor);
@@ -873,20 +892,33 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     //选择开门位置----------------------------------------------------------------
     if(now_state == gl3d::gl3d_global_param::opendoor) {
         this->main_scene->get_assistant_image()->fill(0);
-
         glm::vec2 tmp_pt((float)event->x(), (float)event->y());
-
         //墙体吸附
         glm::vec2 wallLinePoint = this->wallLineAdsorption(tmp_pt, 25.0f);
-
         glm::vec2 pa = this->main_scene->project_point_to_screen(glm::vec3(0.0f));
         glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
         int _1m = (int)glm::length(pb - pa);
-
         this->draw_image(":/images/drawquyu",
                          wallLinePoint.x - (_1m / 2), wallLinePoint.y - _1m, _1m, _1m);
 
         //        doorsWindowsImages->push_back();
+
+
+
+//        static int tmp = 1234;
+//        static gl3d::object * o = NULL;
+//        glm::vec2 tmpcd;
+//        this->main_scene->coord_ground(wallLinePoint, tmpcd);
+//        if (o == NULL) {
+//            klm::resource::manager::shared_instance()->perform_async_res_load(new klm::resource::default_model_loader(
+//                                                                                  this->main_scene,
+//                                                                  GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
+//                                                                  GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
+//                                         "000003");
+//            o = (gl3d::object *)0xff;
+//        } else {
+//            o->get_property()->position = glm::vec3(tmpcd.x, 0.0f, tmpcd.y);
+//        }
     }
 
 

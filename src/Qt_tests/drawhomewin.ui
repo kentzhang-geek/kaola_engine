@@ -644,6 +644,9 @@ border-image:url(:/images/drawwallselectd);
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
@@ -652,6 +655,10 @@ border-image:url(:/images/drawwallselectd);
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
+}
+
+#p_2:hover {
+border-image:url(:/images/drawhomeselectd);
 }</string>
                   </property>
                   <property name="text">

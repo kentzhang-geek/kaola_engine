@@ -101,6 +101,7 @@ void drawhomewin::on_draw_clear() {
 
     dhw->ui->p_4->setIcon(QIcon(":/images/door"));
     dhw->ui->p_1->setIcon(QIcon(":/images/drawline"));
+    dhw->ui->p_2->setIcon(QIcon(":/images/drawhome"));
 
     if(now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
         dhw->dop->close();
@@ -130,6 +131,7 @@ void drawhomewin::on_p_1_clicked() {
 void drawhomewin::on_p_2_clicked() {
     this->on_draw_clear();
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
+    this->ui->p_2->setIcon(QIcon(":/images/drawhomeselectd"));
     dop = new DrawOption(this->ui->OpenGLCanvas);
     dop->show();
 }
