@@ -30,6 +30,7 @@ static int render_id = 10086;
 void resource::default_model_loader::do_work(void *object) {
     std::string * name = (std::string *)object;
     gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    obj->set_res_id(this->get_obj_res_id());
 
     // set property
     obj->get_property()->scale_unit = gl3d::scale::mm;

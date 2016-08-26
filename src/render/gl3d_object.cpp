@@ -35,6 +35,8 @@ void object::init() {
     this->set_control_authority(GL3D_OBJ_ENABLE_ALL); //使能所有权限
     // 注意默认绘制权限为普通+阴影+倒影。天空盒与地面是特殊绘制
     this->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
+    this->obj_file_name.clear();
+    this->res_id.clear();
 }
 
 object::object() {
@@ -64,6 +66,7 @@ object::~object() {
 object::object(char * path_to_obj_file) {
     if (!this->init(path_to_obj_file))
         log_c("faild to init from file %s", path_to_obj_file);
+    this->obj_file_name = QString(path_to_obj_file);
     return;
 }
 

@@ -252,3 +252,103 @@ void del_hole::redo() {
         // has failed
     }
 }
+
+add_obj::add_obj(gl3d::object *o) {
+    this->setText("add_obj");
+    this->obj_id = o->get_id();
+    this->obj_file_name = o->get_obj_file_name();
+    this->res_id = o->get_res_id();
+    this->position = o->get_property()->position;
+    this->rotate_mat = o->get_property()->rotate_mat;
+    this->s_unit = o->get_property()->scale_unit;
+    this->render_code = o->get_render_authority();
+    this->control_code = o->get_control_authority();
+}
+
+void add_obj::undo() {
+    gl3d::object * o = (gl3d::object *) command_stack::shared_instance()->get_main_scene()->get_obj(this->obj_id);
+    command_stack::shared_instance()->get_main_scene()->delete_obj(this->obj_id);
+    delete o;
+}
+
+void add_obj::redo() {
+    // may be here should async?
+//    klm::resource::manager::shared_instance()->perform_async_res_load(this, this->res_id);
+    std::string tmp = this->obj_file_name.toStdString();
+    this->do_work((void *) &tmp);
+}
+
+void add_obj::do_work(void *object) {
+    std::string * name = (std::string *)object;
+    gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    obj->set_res_id(this->get_obj_res_id());
+
+    // set property
+    obj->set_control_authority(this->control_code);
+    obj->set_render_authority(this->render_code);
+    obj->get_property()->scale_unit = this->s_unit;
+    obj->get_property()->position = this->position;
+    obj->get_property()->rotate_mat = this->rotate_mat;
+    obj->pre_scale();
+    obj->merge_meshes();
+    obj->recalculate_normals();
+    obj->convert_left_hand_to_right_hand();
+
+    gl3d_lock::shared_instance()->loader_lock.lock();
+    gl3d_lock::shared_instance()->render_lock.lock();
+    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->obj_id, obj);
+    gl3d_lock::shared_instance()->render_lock.unlock();
+    gl3d_lock::shared_instance()->loader_lock.unlock();
+
+    return;
+}
+
+del_obj::del_obj(gl3d::object *o) {
+    this->setText("del_obj");
+    this->obj_id = o->get_id();
+    this->obj_file_name = o->get_obj_file_name();
+    this->res_id = o->get_res_id();
+    this->position = o->get_property()->position;
+    this->rotate_mat = o->get_property()->rotate_mat;
+    this->s_unit = o->get_property()->scale_unit;
+    this->render_code = o->get_render_authority();
+    this->control_code = o->get_control_authority();
+}
+
+void del_obj::undo() {
+    // may be here should async?
+//    klm::resource::manager::shared_instance()->perform_async_res_load(this, this->res_id);
+    std::string tmp = this->obj_file_name.toStdString();
+    this->do_work((void *) &tmp);
+}
+
+void del_obj::redo() {
+    gl3d::object * o = (gl3d::object *) command_stack::shared_instance()->get_main_scene()->get_obj(this->obj_id);
+    command_stack::shared_instance()->get_main_scene()->delete_obj(this->obj_id);
+    delete o;
+}
+
+void del_obj::do_work(void *object) {
+    std::string * name = (std::string *)object;
+    gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    obj->set_res_id(this->get_obj_res_id());
+
+    // set property
+    obj->set_control_authority(this->control_code);
+    obj->set_render_authority(this->render_code);
+    obj->get_property()->scale_unit = this->s_unit;
+    obj->get_property()->position = this->position;
+    obj->get_property()->rotate_mat = this->rotate_mat;
+    obj->pre_scale();
+    obj->merge_meshes();
+    obj->recalculate_normals();
+    obj->convert_left_hand_to_right_hand();
+
+    gl3d_lock::shared_instance()->loader_lock.lock();
+    gl3d_lock::shared_instance()->render_lock.lock();
+    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->obj_id, obj);
+    gl3d_lock::shared_instance()->render_lock.unlock();
+    gl3d_lock::shared_instance()->loader_lock.unlock();
+
+    return;
+}

@@ -136,6 +136,67 @@ namespace klm {
             glm::vec3 pb;
         };
 
+        class obj_add_or_del : public QUndoCommand, public utils::noncopyable, public klm::resource::res_loader {
+        public:
+            obj_add_or_del(gl3d::object * o);
+            void undo();
+
+            void redo();
+
+            void do_work(void *object);
+
+            int obj_id;
+
+            std::string res_id;
+            QString obj_file_name;
+            gl3d::scale::length_unit s_unit;
+            glm::vec3 position;
+            glm::mat4 rotate_mat;
+            GLuint64 render_code;
+            GLuint64 control_code;
+        };
+
+        class add_obj : public QUndoCommand, public utils::noncopyable, public klm::resource::res_loader {
+        public:
+            add_obj(gl3d::object * o);
+            void undo();
+
+            void redo();
+
+            void do_work(void *object);
+
+            int obj_id;
+
+            std::string res_id;
+            QString obj_file_name;
+            gl3d::scale::length_unit s_unit;
+            glm::vec3 position;
+            glm::mat4 rotate_mat;
+            GLuint64 render_code;
+            GLuint64 control_code;
+        };
+
+        class del_obj : public QUndoCommand, public utils::noncopyable, public klm::resource::res_loader {
+        public:
+            del_obj(gl3d::object * o);
+            void undo();
+
+            void redo();
+
+            void do_work(void *object);
+
+            int obj_id;
+
+            std::string res_id;
+            QString obj_file_name;
+            gl3d::scale::length_unit s_unit;
+            glm::vec3 position;
+            glm::mat4 rotate_mat;
+            GLuint64 render_code;
+            GLuint64 control_code;
+        };
+
+
     }
 }
 
