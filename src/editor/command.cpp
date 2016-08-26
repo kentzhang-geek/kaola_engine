@@ -327,3 +327,45 @@ void del_obj::undo() {
 void del_obj::redo() {
     obj_add_or_del::del_obj();
 }
+
+set_obj_property::set_obj_property(gl3d::object *o) : obj_add_or_del(o), target(NULL){
+    this->setText("set_obj_property");
+    this->obj = o;
+}
+
+int set_obj_property::id() const {
+    return KLM_CMD_ID_SET_FURNITURE;
+}
+
+void set_obj_property::undo() {
+    if (NULL != this->target)
+        delete this->target;
+    this->target = new set_obj_property(this->obj);
+}
+
+void set_obj_property::redo() {
+    this->obj->get_property()->position = this->target->position;
+    this->obj->get_property()->rotate_mat = this->target->rotate_mat;
+    this->obj->get_property()->scale_unit = this->target->s_unit;
+    this->obj->set_render_authority(this->target->render_code);
+    this->obj->set_control_authority(this->target->control_code);
+}
+
+bool set_obj_property::mergeWith(const QUndoCommand *other) {
+    if (other->id() == KLM_CMD_ID_SET_FURNITURE) {
+        set_obj_property * sp = (set_obj_property *) other;
+        if (this->obj_id == sp->obj_id) {
+            // same id then merge
+            if (NULL != this->target)
+                delete target;
+            this->target = new set_obj_property(sp->obj);
+            return true;
+        }
+    }
+    return false;
+}
+
+set_obj_property::~set_obj_property() {
+    if (NULL != this->target)
+        delete this->target;
+}

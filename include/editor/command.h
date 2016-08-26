@@ -20,6 +20,7 @@
 #include <QVector>
 
 #define KLM_CMD_ID_SET_WALL 1
+#define KLM_CMD_ID_SET_FURNITURE 2
 #define KLM_CMD_ID_NULL -1
 
 
@@ -173,6 +174,22 @@ namespace klm {
             void redo();
         };
 
+        // TODO : not process furniture's mtl changes now?
+        class set_obj_property : public QUndoCommand, public obj_add_or_del {
+        public:
+            set_obj_property(gl3d::object * o);
+            ~set_obj_property();
+            void undo();
+
+            void redo();
+
+            bool mergeWith(const QUndoCommand *other);
+
+            virtual int id() const;
+
+            set_obj_property * target;
+            gl3d::object * obj;
+        };
 
     }
 }
