@@ -117,14 +117,12 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
         return false;
     }
     gl3d_lock::shared_instance()->scheme_lock.lock();
-    // TODO : test should cross walls now
     QSet<gl3d_wall *> wall_insert;
     wall_insert.clear();
     wall_insert.insert(w);
     wall_to_end = NULL;
     this->attached_scene->delete_obj(w->get_id());
     int tid = w->get_id();
-    // TODO : debug cross walls
     QVector<glm::vec2> cross_pts;
     Q_FOREACH(gl3d_wall * wit, this->walls) {
             // process delete wall in wall
@@ -273,7 +271,6 @@ gl3d::room *scheme::get_room(glm::vec2 coord_on_screen) {
     return NULL;
 }
 
-// TODO : convert point to vec
 static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
     double tx = CGAL::to_double(pt.x());
     double ty = CGAL::to_double(pt.y());
@@ -289,7 +286,6 @@ static inline glm::vec2 arr_point_to_vec2(Point_2 pt) {
 }
 
 void scheme::recalculate_rooms() {
-    // TODO : test recalculate rooms
     // release old rooms
     bool has_new_sfc = false;
     Q_FOREACH(room *const &rit, this->rooms) {
@@ -330,24 +326,20 @@ void scheme::recalculate_rooms() {
             QVector<glm::vec3> grd;
             grd.clear();
             room *r = new room();
-            QVector<math::line_2d> tmp_test; // TODO : remove this
-            tmp_test.clear();
             do {
                 glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
                 if ((grd.size() >= 2) && (pt == grd.at(grd.size() - 2))) {
-                    // TODO : process isolated lines
+                    // process isolated lines
                     grd.removeLast();
                     grd.removeLast();
                 }
                 // ignore nabor poitns
                 if ((grd.size() == 0) || (!math::point_near_point(grd.last(), pt)))
                     grd.push_back(pt);
-                tmp_test.push_back(math::line_2d(arr_point_to_vec2(cucir->source()->point()),
-                                                 arr_point_to_vec2(cucir->target()->point())));
                 cucir++;
             } while (cucir != cir);
             if (grd.size() >= 3) {
-                // TODO : remove isolated edges
+                // remove isolated edges
                 while ((grd.size() > 3) && (math::point_near_point(grd.at(0), grd.at(grd.size() - 2)))) {
                     grd.removeLast();
                     grd.removeLast();
@@ -377,7 +369,7 @@ void scheme::recalculate_rooms() {
                 }
             }
             if ((has_new_sfc) && (fit->number_of_holes() > 0)) {
-                // TODO : process holes
+                // process holes
                 int i = 0;
                 for (Arrangement_2::Hole_const_iterator hit = fit->holes_begin();
                      hit != fit->holes_end();
@@ -390,7 +382,7 @@ void scheme::recalculate_rooms() {
                         if (hcicur->is_on_outer_ccb()) {
                             glm::vec3 pt = arr_point_to_vec3(hcicur->target()->point());
                             if ((hpts.size() > 2) && (pt == hpts.at(hpts.size() - 2))) {
-                                // TODO : process isolated lines
+                                // process isolated lines
                                 hpts.removeLast();
                                 hpts.removeLast();
                             }
@@ -523,7 +515,7 @@ int main(int argc, char **argv) {
 //                    Arrangement_2::Ccb_halfedge_const_circulator hcicur = hcir;
 //                    do {
 //                        if ((hpts.size() > 2) && (hcicur->target()->point() == hpts.at(hpts.size() - 2))) {
-//                            // TODO : process isolated lines
+//                            // process isolated lines
 //                            hpts.removeLast();
 //                        }
 //                        else {

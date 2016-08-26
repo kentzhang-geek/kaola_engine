@@ -933,7 +933,6 @@ bool gl3d_wall::get_coord_on_wall(scene *sce,
                                   glm::vec2 coord_on_screen,
                                   glm::vec3 &out_point_on_wall,
                                   glm::vec3 &out_point_normal) {
-    // TODO : this method has problem on normal vector, fucking bugs
     if (this->sfcs.size() <= 0) {
         return false;
     }

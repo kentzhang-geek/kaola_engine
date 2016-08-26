@@ -39,6 +39,7 @@ namespace klm {
         };
 
         // should reg command before call sketch add wall
+        // TODO : it is bug in add wall and del wall
         class add_wall : public QUndoCommand, public utils::noncopyable {
         public:
             add_wall(gl3d_wall *w);
