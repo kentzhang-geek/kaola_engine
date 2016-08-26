@@ -56,6 +56,7 @@ set(SRCS
         src/utils/io_utility.cpp
         src/resource_and_network/global_material.cpp
         src/editor/design_scheme.cpp
+        src/editor/command.cpp
         )
 
 set(qttest_MOCS
@@ -110,6 +111,7 @@ set(qttest_MOCS
         include/utils/io_utility.h
         include/resource_and_network/global_material.h
         include/editor/design_scheme.h
+        include/editor/command.h
         )
 
 include_directories(LIBS/glm_build)

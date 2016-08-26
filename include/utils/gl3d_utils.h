@@ -58,4 +58,20 @@
 #define OUT
 #define INOUT
 
+// perform noncopyable
+namespace utils {
+    class noncopyable {
+    protected:
+        noncopyable() {}
+
+        ~noncopyable() {}
+
+    private:  // emphasize the following members are private
+        noncopyable(const noncopyable &);
+
+        const noncopyable &operator=(const noncopyable &);
+    };
+}
+
+
 #endif // GL3D_UTILS_H

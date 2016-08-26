@@ -6,10 +6,11 @@
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/gl3d_wall.h"
 #include "resource_and_network/global_material.h"
+#include "utils/gl3d_utils.h"
 
 namespace klm {
     namespace design {
-        class scheme : public gl3d::abstract_object {
+        class scheme : public gl3d::abstract_object , public utils::noncopyable {
         public:
             scheme(gl3d::scene * sc);
             // get mesh for scheme
