@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMessageBox>
 #include "utils/gl3d_utils.h"
+#include "utils/gl3d_path_config.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
     myHelper::SetChinese();
 
     QTranslator *translator = new QTranslator;
-    translator->load("C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\zh.qm");
+    translator->load(QString(GL3D_PATH_BASE) + GL3D_PATH_SEPRATOR + "zh.qm");
     if (translator->isEmpty()) {
         QMessageBox msgBox(QMessageBox::Critical, "Error",
                               "zh.qm", 0, NULL);

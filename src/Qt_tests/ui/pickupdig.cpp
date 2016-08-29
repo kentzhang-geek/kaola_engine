@@ -213,8 +213,9 @@ void PickupDig::on_delete_obj() {
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
         //删除墙
         this->sketch->del_wal((gl3d_wall *) pickUpObj);
+    }
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
-        // TODO ： 删除房间
+        // TODO : 删除房间
         this->sketch->get_room(this->coord_on_screen);
     } else {
         this->main_scene->delete_obj(pickUpObjID);
