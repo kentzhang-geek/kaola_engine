@@ -8,6 +8,8 @@ QT       += core gui opengl
 
 win32: QMAKE_CXXFLAGS += /MP
 
+TRANSLATIONS += zh.ts
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qttest
