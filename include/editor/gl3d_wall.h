@@ -65,7 +65,7 @@ namespace gl3d {
 
     class hole;
 
-    class gl3d_wall : public object {
+    class gl3d_wall : public object , public utils::noncopyable{
     public:
         gl3d_wall() : start_point(0.0), end_point(0.0) {}
 
@@ -147,7 +147,7 @@ namespace gl3d {
         void init();
     };
 
-    class hole {
+    class hole : public utils::noncopyable {
     public:
         // two point on world coordinate
     GL3D_UTILS_PROPERTY(pta, glm::vec3);
@@ -177,7 +177,7 @@ namespace gl3d {
         void init();
     };
 
-    class room {
+    class room : public utils::noncopyable {
     public:
         room();
         ~room();

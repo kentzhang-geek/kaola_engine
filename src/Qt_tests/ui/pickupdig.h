@@ -18,7 +18,9 @@ class PickupDig:public QDialog
 {
     Q_OBJECT
 public:
-    PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene * sc, klm::design::scheme * sch);
+    PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
+              glm::vec2 cd_scr);
+
 private slots:
     void slotDoubleSpinbox_Slider();
     void slotSlider_DoubleSpinbox();
@@ -45,8 +47,8 @@ private:
     gl3d::scene *main_scene;
     gl3d::gl3d_wall *wall;
     klm::design::scheme * sketch;
-
     QComboBox *cbo;
+    glm::vec2 coord_on_screen;
 };
 
 #endif // PICKUPDIG_H

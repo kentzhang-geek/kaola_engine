@@ -975,7 +975,6 @@ static inline bool is_point_at_same_face(glm::vec3 pa, glm::vec3 pb, glm::vec3 p
     return glm::abs(glm::dot(glm::cross(pb - pa, pc - pa), pb - pc)) > 0.01f;
 }
 
-// TODO : 换成验证的同时求平均法向量的算法
 glm::vec3 Surface::getPlanNormal(const QVector<glm::vec3> &points) {
     for (int i = 0; i < (points.size() - 2); i++) {
         if (is_point_at_same_face(points[i], points[i+1], points[i+2])) {

@@ -46,9 +46,8 @@ void MOpenGLView::do_init() {
 
     // create sketch
     this->sketch = new klm::design::scheme(this->main_scene);
-    this->sketch->set_id(0);
     this->sketch->set_attached_scene(this->main_scene);
-    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(0, this->sketch));
+    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->sketch->get_id(), this->sketch));
 }
 
 #define MAX_FILE_SIZE 10000
@@ -433,10 +432,10 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if(now_state == gl3d::gl3d_global_param::normal) {
             need_capture = true;
             pickUpObjID = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
-            if(pickUpObjID > 0) {
+            if (pickUpObjID > 0) {
                 cout << "click objid: " << pickUpObjID << endl;
                 puDig = new PickupDig(this->parentWidget(), event->x(), event->y(), pickUpObjID, this->main_scene,
-                                      this->sketch);
+                                      this->sketch, glm::vec2(event->x(), event->y()));
                 puDig->show();
                 gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::pickup;
             }

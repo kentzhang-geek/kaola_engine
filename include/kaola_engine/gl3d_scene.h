@@ -26,7 +26,7 @@
 
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
-    class scene {
+    class scene : public utils::noncopyable {
     public:
         typedef struct scene_property {
             glm::vec3 background_color;
