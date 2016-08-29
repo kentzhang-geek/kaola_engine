@@ -1,3 +1,4 @@
+#include <include/editor/command.h>
 #include "kaola_engine/mopenglview.h"
 
 using namespace std;
@@ -47,6 +48,7 @@ void MOpenGLView::do_init() {
     // create sketch
     this->sketch = new klm::design::scheme(this->main_scene);
     this->sketch->set_attached_scene(this->main_scene);
+    klm::command::command_stack::init(this->main_scene, this->sketch);
     this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->sketch->get_id(), this->sketch));
 }
 
