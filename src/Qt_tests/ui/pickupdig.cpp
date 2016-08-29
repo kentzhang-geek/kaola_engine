@@ -19,7 +19,14 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
     pickUpObj = (gl3d::object *) this->main_scene->get_obj(pickUpObjID);
     wall = (gl3d::gl3d_wall *) pickUpObj;
 
-    initBasicInfo();                                    //初始化信息窗体
+    if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
+        //初始化墙操作窗口
+        initBasicInfo();
+    } else if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        initBasicSchemeInfo();
+    }
+
+
 
     QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
     layout->addWidget(baseWidget);                      //加入baseWidget
@@ -114,6 +121,35 @@ void PickupDig::initBasicInfo() {
 
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
 }
+
+//房间
+void PickupDig::initBasicSchemeInfo() {
+    baseWidget = new QWidget;                           //实例化baseWidget
+
+    //控制按钮
+    QPushButton *delButton = new QPushButton();
+    delButton->setText("删除");
+    connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
+    QPushButton *splitButton = new QPushButton();
+    splitButton->setText("拆分");
+
+    QHBoxLayout *hlayoutButtons = new QHBoxLayout;
+    hlayoutButtons->setContentsMargins(0, 0, 0, 10);
+    hlayoutButtons->addWidget(delButton);
+    hlayoutButtons->addWidget(splitButton);
+
+
+    QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
+    vboxLayout->addLayout(hlayoutButtons);
+    baseWidget->setLayout(vboxLayout);                  //加载到窗体上
+}
+
+
+
+
+
+
+
 
 void PickupDig::slotDoubleSpinbox_Slider() {
     slider->setValue((int) (spinBox->value() * 100));
