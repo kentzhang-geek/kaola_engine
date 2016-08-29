@@ -1,7 +1,9 @@
 #include "pickupdig.h"
 
-PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch) {
+PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
+                     glm::vec2 cd_scr) {
     main_scene = sc;
+    this->coord_on_screen = cd_scr;
     this->sketch = sch;
     this->pickUpObjID = pickUpObjID;
     this->setParent(parent);
@@ -190,11 +192,15 @@ void PickupDig::slotSlider_DoubleSpinbox3() {
 
 //删除拾取的obj对象
 void PickupDig::on_delete_obj() {
-    if (pickUpObj->get_obj_type() != gl3d::abstract_object::type_scheme)
-        this->main_scene->delete_obj(pickUpObjID);
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall)
         this->sketch->del_wal((gl3d_wall *) pickUpObj);
-    delete pickUpObj;
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        this->sketch->get_room(this->coord_on_screen);
+    }
+    else {
+        this->main_scene->delete_obj(pickUpObjID);
+        delete pickUpObj;
+    }
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }
