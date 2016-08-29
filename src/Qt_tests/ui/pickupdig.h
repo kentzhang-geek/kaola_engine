@@ -19,7 +19,6 @@ class PickupDig:public QDialog
     Q_OBJECT
 public:
     PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene * sc, klm::design::scheme * sch);
-    void initBasicInfo();
 private slots:
     void slotDoubleSpinbox_Slider();
     void slotSlider_DoubleSpinbox();
@@ -30,6 +29,9 @@ private slots:
 
     void on_delete_obj();
 private:
+    void initBasicInfo();
+    void initBasicSchemeInfo();
+
     QWidget* baseWidget;
     QSlider *slider;
     QSlider *slider2;

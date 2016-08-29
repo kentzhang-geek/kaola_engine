@@ -595,9 +595,26 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                 it != this->wallsPoints->end(); it++) {
                 float dis = glm::length(tmp_pt - (*it).first);
                 if(dis < 15.0f) {
+                    float start_dis = glm::length(
+                                (*it).first - this->main_scene->project_point_to_screen(
+                                    (*it).second->get_start_point()
+                                    )
+                                );
+                    float end_dis = glm::length(
+                                (*it).first - this->main_scene->project_point_to_screen(
+                                    (*it).second->get_end_point()
+                                    )
+                                );
+
+                    if(start_dis == 0) {
+                        move_change_is_start_or_end = true;
+                    } else if(end_dis == 0) {
+                        move_change_is_start_or_end = false;
+                    }
+
+                    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::movewall;
+                    move_change_wall = (*it).second;
                     setCursor(Qt::SizeAllCursor);
-
-
                 }
             }
         }
@@ -930,34 +947,104 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
 
 
-//        static int tmp = 1234;
-//        static gl3d::object * o = NULL;
-//        glm::vec2 tmpcd;
-//        this->main_scene->coord_ground(wallLinePoint, tmpcd);
-//        if (o == NULL) {
-//            klm::resource::manager::shared_instance()->perform_async_res_load(new klm::resource::default_model_loader(
-//                                                                                  this->main_scene,
-//                                                                  GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
-//                                                                  GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
-//                                         "000003");
-//            o = (gl3d::object *)0xff;
-//        } else {
-//            o->get_property()->position = glm::vec3(tmpcd.x, 0.0f, tmpcd.y);
-//        }
+        //        static int tmp = 1234;
+        //        static gl3d::object * o = NULL;
+        //        glm::vec2 tmpcd;
+        //        this->main_scene->coord_ground(wallLinePoint, tmpcd);
+        //        if (o == NULL) {
+        //            klm::resource::manager::shared_instance()->perform_async_res_load(new klm::resource::default_model_loader(
+        //                                                                                  this->main_scene,
+        //                                                                  GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
+        //                                                                  GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
+        //                                         "000003");
+        //            o = (gl3d::object *)0xff;
+        //        } else {
+        //            o->get_property()->position = glm::vec3(tmpcd.x, 0.0f, tmpcd.y);
+        //        }
     }
 
 
     if(event->buttons()&Qt::LeftButton) {
-        auto tmp_viewer = this->main_scene->watcher;
-        if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-            tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
-            this->tmp_point_x = event->x();
-            this->tmp_point_y = event->y();
-            setCursor(Qt::SizeAllCursor);
-            tmp_viewer->calculate_mat();
+        //获取画布上所有墙的顶点（用于吸附）
+        this->getWallsPoint();
 
-            //获取画布上所有墙的顶点（用于吸附）
-            this->getWallsPoint();
+        if(now_state == gl3d::gl3d_global_param::movewall) {
+            //改变墙顶点位置
+            setCursor(Qt::SizeAllCursor);
+            this->connect_wall = NULL;
+            this->main_scene->get_assistant_image()->fill(0);
+            glm::vec2 tmp_pt((float)event->x(), (float)event->y());
+            glm::vec2 tmp;
+            bool show_conn_dot = false;
+            glm::vec2 conn_dot = tmp_pt;
+
+            if(!move_change_is_start_or_end) {
+                tmp = this->main_scene->project_point_to_screen(
+                            this->move_change_wall->get_start_point());
+            } else {
+                tmp = this->main_scene->project_point_to_screen(
+                            this->move_change_wall->get_end_point());
+            }
+
+            //墙体垂直和水平吸附
+            {
+                float dis_x = glm::length(tmp.x - (float)event->x());
+                float dis_y = glm::length(tmp.y - (float)event->y());
+                if(dis_x < 16) {
+                    tmp_pt.x = tmp.x;
+                }
+                if(dis_y < 16) {
+                    tmp_pt.y = tmp.y;
+                }
+            }
+
+            //墙顶点吸附
+            if(this->wallsPoints->length() != 0) {
+                for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
+                    it != this->wallsPoints->end(); it++) {
+                    float dis = glm::length(tmp_pt - (*it).first);
+                    if(dis < 18.0f && (*it).second != this->move_change_wall) {
+                        show_conn_dot = true;
+                        tmp_pt = (*it).first;
+                        conn_dot = (*it).first;
+                        this->connect_wall = (*it).second;
+                    }
+                }
+            }
+
+            glm::vec2 pick;
+            gl3d::scene * vr = this->main_scene;
+            vr->coord_ground(tmp_pt, pick, 0.0);
+
+            if(move_change_is_start_or_end) {
+                //开始点
+                this->move_change_wall->set_start_point(pick);
+            } else {
+                //结束点
+                this->move_change_wall->set_end_point(pick);
+            }
+
+            this->move_change_wall->calculate_mesh();
+
+            //显示辅助点逻辑
+            if(show_conn_dot) {
+                this->draw_image(":/images/con_wall_dot",
+                                 conn_dot.x - 12, conn_dot.y - 12, 24, 24);
+            }
+
+        } else
+
+
+
+        {
+            auto tmp_viewer = this->main_scene->watcher;
+            if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+                tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
+                this->tmp_point_x = event->x();
+                this->tmp_point_y = event->y();
+                setCursor(Qt::SizeAllCursor);
+                tmp_viewer->calculate_mat();
+            }
         }
     } else if(event->buttons()&Qt::LeftButton) {
         //        cout << "right move: " << event->x() << ", " << event->y() << endl;
@@ -968,9 +1055,31 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
 //鼠标松开事件
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
-    //    cout << "loosen: " << event->x() << ", " << event->y() << endl;
-    if(gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawwall
-            && gl3d::gl3d_global_param::shared_instance()->current_work_state != gl3d::gl3d_global_param::drawhome) {
+    auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
+    //移动墙连接吸附墙
+    if(now_state == gl3d::gl3d_global_param::movewall) {
+        if(this->connect_wall != NULL) {
+            this->main_scene->get_assistant_image()->fill(0);
+            if(move_change_is_start_or_end) {
+                gl3d_wall::combine(
+                            this->move_change_wall,
+                            this->connect_wall,
+                            this->move_change_wall->get_start_point()
+                            );
+            } else {
+                gl3d_wall::combine(
+                            this->move_change_wall,
+                            this->connect_wall,
+                            this->move_change_wall->get_end_point()
+                            );
+            }
+        }
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+    }
+
+    if(now_state != gl3d::gl3d_global_param::drawwall
+            && now_state != gl3d::gl3d_global_param::drawhome) {
         setCursor(Qt::ArrowCursor);
     }
 }

@@ -125,6 +125,9 @@ private:
     glm::vec2 wallLineAdsorption(glm::vec2 pt, float dis_com);
     glm::vec2 wallPeakAdsorption(glm::vec2 pt, float dis_com);
     glm::vec2 wallPeakRightAngleAdsorption(glm::vec2 pt);
+
+    gl3d::gl3d_wall * move_change_wall;
+    bool move_change_is_start_or_end;
 };
 
 #endif // MOPENGLVIEW_H
