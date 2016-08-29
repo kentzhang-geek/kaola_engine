@@ -19,6 +19,15 @@ int main(int argc, char *argv[])
 //    myHelper::SetStyle("navy");//天蓝色风格
     myHelper::SetChinese();
 
+    QTranslator *translator = new QTranslator;
+    translator->load("C:\\Users\\Administrator\\Desktop\\Qt_Projects\\qt_opengl_engine\\zh.qm");
+    if (translator->isEmpty()) {
+        QMessageBox msgBox(QMessageBox::Critical, "Error",
+                              "zh.qm", 0, NULL);
+        return msgBox.exec();
+    }
+    a.installTranslator(translator);
+
     MainWindow w;
     w.show();
 

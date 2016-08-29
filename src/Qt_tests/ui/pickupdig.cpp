@@ -23,8 +23,7 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
 
     if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
         //初始化墙操作窗口
-//        initBasicInfo();
-        initBasicSchemeInfo();
+        initBasicInfo();
     } else if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
         initBasicSchemeInfo();
     }
@@ -136,11 +135,18 @@ void PickupDig::initBasicSchemeInfo() {
     QPushButton *splitButton = new QPushButton();
     splitButton->setText("清空家具");
 
-    QLabel *lbl_caption = new QLabel(tr("房间名: "));
+    QLabel *lbl_caption = new QLabel(tr("RoomName"));
     cbo = new QComboBox();
-    cbo->addItem(QWidget::tr("未命"));
-    cbo->addItem(QWidget::tr("123"));
-    cbo->addItem(QWidget::tr("223"));
+    cbo->addItem(QWidget::tr("Unname"));
+    cbo->addItem(QWidget::tr("keting"));
+    cbo->addItem(QWidget::tr("cangting"));
+    cbo->addItem(QWidget::tr("zhuwo"));
+    cbo->addItem(QWidget::tr("ciwo"));
+    cbo->addItem(QWidget::tr("shufang"));
+    cbo->addItem(QWidget::tr("chufang"));
+    cbo->addItem(QWidget::tr("weishengjian"));
+    cbo->addItem(QWidget::tr("yantai"));
+    cbo->addItem(QWidget::tr("chuwujian"));
 
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
@@ -204,12 +210,13 @@ void PickupDig::slotSlider_DoubleSpinbox3() {
 
 //删除拾取的obj对象
 void PickupDig::on_delete_obj() {
-    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall)
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
+        //删除墙
         this->sketch->del_wal((gl3d_wall *) pickUpObj);
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        // TODO ： 删除房间
         this->sketch->get_room(this->coord_on_screen);
-    }
-    else {
+    } else {
         this->main_scene->delete_obj(pickUpObjID);
         delete pickUpObj;
     }

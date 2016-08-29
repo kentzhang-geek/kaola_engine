@@ -158,7 +158,9 @@ RESOURCES += \
     src/utils/qui/rc.qrc \
     src/utils/qui/rc.qrc
 
-DISTFILES +=
+DISTFILES += \
+    zh.ts \
+    zh.qm
 
 target.files += $$[DISTFILES]
 target.path = ./
