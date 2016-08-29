@@ -213,15 +213,11 @@ void PickupDig::slotSlider_DoubleSpinbox3() {
 void PickupDig::on_delete_obj() {
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
         //删除墙
-        QUndoCommand * cmd = new klm::command::del_wall((gl3d_wall *) pickUpObj);
-        klm::command::command_stack::shared_instance()->push(cmd);
+        this->sketch->del_wal((gl3d_wall *) pickUpObj);
     }
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
         // TODO : 删除房间
         this->sketch->get_room(this->coord_on_screen);
-    } else {
-        this->main_scene->delete_obj(pickUpObjID);
-        delete pickUpObj;
     }
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;

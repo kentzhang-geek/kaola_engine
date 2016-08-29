@@ -43,22 +43,30 @@ namespace klm {
         class add_or_del_wall : public utils::noncopyable{
         public:
             add_or_del_wall(gl3d_wall *w);
+            ~add_or_del_wall();
+            void combine_wall();
             bool add_wall();
             bool del_wall();
 
+            gl3d_wall *wall;
             int wall_id;
             glm::vec2 start_pos;
             glm::vec2 end_pos;
             float height;
             float thickness;
+            bool start_fixed;
+            bool end_fixed;
             gl3d_wall_attach start_attach;
             gl3d_wall_attach end_attach;
+
+            bool wall_exist;
         };
 
         // TODO : it is bug in add wall and del wall
         class add_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             add_wall(gl3d_wall *w);
+            ~add_wall() { add_or_del_wall::~add_or_del_wall(); };
 
             void undo();
 
@@ -68,6 +76,7 @@ namespace klm {
         class del_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             del_wall(gl3d_wall *w);
+            ~del_wall() { add_or_del_wall::~add_or_del_wall(); };
 
             void undo();
 

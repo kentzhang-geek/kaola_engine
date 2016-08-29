@@ -207,6 +207,7 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
 void scheme::del_wal(gl3d::gl3d_wall *w) {
     gl3d_lock::shared_instance()->scheme_lock.lock();
     this->walls.remove(w);
+    klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(w));
     this->recalculate_rooms();
     gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
