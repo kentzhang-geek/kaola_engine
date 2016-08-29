@@ -1,14 +1,14 @@
 #include "drawhomewin.h"
 #include "ui_drawhomewin.h"
 #include <iostream>
-
+#include <QTranslator>
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
-
+#include <QTextCodec>
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"

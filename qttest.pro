@@ -8,6 +8,8 @@ QT       += core gui opengl
 
 win32: QMAKE_CXXFLAGS += /MP
 
+TRANSLATIONS += zh.ts
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qttest
@@ -156,7 +158,9 @@ RESOURCES += \
     src/utils/qui/rc.qrc \
     src/utils/qui/rc.qrc
 
-DISTFILES +=
+DISTFILES += \
+    zh.ts \
+    zh.qm
 
 target.files += $$[DISTFILES]
 target.path = ./

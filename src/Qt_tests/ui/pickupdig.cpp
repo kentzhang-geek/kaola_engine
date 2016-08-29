@@ -133,16 +133,34 @@ void PickupDig::initBasicSchemeInfo() {
     delButton->setText("删除");
     connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
     QPushButton *splitButton = new QPushButton();
-    splitButton->setText("拆分");
+    splitButton->setText("清空家具");
+
+    QLabel *lbl_caption = new QLabel(tr("RoomName"));
+    cbo = new QComboBox();
+    cbo->addItem(QWidget::tr("Unname"));
+    cbo->addItem(QWidget::tr("keting"));
+    cbo->addItem(QWidget::tr("cangting"));
+    cbo->addItem(QWidget::tr("zhuwo"));
+    cbo->addItem(QWidget::tr("ciwo"));
+    cbo->addItem(QWidget::tr("shufang"));
+    cbo->addItem(QWidget::tr("chufang"));
+    cbo->addItem(QWidget::tr("weishengjian"));
+    cbo->addItem(QWidget::tr("yantai"));
+    cbo->addItem(QWidget::tr("chuwujian"));
 
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
     hlayoutButtons->addWidget(delButton);
     hlayoutButtons->addWidget(splitButton);
 
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->addWidget(lbl_caption);
+    hlayout->addWidget(cbo);
+
 
     QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
     vboxLayout->addLayout(hlayoutButtons);
+    vboxLayout->addLayout(hlayout);
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
 }
 
@@ -192,12 +210,13 @@ void PickupDig::slotSlider_DoubleSpinbox3() {
 
 //删除拾取的obj对象
 void PickupDig::on_delete_obj() {
-    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall)
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
+        //删除墙
         this->sketch->del_wal((gl3d_wall *) pickUpObj);
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        // TODO ： 删除房间
         this->sketch->get_room(this->coord_on_screen);
-    }
-    else {
+    } else {
         this->main_scene->delete_obj(pickUpObjID);
         delete pickUpObj;
     }
