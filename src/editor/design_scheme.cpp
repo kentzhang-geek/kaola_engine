@@ -244,11 +244,13 @@ void scheme::delete_room(gl3d::room *r) {
     // delete room
     delete r;
     // check is the wall need to delete
-    Q_FOREACH(gl3d_wall *const &wit, wls) {
+    Q_FOREACH(gl3d_wall * wit, wls) {
+            wit->get_relate_rooms()->remove(r);
             if (wit->get_relate_rooms()->size() == 0) {
-                this->attached_scene->delete_obj(wit->get_id());
+                klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(wit));
+//                this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
-                delete wit;
+//                delete wit;
             }
         }
 

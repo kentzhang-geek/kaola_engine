@@ -217,7 +217,8 @@ void PickupDig::on_delete_obj() {
     }
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
         // TODO : 删除房间
-        this->sketch->get_room(this->coord_on_screen);
+        gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
+        this->sketch->delete_room(r);
     }
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
