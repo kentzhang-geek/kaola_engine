@@ -71,7 +71,8 @@ void add_or_del_wall::combine_wall() {
 bool add_or_del_wall::add_wall() {
     command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
     this->wall->set_id(this->wall_id);
-    this->combine_wall();
+//    this->combine_wall();
+    this->wall->calculate_mesh();
     this->wall->buffer_data();
     command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, this->wall);
     this->wall_exist = true;
