@@ -13,13 +13,14 @@ static command_stack *one_stack = NULL;
 command_stack::command_stack(gl3d::scene *sc, klm::design::scheme *sch) {
     this->main_scene = sc;
     this->sketch = sch;
+    this->clear();
     return;
 }
 
 void command_stack::init(gl3d::scene *sc, klm::design::scheme *sch) {
-    if (NULL == one_stack) {
-        one_stack = new command_stack(sc, sch);
-    }
+    if (NULL != one_stack)
+        delete one_stack;
+    one_stack = new command_stack(sc, sch);
     return;
 }
 
@@ -44,6 +45,7 @@ bool add_or_del_wall::add_wall() {
     gl3d_wall * n_w = new gl3d_wall(this->start_pos, this->end_pos, this->thickness, this->height);
     n_w->set_start_point_attach(this->start_attach);
     n_w->set_end_point_attach(this->end_attach);
+    n_w->calculate_mesh();
     command_stack::shared_instance()->get_sketch()->get_walls()->insert(n_w);
     command_stack::shared_instance()->get_main_scene()->delete_obj(n_w->get_id());
     n_w->set_id(this->wall_id);

@@ -1,3 +1,4 @@
+#include <include/editor/command.h>
 #include "pickupdig.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
@@ -212,7 +213,8 @@ void PickupDig::slotSlider_DoubleSpinbox3() {
 void PickupDig::on_delete_obj() {
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
         //删除墙
-        this->sketch->del_wal((gl3d_wall *) pickUpObj);
+        QUndoCommand * cmd = new klm::command::del_wall((gl3d_wall *) pickUpObj);
+        klm::command::command_stack::shared_instance()->push(cmd);
     }
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
         // TODO : 删除房间

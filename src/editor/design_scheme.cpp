@@ -9,6 +9,7 @@
 #include <QtCore>
 #include "editor/surface.h"
 #include "utils/gl3d_lock.h"
+#include "editor/command.h"
 
 using namespace std;
 typedef CGAL::Quotient<CGAL::MP_Float> Number_type;

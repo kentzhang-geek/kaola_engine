@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl widgets
 
 win32: QMAKE_CXXFLAGS += /MP
 
