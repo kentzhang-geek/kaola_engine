@@ -30,8 +30,7 @@ command_stack *command_stack::shared_instance() {
     return one_stack;
 }
 
-add_wall::add_wall(gl3d_wall *w) {
-    this->setText("add_wall");
+add_or_del_wall::add_or_del_wall(gl3d_wall *w) {
     this->start_pos = w->get_start_point();
     this->end_pos = w->get_end_point();
     this->thickness = w->get_thickness();
@@ -41,62 +40,61 @@ add_wall::add_wall(gl3d_wall *w) {
     this->wall_id = w->get_id();
 }
 
-void add_wall::undo() {
-    Q_FOREACH(gl3d_wall * w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
-            math::line_2d w_l(this->start_pos, this->end_pos);
-            if (w_l.point_on_line(w->get_start_point()) && w_l.point_on_line(w->get_end_point())) {
+bool add_or_del_wall::add_wall() {
+    gl3d_wall * n_w = new gl3d_wall(this->start_pos, this->end_pos, this->thickness, this->height);
+    n_w->set_start_point_attach(this->start_attach);
+    n_w->set_end_point_attach(this->end_attach);
+    command_stack::shared_instance()->get_sketch()->get_walls()->insert(n_w);
+    command_stack::shared_instance()->get_main_scene()->delete_obj(n_w->get_id());
+    n_w->set_id(this->wall_id);
+    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, n_w);
+    return true;
+}
+
+bool add_or_del_wall::del_wall() {
+    Q_FOREACH(gl3d_wall *w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
+            if (w->get_id() == this->wall_id) {
                 command_stack::shared_instance()->get_sketch()->del_wal(w);
             }
         }
-}
-
-void add_wall::redo() {
-    gl3d_wall * n_w = new gl3d_wall(this->start_pos, this->end_pos, this->thickness, this->height);
-    gl3d_wall * tmp;
-    n_w->set_start_point_attach(this->start_attach);
-    n_w->set_end_point_attach(this->end_attach);
-    command_stack::shared_instance()->get_sketch()->add_wall(n_w, tmp);
-    command_stack::shared_instance()->get_main_scene()->delete_obj(n_w->get_id());
-    n_w->set_id(this->wall_id);
-    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, n_w);
-    return;
-}
-
-bool add_wall::mergeWith(const QUndoCommand *other) {
+    if (command_stack::shared_instance()->get_main_scene()->get_objects()->contains(this->wall_id)) {
+        command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
+    }
+//    Q_FOREACH(gl3d_wall * w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
+//            math::line_2d w_l(this->start_pos, this->end_pos);
+//            if (w_l.point_on_line(w->get_start_point()) && w_l.point_on_line(w->get_end_point())) {
+//                command_stack::shared_instance()->get_sketch()->del_wal(w);
+//            }
+//        }
     return false;
 }
 
-del_wall::del_wall(gl3d_wall *w) {
+add_wall::add_wall(gl3d_wall *w) : add_or_del_wall(w) {
+    this->setText("add_wall");
+}
+
+void add_wall::undo() {
+    add_or_del_wall::del_wall();
+    return;
+}
+
+void add_wall::redo() {
+    add_or_del_wall::add_wall();
+    return;
+}
+
+del_wall::del_wall(gl3d_wall *w) : add_or_del_wall(w) {
     this->setText("del_wall");
-    this->start_pos = w->get_start_point();
-    this->end_pos = w->get_end_point();
-    this->thickness = w->get_thickness();
-    this->height = w->get_hight();
-    this->start_attach = *w->get_start_point_attach();
-    this->end_attach = *w->get_end_point_attach();
-    this->wall_id = w->get_id();
 }
 
 void del_wall::undo() {
-    gl3d_wall * n_w = new gl3d_wall(this->start_pos, this->end_pos, this->thickness, this->height);
-    gl3d_wall * tmp;
-    n_w->set_start_point_attach(this->start_attach);
-    n_w->set_end_point_attach(this->end_attach);
-    command_stack::shared_instance()->get_sketch()->add_wall(n_w, tmp);
-    // change id of new wall to origin wall
-    command_stack::shared_instance()->get_main_scene()->delete_obj(n_w->get_id());
-    n_w->set_id(this->wall_id);
-    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, n_w);
+    add_or_del_wall::add_wall();
     return;
 }
 
 void del_wall::redo() {
-    Q_FOREACH(gl3d_wall * w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
-            math::line_2d w_l(this->start_pos, this->end_pos);
-            if (w_l.point_on_line(w->get_start_point()) && w_l.point_on_line(w->get_end_point())) {
-                command_stack::shared_instance()->get_sketch()->del_wal(w);
-            }
-        }
+    add_or_del_wall::del_wall();
+    return;
 }
 
 set_wall_property::set_wall_property(gl3d_wall *w) {

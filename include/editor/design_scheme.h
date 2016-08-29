@@ -8,6 +8,8 @@
 #include "resource_and_network/global_material.h"
 #include "utils/gl3d_utils.h"
 
+#define KLM_SCHEME_ID 65535
+
 namespace klm {
     namespace design {
         class scheme : public gl3d::abstract_object , public utils::noncopyable {

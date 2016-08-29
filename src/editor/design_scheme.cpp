@@ -33,7 +33,7 @@ void design::scheme::init() {
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL
                                 | GL3D_OBJ_ENABLE_CHANGEMTL
                                 | GL3D_OBJ_ENABLE_PICKING);
-    this->set_id(0);
+    this->set_id(KLM_SCHEME_ID);
     this->set_obj_type(this->type_scheme);
     this->wall_id_start = 10000;        // start wall id at 10000
 }
