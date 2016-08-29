@@ -21,7 +21,8 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
 
     if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
         //初始化墙操作窗口
-        initBasicInfo();
+//        initBasicInfo();
+        initBasicSchemeInfo();
     } else if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
         initBasicSchemeInfo();
     }
@@ -131,16 +132,27 @@ void PickupDig::initBasicSchemeInfo() {
     delButton->setText("删除");
     connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
     QPushButton *splitButton = new QPushButton();
-    splitButton->setText("拆分");
+    splitButton->setText("清空家具");
+
+    QLabel *lbl_caption = new QLabel(tr("房间名: "));
+    cbo = new QComboBox();
+    cbo->addItem(QWidget::tr("未命"));
+    cbo->addItem(QWidget::tr("123"));
+    cbo->addItem(QWidget::tr("223"));
 
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
     hlayoutButtons->addWidget(delButton);
     hlayoutButtons->addWidget(splitButton);
 
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->addWidget(lbl_caption);
+    hlayout->addWidget(cbo);
+
 
     QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
     vboxLayout->addLayout(hlayoutButtons);
+    vboxLayout->addLayout(hlayout);
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
 }
 

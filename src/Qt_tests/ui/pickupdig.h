@@ -45,6 +45,8 @@ private:
     gl3d::scene *main_scene;
     gl3d::gl3d_wall *wall;
     klm::design::scheme * sketch;
+
+    QComboBox *cbo;
 };
 
 #endif // PICKUPDIG_H

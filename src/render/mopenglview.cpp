@@ -584,13 +584,14 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
-    //默认----------------------------------------------------------------
-    if(now_state == gl3d::gl3d_global_param::normal) {
+    //移动墙顶点--------------------------------------------------------------
+    if(now_state == gl3d::gl3d_global_param::normal || now_state == gl3d::gl3d_global_param::movewall) {
         glm::vec2 tmp_pt((float)event->x(), (float)event->y());
+        setCursor(Qt::ArrowCursor);
+        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 
         //墙顶点吸附
         if(this->wallsPoints->length() != 0) {
-            setCursor(Qt::ArrowCursor);
             for(QVector<point_wall_pair>::iterator it = this->wallsPoints->begin();
                 it != this->wallsPoints->end(); it++) {
                 float dis = glm::length(tmp_pt - (*it).first);
@@ -968,9 +969,24 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //获取画布上所有墙的顶点（用于吸附）
         this->getWallsPoint();
 
+        //移动画布视角------------------------------------
+        if(now_state == gl3d::gl3d_global_param::normal) {
+            auto tmp_viewer = this->main_scene->watcher;
+            if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
+                tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
+                this->tmp_point_x = event->x();
+                this->tmp_point_y = event->y();
+                setCursor(Qt::SizeAllCursor);
+                tmp_viewer->calculate_mat();
+            }
+        }
+
+        //改变墙顶点位置----------------------------------
         if(now_state == gl3d::gl3d_global_param::movewall) {
-            //改变墙顶点位置
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::movewalling;
             setCursor(Qt::SizeAllCursor);
+        }
+        if(now_state == gl3d::gl3d_global_param::movewalling) {
             this->connect_wall = NULL;
             this->main_scene->get_assistant_image()->fill(0);
             glm::vec2 tmp_pt((float)event->x(), (float)event->y());
@@ -1031,20 +1047,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                 this->draw_image(":/images/con_wall_dot",
                                  conn_dot.x - 12, conn_dot.y - 12, 24, 24);
             }
-
-        } else
-
-
-
-        {
-            auto tmp_viewer = this->main_scene->watcher;
-            if (tmp_viewer->get_view_mode() == tmp_viewer->top_view) {
-                tmp_viewer->change_position(glm::vec3(-float(event->x() - this->tmp_point_x) / 50, float(event->y() - this->tmp_point_y) / 50, 0.0));
-                this->tmp_point_x = event->x();
-                this->tmp_point_y = event->y();
-                setCursor(Qt::SizeAllCursor);
-                tmp_viewer->calculate_mat();
-            }
         }
     } else if(event->buttons()&Qt::LeftButton) {
         //        cout << "right move: " << event->x() << ", " << event->y() << endl;
@@ -1058,7 +1060,7 @@ void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //移动墙连接吸附墙
-    if(now_state == gl3d::gl3d_global_param::movewall) {
+    if(now_state == gl3d::gl3d_global_param::movewalling) {
         if(this->connect_wall != NULL) {
             this->main_scene->get_assistant_image()->fill(0);
             if(move_change_is_start_or_end) {
