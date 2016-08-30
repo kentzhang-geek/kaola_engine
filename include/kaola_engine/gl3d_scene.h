@@ -263,8 +263,8 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(height, GLfloat);
 
         GL3D_UTILS_PROPERTY(attached_sketch, klm::design::scheme *);
-        QMap<int, gl3d::abstract_object *> * get_objects() {return this->attached_sketch->get_objects();};
-        QMap<int, general_light_source *> * get_light_srcs() {return this->attached_sketch->get_light_srcs();};
+//        QMap<int, gl3d::abstract_object *> * get_objects() {return this->attached_sketch->get_objects();};
+//        QMap<int, general_light_source *> * get_light_srcs() {return this->attached_sketch->get_light_srcs();};
 //        // 场景光源
 //        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 //

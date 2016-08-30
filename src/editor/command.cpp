@@ -74,13 +74,13 @@ bool add_or_del_wall::add_wall() {
 //    this->combine_wall();
     this->wall->calculate_mesh();
     this->wall->buffer_data();
-    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, this->wall);
+    command_stack::shared_instance()->get_sketch()->get_objects()->insert(this->wall_id, this->wall);
     this->wall_exist = true;
     return true;
 }
 
 bool add_or_del_wall::del_wall() {
-    if (command_stack::shared_instance()->get_main_scene()->get_objects()->contains(this->wall_id)) {
+    if (command_stack::shared_instance()->get_sketch()->get_objects()->contains(this->wall_id)) {
         command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
         if (this->wall->get_start_point_fixed()) {
             gl3d_wall * w = this->wall->get_start_point_attach()->attach;
@@ -307,7 +307,7 @@ obj_add_or_del::obj_add_or_del(gl3d::object *o) {
 }
 
 void obj_add_or_del::del_obj() {
-    if (command_stack::shared_instance()->get_main_scene()->get_objects()->contains(this->obj_id)) {
+    if (command_stack::shared_instance()->get_sketch()->get_objects()->contains(this->obj_id)) {
         gl3d::object * o = (gl3d::object *) command_stack::shared_instance()->get_main_scene()->get_obj(this->obj_id);
         command_stack::shared_instance()->get_main_scene()->delete_obj(this->obj_id);
         delete o;
@@ -339,7 +339,7 @@ void obj_add_or_del::do_work(void *object) {
 
     gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
-    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->obj_id, obj);
+    command_stack::shared_instance()->get_sketch()->add_obj(this->obj_id, obj);
     gl3d_lock::shared_instance()->render_lock.unlock();
     gl3d_lock::shared_instance()->loader_lock.unlock();
 

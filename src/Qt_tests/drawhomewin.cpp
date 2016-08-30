@@ -67,7 +67,7 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     light_1->set_light_type(light_1->directional_point_light);
     light_1->set_light_angle(30.0);
 
-    this->ui->OpenGLCanvas->main_scene->get_light_srcs()->insert(1, light_1);
+    this->ui->OpenGLCanvas->sketch->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 }

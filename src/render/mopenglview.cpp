@@ -307,8 +307,8 @@ void MOpenGLView::getWallsPoint() {
     wallsPoints->clear();
     points_for_walls->clear();
 
-    for (auto it = this->main_scene->get_objects()->begin();
-         it != this->main_scene->get_objects()->end();
+    for (auto it = this->sketch->get_objects()->begin();
+         it != this->sketch->get_objects()->end();
          it++) {
         gl3d::abstract_object *obj = *it;
         if (obj->get_obj_type() == obj->type_wall) {

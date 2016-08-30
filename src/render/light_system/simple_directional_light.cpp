@@ -45,8 +45,8 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
     GL3D_GL()->glDisable(GL_CULL_FACE);
 
     // 遍历所有光源进行绘制
-    for (auto it = scene->get_light_srcs()->begin();
-         it != scene->get_light_srcs()->end();
+    for (auto it = scene->get_attached_sketch()->get_light_srcs()->begin();
+         it != scene->get_attached_sketch()->get_light_srcs()->end();
          it++) {
         // 设置光照参数
         GL3D_GL()->glUseProgram(pro);
