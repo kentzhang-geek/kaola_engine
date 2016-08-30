@@ -262,11 +262,14 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(width, GLfloat);
         GL3D_UTILS_PROPERTY(height, GLfloat);
 
-        // 场景光源
-        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
-
-        // objects
-        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
+        GL3D_UTILS_PROPERTY(attached_sketch, klm::design::scheme *);
+        QMap<int, gl3d::abstract_object *> * get_objects() {return this->attached_sketch->get_objects();};
+        QMap<int, general_light_source *> * get_light_srcs() {return this->attached_sketch->get_light_srcs();};
+//        // 场景光源
+//        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
+//
+//        // objects
+//        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
 
         // 设置输入参数位置
         static void set_attribute(GLuint pro);

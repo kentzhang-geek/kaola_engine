@@ -30,7 +30,14 @@ void MOpenGLView::do_init() {
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
 
+    // create sketch and scene
     this->create_scene();
+    this->sketch = new klm::design::scheme(this->main_scene);
+    this->sketch->set_attached_scene(this->main_scene);
+    this->main_scene->set_attached_sketch(this->sketch);
+    klm::command::command_stack::init(this->main_scene, this->sketch);
+    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->sketch->get_id(), this->sketch));
+
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
 
     this->main_scene->prepare_buffer();
@@ -44,12 +51,6 @@ void MOpenGLView::do_init() {
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
-
-    // create sketch
-    this->sketch = new klm::design::scheme(this->main_scene);
-    this->sketch->set_attached_scene(this->main_scene);
-    klm::command::command_stack::init(this->main_scene, this->sketch);
-    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->sketch->get_id(), this->sketch));
 }
 
 #define MAX_FILE_SIZE 10000
