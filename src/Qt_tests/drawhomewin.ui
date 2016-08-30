@@ -1187,7 +1187,7 @@ border:0;
                 <rect>
                  <x>10</x>
                  <y>140</y>
-                 <width>48</width>
+                 <width>51</width>
                  <height>17</height>
                 </rect>
                </property>
@@ -1204,6 +1204,113 @@ color: rgb(245, 245, 245);
                <property name="text">
                 <string>开门窗</string>
                </property>
+              </widget>
+              <widget class="QLabel" name="l_7">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>350</y>
+                 <width>48</width>
+                 <height>17</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#l_7 {
+color: rgb(245, 245, 245);
+}</string>
+               </property>
+               <property name="text">
+                <string>自由绘制</string>
+               </property>
+              </widget>
+              <widget class="QWidget" name="gridLayoutWidget_3">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>380</y>
+                 <width>241</width>
+                 <height>73</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_11">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_11 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>梁</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="p_10">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_10 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}
+
+#p_10:hover {
+border-image:url(:/images/drawwallselectd);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </widget>
             </item>
@@ -1541,6 +1648,13 @@ border-radius: 0
                </widget>
               </item>
               <item>
+               <widget class="Line" name="line_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="switch3D">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1567,11 +1681,11 @@ border-radius: 0
                  <string notr="true">#switch3D {border-radius: 0}</string>
                 </property>
                 <property name="text">
-                 <string> 进入3D模式</string>
+                 <string>去装修</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../../res.qrc">
-                  <normaloff>:/images/3d</normaloff>:/images/3d</iconset>
+                  <normaloff>:/images/paint_icon</normaloff>:/images/paint_icon</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
