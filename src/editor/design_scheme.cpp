@@ -9,6 +9,7 @@
 #include <QtCore>
 #include "editor/surface.h"
 #include "utils/gl3d_lock.h"
+#include "editor/command.h"
 
 using namespace std;
 typedef CGAL::Quotient<CGAL::MP_Float> Number_type;
@@ -128,12 +129,14 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
             // process delete wall in wall
             if (gl3d_wall::delete_wall_in_wall(w, wit)) {
                 wall_to_end = NULL;
+                gl3d_lock::shared_instance()->scheme_lock.unlock();
                 return false;
             }
             // cut walls in scheme
             if (gl3d::gl3d_wall::wall_cross(w, wit, wall_insert)) {
                 tid = wit->get_id();
-                this->attached_scene->delete_obj(wit->get_id());
+                klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(wit));
+//                this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
                 glm::vec2 ptin;
                 math::get_cross(
@@ -141,7 +144,7 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
                         math::line_2d(wit->get_start_point(), wit->get_end_point()),
                         ptin);
                 cross_pts.push_back(ptin);
-                delete wit;
+//                delete wit;
             }
         }
 
@@ -194,7 +197,8 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
     Q_FOREACH(gl3d_wall *const &wit, wall_insert) {
             ++this->wall_id_start;
             wit->set_id(this->wall_id_start);
-            this->attached_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->wall_id_start, wit));
+            klm::command::command_stack::shared_instance()->push(new klm::command::add_wall(wit));
+//            this->attached_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->wall_id_start, wit));
             this->walls.insert(wit);
         }
 
@@ -206,6 +210,7 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
 void scheme::del_wal(gl3d::gl3d_wall *w) {
     gl3d_lock::shared_instance()->scheme_lock.lock();
     this->walls.remove(w);
+    klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(w));
     this->recalculate_rooms();
     gl3d_lock::shared_instance()->scheme_lock.unlock();
     return;
@@ -239,11 +244,13 @@ void scheme::delete_room(gl3d::room *r) {
     // delete room
     delete r;
     // check is the wall need to delete
-    Q_FOREACH(gl3d_wall *const &wit, wls) {
+    Q_FOREACH(gl3d_wall * wit, wls) {
+            wit->get_relate_rooms()->remove(r);
             if (wit->get_relate_rooms()->size() == 0) {
-                this->attached_scene->delete_obj(wit->get_id());
+                klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(wit));
+//                this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
-                delete wit;
+//                delete wit;
             }
         }
 

@@ -1,3 +1,4 @@
+#include <include/editor/command.h>
 #include "pickupdig.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
@@ -175,8 +176,10 @@ void PickupDig::slotDoubleSpinbox_Slider() {
     slider->setValue((int) (spinBox->value() * 100));
 
     //改变墙长度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_length(float(spinBox->value()));
     wall->calculate_mesh();
+    this->sketch->recalculate_rooms();
 }
 
 void PickupDig::slotSlider_DoubleSpinbox() {
@@ -187,6 +190,7 @@ void PickupDig::slotDoubleSpinbox_Slider2() {
     slider2->setValue((int) (spinBox2->value() * 100));
 
     //改变墙厚度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_thickness(float(spinBox2->value()));
     wall->calculate_mesh();
 }
@@ -199,6 +203,7 @@ void PickupDig::slotDoubleSpinbox_Slider3() {
     slider3->setValue((int) (spinBox3->value() * 100));
 
     //改变墙高度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_hight(float(spinBox3->value()));
     wall->calculate_mesh();
 }
@@ -214,13 +219,10 @@ void PickupDig::on_delete_obj() {
         //删除墙
         this->sketch->del_wal((gl3d_wall *) pickUpObj);
     }
-
     if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
-        // TODO ： 删除房间
-        this->sketch->get_room(this->coord_on_screen);
-    } else {
-        this->main_scene->delete_obj(pickUpObjID);
-        delete pickUpObj;
+        // TODO : 删除房间
+        gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
+        this->sketch->delete_room(r);
     }
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;

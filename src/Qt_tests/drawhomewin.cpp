@@ -13,6 +13,7 @@
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
 #include "resource_and_network/klm_resource_manager.h"
+#include "editor/command.h"
 
 using namespace std;
 
@@ -134,4 +135,12 @@ void drawhomewin::on_p_2_clicked() {
     this->ui->p_2->setIcon(QIcon(":/images/drawhomeselectd"));
     dop = new DrawOption(this->ui->OpenGLCanvas);
     dop->show();
+}
+
+void drawhomewin::on_restore_clicked() {
+    klm::command::command_stack::shared_instance()->redo();
+}
+
+void drawhomewin::on_undo_clicked() {
+    klm::command::command_stack::shared_instance()->undo();
 }

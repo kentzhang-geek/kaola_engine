@@ -2,7 +2,7 @@
 #define COMMAND_H
 
 #include <QUndoCommand>
-
+#include <QDateTime>
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
@@ -43,22 +43,30 @@ namespace klm {
         class add_or_del_wall : public utils::noncopyable{
         public:
             add_or_del_wall(gl3d_wall *w);
+            ~add_or_del_wall();
+            void combine_wall();
             bool add_wall();
             bool del_wall();
 
+            gl3d_wall *wall;
             int wall_id;
             glm::vec2 start_pos;
             glm::vec2 end_pos;
             float height;
             float thickness;
+            bool start_fixed;
+            bool end_fixed;
             gl3d_wall_attach start_attach;
             gl3d_wall_attach end_attach;
+
+            bool wall_exist;
         };
 
         // TODO : it is bug in add wall and del wall
         class add_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             add_wall(gl3d_wall *w);
+            ~add_wall() { add_or_del_wall::~add_or_del_wall(); };
 
             void undo();
 
@@ -68,6 +76,7 @@ namespace klm {
         class del_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             del_wall(gl3d_wall *w);
+            ~del_wall() { add_or_del_wall::~add_or_del_wall(); };
 
             void undo();
 
@@ -85,6 +94,10 @@ namespace klm {
             bool mergeWith(const QUndoCommand *other);
 
             virtual int id() const;
+
+            bool auto_call;
+            qint64 init_time;
+            static const qint64 ONE_SECOND = 1000;
 
             glm::vec2 ori_start_pos;
             glm::vec2 ori_end_pos;

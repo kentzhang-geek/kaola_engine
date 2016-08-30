@@ -39,6 +39,7 @@ void abstract_object::buffer_data() {
         p_mesh->buffer_data();
         iter++;
     }
+    this->clear_abstract_meshes(mss);
 
     GL3D_GL()->glBindVertexArray(0);
 

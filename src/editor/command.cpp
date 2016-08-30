@@ -13,13 +13,14 @@ static command_stack *one_stack = NULL;
 command_stack::command_stack(gl3d::scene *sc, klm::design::scheme *sch) {
     this->main_scene = sc;
     this->sketch = sch;
+    this->clear();
     return;
 }
 
 void command_stack::init(gl3d::scene *sc, klm::design::scheme *sch) {
-    if (NULL == one_stack) {
-        one_stack = new command_stack(sc, sch);
-    }
+    if (NULL != one_stack)
+        delete one_stack;
+    one_stack = new command_stack(sc, sch);
     return;
 }
 
@@ -38,27 +39,59 @@ add_or_del_wall::add_or_del_wall(gl3d_wall *w) {
     this->start_attach = *w->get_start_point_attach();
     this->end_attach = *w->get_end_point_attach();
     this->wall_id = w->get_id();
+    this->wall = w;
+    this->start_fixed = w->get_start_point_fixed();
+    this->end_fixed = w->get_end_point_fixed();
+}
+
+add_or_del_wall::~add_or_del_wall() {
+    if (!this->wall_exist)
+        delete this->wall;
+}
+
+void add_or_del_wall::combine_wall() {
+    if (this->start_fixed) {
+        if (this->start_attach.attach_point = gl3d_wall_attach::start_point) {
+            gl3d_wall::combine(this->wall, this->start_attach.attach, gl3d_wall::combine_wall1_start_to_wall2_start);
+        }
+        else {
+            gl3d_wall::combine(this->wall, this->start_attach.attach, gl3d_wall::combine_wall1_start_to_wall2_end);
+        }
+    }
+    if (this->end_fixed) {
+        if (this->end_attach.attach_point = gl3d_wall_attach::start_point) {
+            gl3d_wall::combine(this->wall, this->end_attach.attach, gl3d_wall::combine_wall1_end_to_wall2_start);
+        }
+        else {
+            gl3d_wall::combine(this->wall, this->end_attach.attach, gl3d_wall::combine_wall1_end_to_wall2_end);
+        }
+    }
 }
 
 bool add_or_del_wall::add_wall() {
-    gl3d_wall * n_w = new gl3d_wall(this->start_pos, this->end_pos, this->thickness, this->height);
-    n_w->set_start_point_attach(this->start_attach);
-    n_w->set_end_point_attach(this->end_attach);
-    command_stack::shared_instance()->get_sketch()->get_walls()->insert(n_w);
-    command_stack::shared_instance()->get_main_scene()->delete_obj(n_w->get_id());
-    n_w->set_id(this->wall_id);
-    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, n_w);
+    command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
+    this->wall->set_id(this->wall_id);
+//    this->combine_wall();
+    this->wall->calculate_mesh();
+    this->wall->buffer_data();
+    command_stack::shared_instance()->get_main_scene()->get_objects()->insert(this->wall_id, this->wall);
+    this->wall_exist = true;
     return true;
 }
 
 bool add_or_del_wall::del_wall() {
-    Q_FOREACH(gl3d_wall *w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
-            if (w->get_id() == this->wall_id) {
-                command_stack::shared_instance()->get_sketch()->del_wal(w);
-            }
-        }
     if (command_stack::shared_instance()->get_main_scene()->get_objects()->contains(this->wall_id)) {
         command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
+        if (this->wall->get_start_point_fixed()) {
+            gl3d_wall * w = this->wall->get_start_point_attach()->attach;
+            this->wall->seperate(*this->wall->get_start_point_attach());
+            w->calculate_mesh();
+        }
+        if (this->wall->get_end_point_fixed()) {
+            gl3d_wall * w = this->wall->get_end_point_attach()->attach;
+            this->wall->seperate(*this->wall->get_end_point_attach());
+            w->calculate_mesh();
+        }
     }
 //    Q_FOREACH(gl3d_wall * w, *(command_stack::shared_instance()->get_sketch()->get_walls())) {
 //            math::line_2d w_l(this->start_pos, this->end_pos);
@@ -66,6 +99,7 @@ bool add_or_del_wall::del_wall() {
 //                command_stack::shared_instance()->get_sketch()->del_wal(w);
 //            }
 //        }
+    this->wall_exist = false;
     return false;
 }
 
@@ -106,6 +140,8 @@ set_wall_property::set_wall_property(gl3d_wall *w) {
     this->ori_start_attach = *w->get_start_point_attach();
     this->ori_end_attach = *w->get_end_point_attach();
     this->wall_id = w->get_id();
+    this->auto_call = true;
+    this->init_time = QDateTime::currentMSecsSinceEpoch();
 }
 
 void set_wall_property::undo() {
@@ -128,6 +164,10 @@ void set_wall_property::undo() {
 }
 
 void set_wall_property::redo() {
+    if (this->auto_call) {
+        this->auto_call = false;
+        return;
+    }
     gl3d_wall * w = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
     w->set_start_point(this->tar_start_pos);
     w->set_end_point(this->tar_end_pos);
@@ -149,6 +189,10 @@ bool set_wall_property::mergeWith(const QUndoCommand *other) {
         gl3d_wall * w1 = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
         gl3d_wall * w2 = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(p->wall_id);
         if (w1->get_id() == w2->get_id()) {
+            if (abs(p->init_time - this->init_time) > this->ONE_SECOND) {
+                return false;
+            }
+            this->init_time = p->init_time;
             this->tar_start_pos = p->tar_start_pos;
             this->tar_end_pos = p->tar_end_pos;
             this->tar_height = p->tar_height;
