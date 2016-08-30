@@ -37,11 +37,19 @@ void design::scheme::init() {
     this->set_id(KLM_SCHEME_ID);
     this->set_obj_type(this->type_scheme);
     this->wall_id_start = 10000;        // start wall id at 10000
+
+    this->objects.clear();
+    this->light_srcs.clear();
 }
 
 design::scheme::scheme(gl3d::scene *sc) {
     this->init();
     this->attached_scene = sc;
+    return;
+}
+
+design::scheme::~scheme() {
+    // TODO : release data in sketch
     return;
 }
 
@@ -423,6 +431,26 @@ void scheme::recalculate_rooms() {
     }
 
     return;
+}
+
+bool scheme::add_obj(int id, abstract_object *obj) {
+    this->objects.remove(id);
+    this->objects.insert(id, obj);
+    return true;
+}
+
+bool scheme::del_obj(int id) {
+    if (this->objects.contains(id)) {
+        this->objects.remove(id);
+    }
+    return true;
+}
+
+gl3d::abstract_object * scheme::get_obj(int id) {
+    if (this->objects.contains(id)) {
+        return this->objects.value(id);
+    }
+    return NULL;
 }
 
 // test code

@@ -7,6 +7,7 @@
 #include "editor/gl3d_wall.h"
 #include "resource_and_network/global_material.h"
 #include "utils/gl3d_utils.h"
+#include "kaola_engine/gl3d_general_light_source.h"
 
 #define KLM_SCHEME_ID 65535
 
@@ -15,6 +16,7 @@ namespace klm {
         class scheme : public gl3d::abstract_object , public utils::noncopyable {
         public:
             scheme(gl3d::scene * sc);
+            ~scheme();
             // get mesh for scheme
             bool is_data_changed() ;
             bool is_visible() ;
@@ -42,6 +44,14 @@ namespace klm {
 
             void delete_room(gl3d::room * r);
             gl3d::room * get_room(glm::vec2 coord_on_screen);
+
+            // objects in sketch
+            GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
+            // light source in sketch
+            GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
+            bool add_obj(int id, abstract_object * obj);
+            bool del_obj(int id);
+            gl3d::abstract_object * get_obj(int id);
 
         private:
             void init();
