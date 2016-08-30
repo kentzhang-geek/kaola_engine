@@ -13,6 +13,43 @@ void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
     pter.drawPixmap(x, y, w, h, pix);
 }
 
+void MOpenGLView::closeEvent(QCloseEvent *event) {
+    this->hide();
+    if (NULL != this->main_scene)
+        delete this->main_scene;
+    this->main_scene = NULL;
+    if (this->isInitialized()) {
+        // delete all shaders
+        shader_manager *shader_mgr = ::shader_manager::sharedInstance();
+        Q_FOREACH(gl3d::Program * ip, shader_mgr->shaders) {
+                delete ip;
+            }
+        shader_mgr->shaders.clear();
+        // release all materials
+        global_material_lib::shared_instance()->release_all_mtl();
+    }
+
+    QGLWidget::closeEvent(event);
+    event->accept();
+}
+
+MOpenGLView::~MOpenGLView() {
+    QGLWidget::~QGLWidget();
+    // delete scene this
+    if (NULL != this->main_scene)
+        delete this->main_scene;
+    this->main_scene = NULL;
+
+    // delete all programs
+    if (this->isInitialized()) {
+        shader_manager *shader_mgr = ::shader_manager::sharedInstance();
+        Q_FOREACH(gl3d::Program * ip, shader_mgr->shaders) {
+                delete ip;
+            }
+        shader_mgr->shaders.clear();
+    }
+}
+
 void MOpenGLView::do_init() {
     //yananli code
     this->setMouseTracking(true);
@@ -194,9 +231,11 @@ void MOpenGLView::view_change() {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0));
     }
 
-    this->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
-    this->key_press = 0;
-    GL3D_GET_CURRENT_RENDER_PROCESS()->invoke();
+    if (this->main_scene != NULL) {
+        this->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
+        this->key_press = 0;
+        GL3D_GET_CURRENT_RENDER_PROCESS()->invoke();
+    }
 }
 
 void MOpenGLView::keyPressEvent(QKeyEvent *event) {

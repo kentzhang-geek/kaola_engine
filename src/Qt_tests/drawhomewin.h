@@ -40,6 +40,7 @@ private:
 
 protected:
     void showEvent(QShowEvent *ev);
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // DRAWHOMEWIN_H

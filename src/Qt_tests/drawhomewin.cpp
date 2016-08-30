@@ -29,6 +29,11 @@ drawhomewin::drawhomewin(QWidget *parent) :
     dhw = this;
 }
 
+void drawhomewin::closeEvent(QCloseEvent *event) {
+    event->accept();
+    this->ui->OpenGLCanvas->close();
+}
+
 drawhomewin::~drawhomewin() {
     delete ui;
 }

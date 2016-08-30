@@ -33,7 +33,7 @@ namespace gl3d {
     public:
         typedef struct scene_property {
             glm::vec3 background_color;
-            string global_shader;
+            QString global_shader;
             GLuint64 current_draw_authority; // 当前绘制哪些obj，见gl3d_obj_authority.h
             //还有其他属性待加入
         } scene_property;
@@ -263,13 +263,6 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(height, GLfloat);
 
         GL3D_UTILS_PROPERTY(attached_sketch, klm::design::scheme *);
-//        QMap<int, gl3d::abstract_object *> * get_objects() {return this->attached_sketch->get_objects();};
-//        QMap<int, general_light_source *> * get_light_srcs() {return this->attached_sketch->get_light_srcs();};
-//        // 场景光源
-//        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
-//
-//        // objects
-//        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
 
         // 设置输入参数位置
         static void set_attribute(GLuint pro);

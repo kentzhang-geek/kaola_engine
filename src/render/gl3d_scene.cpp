@@ -52,8 +52,7 @@ using namespace gl3d;
  */
 void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
-    memset(&this->this_property, 0, sizeof(scene_property));
-    memset(&this->lights, 0, sizeof(light_property) * 4);
+    this->this_property.global_shader.clear();
     this->attached_sketch = NULL;
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
@@ -79,8 +78,10 @@ scene::scene(GLfloat h, GLfloat w, scene_property * property) {
 }
 
 scene::~scene() {
+    this->this_property.global_shader.clear();
     delete this->watcher;
-    Assimp::DefaultLogger::kill();
+    this->watcher = NULL;
+//    Assimp::DefaultLogger::kill();
     return;
 }
 
@@ -209,12 +210,12 @@ bool scene::draw(bool use_global_shader) {
         int cuid_tmp = iter_objs.key();
         //        cout << "current obj id " << (*iter_objs).first << endl;
         // do not support specify shader now, global shader only
-        use_shader = GL3D_GET_SHADER(this->this_property.global_shader.c_str());
+        use_shader = GL3D_GET_SHADER(this->this_property.global_shader.toUtf8().data());
         if (NULL != use_shader) {
             GL3D_GL()->glUseProgram(use_shader->getProgramID());
 
             // globla shader only, do not support specific shader now
-            param = GL3D_GET_PARAM(this->this_property.global_shader.c_str());
+            param = GL3D_GET_PARAM(this->this_property.global_shader.toUtf8().data());
 
             if (current_obj->get_render_authority() & this->this_property.current_draw_authority) {
                 if (NULL != param) {
@@ -229,7 +230,7 @@ bool scene::draw(bool use_global_shader) {
             iter_objs++;
         }
         else {
-            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), this->this_property.global_shader.c_str());
+            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), this->this_property.global_shader.toUtf8().data());
             // TODO : 这里删除的话会报错
             iter_objs = this->attached_sketch->get_objects()->erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
@@ -448,7 +449,7 @@ void scene::draw_object_picking_mask() {
             GL3D_SCENE_DRAW_NORMAL |
             GL3D_SCENE_DRAW_GROUND |
             GL3D_SCENE_DRAW_WALL;
-    this->this_property.global_shader = string("picking_mask");
+    this->this_property.global_shader = QString("picking_mask");
     this->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     this->draw(true);
@@ -579,7 +580,7 @@ void scene::draw_shadow_mask() {
     // 绘制阴影贴图
     frame->attach_depth_text(this->shadow_text->get_text_obj());
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_SHADOW;
-    this->this_property.global_shader = string("shadow_mask");
+    this->this_property.global_shader = QString("shadow_mask");
     frame->use_this_frame();
     this->prepare_canvas(true);
     // 绘制阴影贴图的时候所有东西都不透明
@@ -609,7 +610,7 @@ void scene::draw_stencil() {
     /* Now drawing the floor just tags the floor pixels
      as stencil value 1. */
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-    this->this_property.global_shader = string("default");
+    this->this_property.global_shader = QString("default");
     this->draw(true);
     
     /* Re-enable update of color and depth. */

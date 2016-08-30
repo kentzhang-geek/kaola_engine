@@ -82,7 +82,7 @@ void normal::render() {
     current_shader_param = GL3D_GET_PARAM("image");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
-    one_scene->get_property()->global_shader = string("image");
+    one_scene->get_property()->global_shader = QString("image");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     GL3D_GL()->glDisable(GL_STENCIL_TEST);
@@ -91,7 +91,7 @@ void normal::render() {
     current_shader_param = GL3D_GET_PARAM("dm");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-    one_scene->get_property()->global_shader = string("dm");
+    one_scene->get_property()->global_shader = QString("dm");
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
@@ -100,7 +100,7 @@ void normal::render() {
     current_shader_param = GL3D_GET_PARAM("skybox");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-    one_scene->get_property()->global_shader = string("skybox");
+    one_scene->get_property()->global_shader = QString("skybox");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
@@ -122,7 +122,7 @@ void moving::render() {
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     // 选择全局渲染器
-    one_scene->get_property()->global_shader = string("multiple_text_vector");
+    one_scene->get_property()->global_shader = QString("multiple_text_vector");
     one_scene->get_property()->current_draw_authority =
             GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
     one_scene->prepare_canvas(false);
@@ -133,7 +133,7 @@ void moving::render() {
     current_shader_param = GL3D_GET_PARAM("dm2");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     // 选择全局渲染器
-    one_scene->get_property()->global_shader = string("dm2");
+    one_scene->get_property()->global_shader = QString("dm2");
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
@@ -142,7 +142,7 @@ void moving::render() {
     current_shader_param = GL3D_GET_PARAM("skybox");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     // 选择全局渲染器
-    one_scene->get_property()->global_shader = string("skybox");
+    one_scene->get_property()->global_shader = QString("skybox");
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
@@ -158,7 +158,7 @@ public:
         gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("default");
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
-        one_scene->get_property()->global_shader = string("default");
+        one_scene->get_property()->global_shader = QString("default");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_SKYBOX);
         one_scene->prepare_canvas(false);
         GL3D_GL()->glDisable(GL_CULL_FACE);
@@ -235,7 +235,7 @@ public:
         // 选择全局渲染器渲染地面网格
         gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("lines");
         current_shader_param->user_data.insert(string("scene"), one_scene);
-        one_scene->get_property()->global_shader = string("lines");
+        one_scene->get_property()->global_shader = QString("lines");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
         one_scene->prepare_canvas(false);
         object *oo = this->draw_coord();
@@ -250,7 +250,7 @@ public:
         current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
-        one_scene->get_property()->global_shader = string("multiple_text_vector");
+        one_scene->get_property()->global_shader = QString("multiple_text_vector");
         one_scene->get_property()->current_draw_authority =
                 GL3D_SCENE_DRAW_ALL & (~GL3D_SCENE_DRAW_GROUND) & (~GL3D_SCENE_DRAW_SKYBOX);
 //        object * oo = this->draw_coord();
@@ -265,7 +265,7 @@ public:
         current_shader_param = GL3D_GET_PARAM("dm2");
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
-        one_scene->get_property()->global_shader = string("dm2");
+        one_scene->get_property()->global_shader = QString("dm2");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
         GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);
@@ -274,7 +274,7 @@ public:
         current_shader_param = GL3D_GET_PARAM("skybox");
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
-        one_scene->get_property()->global_shader = string("skybox");
+        one_scene->get_property()->global_shader = QString("skybox");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
         GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);
@@ -283,7 +283,7 @@ public:
         // TODO : draw assistant
         current_shader_param = GL3D_GET_PARAM("post_process_result");
         current_shader_param->user_data.insert(string("scene"), one_scene);
-        one_scene->get_property()->global_shader = string("post_process_result");
+        one_scene->get_property()->global_shader = QString("post_process_result");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL;
         gl3d_general_texture *txt =
                 new gl3d_general_texture(gl3d_general_texture::GL3D_RGBA,
@@ -395,7 +395,7 @@ void has_post::rend_main_scene() {
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("multiple_text_vector_shadow");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    one_scene->get_property()->global_shader = string("multiple_text_vector_shadow");
+    one_scene->get_property()->global_shader = QString("multiple_text_vector_shadow");
     one_scene->prepare_canvas(false);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(false);
@@ -417,7 +417,7 @@ void has_post::rend_main_scene() {
     current_shader_param = GL3D_GET_PARAM("image");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
-    one_scene->get_property()->global_shader = string("image");
+    one_scene->get_property()->global_shader = QString("image");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     GL3D_GL()->glDisable(GL_STENCIL_TEST);
@@ -426,7 +426,7 @@ void has_post::rend_main_scene() {
     current_shader_param = GL3D_GET_PARAM("dm");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-    one_scene->get_property()->global_shader = string("dm");
+    one_scene->get_property()->global_shader = QString("dm");
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
@@ -435,7 +435,7 @@ void has_post::rend_main_scene() {
     current_shader_param = GL3D_GET_PARAM("skybox");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-    one_scene->get_property()->global_shader = string("skybox");
+    one_scene->get_property()->global_shader = QString("skybox");
     one_scene->draw(true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
@@ -450,7 +450,7 @@ void has_post::rend_result() {
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("post_process_result");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
-    one_scene->get_property()->global_shader = string("post_process_result");
+    one_scene->get_property()->global_shader = QString("post_process_result");
     one_scene->add_obj(222, rect);
     GL3D_GL()->glViewport(0, 0,
                           one_scene->get_width(), one_scene->get_height());

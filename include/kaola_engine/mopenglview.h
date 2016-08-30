@@ -66,12 +66,14 @@ public:
     void create_scene();
     MOpenGLView();
     MOpenGLView(QWidget * x);
+    ~MOpenGLView();
     void paintGL();
     void initializeGL();
     float time_factor;
     GLfloat angle;
     void keyPressEvent(QKeyEvent *event);
     void resizeGL(int width, int height);
+    void closeEvent(QCloseEvent *event);
 
     //yananli codes -----------------------------------------------------
     enum button_state {
