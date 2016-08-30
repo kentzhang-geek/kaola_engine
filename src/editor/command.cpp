@@ -140,6 +140,8 @@ set_wall_property::set_wall_property(gl3d_wall *w) {
     this->ori_start_attach = *w->get_start_point_attach();
     this->ori_end_attach = *w->get_end_point_attach();
     this->wall_id = w->get_id();
+    this->auto_call = true;
+    this->init_time = QDateTime::currentMSecsSinceEpoch();
 }
 
 void set_wall_property::undo() {
@@ -162,6 +164,10 @@ void set_wall_property::undo() {
 }
 
 void set_wall_property::redo() {
+    if (this->auto_call) {
+        this->auto_call = false;
+        return;
+    }
     gl3d_wall * w = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
     w->set_start_point(this->tar_start_pos);
     w->set_end_point(this->tar_end_pos);
@@ -183,6 +189,10 @@ bool set_wall_property::mergeWith(const QUndoCommand *other) {
         gl3d_wall * w1 = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
         gl3d_wall * w2 = (gl3d_wall *) command_stack::shared_instance()->get_main_scene()->get_obj(p->wall_id);
         if (w1->get_id() == w2->get_id()) {
+            if (abs(p->init_time - this->init_time) > this->ONE_SECOND) {
+                return false;
+            }
+            this->init_time = p->init_time;
             this->tar_start_pos = p->tar_start_pos;
             this->tar_end_pos = p->tar_end_pos;
             this->tar_height = p->tar_height;

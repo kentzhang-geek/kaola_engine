@@ -176,8 +176,10 @@ void PickupDig::slotDoubleSpinbox_Slider() {
     slider->setValue((int) (spinBox->value() * 100));
 
     //改变墙长度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_length(float(spinBox->value()));
     wall->calculate_mesh();
+    this->sketch->recalculate_rooms();
 }
 
 void PickupDig::slotSlider_DoubleSpinbox() {
@@ -188,6 +190,7 @@ void PickupDig::slotDoubleSpinbox_Slider2() {
     slider2->setValue((int) (spinBox2->value() * 100));
 
     //改变墙厚度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_thickness(float(spinBox2->value()));
     wall->calculate_mesh();
 }
@@ -200,6 +203,7 @@ void PickupDig::slotDoubleSpinbox_Slider3() {
     slider3->setValue((int) (spinBox3->value() * 100));
 
     //改变墙高度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_hight(float(spinBox3->value()));
     wall->calculate_mesh();
 }

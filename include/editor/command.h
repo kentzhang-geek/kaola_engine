@@ -2,7 +2,7 @@
 #define COMMAND_H
 
 #include <QUndoCommand>
-
+#include <QDateTime>
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
@@ -94,6 +94,10 @@ namespace klm {
             bool mergeWith(const QUndoCommand *other);
 
             virtual int id() const;
+
+            bool auto_call;
+            qint64 init_time;
+            static const qint64 ONE_SECOND = 1000;
 
             glm::vec2 ori_start_pos;
             glm::vec2 ori_end_pos;
