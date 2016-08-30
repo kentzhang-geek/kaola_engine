@@ -68,7 +68,7 @@ namespace gl3d {
          *
          *  @return 是否加入成功
          */
-        bool add_obj(QPair<int, abstract_object *> obj_key_pair);
+        bool add_obj(int key, abstract_object * obj);
 
         /**
          *  @author Kent, 16-02-17 21:02:11

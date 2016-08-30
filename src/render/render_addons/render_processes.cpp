@@ -239,7 +239,7 @@ public:
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
         one_scene->prepare_canvas(false);
         object *oo = this->draw_coord();
-        one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
+        one_scene->add_obj(23123, oo);
         GL3D_GL()->glDisable(GL_CULL_FACE);
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
         one_scene->draw(true);
@@ -296,7 +296,7 @@ public:
             opt[ii].texture_y = 1.0f - opt[ii].texture_y;
         }
         oo->set_render_authority(GL3D_SCENE_DRAW_SPECIAL);
-        one_scene->add_obj(QPair<int, abstract_object *>(23123, oo));
+        one_scene->add_obj(23123, oo);
         GL3D_GL()->glDisable(GL_CULL_FACE);
         GL3D_GL()->glDisable(GL_DEPTH_TEST);
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
@@ -451,7 +451,7 @@ void has_post::rend_result() {
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
     one_scene->get_property()->global_shader = string("post_process_result");
-    one_scene->add_obj(QPair<int, object *>(222, rect));
+    one_scene->add_obj(222, rect);
     GL3D_GL()->glViewport(0, 0,
                           one_scene->get_width(), one_scene->get_height());
     one_scene->prepare_canvas(true);

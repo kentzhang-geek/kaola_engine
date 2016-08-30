@@ -36,7 +36,7 @@ void MOpenGLView::do_init() {
     this->sketch->set_attached_scene(this->main_scene);
     this->main_scene->set_attached_sketch(this->sketch);
     klm::command::command_stack::init(this->main_scene, this->sketch);
-    this->main_scene->add_obj(QPair<int, gl3d::abstract_object *>(this->sketch->get_id(), this->sketch));
+    this->main_scene->add_obj(this->sketch->get_id(), this->sketch);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(normal, this->main_scene);
 
@@ -299,7 +299,7 @@ void MOpenGLView::openglDrawWall(const int x, const int y) {
 
     //新建墙
     this->new_wall = new gl3d::gl3d_wall(pick, pick, gl3d::gl3d_global_param::shared_instance()->wall_thick, 2.8);
-    this->main_scene->add_obj(QPair<int, object *>(this->wall_temp_id, this->new_wall));
+    this->main_scene->add_obj(this->wall_temp_id, this->new_wall);
 }
 
 //获取屏幕上所有的墙-----获取屏幕上所有的墙的顶点
@@ -875,7 +875,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                              picka, 0.0f);
             this->new_walla = new gl3d::gl3d_wall(picka, picka, gl3d::gl3d_global_param::shared_instance()->wall_thick,
                                                   2.8);
-            vr->add_obj(QPair<int, object *>(this->wall_temp_id + 1, this->new_walla));
+            vr->add_obj(this->wall_temp_id + 1, this->new_walla);
             vr->coord_ground(glm::vec2((this->drawhome_x2),
                                        (this->drawhome_y1)),
                              picka, 0.0f);
@@ -889,7 +889,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                              pickb, 0.0);
             this->new_wallb = new gl3d::gl3d_wall(pickb, pickb, gl3d::gl3d_global_param::shared_instance()->wall_thick,
                                                   2.8);
-            vr->add_obj(QPair<int, object *>(this->wall_temp_id + 2, this->new_wallb));
+            vr->add_obj(this->wall_temp_id + 2, this->new_wallb);
             vr->coord_ground(glm::vec2((this->drawhome_x1),
                                        (this->drawhome_y2)),
                              pickb, 0.0);
@@ -903,7 +903,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                              pickc, 0.0);
             this->new_wallc = new gl3d::gl3d_wall(pickc, pickc, gl3d::gl3d_global_param::shared_instance()->wall_thick,
                                                   2.8);
-            vr->add_obj(QPair<int, object *>(this->wall_temp_id + 3, this->new_wallc));
+            vr->add_obj(this->wall_temp_id + 3, this->new_wallc);
             vr->coord_ground(glm::vec2((this->drawhome_x2),
                                        (this->drawhome_y2)),
                              pickc, 0.0);
@@ -917,7 +917,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                              pickd, 0.0);
             this->new_walld = new gl3d::gl3d_wall(pickd, pickd, gl3d::gl3d_global_param::shared_instance()->wall_thick,
                                                   2.8);
-            vr->add_obj(QPair<int, object *>(this->wall_temp_id + 4, this->new_walld));
+            vr->add_obj(this->wall_temp_id + 4, this->new_walld);
             vr->coord_ground(glm::vec2((this->drawhome_x2),
                                        (this->drawhome_y2)),
                              pickd, 0.0);

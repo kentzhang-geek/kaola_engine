@@ -90,11 +90,10 @@ bool scene::init(scene_property * property) {
     return true;
 }
 
-bool scene::add_obj(QPair<int, gl3d::abstract_object *> obj_key_pair) {
-    obj_key_pair.second->set_id((GLuint) obj_key_pair.first);
-    obj_key_pair.second->buffer_data();
-    this->attached_sketch->add_obj(obj_key_pair.first, obj_key_pair.second);
-    return true;
+bool scene::add_obj(int key, abstract_object * obj) {
+    obj->set_id(key);
+    obj->buffer_data();
+    return this->attached_sketch->add_obj(key, obj);
 }
 
 bool scene::delete_obj(int key) {
