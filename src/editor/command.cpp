@@ -42,11 +42,13 @@ add_or_del_wall::add_or_del_wall(gl3d_wall *w) {
     this->wall = w;
     this->start_fixed = w->get_start_point_fixed();
     this->end_fixed = w->get_end_point_fixed();
+    this->wall_exist = true;
 }
 
 add_or_del_wall::~add_or_del_wall() {
-    if (!this->wall_exist)
+    if (!this->wall_exist) {
         delete this->wall;
+    }
 }
 
 void add_or_del_wall::combine_wall() {

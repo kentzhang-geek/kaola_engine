@@ -12,6 +12,7 @@ public:
     float canvas_height;
     float wall_thick;
     unsigned int framebuffer;
+    void *old_sketch_test;
 
     enum work_state {
         normal = 0,

@@ -66,7 +66,7 @@ namespace klm {
         class add_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             add_wall(gl3d_wall *w);
-            ~add_wall() { add_or_del_wall::~add_or_del_wall(); };
+            ~add_wall() {};
 
             void undo();
 
@@ -76,7 +76,7 @@ namespace klm {
         class del_wall : public QUndoCommand, public add_or_del_wall, public utils::noncopyable {
         public:
             del_wall(gl3d_wall *w);
-            ~del_wall() { add_or_del_wall::~add_or_del_wall(); };
+            ~del_wall() {};
 
             void undo();
 

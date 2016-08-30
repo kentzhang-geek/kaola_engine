@@ -79,4 +79,10 @@ void render_process_manager::set_current_process(string name) {
     this->render_processes.value(this->current_process)->env_up();
 }
 
-
+void render_process_manager::release_render() {
+    if (this->current_process.length() > 0) {
+        // tear down last render process
+        this->render_processes.value(this->current_process)->env_down();
+    }
+    this->current_process.clear();
+}

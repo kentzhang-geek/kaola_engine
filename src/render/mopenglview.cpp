@@ -15,6 +15,11 @@ void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
 
 void MOpenGLView::closeEvent(QCloseEvent *event) {
     this->hide();
+    // clear undo and redo
+    klm::command::command_stack::shared_instance()->clear();
+    // release render process
+    render_process_manager::get_shared_instance()->release_render();
+    // release scene
     if (NULL != this->main_scene)
         delete this->main_scene;
     this->main_scene = NULL;
@@ -48,6 +53,8 @@ MOpenGLView::~MOpenGLView() {
             }
         shader_mgr->shaders.clear();
     }
+
+    klm::command::command_stack::shared_instance()->clear();
 }
 
 void MOpenGLView::do_init() {
@@ -69,6 +76,12 @@ void MOpenGLView::do_init() {
 
     // create sketch and scene
     this->create_scene();
+    // test codes
+//    if (gl3d_global_param::shared_instance()->old_sketch_test != NULL)
+//        this->sketch = (klm::design::scheme *) gl3d_global_param::shared_instance()->old_sketch_test;
+//    else
+//        this->sketch = new klm::design::scheme(this->main_scene);
+//    gl3d_global_param::shared_instance()->old_sketch_test = this->sketch;
     this->sketch = new klm::design::scheme(this->main_scene);
     this->sketch->set_attached_scene(this->main_scene);
     this->main_scene->set_attached_sketch(this->sketch);
