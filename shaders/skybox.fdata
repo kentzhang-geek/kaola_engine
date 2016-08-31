@@ -23,12 +23,11 @@ uniform bool gl3d_t_specular_enable;
 
 // light
 uniform float shininess;
-uniform float param_x;
 
 void main() {
 #if 0 // for test
 #endif
-    
+
     gl_FragColor = texture2D(gl3d_texture_ambient, text_coord) +
     texture2D(gl3d_texture_diffuse, text_coord)  +
     texture2D(gl3d_texture_specular, text_coord) ;

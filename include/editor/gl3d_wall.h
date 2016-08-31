@@ -85,6 +85,10 @@ namespace gl3d {
     GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *>);
     GL3D_UTILS_PROPERTY_GET_POINTER(relate_rooms, QSet<gl3d::room *>);
     GL3D_UTILS_PROPERTY(fixed, bool);
+
+        // pick
+        GL3D_UTILS_PROPERTY(is_picked, bool );
+
         QMap<int, hole *> holes_on_this_wall;
 
         void calculate_mesh();
@@ -184,6 +188,7 @@ namespace gl3d {
         klm::Surface * ground;
         QSet<gl3d::gl3d_wall *> relate_walls;
         std::string name;
+        void set_picked(bool enable);
     };
 }
 

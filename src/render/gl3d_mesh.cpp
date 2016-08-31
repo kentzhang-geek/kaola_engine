@@ -20,7 +20,7 @@ void gl3d::mesh::init() {
     this->texture_repeat = false;
     this->points_data = NULL;
     this->indecis = NULL;
-    this->is_blink = true;
+    this->is_blink = false;
 }
 
 gl3d::mesh::~mesh() {

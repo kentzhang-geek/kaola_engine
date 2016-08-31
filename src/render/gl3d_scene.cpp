@@ -394,12 +394,13 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
 
         if (p_mesh->get_is_blink()) {  // obj 拾取要做的一些事
+            float xtmp = QDateTime::currentDateTime().time().msecsSinceStartOfDay();
             GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                    (pro, "x_factor"), 0.5 + 0.5 * sin(QDateTime::currentMSecsSinceEpoch() / 100.0f));
+                    (pro, "param_x"), 0.75 + 0.25 * sin(xtmp / 200.0f));
         }
         else {
             GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                    (pro, "x_factor"), 1.0);
+                    (pro, "param_x"), 1.0);
         }
 
         // 多重纹理的绑定与绘制

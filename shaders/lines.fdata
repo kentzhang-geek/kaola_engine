@@ -46,6 +46,10 @@ uniform mat4 unpvm;
 
 void main() {
     gl_FragColor = texture2D(gl3d_texture_diffuse, text_coord);
+    // pick
+    float tmp = gl_FragColor.w;
+    gl_FragColor = gl_FragColor * param_x;
+    gl_FragColor.w = tmp;
     // gl_FragColor.a = 1.0;
     // TEST origin Color
   //  gl_FragColor = color;

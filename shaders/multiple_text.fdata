@@ -31,12 +31,12 @@ void main() {
 	gl_FragColor += (0.3 + 0.7 * df) * (texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor);
 	gl_FragColor += sf * (texture2D(gl3d_texture_specular, text_coord) + mtlSpecularColor);
     // for picking
-	gl_FragColor = gl_FragColor/param_x;
+	gl_FragColor = gl_FragColor * param_x;
     gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
     gl_FragColor.w = 1.0;
 	// + texture2D(gl3d_texture_diffuse, text_coord);
 #endif
-    
+
     // gl_FragColor = texture2D(gl3d_texture_diffuse, text_coord);
     // 0.7 * clamp((texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor), 0.0, 1.0) - 0.1;
     // gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);

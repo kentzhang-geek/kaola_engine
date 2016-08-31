@@ -802,6 +802,15 @@ void gl3d_wall::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
          it++) {
         gl3d::surface_to_mesh(*it, ms);
     }
+
+    Q_FOREACH(gl3d::mesh * ims, ms) {
+            if (this->is_picked) {
+                ims->set_is_blink(true);
+            }
+            else {
+                ims->set_is_blink(false);
+            }
+        }
 }
 
 void gl3d_wall::get_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {

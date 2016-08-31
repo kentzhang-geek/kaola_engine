@@ -226,7 +226,7 @@ void main() {
     out_color = vec4(hsi2rgb(hsi), out_color.w);
 
     // for picking
-    out_color = out_color/param_x;
+    out_color = out_color * param_x;
 
     // clamp values
     out_color = clamp(out_color, 0.0, 1.0);
