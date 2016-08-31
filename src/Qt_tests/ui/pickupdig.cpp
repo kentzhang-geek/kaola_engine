@@ -29,7 +29,22 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
         initBasicSchemeInfo();
     }
 
-
+    // pick
+    switch (pickUpObj->get_obj_type()) {
+        case gl3d::abstract_object::type_wall : {
+            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+            w->set_is_picked(true);
+            break;
+    }
+    case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
+            gl3d::room * r = skt->get_room(this->coord_on_screen);
+            r->set_picked(true);
+            break;
+    }
+        default:
+            break;
+    }
 
     QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
     layout->addWidget(baseWidget);                      //加入baseWidget
@@ -37,6 +52,26 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
     layout->setSpacing(6);                              //窗口部件之间间隔大小
     layout->setMargin(5);
     setLayout(layout);                                  //加载到窗体上
+}
+
+PickupDig::~PickupDig() {
+    // pick
+    switch (pickUpObj->get_obj_type()) {
+    case gl3d::abstract_object::type_wall : {
+            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+            w->set_is_picked(false);
+            break;
+    }
+    case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
+            gl3d::room * r = skt->get_room(this->coord_on_screen);
+            r->set_picked(false);
+            break;
+    }
+        default:
+            break;
+    }
+
 }
 
 //墙

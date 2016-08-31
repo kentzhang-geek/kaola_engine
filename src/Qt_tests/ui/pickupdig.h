@@ -20,6 +20,7 @@ class PickupDig:public QDialog
 public:
     PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
               glm::vec2 cd_scr);
+    ~PickupDig();
 
 private slots:
     void slotDoubleSpinbox_Slider();

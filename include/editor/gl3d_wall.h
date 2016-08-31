@@ -44,7 +44,7 @@ namespace klm {
 }
 
 namespace gl3d {
-    void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct);
+    void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct, bool picked = false);
     void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
 
     class gl3d_wall;
@@ -188,7 +188,11 @@ namespace gl3d {
         klm::Surface * ground;
         QSet<gl3d::gl3d_wall *> relate_walls;
         std::string name;
-        void set_picked(bool enable);
+        void set_picked(bool on_off);
+        bool get_picked();
+
+    private:
+        bool picked;
     };
 }
 

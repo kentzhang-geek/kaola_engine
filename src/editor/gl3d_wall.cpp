@@ -52,6 +52,7 @@ void gl3d_wall::init() {
     this->fixed = false;
     this->set_obj_type(this->type_wall);
     this->relate_rooms.clear();
+    this->is_picked = false;
 }
 
 gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_hight) {
@@ -662,7 +663,7 @@ bool gl3d_wall::set_length(float len) {
 #define BOUND_MIN_DEFAULT 0.0f
 
 void gl3d::surface_to_mesh(klm::Surface *sfc,
-                           QVector<gl3d::mesh *> &vct) {
+                           QVector<gl3d::mesh *> &vct, bool picked) {
     // process local verticles
     // create vertex buffer
     glm::vec3 bnd_max(BOUND_MIN_DEFAULT);
@@ -709,6 +710,7 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
         m->set_texture_repeat(true);
+        m->set_is_blink(picked);
         vct.push_back(m);
     }
 
@@ -755,6 +757,7 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
         m->set_bounding_value_max(bnd_max);
         m->set_bounding_value_min(bnd_min);
         m->set_texture_repeat(true);
+        m->set_is_blink(picked);
         vct.push_back(m);
         // clean env
         delete pts;
@@ -764,7 +767,7 @@ void gl3d::surface_to_mesh(klm::Surface *sfc,
     // process sub surface
     if ((sfc->getSurfaceCnt() > 0) && (sfc->isSurfaceVisible())) {
         for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
-            surface_to_mesh(sfc->getSubSurface(i), vct);
+            surface_to_mesh(sfc->getSubSurface(i), vct, picked);
         }
     }
     return;
@@ -1114,6 +1117,18 @@ room::room() {
     this->ground = NULL;
     this->name = "";
     this->relate_walls.clear();
+    this->picked = false;
+}
+
+void room::set_picked(bool on_off) {
+    this->picked = on_off;
+    Q_FOREACH(gl3d_wall * wit, this->relate_walls) {
+            wit->set_is_picked(on_off);
+        }
+}
+
+bool room::get_picked() {
+    return this->picked;
 }
 
 room::~room() {

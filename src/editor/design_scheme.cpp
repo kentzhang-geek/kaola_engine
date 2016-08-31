@@ -78,7 +78,7 @@ void scheme::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
         return;
     }
     Q_FOREACH(gl3d::room *rit, this->rooms) {
-            gl3d::surface_to_mesh(rit->ground, ms);
+            gl3d::surface_to_mesh(rit->ground, ms, rit->get_picked());
         }
 
     Q_FOREACH(gl3d::mesh *mit, ms) {
