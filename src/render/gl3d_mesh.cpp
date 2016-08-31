@@ -20,6 +20,7 @@ void gl3d::mesh::init() {
     this->texture_repeat = false;
     this->points_data = NULL;
     this->indecis = NULL;
+    this->is_blink = true;
 }
 
 gl3d::mesh::~mesh() {
@@ -65,7 +66,7 @@ gl3d::mesh::mesh(void * in_p) {
             this->points_data[i].normal_y = as_mesh->mNormals[i].y;
             this->points_data[i].normal_z = as_mesh->mNormals[i].z;
         }
-        // for bounding value
+        // for bounding value , TODO : bounding box seems have BUG
         this->bounding_value_max.x = (this->points_data[i].vertex_x > this->bounding_value_max.x) ? this->points_data[i].vertex_x : this->bounding_value_max.x;
         this->bounding_value_max.y = (this->points_data[i].vertex_y > this->bounding_value_max.y) ? this->points_data[i].vertex_y : this->bounding_value_max.y;
         this->bounding_value_max.z = (this->points_data[i].vertex_z > this->bounding_value_max.z) ? this->points_data[i].vertex_z : this->bounding_value_max.z;

@@ -16,6 +16,7 @@
 #include "assimp/DefaultLogger.hpp"
 #include "kaola_engine/gl3d_framebuffer.hpp"
 #include "utils/gl3d_lock.h"
+#include <QDateTime>
 
 std::string gl3d_sandbox_path;
 
@@ -374,14 +375,6 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
             (GL3D_GL()->glGetUniformLocation
              (pro, "normalMtx"),
              1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
-    if (obj->get_pick_flag()) {  // obj 拾取要做的一些事
-        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                               (pro, "param_x"), 0.5);
-    }
-    else {
-        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
-                               (pro, "param_x"), 1.0);
-    }
 
     QVector<mesh *> mss;
     mss.clear();
@@ -399,7 +392,16 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         // set buffers
         GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
         GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
-        
+
+        if (p_mesh->get_is_blink()) {  // obj 拾取要做的一些事
+            GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                    (pro, "x_factor"), 0.5 + 0.5 * sin(QDateTime::currentMSecsSinceEpoch() / 100.0f));
+        }
+        else {
+            GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                    (pro, "x_factor"), 1.0);
+        }
+
         // 多重纹理的绑定与绘制
         try {
             mts.value(p_mesh->material_index)->use_this(pro);
