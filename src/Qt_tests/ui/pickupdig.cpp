@@ -55,6 +55,9 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
 }
 
 PickupDig::~PickupDig() {
+    if (this->pickUpObjID < 0)
+        return;
+
     // pick
     switch (pickUpObj->get_obj_type()) {
     case gl3d::abstract_object::type_wall : {
@@ -184,6 +187,37 @@ void PickupDig::initBasicSchemeInfo() {
     cbo->addItem(QWidget::tr("yantai"));
     cbo->addItem(QWidget::tr("chuwujian"));
 
+    // calculate current index
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        // TODO : 房间命名
+        gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
+        QVector<QString> vss;
+        vss.push_back(QWidget::tr("Unname"));
+        vss.push_back(QWidget::tr("keting"));
+        vss.push_back(QWidget::tr("cangting"));
+        vss.push_back(QWidget::tr("zhuwo"));
+        vss.push_back(QWidget::tr("ciwo"));
+        vss.push_back(QWidget::tr("shufang"));
+        vss.push_back(QWidget::tr("chufang"));
+        vss.push_back(QWidget::tr("weishengjian"));
+        vss.push_back(QWidget::tr("yantai"));
+        vss.push_back(QWidget::tr("chuwujian"));
+        for (int i = 0; i < vss.size(); i++) {
+            if (vss.at(i) == QString::fromStdString(r->name))
+                cbo->setCurrentIndex(i);
+        }
+    }
+
+    // connect cbo change evnets
+    connect(cbo, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            [=](const QString &text) {
+                if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+                    // TODO : 房间命名
+                    gl3d::room *r = this->sketch->get_room(this->coord_on_screen);
+                    r->name = text.toStdString();
+                }
+            });
+
     QHBoxLayout *hlayoutButtons = new QHBoxLayout;
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
     hlayoutButtons->addWidget(delButton);
@@ -259,6 +293,8 @@ void PickupDig::on_delete_obj() {
         gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
         this->sketch->delete_room(r);
     }
+    this->pickUpObj = NULL;
+    this->pickUpObjID = -1;
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }

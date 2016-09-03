@@ -56,31 +56,31 @@
 <context>
     <name>PickupDig</name>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="53"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="89"/>
         <source>长度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="62"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="76"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="90"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="98"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="112"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="126"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="67"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="103"/>
         <source>厚度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="81"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="117"/>
         <source>高度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="138"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="174"/>
         <source>RoomName</source>
-        <translation>房间名：</translation>
+        <translation>房间名</translation>
     </message>
 </context>
 <context>
@@ -111,19 +111,64 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="140"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="176"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="192"/>
         <source>Unname</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="141"/>
-        <source>123</source>
-        <translation type="unfinished"></translation>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="177"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="193"/>
+        <source>keting</source>
+        <translation>客厅</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="142"/>
-        <source>223</source>
-        <translation type="unfinished"></translation>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="178"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="194"/>
+        <source>cangting</source>
+        <translation>餐厅</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="179"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="195"/>
+        <source>zhuwo</source>
+        <translation>主卧</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="180"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="196"/>
+        <source>ciwo</source>
+        <translation>次卧</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="181"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="197"/>
+        <source>shufang</source>
+        <translation>书房</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="182"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="198"/>
+        <source>chufang</source>
+        <translation>厨房</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="183"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="199"/>
+        <source>weishengjian</source>
+        <translation>卫生间</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="184"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="200"/>
+        <source>yantai</source>
+        <translation>阳台</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="185"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="201"/>
+        <source>chuwujian</source>
+        <translation>储物间</translation>
     </message>
 </context>
 <context>
@@ -187,6 +232,7 @@ color: rgb(245, 245, 245);
     </message>
     <message>
         <location filename="src/Qt_tests/drawhomewin.ui" line="749"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1228"/>
         <source>自由绘制</source>
         <translation type="unfinished"></translation>
     </message>
@@ -226,38 +272,43 @@ color: rgb(245, 245, 245);
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1284"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1254"/>
+        <source>梁</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1391"/>
         <source>导入户型图</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1341"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1448"/>
         <source>户型翻转</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1389"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1496"/>
         <source> 撤销</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1430"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1537"/>
         <source>恢复</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1472"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1579"/>
         <source>清空画布</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1526"/>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1633"/>
         <source>导出图纸</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/drawhomewin.ui" line="1570"/>
-        <source> 进入3D模式</source>
+        <location filename="src/Qt_tests/drawhomewin.ui" line="1684"/>
+        <source>去装修</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

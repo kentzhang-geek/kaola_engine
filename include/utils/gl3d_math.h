@@ -89,6 +89,18 @@ namespace gl3d {
         glm::vec3 convert_vec2_to_vec3(glm::vec2 a);
 
         template <typename T>
+        void get_bounding(QVector<T> tss, T & t_max, T & t_min) {
+            t_max = tss.at(0);
+            t_min = tss.at(0);
+            Q_FOREACH(T tit, tss) {
+                    for (int i = 0; i < tit.length(); i++) {
+                        t_max[i] = (tit[i] > t_max[i]) ? tit[i] : t_max[i];
+                        t_min[i] = (tit[i] < t_min[i]) ? tit[i] : t_min[i];
+                    }
+                }
+        }
+
+        template <typename T>
         bool has_near_point_in_vector(QVector<T> pts, T pt) {
             Q_FOREACH(T it, pts) {
                     if (glm::length(it - pt) < 0.001)
