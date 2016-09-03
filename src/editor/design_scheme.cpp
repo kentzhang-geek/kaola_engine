@@ -340,7 +340,7 @@ void scheme::recalculate_rooms() {
             Arrangement_2::Ccb_halfedge_const_circulator cucir = cir;
             QVector<glm::vec3> grd;
             grd.clear();
-            room *r = new room();
+            room *r = NULL;
             do {
                 glm::vec3 pt = arr_point_to_vec3(cucir->target()->point());
                 if ((grd.size() >= 2) && (pt == grd.at(grd.size() - 2))) {
@@ -364,8 +364,7 @@ void scheme::recalculate_rooms() {
                     grd.removeFirst();
                 }
                 try{
-                    r->ground = new klm::Surface(grd);
-                    r->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
+                    r = new room(grd);
                     Q_FOREACH(glm::vec3 pit, grd) {
                             Q_FOREACH(gl3d_wall * wit, this->walls) {
                                     if (math::line_2d(wit->get_start_point(),
@@ -479,7 +478,24 @@ bool scheme::draw_assistant_image(QImage *img) {
                 pt.drawText(draw_pos.x, draw_pos.y, QString::asprintf("%.2f", wit->get_length()).append("M"));
             }
         }
-    // TODO : draw length and room name to image
+    // TODO : room name to image
+    Q_FOREACH(room * rit, this->rooms) {
+            if (rit->name.size() > 0) {
+                glm::vec2 pos = glm::vec2(0.0f);
+                Q_FOREACH(glm::vec3 pit, rit->edge_points) {
+                        pos += this->attached_scene->project_point_to_screen(pit);
+                    }
+                pos = pos / rit->edge_points.size();
+                if (check_coord_on_img(pos, img)) {
+                    QPainter pt(img);
+                    QFont f;
+                    f.setPixelSize(24);
+                    pt.setFont(f);
+                    pt.setPen(QColor(255, 0, 0, 255));
+                    pt.drawText(pos.x, pos.y, QString::fromStdString(rit->name));
+                }
+            }
+        }
     return false;
 }
 

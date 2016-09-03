@@ -183,9 +183,10 @@ namespace gl3d {
 
     class room : public utils::noncopyable {
     public:
-        room();
+        room(QVector<glm::vec3> edge_points);
         ~room();
         klm::Surface * ground;
+        QVector<glm::vec3> edge_points;
         QSet<gl3d::gl3d_wall *> relate_walls;
         std::string name;
         void set_picked(bool on_off);

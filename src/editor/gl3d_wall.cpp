@@ -1113,8 +1113,10 @@ bool hole::is_valid() {
     return pa_locate && pb_locate;
 }
 
-room::room() {
-    this->ground = NULL;
+room::room(QVector<glm::vec3> e_pts) {
+    this->ground = new Surface(e_pts);
+    this->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
+    this->edge_points = e_pts;
     this->name = "";
     this->relate_walls.clear();
     this->picked = false;
