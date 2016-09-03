@@ -1255,3 +1255,64 @@ bool gl3d_wall::delete_wall_in_wall(gl3d_wall *&wall_target, gl3d_wall *&wall_rm
 
     return false;
 }
+
+bool gl3d_wall::set_material(std::string res_id) {
+    Q_FOREACH(klm::Surface * sit, this->sfcs) {
+            sit->setSurfaceMaterial(new klm::Surfacing(res_id));
+        }
+
+    return true;
+}
+
+void room::get_relate_surfaces(QSet<klm::Surface *> &surfaces) {
+    // TODO : test get relate surfaces
+    Q_FOREACH(gl3d_wall * wit, this->relate_walls) {
+            for (int i = 0; i < (this->edge_points.size() - 1); i++) {
+                if (math::point_near_point(math::convert_vec2_to_vec3(wit->get_start_point()),
+                                           this->edge_points[i]) &&
+                    math::point_near_point(math::convert_vec2_to_vec3(wit->get_end_point()),
+                                           this->edge_points[i + 1])) {
+                    // get left sfc
+                    surfaces.insert(wit->get_sfcs()->at(0));
+                }
+                else if (math::point_near_point(math::convert_vec2_to_vec3(wit->get_start_point()),
+                                                this->edge_points[i + 1]) &&
+                         math::point_near_point(math::convert_vec2_to_vec3(wit->get_end_point()),
+                                                this->edge_points[i])) {
+                    // get right sfc
+                    surfaces.insert(wit->get_sfcs()->at(1));
+                }
+                else if (math::point_near_point(math::convert_vec2_to_vec3(wit->get_start_point()),
+                                                this->edge_points.last()) &&
+                         math::point_near_point(math::convert_vec2_to_vec3(wit->get_end_point()),
+                                                this->edge_points.first())) {
+                    // get left sfc
+                    surfaces.insert(wit->get_sfcs()->at(0));
+                }
+                else if (math::point_near_point(math::convert_vec2_to_vec3(wit->get_start_point()),
+                                                this->edge_points.first()) &&
+                         math::point_near_point(math::convert_vec2_to_vec3(wit->get_end_point()),
+                                                this->edge_points.last())) {
+                    // get right sfc
+                    surfaces.insert(wit->get_sfcs()->at(1));
+                }
+            }
+        }
+
+    return;
+}
+
+void room::clear_relate_surfaces(QSet<klm::Surface *> &surfaces) {
+    surfaces.clear();
+    return;;
+}
+
+void room::set_material(std::string res_id) {
+    QSet<klm::Surface *> ss;
+    this->get_relate_surfaces(ss);
+    Q_FOREACH(klm::Surface *sit, ss) {
+            sit->setSurfaceMaterial(new klm::Surfacing(res_id));
+        }
+
+    return;
+}

@@ -145,6 +145,9 @@ namespace gl3d {
         bool get_coord_on_wall(gl3d::scene *sce, glm::vec2 coord_on_screen, glm::vec3 &out_point_on_wall,
                                glm::vec3 &out_point_normal);
 
+        // set material of this wall
+        bool set_material(std::string res_id);
+
     private:
         void release_last_data();
 
@@ -191,6 +194,10 @@ namespace gl3d {
         std::string name;
         void set_picked(bool on_off);
         bool get_picked();
+
+        void get_relate_surfaces(QSet<klm::Surface *> &surfaces);
+        void clear_relate_surfaces(QSet<klm::Surface *> &surfaces);
+        void set_material(std::string res_id);
 
     private:
         bool picked;
