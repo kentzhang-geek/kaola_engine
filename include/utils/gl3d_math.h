@@ -101,6 +101,34 @@ namespace gl3d {
         }
 
         template <typename T>
+        T get_left_top_vertex(QVector<T> tss) {
+            T t_ret = tss.at(0);
+            Q_FOREACH(T tit, tss) {
+                    if (tit.length() == 2) {
+                        if ((tit[1] < t_ret[1]) || ((tit[1] == t_ret[1]) && (tit[0] >= t_ret[0])))
+                            t_ret = tit;
+                    }
+                    if (tit.length() == 3) {
+                        if ((tit[2] > t_ret[2]) || ((tit[2] == t_ret[2]) && (tit[0] >= t_ret[0])))
+                            t_ret = tit;
+                    }
+                }
+
+            return t_ret;
+        }
+
+        template <typename T>
+        T get_center_vertex(QVector<T> tss) {
+            T t_ret(0.0f);
+            Q_FOREACH(T tit, tss) {
+                    t_ret += tit;
+                }
+            t_ret = t_ret / tss.size();
+
+            return t_ret;
+        }
+
+        template <typename T>
         bool has_near_point_in_vector(QVector<T> pts, T pt) {
             Q_FOREACH(T it, pts) {
                     if (glm::length(it - pt) < 0.001)

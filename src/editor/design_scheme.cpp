@@ -502,15 +502,13 @@ bool scheme::draw_assistant_image(QImage *img) {
     Q_FOREACH(room * rit, this->rooms) {
             if (rit->name.size() > 0) {
                 glm::vec2 pos;
+                glm::vec3 pos_3d = math::get_left_top_vertex(rit->edge_points);
                 glm::vec3 b_max;
                 glm::vec3 b_min;
                 glm::vec2 s_max;
                 glm::vec2 s_min;
                 math::get_bounding(rit->edge_points, b_max, b_min);
-                s_max = this->attached_scene->project_point_to_screen(b_max);
-                s_min = this->attached_scene->project_point_to_screen(b_min);
-                float tmp_len = glm::length(s_max - s_min);
-                pos = s_max + tmp_len * 0.05f;
+                pos = this->attached_scene->project_point_to_screen((b_max + b_min) / 2.0f);
                 if (check_coord_on_img(pos, img)) {
                     QPainter pt(img);
                     QFont f;
