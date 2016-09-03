@@ -134,13 +134,33 @@ bool object::init(char * filename) {
     }
     
     // process boundings
+    this->this_property.bounding_value_max = this->meshes.at(0)->bounding_value_max;
+    this->this_property.bounding_value_min = this->meshes.at(0)->bounding_value_min;
     for (auto it = this->meshes.begin(); it != this->meshes.end(); it++) {
-        this->this_property.bounding_value_max.x = (this->this_property.bounding_value_max.x > (*it)->bounding_value_max.x) ? this->this_property.bounding_value_max.x : (*it)->bounding_value_max.x;
-        this->this_property.bounding_value_max.y = (this->this_property.bounding_value_max.y > (*it)->bounding_value_max.y) ? this->this_property.bounding_value_max.y : (*it)->bounding_value_max.y;
-        this->this_property.bounding_value_max.z = (this->this_property.bounding_value_max.z > (*it)->bounding_value_max.z) ? this->this_property.bounding_value_max.z : (*it)->bounding_value_max.z;
-        this->this_property.bounding_value_min.x = (this->this_property.bounding_value_min.x < (*it)->bounding_value_min.x) ? this->this_property.bounding_value_min.x : (*it)->bounding_value_min.x;
-        this->this_property.bounding_value_min.y = (this->this_property.bounding_value_min.y < (*it)->bounding_value_min.y) ? this->this_property.bounding_value_min.y : (*it)->bounding_value_min.y;
-        this->this_property.bounding_value_min.z = (this->this_property.bounding_value_min.z < (*it)->bounding_value_min.z) ? this->this_property.bounding_value_min.z : (*it)->bounding_value_min.z;
+        this->this_property.bounding_value_max.x = (this->this_property.bounding_value_max.x >
+                                                    (*it)->bounding_value_max.x)
+                                                   ? this->this_property.bounding_value_max.x
+                                                   : (*it)->bounding_value_max.x;
+        this->this_property.bounding_value_max.y = (this->this_property.bounding_value_max.y >
+                                                    (*it)->bounding_value_max.y)
+                                                   ? this->this_property.bounding_value_max.y
+                                                   : (*it)->bounding_value_max.y;
+        this->this_property.bounding_value_max.z = (this->this_property.bounding_value_max.z >
+                                                    (*it)->bounding_value_max.z)
+                                                   ? this->this_property.bounding_value_max.z
+                                                   : (*it)->bounding_value_max.z;
+        this->this_property.bounding_value_min.x = (this->this_property.bounding_value_min.x <
+                                                    (*it)->bounding_value_min.x)
+                                                   ? this->this_property.bounding_value_min.x
+                                                   : (*it)->bounding_value_min.x;
+        this->this_property.bounding_value_min.y = (this->this_property.bounding_value_min.y <
+                                                    (*it)->bounding_value_min.y)
+                                                   ? this->this_property.bounding_value_min.y
+                                                   : (*it)->bounding_value_min.y;
+        this->this_property.bounding_value_min.z = (this->this_property.bounding_value_min.z <
+                                                    (*it)->bounding_value_min.z)
+                                                   ? this->this_property.bounding_value_min.z
+                                                   : (*it)->bounding_value_min.z;
     }
     
     int tex_cnt = scene->mNumMaterials;
