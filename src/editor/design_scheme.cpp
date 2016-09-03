@@ -303,8 +303,13 @@ static inline glm::vec2 arr_point_to_vec2(Point_2 pt) {
 void scheme::recalculate_rooms() {
     // release old rooms
     bool has_new_sfc = false;
-    QMap<glm::vec3, QString> room_and_names;
+    QVector<QPair<glm::vec3, QString>> room_and_names;
     Q_FOREACH(room *const &rit, this->rooms) {
+            glm::vec3 b_max;
+            glm::vec3 b_min;
+            math::get_bounding(rit->edge_points, b_max, b_min);
+            glm::vec3 center = (b_max + b_min) / 2.0f;
+            room_and_names.push_back(QPair<glm::vec3, QString>(center, QString::fromStdString(rit->name)));
             delete rit;
         }
     this->rooms.clear();
@@ -366,6 +371,20 @@ void scheme::recalculate_rooms() {
                 }
                 try{
                     r = new room(grd);
+                    // check room name
+                    for (auto it = room_and_names.begin();
+                            it != room_and_names.end();
+                            it++) {
+                        glm::vec3 b_max;
+                        glm::vec3 b_min;
+                        math::get_bounding(r->edge_points, b_max, b_min);
+                        glm::vec3 center = (b_max + b_min) / 2.0f;
+                        if (math::point_near_point(it->first, center)) {
+                            r->name = it->second.toStdString();
+                        }
+                    }
+
+                    // insert relate walls
                     Q_FOREACH(glm::vec3 pit, grd) {
                             Q_FOREACH(gl3d_wall * wit, this->walls) {
                                     if (math::line_2d(wit->get_start_point(),
