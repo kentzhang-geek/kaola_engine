@@ -230,6 +230,8 @@ public:
 
     void render() {
         gl3d::scene *one_scene = this->get_attached_scene();
+        one_scene->get_assistant_image()->fill(0);
+        one_scene->get_attached_sketch()->draw_assistant_image(one_scene->get_assistant_image());
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
 
         // 选择全局渲染器渲染地面网格

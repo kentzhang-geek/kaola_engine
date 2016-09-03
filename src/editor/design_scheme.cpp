@@ -453,6 +453,36 @@ gl3d::abstract_object * scheme::get_obj(int id) {
     return NULL;
 }
 
+static inline bool check_coord_on_img(glm::vec2 pos, QImage * img) {
+    if ((pos.x < 0) || (pos.x > img->width()))
+        return false;
+    if ((pos.y < 0) || (pos.y > img->height()))
+        return false;
+
+    return true;
+}
+
+bool scheme::draw_assistant_image(QImage *img) {
+    // draw length of wall
+    Q_FOREACH(gl3d_wall * wit, this->walls) {
+            glm::vec2 st;
+            glm::vec2 ed;
+            glm::vec2 draw_pos;
+            wit->get_coord_on_screen(this->attached_scene, st, ed);
+            draw_pos = (st + ed) / 2.0f;
+            if (check_coord_on_img(draw_pos, img)) {
+                QPainter pt(img);
+                QFont f;
+                f.setPixelSize(24);
+                pt.setFont(f);
+                pt.setPen(QColor(255, 0, 0, 255));
+                pt.drawText(draw_pos.x, draw_pos.y, QString::asprintf("%.2f", wit->get_length()).append("M"));
+            }
+        }
+    // TODO : draw length and room name to image
+    return false;
+}
+
 // test code
 #if 0
 

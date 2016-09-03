@@ -2,6 +2,10 @@
 #define DESIGN_SCHEME_H
 
 #include <iostream>
+#include <QImage>
+#include <QPainter>
+#include <QtCore>
+#include <QtGui>
 #include "kaola_engine/gl3d_scene.h"
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/gl3d_wall.h"
@@ -52,6 +56,9 @@ namespace klm {
             bool add_obj(int id, abstract_object * obj);
             bool del_obj(int id);
             gl3d::abstract_object * get_obj(int id);
+
+            // draw assistant image
+            bool draw_assistant_image(QImage * img);
 
         private:
             void init();
