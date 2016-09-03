@@ -20,6 +20,7 @@ void gl3d::mesh::init() {
     this->texture_repeat = false;
     this->points_data = NULL;
     this->indecis = NULL;
+    this->is_blink = false;
 }
 
 gl3d::mesh::~mesh() {
@@ -51,6 +52,13 @@ gl3d::mesh::mesh(void * in_p) {
     }
     
     unsigned int i;
+    // init boundings
+    this->bounding_value_max.x = as_mesh->mVertices[0].x;
+    this->bounding_value_max.y = as_mesh->mVertices[0].y;
+    this->bounding_value_max.z = as_mesh->mVertices[0].z;
+    this->bounding_value_min.x = as_mesh->mVertices[0].x;
+    this->bounding_value_min.y = as_mesh->mVertices[0].y;
+    this->bounding_value_min.z = as_mesh->mVertices[0].z;
     // vertexes
     this->points_data = (obj_points *)malloc(sizeof(obj_points) * as_mesh->mNumVertices);
     this->num_pts = as_mesh->mNumVertices;
@@ -65,13 +73,19 @@ gl3d::mesh::mesh(void * in_p) {
             this->points_data[i].normal_y = as_mesh->mNormals[i].y;
             this->points_data[i].normal_z = as_mesh->mNormals[i].z;
         }
-        // for bounding value
-        this->bounding_value_max.x = (this->points_data[i].vertex_x > this->bounding_value_max.x) ? this->points_data[i].vertex_x : this->bounding_value_max.x;
-        this->bounding_value_max.y = (this->points_data[i].vertex_y > this->bounding_value_max.y) ? this->points_data[i].vertex_y : this->bounding_value_max.y;
-        this->bounding_value_max.z = (this->points_data[i].vertex_z > this->bounding_value_max.z) ? this->points_data[i].vertex_z : this->bounding_value_max.z;
-        this->bounding_value_min.x = (this->points_data[i].vertex_x < this->bounding_value_min.x) ? this->points_data[i].vertex_x : this->bounding_value_min.x;
-        this->bounding_value_min.y = (this->points_data[i].vertex_y < this->bounding_value_min.y) ? this->points_data[i].vertex_y : this->bounding_value_min.y;
-        this->bounding_value_min.z = (this->points_data[i].vertex_z < this->bounding_value_min.z) ? this->points_data[i].vertex_z : this->bounding_value_min.z;
+        // for bounding value , TODO : bounding box seems have BUG
+        this->bounding_value_max.x = (this->points_data[i].vertex_x > this->bounding_value_max.x)
+                                     ? this->points_data[i].vertex_x : this->bounding_value_max.x;
+        this->bounding_value_max.y = (this->points_data[i].vertex_y > this->bounding_value_max.y)
+                                     ? this->points_data[i].vertex_y : this->bounding_value_max.y;
+        this->bounding_value_max.z = (this->points_data[i].vertex_z > this->bounding_value_max.z)
+                                     ? this->points_data[i].vertex_z : this->bounding_value_max.z;
+        this->bounding_value_min.x = (this->points_data[i].vertex_x < this->bounding_value_min.x)
+                                     ? this->points_data[i].vertex_x : this->bounding_value_min.x;
+        this->bounding_value_min.y = (this->points_data[i].vertex_y < this->bounding_value_min.y)
+                                     ? this->points_data[i].vertex_y : this->bounding_value_min.y;
+        this->bounding_value_min.z = (this->points_data[i].vertex_z < this->bounding_value_min.z)
+                                     ? this->points_data[i].vertex_z : this->bounding_value_min.z;
         if (has_text) {
             // KENT TODO : 暂时只支持每个顶点一个纹理坐标
             this->points_data[i].texture_x = as_mesh->mTextureCoords[0][i].x;
@@ -137,6 +151,9 @@ gl3d::mesh::mesh(obj_points * pts, int number_of_points,
 }
 
 void gl3d::mesh::buffer_data() {
+    if (this->data_buffered) {
+        return;
+    }
     // gen vbo
     GL3D_GL()->glGenBuffers(1, &this->vbo);
     GL3D_GL()->glGenBuffers(1, &this->idx);
@@ -190,15 +207,24 @@ gl3d::mesh::mesh(QVector<mesh *> &meshes) {
     this->num_pts = _num_of_vert;
     this->num_idx = _num_of_index;
 
+    // init boundings
+    this->bounding_value_max = meshes.at(0)->bounding_value_max;
+    this->bounding_value_min = meshes.at(0)->bounding_value_min;
     // 复制数据
     for (iter = meshes.begin(); iter != meshes.end(); iter++) {
         // 检测mesh的bouding box
-        this->bounding_value_max.x = (this->bounding_value_max.x > (*iter)->bounding_value_max.x) ? this->bounding_value_max.x : (*iter)->bounding_value_max.x;
-        this->bounding_value_max.y = (this->bounding_value_max.y > (*iter)->bounding_value_max.y) ? this->bounding_value_max.y : (*iter)->bounding_value_max.y;
-        this->bounding_value_max.z = (this->bounding_value_max.z > (*iter)->bounding_value_max.x) ? this->bounding_value_max.z : (*iter)->bounding_value_max.z;
-        this->bounding_value_min.x = (this->bounding_value_min.x < (*iter)->bounding_value_min.x) ? this->bounding_value_min.x : (*iter)->bounding_value_min.x;
-        this->bounding_value_min.y = (this->bounding_value_min.y < (*iter)->bounding_value_min.y) ? this->bounding_value_min.y : (*iter)->bounding_value_min.y;
-        this->bounding_value_min.z = (this->bounding_value_min.z < (*iter)->bounding_value_min.x) ? this->bounding_value_min.z : (*iter)->bounding_value_min.z;
+        this->bounding_value_max.x = (this->bounding_value_max.x > (*iter)->bounding_value_max.x)
+                                     ? this->bounding_value_max.x : (*iter)->bounding_value_max.x;
+        this->bounding_value_max.y = (this->bounding_value_max.y > (*iter)->bounding_value_max.y)
+                                     ? this->bounding_value_max.y : (*iter)->bounding_value_max.y;
+        this->bounding_value_max.z = (this->bounding_value_max.z > (*iter)->bounding_value_max.x)
+                                     ? this->bounding_value_max.z : (*iter)->bounding_value_max.z;
+        this->bounding_value_min.x = (this->bounding_value_min.x < (*iter)->bounding_value_min.x)
+                                     ? this->bounding_value_min.x : (*iter)->bounding_value_min.x;
+        this->bounding_value_min.y = (this->bounding_value_min.y < (*iter)->bounding_value_min.y)
+                                     ? this->bounding_value_min.y : (*iter)->bounding_value_min.y;
+        this->bounding_value_min.z = (this->bounding_value_min.z < (*iter)->bounding_value_min.x)
+                                     ? this->bounding_value_min.z : (*iter)->bounding_value_min.z;
         // 复制点数据
         memcpy
         (this->points_data + _vert_offset_for_index,
@@ -221,7 +247,6 @@ gl3d::mesh::mesh(QVector<mesh *> &meshes) {
         _vert_offset_for_index += (*iter)->num_pts;
     }
     
-//    log_c("now merge output %d points and %d indecis", this->num_pts, this->num_idx);
     return;
 }
 

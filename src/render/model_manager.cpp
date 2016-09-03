@@ -53,7 +53,7 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
         this->available_id =
         ((*iter)->id > this->available_id) ?
         ((*iter)->id) : this->available_id;
-        main_scene->add_obj(QPair<int, gl3d::object *>((*iter)->id, obj_tmp));
+        main_scene->add_obj((*iter)->id, obj_tmp);
     }
 }
 
@@ -91,5 +91,5 @@ void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm
     obj->buffer_data();
     // 添加obj到场景
     this->available_id++;
-    scene->add_obj(QPair<int, gl3d::object *>(this->available_id, obj));
+    scene->add_obj(this->available_id, obj);
 }

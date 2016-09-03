@@ -35,6 +35,8 @@ void object::init() {
     this->set_control_authority(GL3D_OBJ_ENABLE_ALL); //使能所有权限
     // 注意默认绘制权限为普通+阴影+倒影。天空盒与地面是特殊绘制
     this->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
+    this->obj_file_name.clear();
+    this->res_id.clear();
 }
 
 object::object() {
@@ -64,6 +66,7 @@ object::~object() {
 object::object(char * path_to_obj_file) {
     if (!this->init(path_to_obj_file))
         log_c("faild to init from file %s", path_to_obj_file);
+    this->obj_file_name = QString(path_to_obj_file);
     return;
 }
 
@@ -126,19 +129,38 @@ bool object::init(char * filename) {
     this->number_of_meshes = scene->mNumMeshes;
     
     // process meshes
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     for (i = 0; i < scene->mNumMeshes; i++) {
         this->meshes.push_back(new gl3d::mesh((void *)scene->mMeshes[i]));
     }
     
     // process boundings
+    this->this_property.bounding_value_max = this->meshes.at(0)->bounding_value_max;
+    this->this_property.bounding_value_min = this->meshes.at(0)->bounding_value_min;
     for (auto it = this->meshes.begin(); it != this->meshes.end(); it++) {
-        this->this_property.bounding_value_max.x = (this->this_property.bounding_value_max.x > (*it)->bounding_value_max.x) ? this->this_property.bounding_value_max.x : (*it)->bounding_value_max.x;
-        this->this_property.bounding_value_max.y = (this->this_property.bounding_value_max.y > (*it)->bounding_value_max.y) ? this->this_property.bounding_value_max.y : (*it)->bounding_value_max.y;
-        this->this_property.bounding_value_max.z = (this->this_property.bounding_value_max.z > (*it)->bounding_value_max.z) ? this->this_property.bounding_value_max.z : (*it)->bounding_value_max.z;
-        this->this_property.bounding_value_min.x = (this->this_property.bounding_value_min.x < (*it)->bounding_value_min.x) ? this->this_property.bounding_value_min.x : (*it)->bounding_value_min.x;
-        this->this_property.bounding_value_min.y = (this->this_property.bounding_value_min.y < (*it)->bounding_value_min.y) ? this->this_property.bounding_value_min.y : (*it)->bounding_value_min.y;
-        this->this_property.bounding_value_min.z = (this->this_property.bounding_value_min.z < (*it)->bounding_value_min.z) ? this->this_property.bounding_value_min.z : (*it)->bounding_value_min.z;
+        this->this_property.bounding_value_max.x = (this->this_property.bounding_value_max.x >
+                                                    (*it)->bounding_value_max.x)
+                                                   ? this->this_property.bounding_value_max.x
+                                                   : (*it)->bounding_value_max.x;
+        this->this_property.bounding_value_max.y = (this->this_property.bounding_value_max.y >
+                                                    (*it)->bounding_value_max.y)
+                                                   ? this->this_property.bounding_value_max.y
+                                                   : (*it)->bounding_value_max.y;
+        this->this_property.bounding_value_max.z = (this->this_property.bounding_value_max.z >
+                                                    (*it)->bounding_value_max.z)
+                                                   ? this->this_property.bounding_value_max.z
+                                                   : (*it)->bounding_value_max.z;
+        this->this_property.bounding_value_min.x = (this->this_property.bounding_value_min.x <
+                                                    (*it)->bounding_value_min.x)
+                                                   ? this->this_property.bounding_value_min.x
+                                                   : (*it)->bounding_value_min.x;
+        this->this_property.bounding_value_min.y = (this->this_property.bounding_value_min.y <
+                                                    (*it)->bounding_value_min.y)
+                                                   ? this->this_property.bounding_value_min.y
+                                                   : (*it)->bounding_value_min.y;
+        this->this_property.bounding_value_min.z = (this->this_property.bounding_value_min.z <
+                                                    (*it)->bounding_value_min.z)
+                                                   ? this->this_property.bounding_value_min.z
+                                                   : (*it)->bounding_value_min.z;
     }
     
     int tex_cnt = scene->mNumMaterials;
@@ -158,10 +180,8 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only on mesh for test
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, idx_in, num_of_indecis));
-    GL3D_GL()->glBindVertexArray(0);
-    
+
     return true;
 }
 
@@ -171,10 +191,8 @@ bool object::init(obj_points * pts, int number_of_points,
     this->init();
     
     // only one mesh for test
-    GL3D_GL()->glBindVertexArray(this->get_vao());
     this->meshes.push_back(new mesh(pts, number_of_points, indecis, num_of_indecis, txtr, number_of_textures));
-    GL3D_GL()->glBindVertexArray(0);
-    
+
     return true;
 }
 
@@ -197,6 +215,9 @@ void object::buffer_data() {
     this->pre_scale();
 
     // bind vao
+    GLuint tmpvao;
+    GL3D_GL()->glGenVertexArrays(1, &tmpvao);
+    this->set_vao(tmpvao);
     GL3D_GL()->glBindVertexArray(this->get_vao());
 
     gl3d::mesh * p_mesh;

@@ -20,6 +20,7 @@
 
 // Qt Headers
 #include <QVector>
+#include <QString>
 #include <QMap>
 
 #include "glm/glm.hpp"
@@ -193,6 +194,8 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(number_of_meshes, unsigned long long);
         GL3D_UTILS_PROPERTY(data_buffered, bool);
         GL3D_UTILS_PROPERTY(pre_scaled, bool);
+    GL3D_UTILS_PROPERTY(obj_file_name, QString);
+    GL3D_UTILS_PROPERTY(res_id, std::string);
 
         // 缓存数据
         void buffer_data();

@@ -45,8 +45,8 @@ gl3d_general_texture * simple_directional_light::rend_light_pic(
     GL3D_GL()->glDisable(GL_CULL_FACE);
 
     // 遍历所有光源进行绘制
-    for (auto it = scene->get_light_srcs()->begin();
-         it != scene->get_light_srcs()->end();
+    for (auto it = scene->get_attached_sketch()->get_light_srcs()->begin();
+         it != scene->get_attached_sketch()->get_light_srcs()->end();
          it++) {
         // 设置光照参数
         GL3D_GL()->glUseProgram(pro);
@@ -92,7 +92,7 @@ gl3d_general_texture * simple_directional_light::compose_pic(
     current_shader_param->user_data.insert(string("scene"), scene);
     scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL;
     scene->get_property()->global_shader = "light_compose";
-    scene->add_obj(QPair<int, object *>(2333, sobj));
+    scene->add_obj(2333, sobj);
     scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     scene->draw(true);

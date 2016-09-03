@@ -4,57 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl widgets
 
 win32: QMAKE_CXXFLAGS += /MP
 
-PRECOMPILED_HEADER += \
-    include/kaola_engine/gl3d.hpp \
-    include/kaola_engine/gl3d_framebuffer.hpp \
-    include/kaola_engine/gl3d_general_texture.hpp \
-    include/kaola_engine/gl3d_image.hpp \
-    include/kaola_engine/gl3d_material.hpp \
-    include/kaola_engine/gl3d_mesh.h \
-    include/kaola_engine/gl3d_obj_authority.h \
-    include/kaola_engine/gl3d_object.h \
-    include/kaola_engine/gl3d_out_headers.h \
-    include/kaola_engine/gl3d_render_process.hpp \
-    include/kaola_engine/gl3d_scene.h \
-    include/kaola_engine/gl3d_texture.hpp \
-    include/kaola_engine/gl3d_viewer.h \
-    include/kaola_engine/glheaders.h \
-    include/kaola_engine/kaola_engine.h \
-    include/kaola_engine/log.h \
-    include/kaola_engine/model_manager.hpp \
-    include/kaola_engine/mopenglview.h \
-    include/kaola_engine/Program.hpp \
-    include/kaola_engine/Shader.hpp \
-    include/kaola_engine/shader_manager.hpp \
-    src/Qt_tests/mainwindow.h \
-    src/Qt_tests/ray_tracer.h \
-    include/utils/gl3d_scale.h \
-    include/utils/gl3d_global_param.h \
-    include/kaola_engine/gl3d_post_process.h \
-    include/utils/gl3d_utils.h \
-    include/utils/gl3d_post_process_template.h \
-    include/kaola_engine/gl3d_general_light_source.h \
-#    include/editor/klm_surface.h \
-    include/editor/bounding_box.h \
-    src/Qt_tests/drawhomewin.h \
-    include/editor/vertex.h \
-    include/utils/gl3d_path_config.h \
-    src/Qt_tests/ui/pickupdig.h \
-    include/editor/gl3d_wall.h \
-    include/editor/gl_utility.h \
-    include/utils/gl3d_lock.h \
-    include/utils/gl3d_math.h \
-    src/Qt_tests/ui/drawoption.h \
-    src/utils/qui/frmmessagebox.h \
-    src/utils/qui/iconhelper.h \
-    src/utils/qui/myhelper.h \
-    include/editor/gl3d_surface_object.h \
-    include/kaola_engine/gl3d_abstract_object.h \
-    include/editor/surface.h
+TRANSLATIONS += zh.ts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -108,7 +62,12 @@ SOURCES += \
     src/editor/surface.cpp \
     src/editor/merchandise.cpp \
     src/resource_and_network/klm_resource_manager.cpp \
-    src/utils/io_utility.cpp
+    src/utils/io_utility.cpp \
+    src/resource_and_network/global_material.cpp \
+    src/editor/design_scheme.cpp \
+    src/Qt_tests/commands.cpp \
+    src/editor/command.cpp \
+    src/Qt_tests/decoratewin.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -159,14 +118,24 @@ HEADERS  += \
     include/editor/surface.h \
     include/editor/merchandise.h \
     include/resource_and_network/klm_resource_manager.h \
-    include/utils/io_utility.h
+    include/utils/io_utility.h \
+    include/resource_and_network/global_material.h \
+    include/editor/design_scheme.h \
+    src/Qt_tests/commands.h \
+    include/editor/command.h \
+    src/Qt_tests/decoratewin.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
     src/Qt_tests/drawhomewin.ui \
-    src/utils/qui/frmmessagebox.ui
+    src/utils/qui/frmmessagebox.ui \
+    src/Qt_tests/decoratewin.ui
+
+PRECOMPILED_HEADER += $$HEADERS
 
 win32:INCLUDEPATH += include
+
+win32:INCLUDEPATH += LIBS/cgal/auxiliary/gmp/include/
 
 #INCLUDEPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
 #DEPENDPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
@@ -192,7 +161,9 @@ RESOURCES += \
     src/utils/qui/rc.qrc \
     src/utils/qui/rc.qrc
 
-DISTFILES +=
+DISTFILES += \
+    zh.ts \
+    zh.qm
 
 target.files += $$[DISTFILES]
 target.path = ./
@@ -236,9 +207,38 @@ DEPENDPATH += $$PWD/LIBS/pugixml-1.7/src
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
 
-win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/ -lpugixml
+win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/ -lpugixml
 
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/pugixml.lib
+win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/pugixml.lib
+
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL_Core-vc140-mt-gd-4.8.1
+
+INCLUDEPATH += $$PWD/LIBS/cgal/include
+DEPENDPATH += $$PWD/LIBS/cgal/include
+INCLUDEPATH += $$PWD/LIBS/cgal_lib/include
+DEPENDPATH += $$PWD/LIBS/cgal_lib/include
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL_Core-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL_Core-vc140-mt-gd-4.8.1.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL_Core-vc140-mt-gd-4.8.1
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL_Core-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL_Core-vc140-mt-gd-4.8.1.a
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL-vc140-mt-gd-4.8.1
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL-vc140-mt-gd-4.8.1.a

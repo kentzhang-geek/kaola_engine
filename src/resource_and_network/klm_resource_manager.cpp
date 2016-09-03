@@ -30,6 +30,7 @@ static int render_id = 10086;
 void resource::default_model_loader::do_work(void *object) {
     std::string * name = (std::string *)object;
     gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    obj->set_res_id(this->get_obj_res_id());
 
     // set property
     obj->get_property()->scale_unit = gl3d::scale::mm;
@@ -53,11 +54,12 @@ void resource::default_model_loader::do_work(void *object) {
 
     gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
-    this->main_scene->get_objects()->insert(render_id++, obj);
+    this->main_scene->get_attached_sketch()->add_obj(render_id++, obj);
 //    this->main_scene->add_obj(QPair<int, gl3d::abstract_object * >(render_id++, obj));
-    this->main_scene->get_objects()->insert(render_id++, obj);
     gl3d_lock::shared_instance()->render_lock.unlock();
     gl3d_lock::shared_instance()->loader_lock.unlock();
+
+    this->terminate();
 }
 
 manager *manager::shared_instance() {
@@ -88,8 +90,8 @@ Merchandise *manager::get_merchandise_item(string id) {
 
 void manager::perform_async_res_load(res_loader * ld, string id) {
     ld->set_obj_res_id(id);
-//    ld->start();
-    ld->run();
+    ld->start();
+//    ld->run();
     return;
 }
 
@@ -123,10 +125,15 @@ void manager::test_data_init() {
                                 std::string(get_file_name_by_item(this->id_to_item.value("000003"))));
     this->id_to_merchandise.insert("000003", new klm::Furniture("000003"));
 
-    this->id_to_item.insert("000004", resource::item("000004", "58.jpg", item::res_texture_picture, true));
-    this->id_to_resource.insert("000004",
-                                std::string(get_file_name_by_item(this->id_to_item.value("000004"))));
-    this->id_to_merchandise.insert("000004", new klm::Surfacing("000004"));
+    this->id_to_item.insert("mtl000000", resource::item("mtl000000", "58.jpg", item::res_texture_picture, true));
+    this->id_to_resource.insert("mtl000000",
+                                std::string(get_file_name_by_item(this->id_to_item.value("mtl000000"))));
+    this->id_to_merchandise.insert("mtl000000", new klm::Surfacing("mtl000000"));
+
+    this->id_to_item.insert("mtl000001", resource::item("mtl000001", "_35.jpg", item::res_texture_picture, true));
+    this->id_to_resource.insert("mtl000001",
+                                std::string(get_file_name_by_item(this->id_to_item.value("mtl000001"))));
+    this->id_to_merchandise.insert("mtl000001", new klm::Surfacing("mtl000001"));
 
 //    this->id_to_item.insert("000005", resource::item("000005", "armchair.3ds", item::res_model_3ds, true));
 //    this->id_to_resource.insert("000005",
@@ -141,9 +148,8 @@ void manager::test_data_init() {
 
 // preload resources like ground and some else
 void manager::preload_resources(gl3d::scene * sc) {
-    this->perform_async_res_load(new default_model_loader(sc,
-                                                           GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
-                                                           GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
-                                 "000000");
-    this->perform_async_res_load(new default_model_loader(sc), "000001");
+//    this->perform_async_res_load(new default_model_loader(sc,
+//                                                          GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
+//                                                          GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
+//                                 "000000");
 }

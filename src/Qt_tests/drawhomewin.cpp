@@ -1,20 +1,19 @@
 #include "drawhomewin.h"
 #include "ui_drawhomewin.h"
 #include <iostream>
-
+#include <QTranslator>
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/kaola_engine.h"
 #include "kaola_engine/model_manager.hpp"
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
-
+#include <QTextCodec>
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
 #include "resource_and_network/klm_resource_manager.h"
-#include "editor/gl3d_surface_object.h"
-#include <pugixml.hpp>
+#include "editor/command.h"
 
 using namespace std;
 
@@ -23,11 +22,16 @@ extern MOpenGLView *one_view;
 static drawhomewin *dhw = NULL;
 
 drawhomewin::drawhomewin(QWidget *parent) :
-        QWidget(parent),
-        ui(new Ui::drawhomewin) {
+    QWidget(parent),
+    ui(new Ui::drawhomewin) {
     setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
+}
+
+void drawhomewin::closeEvent(QCloseEvent *event) {
+    event->accept();
+    this->ui->OpenGLCanvas->close();
 }
 
 drawhomewin::~drawhomewin() {
@@ -52,16 +56,11 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     this->ui->OpenGLCanvas->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->OpenGLCanvas->main_scene->set_width(
-            this->ui->OpenGLCanvas->size().width());
+                this->ui->OpenGLCanvas->size().width());
     this->ui->OpenGLCanvas->main_scene->set_height(
-            this->ui->OpenGLCanvas->size().height());
+                this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
     klm::resource::manager::shared_instance()->preload_resources(this->ui->OpenGLCanvas->main_scene);
-//    gl3d::model_manager::shared_instance()->init_objs(this->ui->OpenGLCanvas->main_scene);
-//    // 释放模型加载器
-//    gl3d::model_manager::shared_instance()->release_loaders();
-
-//    this->ui->OpenGLCanvas->main_scene->prepare_buffer();
 
     // add a light
     general_light_source *light_1 = new general_light_source();
@@ -73,108 +72,9 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     light_1->set_light_type(light_1->directional_point_light);
     light_1->set_light_angle(30.0);
 
-    this->ui->OpenGLCanvas->main_scene->get_light_srcs()->insert(1, light_1);
+    this->ui->OpenGLCanvas->sketch->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
-
-
-    QVector<glm::vec3 > pts;
-    pts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    pts.push_back(glm::vec3(5.0f, 0.0f, 2.0f));
-    pts.push_back(glm::vec3(5.0f, 5.0f, 2.0f));
-    pts.push_back(glm::vec3(0.0f, 5.0f, 0.0f));
-    klm::Surface * sfc = new klm::Surface(pts);
-
-    pts.clear();
-    pts.push_back(glm::vec3(-2.0, -2.0, 0.0f));
-    pts.push_back(glm::vec3(-1.0, -2.0, 0.0f));
-    pts.push_back(glm::vec3(-1.0,  0.0, 0.0f));
-    pts.push_back(glm::vec3(-2.0,  0.0, 0.0f));
-    klm::Surface* sub = sfc->addSubSurface(pts);
-    if(sub != nullptr){
-        sub->setTranslate(glm::vec3(0.0, 0.0, 1.0));
-
-        pts.clear();
-        pts.push_back(glm::vec3(-0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0, -0.7, 0.0));
-        pts.push_back(glm::vec3( 0.4, -0.5, 0.0));
-        pts.push_back(glm::vec3( 0.4,  0.5, 0.0));
-        pts.push_back(glm::vec3( 0.0,  0.7, 0.0));
-        pts.push_back(glm::vec3(-0.4,  0.5, 0.0));
-
-        klm::Surface* ss = sub->addSubSurface(pts);
-        if(ss){
-            ss->setRotation(glm::rotate(glm::mat4(1.0), 12.0f, glm::vec3(0.0, 1.0, 0.0)));
-            ss->setScale(glm::vec3(0.8, 0.8, 1.0));
-            ss->setTranslate(glm::vec3(0.0, 0.0, -1.0));
-
-            pts.clear();
-            pts.push_back(glm::vec3(-0.2, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1, -0.1, 0.0));
-            pts.push_back(glm::vec3(-0.1,  0.0, 0.0));
-            pts.push_back(glm::vec3(-0.2,  0.0, 0.0));
-
-
-            klm::Surface* sss = ss->addSubSurface(pts);
-            if(sss != nullptr){
-                sss->setTranslate(glm::vec3(0.0, 0.15, -2.5f));
-            } else {
-                cout<<"failed to add last sub-surface"<<endl;
-            }
-        }
-
-    }
-
-    pts.clear();
-    pts.push_back(glm::vec3(1.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 1.0, 0.0));
-    pts.push_back(glm::vec3(2.0, 2.0, 0.0));
-    pts.push_back(glm::vec3(1.0, 2.0, 0.0));
-
-    klm::Surface *seSub = sfc->addSubSurface(pts);
-    if(seSub != nullptr){
-        seSub->setScale(glm::vec3(0.8, 0.8, 1.0));
-    }
-
-    pugi::xml_document doc;
-    sfc->setTranslate(glm::vec3(0.0, 0.5, 2.0));
-    sfc->setRotation(glm::rotate(glm::mat4(1.0), -0.3f, glm::vec3(0.0f, 1.0f, 0.0f)));
-    sfc->save(doc);
-    doc.save_file("/Users/gang_liu/Desktop/surface.xml");    
-    delete sfc;
-
-    pugi::xml_document load_doc;
-    load_doc.load_file("/Users/gang_liu/Desktop/surface.xml");
-    pugi::xml_node surface_node = load_doc.select_node("//surface").node();
-    if(surface_node){
-        std::cout<<"surface_node.name() = "<<surface_node.name()<<std::endl;
-    }
-
-    Surface* mySurface = new Surface;
-
-    if(mySurface->load(surface_node)){        
-//        mySurface
-//        sfc->setTranslate(glm::vec3(0.0, 0.5, 1.0));
-
-        gl3d::surface_object * oo = new gl3d::surface_object(mySurface);
-        oo->get_mtls()->insert(0, new gl3d_material("___101.jpg"));
-        oo->get_mtls()->insert(1, new gl3d_material("_LimeGre.jpg"));
-        oo->get_mtls()->insert(2, new gl3d_material("bottle.jpg"));
-        oo->get_mtls()->insert(3, new gl3d_material("58.jpg"));
-        oo->get_mtls()->insert(4, new gl3d_material("123.jpg"));
-        oo->get_mtls()->insert(5, new gl3d_material("___1.jpg"));
-        oo->get_mtls()->insert(6, new gl3d_material("WoodVeneer.jpg"));
-        oo->get_mtls()->insert(7, new gl3d_material("xin_4005.jpg"));
-        oo->get_mtls()->insert(8, new gl3d_material("_2.jpg"));
-        oo->get_mtls()->insert(9, new gl3d_material("_1.jpg"));
-        oo->get_mtls()->insert(10, new gl3d_material("_3.jpg"));
-        oo->get_mtls()->insert(11, new gl3d_material("_5.jpg"));
-        oo->get_mtls()->insert(12, new gl3d_material("_17.jpg"));
-        oo->get_mtls()->insert(13, new gl3d_material("_7.jpg"));
-        oo->get_mtls()->insert(14, new gl3d_material("_8.jpg"));
-        this->ui->OpenGLCanvas->main_scene->add_obj(QPair<int, abstract_object *>(12333, oo));            
-    }
-
 }
 
 class ray_thread : public QThread {
@@ -183,43 +83,6 @@ public:
         GL3D_GET_RENDER_PROCESS(ray_tracer)->render();
     }
 };
-
-//取消所有按钮选择状态
-void drawhomewin::on_draw_clear() {
-    dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
-    dhw->ui->checkBox->setCheckState(Qt::Unchecked);
-
-    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-}
-
-//画墙功能按钮-change
-void drawhomewin::on_drawwall_b_stateChanged(int arg1) {
-    if (!arg1) {
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-        dop->close();
-        delete dop;
-    } else {
-        dhw->ui->checkBox->setCheckState(Qt::Unchecked);
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
-        dop = new DrawOption(this->ui->OpenGLCanvas);
-        dop->show();
-    }
-}
-
-//画房间功能按钮-change
-void drawhomewin::on_checkBox_stateChanged(int arg1) {
-    if (!arg1) {
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
-        dop->close();
-        delete dop;
-    } else {
-        dhw->ui->drawwall_b->setCheckState(Qt::Unchecked);
-        gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
-        dop = new DrawOption(this->ui->OpenGLCanvas);
-        dop->show();
-    }
-}
-
 
 void drawhomewin::on_switch3D_clicked() {
     static bool flag_edit = false;
@@ -234,4 +97,55 @@ void drawhomewin::on_switch3D_clicked() {
 
 void drawhomewin::on_colse_b_clicked() {
     this->close();
+}
+
+
+
+//取消所有按钮选择状态
+void drawhomewin::on_draw_clear() {
+    auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
+    dhw->ui->p_4->setIcon(QIcon(":/images/door"));
+    dhw->ui->p_1->setIcon(QIcon(":/images/drawline"));
+    dhw->ui->p_2->setIcon(QIcon(":/images/drawhome"));
+
+    if(now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
+        dhw->dop->close();
+        delete dhw->dop;
+    }
+
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+}
+
+
+
+//开门功能按钮
+void drawhomewin::on_p_4_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::opendoor;
+    this->ui->p_4->setIcon(QIcon(":/images/doorselectd"));
+}
+//画墙功能按钮
+void drawhomewin::on_p_1_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawwall;
+    this->ui->p_1->setIcon(QIcon(":/images/drawwallselectd"));
+    dop = new DrawOption(this->ui->OpenGLCanvas);
+    dop->show();
+}
+//画房间功能按钮
+void drawhomewin::on_p_2_clicked() {
+    this->on_draw_clear();
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
+    this->ui->p_2->setIcon(QIcon(":/images/drawhomeselectd"));
+    dop = new DrawOption(this->ui->OpenGLCanvas);
+    dop->show();
+}
+
+void drawhomewin::on_restore_clicked() {
+    klm::command::command_stack::shared_instance()->redo();
+}
+
+void drawhomewin::on_undo_clicked() {
+    klm::command::command_stack::shared_instance()->undo();
 }

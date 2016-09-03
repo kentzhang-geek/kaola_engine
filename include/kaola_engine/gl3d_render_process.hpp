@@ -52,6 +52,7 @@ namespace gl3d {
         render_process * get_render_process(string key);
         void set_current_process(string name);
         string get_current_process_name();
+        void release_render();
         
     private:
         string current_process;

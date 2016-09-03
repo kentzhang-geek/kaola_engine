@@ -90,4 +90,9 @@ void main() {
 		out_color = texture2D(gl3d_texture_diffuse, text_coord);
 		out_color += hdr_color;
 		out_color = min(vec4(1.0), out_color);
+
+		// pick
+		float tmp = out_color.w;
+		out_color = out_color * param_x;
+		out_color.w = tmp;
 }

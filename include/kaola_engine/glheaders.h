@@ -13,6 +13,8 @@
 #include <gl/GLU.h>
 #else
 #include <glu.h>
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
 #endif
 
 extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;

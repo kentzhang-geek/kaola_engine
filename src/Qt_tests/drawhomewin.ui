@@ -176,7 +176,7 @@ color:rgb(245, 245, 245);
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -231,7 +231,7 @@ background-color: rgb(117, 117, 117);
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -271,7 +271,7 @@ border:0
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -311,7 +311,7 @@ border:0
               <property name="font">
                <font>
                 <family>微软雅黑</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -499,38 +499,6 @@ background-image: url(:/images/drawhome_title);
 background-color: rgb(28, 29, 32)
 }</string>
               </property>
-              <widget class="QCheckBox" name="drawwall_b">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>150</y>
-                 <width>75</width>
-                 <height>52</height>
-                </rect>
-               </property>
-               <property name="acceptDrops">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>48</width>
-                 <height>48</height>
-                </size>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-              </widget>
               <widget class="QWidget" name="gridLayoutWidget">
                <property name="geometry">
                 <rect>
@@ -602,7 +570,7 @@ color: rgb(245, 245, 245);
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QToolButton" name="p_1">
+                 <widget class="QPushButton" name="p_1">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -624,11 +592,18 @@ color: rgb(245, 245, 245);
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="styleSheet">
-                   <string notr="true">#p1 {
+                   <string notr="true">#p_1 {
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
+}
+
+#p_1:hover {
+border-image:url(:/images/drawwallselectd);
 }</string>
                   </property>
                   <property name="text">
@@ -644,13 +619,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QToolButton" name="p_2">
+                 <widget class="QPushButton" name="p_2">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -672,14 +644,21 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="layoutDirection">
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">#p2 {
+                   <string notr="true">#p_2 {
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
+}
+
+#p_2:hover {
+border-image:url(:/images/drawhomeselectd);
 }</string>
                   </property>
                   <property name="text">
@@ -695,13 +674,10 @@ border:0;
                     <height>48</height>
                    </size>
                   </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
-                  </property>
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QToolButton" name="p_3">
+                 <widget class="QPushButton" name="p_3">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -727,7 +703,7 @@ border:0;
                    <enum>Qt::LeftToRight</enum>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">#p3 {
+                   <string notr="true">#p_3 {
 border-radius: 0;
 background-color: rgb(28, 29, 32);
 border:0;
@@ -745,9 +721,6 @@ border:0;
                     <width>48</width>
                     <height>48</height>
                    </size>
-                  </property>
-                  <property name="autoRaise">
-                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -776,28 +749,568 @@ color: rgb(245, 245, 245);
                 <string>自由绘制</string>
                </property>
               </widget>
-              <widget class="QCheckBox" name="checkBox">
+              <widget class="QWidget" name="gridLayoutWidget_2">
                <property name="geometry">
                 <rect>
-                 <x>100</x>
-                 <y>150</y>
-                 <width>71</width>
-                 <height>51</height>
+                 <x>10</x>
+                 <y>170</y>
+                 <width>241</width>
+                 <height>150</height>
                 </rect>
                </property>
+               <layout class="QGridLayout" name="gridLayout_2">
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_8">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_8 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>窗</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_6">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_6 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>移门</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_5">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_5 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>单开门</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLabel" name="label_7">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_7 {
+color: rgb(245, 245, 245);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>双开门</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLabel" name="label_9">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_9 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>飘窗</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QLabel" name="label_10">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_10 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>落地窗</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="p_4">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_4 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}
+
+#p_4:hover {
+border-image:url(:/images/doorselectd);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/door</normaloff>:/images/door</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="p_5">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_5 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/2door</normaloff>:/images/2door</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="p_6">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_6 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/movedoor</normaloff>:/images/movedoor</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="p_7">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_7 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/window</normaloff>:/images/window</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="p_8">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_8 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/taquilla</normaloff>:/images/taquilla</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="p_9">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="mouseTracking">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_9 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/ground_window</normaloff>:/images/ground_window</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QLabel" name="l_6">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>140</y>
+                 <width>51</width>
+                 <height>17</height>
+                </rect>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#l_6 {
+color: rgb(245, 245, 245);
+}</string>
+               </property>
                <property name="text">
-                <string/>
+                <string>开门窗</string>
                </property>
-               <property name="icon">
-                <iconset resource="../../res.qrc">
-                 <normaloff>:/images/drawhome</normaloff>:/images/drawhome</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
+              </widget>
+              <widget class="QLabel" name="l_7">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>350</y>
                  <width>48</width>
-                 <height>48</height>
-                </size>
+                 <height>17</height>
+                </rect>
                </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">#l_7 {
+color: rgb(245, 245, 245);
+}</string>
+               </property>
+               <property name="text">
+                <string>自由绘制</string>
+               </property>
+              </widget>
+              <widget class="QWidget" name="gridLayoutWidget_3">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>380</y>
+                 <width>241</width>
+                 <height>73</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_3">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_11">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#label_11 {
+color: rgb(229, 229, 229);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>梁</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="p_10">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">#p_10 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}
+
+#p_10:hover {
+border-image:url(:/images/drawwallselectd);
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../res.qrc">
+                    <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>48</width>
+                    <height>48</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </widget>
             </item>
@@ -850,7 +1363,7 @@ color: rgb(245, 245, 245);
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                   <weight>50</weight>
                   <bold>false</bold>
                   <stylestrategy>PreferDefault</stylestrategy>
@@ -925,7 +1438,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -973,7 +1486,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1014,7 +1527,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1056,7 +1569,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1110,7 +1623,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1135,6 +1648,13 @@ border-radius: 0
                </widget>
               </item>
               <item>
+               <widget class="Line" name="line_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="switch3D">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1151,7 +1671,7 @@ border-radius: 0
                 <property name="font">
                  <font>
                   <family>微软雅黑</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>9</pointsize>
                  </font>
                 </property>
                 <property name="autoFillBackground">
@@ -1161,11 +1681,11 @@ border-radius: 0
                  <string notr="true">#switch3D {border-radius: 0}</string>
                 </property>
                 <property name="text">
-                 <string> 进入3D模式</string>
+                 <string>去装修</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../../res.qrc">
-                  <normaloff>:/images/3d</normaloff>:/images/3d</iconset>
+                  <normaloff>:/images/paint_icon</normaloff>:/images/paint_icon</iconset>
                 </property>
                 <property name="iconSize">
                  <size>

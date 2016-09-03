@@ -5,7 +5,7 @@ using namespace gl3d;
 
 abstract_object::abstract_object() {
     // gen vao
-    GL3D_GL()->glGenVertexArrays(1, &this->vao);
+    this->vao = -1;
     this->pick_flag = false;
     this->obj_type = this->type_default;
     this->data_buffered = false;
@@ -15,7 +15,9 @@ abstract_object::abstract_object() {
 
 abstract_object::~abstract_object() {
     // delete vao
-    GL3D_GL()->glDeleteVertexArrays(1, &this->vao);
+    if (this->data_buffered) {
+        GL3D_GL()->glDeleteVertexArrays(1, &this->vao);
+    }
 }
 
 void abstract_object::buffer_data() {
@@ -25,6 +27,7 @@ void abstract_object::buffer_data() {
     }
 
     // bind vao
+    GL3D_GL()->glGenVertexArrays(1, &this->vao);
     GL3D_GL()->glBindVertexArray(this->get_vao());
 
     gl3d::mesh * p_mesh;
@@ -36,6 +39,7 @@ void abstract_object::buffer_data() {
         p_mesh->buffer_data();
         iter++;
     }
+    this->clear_abstract_meshes(mss);
 
     GL3D_GL()->glBindVertexArray(0);
 

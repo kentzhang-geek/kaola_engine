@@ -88,6 +88,7 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(texture_repeat, bool );
         GL3D_UTILS_PROPERTY(vbo, GLuint );
         GL3D_UTILS_PROPERTY(idx, GLuint );
+        GL3D_UTILS_PROPERTY(is_blink, bool );
 
     private:
         void init();

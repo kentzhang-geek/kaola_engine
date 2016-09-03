@@ -9,6 +9,8 @@
 // Qt Headers
 #include <QVector>
 #include <QMap>
+#include <QImage>
+#include <QPainter>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -22,13 +24,16 @@
 #include "kaola_engine/gl3d_framebuffer.hpp"
 #include "kaola_engine/gl3d_abstract_object.h"
 
+// klm layout scheme
+#include "editor/design_scheme.h"
+
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
-    class scene {
+    class scene : public utils::noncopyable {
     public:
         typedef struct scene_property {
             glm::vec3 background_color;
-            string global_shader;
+            QString global_shader;
             GLuint64 current_draw_authority; // 当前绘制哪些obj，见gl3d_obj_authority.h
             //还有其他属性待加入
         } scene_property;
@@ -63,7 +68,7 @@ namespace gl3d {
          *
          *  @return 是否加入成功
          */
-        bool add_obj(QPair<int, abstract_object *> obj_key_pair);
+        bool add_obj(int key, abstract_object * obj);
 
         /**
          *  @author Kent, 16-02-17 21:02:11
@@ -257,17 +262,21 @@ namespace gl3d {
         GL3D_UTILS_PROPERTY(width, GLfloat);
         GL3D_UTILS_PROPERTY(height, GLfloat);
 
-        // 场景光源
-        GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
-
-        // objects
-        GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
+        GL3D_UTILS_PROPERTY(attached_sketch, klm::design::scheme *);
 
         // 设置输入参数位置
         static void set_attribute(GLuint pro);
 
         // 绘制单个对象
         void draw_object(abstract_object *obj, GLuint pro);
+
+        // project point to screen
+        glm::vec2 project_point_to_screen(glm::vec3 point_on_world);
+        glm::vec2 project_point_to_screen(glm::vec2 point_on_world_ground);
+
+        // image for draw assistant lines
+    GL3D_UTILS_PROPERTY(assistant_image, QImage *);
+//    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
     private:
         void init();

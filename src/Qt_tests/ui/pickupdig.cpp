@@ -1,13 +1,16 @@
+#include <include/editor/command.h>
 #include "pickupdig.h"
 
-PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene *sc)
-{
+PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
+                     glm::vec2 cd_scr) {
     main_scene = sc;
+    this->coord_on_screen = cd_scr;
+    this->sketch = sch;
     this->pickUpObjID = pickUpObjID;
     this->setParent(parent);
     this->setAutoFillBackground(true);
     QPalette palette;
-    palette.setColor(QPalette::Background, QColor(248,248,255));
+    palette.setColor(QPalette::Background, QColor(248, 248, 255));
     this->setPalette(palette);
 
     //定义窗口坐标
@@ -16,12 +19,34 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     setWindowFlags(Qt::FramelessWindowHint);
 
     //根据拾取到的objid获取模型obj
-    pickUpObj = (gl3d::object *)this->main_scene->get_obj(pickUpObjID);
-    wall = (gl3d::gl3d_wall *)pickUpObj;
+    pickUpObj = (gl3d::object *) this->main_scene->get_obj(pickUpObjID);
+    wall = (gl3d::gl3d_wall *) pickUpObj;
 
-    initBasicInfo();                                    //初始化信息窗体
+    if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
+        //初始化墙操作窗口
+        initBasicInfo();
+    } else if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        initBasicSchemeInfo();
+    }
 
-    QVBoxLayout* layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
+    // pick
+    switch (pickUpObj->get_obj_type()) {
+        case gl3d::abstract_object::type_wall : {
+            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+            w->set_is_picked(true);
+            break;
+    }
+    case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
+            gl3d::room * r = skt->get_room(this->coord_on_screen);
+            r->set_picked(true);
+            break;
+    }
+        default:
+            break;
+    }
+
+    QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
     layout->addWidget(baseWidget);                      //加入baseWidget
     layout->setSizeConstraint(QLayout::SetFixedSize);   //设置窗体缩放模式，此处设置为固定大小
     layout->setSpacing(6);                              //窗口部件之间间隔大小
@@ -29,9 +54,31 @@ PickupDig::PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene
     setLayout(layout);                                  //加载到窗体上
 }
 
+PickupDig::~PickupDig() {
+    if (this->pickUpObjID < 0)
+        return;
+
+    // pick
+    switch (pickUpObj->get_obj_type()) {
+    case gl3d::abstract_object::type_wall : {
+            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+            w->set_is_picked(false);
+            break;
+    }
+    case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
+            gl3d::room * r = skt->get_room(this->coord_on_screen);
+            r->set_picked(false);
+            break;
+    }
+        default:
+            break;
+    }
+
+}
+
 //墙
-void PickupDig::initBasicInfo()
-{
+void PickupDig::initBasicInfo() {
     baseWidget = new QWidget;                           //实例化baseWidget
 
     //控制按钮
@@ -107,7 +154,7 @@ void PickupDig::initBasicInfo()
     hlayout3->addWidget(unitLabel3);
 
 
-    QVBoxLayout* vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
+    QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
     vboxLayout->addLayout(hlayoutButtons);
     vboxLayout->addLayout(hlayout1);
     vboxLayout->addLayout(hlayout2);
@@ -116,44 +163,138 @@ void PickupDig::initBasicInfo()
     baseWidget->setLayout(vboxLayout);                  //加载到窗体上
 }
 
+//房间
+void PickupDig::initBasicSchemeInfo() {
+    baseWidget = new QWidget;                           //实例化baseWidget
+
+    //控制按钮
+    QPushButton *delButton = new QPushButton();
+    delButton->setText("删除");
+    connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
+    QPushButton *splitButton = new QPushButton();
+    splitButton->setText("清空家具");
+
+    QLabel *lbl_caption = new QLabel(tr("RoomName"));
+    cbo = new QComboBox();
+    cbo->addItem(QWidget::tr("Unname"));
+    cbo->addItem(QWidget::tr("keting"));
+    cbo->addItem(QWidget::tr("cangting"));
+    cbo->addItem(QWidget::tr("zhuwo"));
+    cbo->addItem(QWidget::tr("ciwo"));
+    cbo->addItem(QWidget::tr("shufang"));
+    cbo->addItem(QWidget::tr("chufang"));
+    cbo->addItem(QWidget::tr("weishengjian"));
+    cbo->addItem(QWidget::tr("yantai"));
+    cbo->addItem(QWidget::tr("chuwujian"));
+
+    // calculate current index
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        // TODO : 房间命名
+        gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
+        QVector<QString> vss;
+        vss.push_back(QWidget::tr("Unname"));
+        vss.push_back(QWidget::tr("keting"));
+        vss.push_back(QWidget::tr("cangting"));
+        vss.push_back(QWidget::tr("zhuwo"));
+        vss.push_back(QWidget::tr("ciwo"));
+        vss.push_back(QWidget::tr("shufang"));
+        vss.push_back(QWidget::tr("chufang"));
+        vss.push_back(QWidget::tr("weishengjian"));
+        vss.push_back(QWidget::tr("yantai"));
+        vss.push_back(QWidget::tr("chuwujian"));
+        for (int i = 0; i < vss.size(); i++) {
+            if (vss.at(i) == QString::fromStdString(r->name))
+                cbo->setCurrentIndex(i);
+        }
+    }
+
+    // connect cbo change evnets
+    connect(cbo, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            [=](const QString &text) {
+                if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+                    // TODO : 房间命名
+                    gl3d::room *r = this->sketch->get_room(this->coord_on_screen);
+                    r->name = text.toStdString();
+                }
+            });
+
+    QHBoxLayout *hlayoutButtons = new QHBoxLayout;
+    hlayoutButtons->setContentsMargins(0, 0, 0, 10);
+    hlayoutButtons->addWidget(delButton);
+    hlayoutButtons->addWidget(splitButton);
+
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->addWidget(lbl_caption);
+    hlayout->addWidget(cbo);
+
+
+    QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
+    vboxLayout->addLayout(hlayoutButtons);
+    vboxLayout->addLayout(hlayout);
+    baseWidget->setLayout(vboxLayout);                  //加载到窗体上
+}
+
+
+
+
+
+
+
+
 void PickupDig::slotDoubleSpinbox_Slider() {
-    slider->setValue((int)(spinBox->value()*100));
+    slider->setValue((int) (spinBox->value() * 100));
 
     //改变墙长度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_length(float(spinBox->value()));
     wall->calculate_mesh();
+    this->sketch->recalculate_rooms();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox() {
-    spinBox->setValue((double)(slider->value())/100);
+    spinBox->setValue((double) (slider->value()) / 100);
 }
 
 void PickupDig::slotDoubleSpinbox_Slider2() {
-    slider2->setValue((int)(spinBox2->value()*100));
+    slider2->setValue((int) (spinBox2->value() * 100));
 
     //改变墙厚度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_thickness(float(spinBox2->value()));
     wall->calculate_mesh();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox2() {
-    spinBox2->setValue((double)(slider2->value())/100);
+    spinBox2->setValue((double) (slider2->value()) / 100);
 }
 
 void PickupDig::slotDoubleSpinbox_Slider3() {
-    slider3->setValue((int)(spinBox3->value()*100));
+    slider3->setValue((int) (spinBox3->value() * 100));
 
     //改变墙高度
+    klm::command::command_stack::shared_instance()->push(new klm::command::set_wall_property(this->wall));
     wall->set_hight(float(spinBox3->value()));
     wall->calculate_mesh();
 }
+
 void PickupDig::slotSlider_DoubleSpinbox3() {
-    spinBox3->setValue((double)(slider3->value())/100);
+    spinBox3->setValue((double) (slider3->value()) / 100);
 }
 
 
 //删除拾取的obj对象
-void PickupDig::on_delete_obj(){
-    this->main_scene->delete_obj(pickUpObjID);
-    delete pickUpObj;
+void PickupDig::on_delete_obj() {
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
+        //删除墙
+        this->sketch->del_wal((gl3d_wall *) pickUpObj);
+    }
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
+        // TODO : 删除房间
+        gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
+        this->sketch->delete_room(r);
+    }
+    this->pickUpObj = NULL;
+    this->pickUpObjID = -1;
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
 }

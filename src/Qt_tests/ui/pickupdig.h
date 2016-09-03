@@ -12,13 +12,16 @@
 #include "utils/gl3d_global_param.h"
 #include "kaola_engine/gl3d.hpp"
 #include "editor/gl3d_wall.h"
+#include "editor/design_scheme.h"
 
 class PickupDig:public QDialog
 {
     Q_OBJECT
 public:
-    PickupDig(QWidget* parent, int x, int y, int pickUpObjID, gl3d::scene * sc);
-    void initBasicInfo();
+    PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
+              glm::vec2 cd_scr);
+    ~PickupDig();
+
 private slots:
     void slotDoubleSpinbox_Slider();
     void slotSlider_DoubleSpinbox();
@@ -29,6 +32,9 @@ private slots:
 
     void on_delete_obj();
 private:
+    void initBasicInfo();
+    void initBasicSchemeInfo();
+
     QWidget* baseWidget;
     QSlider *slider;
     QSlider *slider2;
@@ -41,6 +47,9 @@ private:
     gl3d::object *pickUpObj;
     gl3d::scene *main_scene;
     gl3d::gl3d_wall *wall;
+    klm::design::scheme * sketch;
+    QComboBox *cbo;
+    glm::vec2 coord_on_screen;
 };
 
 #endif // PICKUPDIG_H

@@ -28,12 +28,12 @@ public:
     //设置编码为UTF8
     static void SetUTF8Code()
     {
-#if (QT_VERSION <= QT_VERSION_CHECK(5,0,0))
+//#if (QT_VERSION <= QT_VERSION_CHECK(5,0,0))
         QTextCodec *codec = QTextCodec::codecForName("UTF-8");
         QTextCodec::setCodecForLocale(codec);
-        QTextCodec::setCodecForCStrings(codec);
-        QTextCodec::setCodecForTr(codec);
-#endif
+//        QTextCodec::setCodecForCStrings(codec);
+//        QTextCodec::setCodecForTr(codec);
+//#endif
     }
 
     //设置皮肤样式

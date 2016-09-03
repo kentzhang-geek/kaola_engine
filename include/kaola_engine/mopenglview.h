@@ -21,6 +21,7 @@
 #include <QGLWidget>
 #include <QResource>
 #include <QFile>
+#include <QImage>
 
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_render_process.hpp"
@@ -37,6 +38,14 @@
 
 // test draw wall
 #include "editor/gl3d_wall.h"
+#include "kaola_engine/gl3d_out_headers.h"
+#include "kaola_engine/gl3d_render_process.hpp"
+#include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
+#include "utils/gl3d_lock.h"
+#include "utils/gl3d_math.h"
+#include "editor/design_scheme.h"
+#include "resource_and_network/klm_resource_manager.h"
 
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
@@ -52,16 +61,19 @@ class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
 
 public:
     gl3d::scene * main_scene;
+    klm::design::scheme * sketch;
     void do_init();
     void create_scene();
     MOpenGLView();
     MOpenGLView(QWidget * x);
+    ~MOpenGLView();
     void paintGL();
     void initializeGL();
     float time_factor;
     GLfloat angle;
     void keyPressEvent(QKeyEvent *event);
     void resizeGL(int width, int height);
+    void closeEvent(QCloseEvent *event);
 
     //yananli codes -----------------------------------------------------
     enum button_state {
@@ -76,6 +88,8 @@ public:
 public slots:
     void view_change();
 private:
+    void draw_image(QString img, float x, float y, int w, int h);
+
     string res_path;
     QTimer * timer;
     QTimer * keyTimer;
@@ -87,7 +101,6 @@ private:
     typedef QPair<glm::vec2, gl3d_wall *> point_wall_pair;
     QVector<point_wall_pair> *wallsPoints;
     float drawhome_x1, drawhome_x2, drawhome_y1, drawhome_y2;
-    QLabel *connectDot;
     glm::vec2 drawwall_start_point;
     glm::vec2 drawwall_connect_point;
     bool is_drawwall_start_point;
@@ -108,6 +121,15 @@ private:
 
     void openglDrawWall(const int x, const int y);
     void getWallsPoint();
+
+    QVector<QLabel> *doorsWindowsImages;
+
+    glm::vec2 wallLineAdsorption(glm::vec2 pt, float dis_com);
+    glm::vec2 wallPeakAdsorption(glm::vec2 pt, float dis_com);
+    glm::vec2 wallPeakRightAngleAdsorption(glm::vec2 pt);
+
+    gl3d::gl3d_wall * move_change_wall;
+    bool move_change_is_start_or_end;
 };
 
 #endif // MOPENGLVIEW_H

@@ -33,30 +33,34 @@ glm::vec3 triangle_facet::get_normal() const {
 }
 
 bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
+    // TODO : this has bug!
     if (0.00001 < gl3d::math::point_distance_to_facet(*this, pt)) {
         // 与平面距离不为0,则认为不在三角形内
         return false;
     }
-    glm::vec3 ap = pt - this->a;
-    glm::vec3 ab = this->b - this->a;
-    glm::vec3 ac = this->c - this->a;
-    float alpha = glm::acos(glm::dot(glm::normalize(ab), glm::normalize(ac)));
 
-    glm::vec3 tab = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->c))
-            / glm::sin(alpha) * glm::normalize(ab);
-    glm::vec3 tac = gl3d::math::point_distance_to_line(pt, line_3d(this->a, this->b))
-            / glm::sin(alpha) * glm::normalize(ac);
-    if (
-            (glm::normalize(tab) == glm::normalize(ab)) &&
-            (glm::normalize(tac) == glm::normalize(ac)) &&
-            (glm::length(tab) <= glm::length(ab)) &&
-            (glm::length(tac) <= glm::length(ac))
-            ) {
+    float triangle_area = glm::length(glm::cross(this->b - this->a, this->c - this->a));
+    float t1_area = glm::length(glm::cross(this->b - pt, this->a - pt));
+    float t2_area = glm::length(glm::cross(this->c - pt, this->a - pt));
+    float t3_area = glm::length(glm::cross(this->b - pt, this->c - pt));
+
+    return (t1_area + t2_area + t3_area) < (triangle_area + 0.0001);
+#if 0
+    glm::vec3 tmpa = glm::cross(pt - this->a, this->b - this->a);
+    glm::vec3 tmpb = glm::cross(pt - this->b, this->c - this->b);
+    glm::vec3 tmpc = glm::cross(pt - this->c, this->a - this->c);
+    tmpa = glm::normalize(tmpa);
+    tmpb = glm::normalize(tmpb);
+    tmpc = glm::normalize(tmpc);
+    float tmp  = glm::dot(tmpa, tmpb);
+    float tmp2 = glm::dot(tmpb, tmpc);
+    if ((tmp < (tmp2 + 0.0001)) && (tmp > (tmp2 - 0.0001))) {
         return true;
     }
     else {
         return false;
     }
+#endif
 }
 
 bool gl3d::math::get_cross(const line_2d &l1,
@@ -69,6 +73,11 @@ bool gl3d::math::get_cross(const line_2d &l1,
 
     float x = 0.0;
     float y = 0.0;
+
+    // check paralym
+    if (glm::abs(glm::dot(glm::normalize(l1.b - l1.a), glm::normalize(l2.b - l2.a))) > 0.98f) {
+        return false;
+    }
     if (glm::normalize(p2 - p1) == glm::normalize(p4 - p3)) {
         return false;
     }
@@ -111,17 +120,25 @@ float gl3d::math::point_distance_to_facet(const triangle_facet &fc, const glm::v
 }
 
 bool gl3d::math::line_cross_facet(const triangle_facet &f, const line_3d &ray, glm::vec3 &pt) {
-    if (0.000001 > glm::dot(
+    // NOTE this BUG FIX ! this should note use absolutly value!
+    if (0.000001 > glm::abs(glm::dot(
                 f.get_normal(),
                 glm::normalize(ray.b - ray.a)
-                )) {
+                ))) {
         return false;
     }
     float dis = gl3d::math::point_distance_to_facet(f, ray.a);
     float cosx = glm::dot(glm::normalize(ray.b - ray.a), f.get_normal());
     cosx = glm::abs(cosx);
     dis = dis / cosx;
-    pt = ray.a + glm::normalize(ray.b - ray.a) * dis;
+    glm::vec3 dir;
+    if (glm::dot(f.a - ray.a, ray.b - ray.a) > 0.0f) {
+        dir = glm::normalize(ray.b - ray.a);
+    }
+    else {
+        dir = glm::normalize(ray.a - ray.b);
+    }
+    pt = ray.a + dir * dis;
 
     return true;
 }
@@ -215,6 +232,10 @@ glm::vec3 math_local_cal_area(QVector<line_2d> &poly) {
 }
 
 static glm::vec3 math_local_cvt_glm2_to_glm3(glm::vec2 a) {
+    return glm::vec3(a.x, 0.0f, a.y);
+}
+
+glm::vec3 gl3d::math::convert_vec2_to_vec3(glm::vec2 a) {
     return glm::vec3(a.x, 0.0f, a.y);
 }
 

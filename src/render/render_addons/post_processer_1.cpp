@@ -45,7 +45,7 @@ public:
         current_shader_param->user_data.insert(string("scene"), one_scene);
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL;
         one_scene->get_property()->global_shader = "hdr_test";
-        one_scene->add_obj(QPair<int, object *>(2333, sobj));
+        one_scene->add_obj(2333, sobj);
         one_scene->prepare_canvas(true);
         GL3D_GL()->glDisable(GL_CULL_FACE);
         one_scene->draw(true);

@@ -23,7 +23,6 @@ uniform bool gl3d_t_specular_enable;
 
 // light
 uniform float shininess;
-uniform float param_x;
 in vec3 eye_to_pos;
 in vec3 l_normal;
 in vec3 in_light;
