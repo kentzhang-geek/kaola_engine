@@ -403,3 +403,23 @@ void object::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) {
     mt.clear();
     return;
 }
+
+bool object::save_to_xml(pugi::xml_node &node) {
+    return false;
+}
+
+object* object::load_from_xml(pugi::xml_node node) {
+    return NULL;
+}
+
+#if 1
+using namespace pugi;
+int main() {
+    xml_document doc;
+    doc.load_file("mat.xml");
+    xml_node tmp = doc.root().child("mat_test");
+    glm::mat4 ppp(0.0f);
+    gl3d::xml::load_xml_to_mat(tmp, ppp);
+    return 0;
+}
+#endif

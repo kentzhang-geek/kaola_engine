@@ -1328,7 +1328,7 @@ bool room::save_to_xml(pugi::xml_node &node) {
     // save edge points
     for (int i = 0; i < this->edge_points.size(); i++) {
         tmp = node.append_child("edge_point");
-        gl3d::xml::save_vec_to_xnode(this->edge_points.at(i), tmp);
+        gl3d::xml::save_vec_to_xml(this->edge_points.at(i), tmp);
         tmp.append_attribute("seq_id").set_value(i);
     }
     // relate wall id
@@ -1354,7 +1354,7 @@ room* room::load_from_xml(pugi::xml_node &node) {
         int seq_id = xit->node().attribute("seq_id").as_int();
         glm::vec3 inspt;
         pugi::xml_node tmp = xit->node();
-        gl3d::xml::load_xnode_vec(tmp, inspt);
+        gl3d::xml::load_xml_to_vec(tmp, inspt);
         edgept_map.insert(seq_id, inspt);
     }
     QVector<glm::vec3> pts;
