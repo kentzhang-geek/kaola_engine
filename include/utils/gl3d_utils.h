@@ -1,6 +1,10 @@
 #ifndef GL3D_UTILS_H
 #define GL3D_UTILS_H
 
+#include "pugiconfig.hpp"
+#include "pugixml.hpp"
+#include <QString>
+
 // usage : GL3D_UTILS_PROPERTY(member name, member type) in gl3d class
 #define GL3D_UTILS_PROPERTY(member_name, ...) \
     private: \
@@ -49,7 +53,6 @@
 
 #define GL3D_UTILS_SHADOW_MAP_ORTHO glm::ortho(-20.0,20.0,-20.0,20.0,-30.0, 200.0)
 
-#include <QString>
 #define GL3D_UTILS_THROW(...) \
     throw QString::asprintf("Throw Error at %s : %d ==> ", __FILE__, __LINE__) + QString::asprintf(__VA_ARGS__);
 
@@ -71,6 +74,32 @@ namespace utils {
 
         const noncopyable &operator=(const noncopyable &);
     };
+}
+
+namespace gl3d {
+    namespace xml {
+        template <typename T>
+        void save_vec_to_xnode(T vec, pugi::xml_node & node) {
+            node.append_attribute("type").set_value("glm_vec");
+            for (int i = 0; i < vec.length(); i++) {
+                node.append_attribute(QString::asprintf("d_%i", i).toStdString().c_str()).set_value(vec[i]);
+            }
+
+            return;
+        }
+
+        template <typename T>
+        void load_xnode_vec(pugi::xml_node & node, T & vec) {
+            vec = T(0.0f);
+            std::string type = (node.first_attribute().value());
+            if (type != std::string("glm_vec")) {
+                return;
+            }
+            for (int i = 0; i < vec.length(); i++) {
+                vec[i] = node.attribute(QString::asprintf("d_%i", i).toStdString().c_str()).as_float();
+            }
+        }
+    }
 }
 
 

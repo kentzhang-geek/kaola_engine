@@ -9,6 +9,7 @@
 #include <QtCore>
 #include "editor/surface.h"
 #include "utils/gl3d_lock.h"
+#include "utils/gl3d_utils.h"
 #include "editor/command.h"
 
 using namespace std;
@@ -659,34 +660,28 @@ int main(int argc, char **argv) {
 #if 0
 using namespace std;
 using namespace pugi;
-template<typename T>
-void save_vec(xml_node & node, T vec) {
-    for (int i = 0; i < vec.length(); i++) {
-        node.append_attribute(QString::asprintf("d_%i", i).toStdString().c_str()).set_value(vec[i]);
-    }
-}
 
 int main(int argc, char ** argv) {
     xml_document doc;
     doc.set_name("test doc");
     xml_node xnode = doc.root();
     xml_node tmpnode = xnode.append_child("child1");
-    save_vec(tmpnode, glm::vec3(1.0f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.0f), tmpnode);
     tmpnode = xnode.append_child("child2");
-    save_vec(tmpnode, glm::vec3(1.1f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.1f), tmpnode);
     tmpnode = xnode.append_child("child3");
-    save_vec(tmpnode, glm::vec3(1.2f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.2f), tmpnode);
     tmpnode = xnode.append_child("child4");
-    save_vec(tmpnode, glm::vec3(1.3f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.3f), tmpnode);
     tmpnode = xnode.append_child("childs");
     xml_node tmp = tmpnode.append_child("tmp1");
-    save_vec(tmp, glm::vec3(1.4f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.4f), tmp);
     tmp = tmpnode.append_child("tmp2");
-    save_vec(tmp, glm::vec3(1.5f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.5f), tmp);
     tmp = tmpnode.append_child("tmp3");
-    save_vec(tmp, glm::vec3(1.6f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.6f), tmp);
     tmp = tmpnode.append_child("tmp4");
-    save_vec(tmp, glm::vec3(1.7f));
+    gl3d::xml::save_vec_to_xnode(glm::vec3(1.7f), tmp);
     ofstream f("test.xml");
     doc.save(f);
     return 0;
@@ -715,16 +710,15 @@ int main(int argc, char ** argv) {
     pugi::xml_parse_result result = doc.load_file("test.xml");
     std::cout << "Load result: " << result.description() << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
     xml_node tmp = doc.root();
-    xpath_node_set ss = doc.select_nodes("/childs/*");
+    xpath_node_set ss = doc.select_nodes("//*[@type='glm_vec']");
     for (xpath_node_set::iterator it = ss.begin();
             it != ss.end();
             it++) {
-        cout << "node : " << it->node().name() << endl;
-        for (xml_attribute_iterator ait = it->node().attributes_begin();
-                ait != it->node().attributes_end();
-                ait++) {
-            cout << "attribute : " << ait->name() << " = " << ait->value() << endl;
-        }
+        glm::vec3 get;
+        gl3d::xml::load_xnode_vec(it->node(), get);
+        cout << get.x << endl;
+        cout << get.y << endl;
+        cout << get.z << endl;
     }
 //    print_node(tmp);
     return 0;
