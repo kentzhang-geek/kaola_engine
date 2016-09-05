@@ -715,7 +715,18 @@ int main(int argc, char ** argv) {
     pugi::xml_parse_result result = doc.load_file("test.xml");
     std::cout << "Load result: " << result.description() << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
     xml_node tmp = doc.root();
-    print_node(tmp);
+    xpath_node_set ss = doc.select_nodes("/childs/*");
+    for (xpath_node_set::iterator it = ss.begin();
+            it != ss.end();
+            it++) {
+        cout << "node : " << it->node().name() << endl;
+        for (xml_attribute_iterator ait = it->node().attributes_begin();
+                ait != it->node().attributes_end();
+                ait++) {
+            cout << "attribute : " << ait->name() << " = " << ait->value() << endl;
+        }
+    }
+//    print_node(tmp);
     return 0;
 }
 #endif
