@@ -199,6 +199,9 @@ namespace gl3d {
         void clear_relate_surfaces(QSet<klm::Surface *> &surfaces);
         void set_material(std::string res_id);
 
+        bool save_to_xml(pugi::xml_node & node);
+        static room * load_from_xml(pugi::xml_node & node);
+
     private:
         bool picked;
     };

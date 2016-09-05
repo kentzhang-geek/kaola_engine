@@ -13,6 +13,7 @@ public:
     float wall_thick;
     unsigned int framebuffer;
     void *old_sketch_test;
+    void * main_scene;
 
     enum work_state {
         normal = 0,

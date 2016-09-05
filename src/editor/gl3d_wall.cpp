@@ -1316,3 +1316,125 @@ void room::set_material(std::string res_id) {
 
     return;
 }
+
+bool room::save_to_xml(pugi::xml_node &node) {
+    // first attribute type is room
+    node.append_attribute("type").set_value("room");
+    // room name
+    node.append_attribute("room_name").set_value(this->name.c_str());
+    // add ground
+    pugi::xml_node tmp = node.append_child("ground");
+    this->ground->save(tmp);
+    // save edge points
+    for (int i = 0; i < this->edge_points.size(); i++) {
+        tmp = node.append_child("edge_point");
+        gl3d::xml::save_vec_to_xnode(this->edge_points.at(i), tmp);
+        tmp.append_attribute("seq_id").set_value(i);
+    }
+    // relate wall id
+    Q_FOREACH(gl3d_wall * wit, this->relate_walls) {
+            tmp = node.append_child("relate_wall_id");
+            tmp.append_attribute("wall_id").set_value(wit->get_id());
+        }
+
+    return true;
+}
+
+room* room::load_from_xml(pugi::xml_node &node) {
+    // check type
+    if (std::string(node.attribute("type").value()) != std::string("room")) {
+        return NULL;
+    }
+    QMap<int , glm::vec3> edgept_map;
+    // load edge
+    pugi::xpath_node_set nset = node.select_nodes("//edge_point");
+    for (pugi::xpath_node_set::iterator xit = nset.begin();
+            xit != nset.end();
+            xit++) {
+        int seq_id = xit->node().attribute("seq_id").as_int();
+        glm::vec3 inspt;
+        pugi::xml_node tmp = xit->node();
+        gl3d::xml::load_xnode_vec(tmp, inspt);
+        edgept_map.insert(seq_id, inspt);
+    }
+    QVector<glm::vec3> pts;
+    for (int i = 0; i < edgept_map.size(); i++) {
+        pts.push_back(edgept_map.value(i));
+    }
+    // room name
+    room * n_r = new room(pts);
+    n_r->name = std::string(node.attribute("room_name").value());
+    // ground
+    n_r->ground = new klm::Surface;
+    n_r->ground->load(node.child("ground").first_child());
+    // related walls
+    nset = node.select_nodes("//relate_wall_id");
+    for (auto xit = nset.begin();
+            xit != nset.end();
+            xit++) {
+//        cout << "get room id" << xit->node().attribute("wall_id").as_int() << endl; // test output
+        gl3d::scene * msc = (gl3d::scene * ) gl3d_global_param::shared_instance()->main_scene;
+        int wallid = xit->node().attribute("wall_id").as_int();
+        if (msc->get_attached_sketch()->get_objects()->contains(wallid)) {
+            n_r->relate_walls.insert((gl3d_wall *) msc->get_attached_sketch()->get_obj(wallid));
+        }
+    }
+
+    return n_r;
+}
+
+// test code
+#if 0
+int main(int argc, char ** argv) {
+    gl3d_wall *w1 = new gl3d_wall(glm::vec2(0.0f),
+                                  glm::vec2(1.0f, 0.0f),
+                                  0.2f,
+                                  2.0f);
+    gl3d_wall *w2 = new gl3d_wall(glm::vec2(1.0f, 0.0f),
+                                  glm::vec2(1.0f),
+                                  0.2f,
+                                  2.0f);
+    gl3d_wall *w3 = new gl3d_wall(glm::vec2(1.0f),
+                                  glm::vec2(0.0f, 1.0f),
+                                  0.2f,
+                                  2.0f);
+    gl3d_wall *w4 = new gl3d_wall(glm::vec2(0.0f, 1.0f),
+                                  glm::vec2(0.0f),
+                                  0.2f,
+                                  2.0f);
+    QVector<glm::vec3 > pts;
+    pts.push_back(glm::vec3(0.0f));
+    pts.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+    pts.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+    pts.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+    w1->set_id(1);
+    w2->set_id(2);
+    w3->set_id(3);
+    w4->set_id(4);
+
+    room * r = new room(pts);
+    r->name = "what";
+    r->relate_walls.insert(w1);
+    r->relate_walls.insert(w2);
+    r->relate_walls.insert(w3);
+    r->relate_walls.insert(w4);
+
+    pugi::xml_document doc;
+    pugi::xml_node n = doc.root().append_child("room");
+    r->save_to_xml(n);
+    doc.save_file("room.xml");
+    return 0;
+}
+#endif
+
+#if 0
+int main() {
+    pugi::xml_document doc;
+    doc.load_file("room.xml");
+    pugi::xml_node inn = doc.root().child("room");
+    room * r = room::load_from_xml(inn);
+    cout << r->name << endl;
+
+    return 0;
+}
+#endif
