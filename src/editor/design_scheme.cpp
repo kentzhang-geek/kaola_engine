@@ -655,3 +655,67 @@ int main(int argc, char **argv) {
 }
 
 #endif
+
+#if 0
+using namespace std;
+using namespace pugi;
+template<typename T>
+void save_vec(xml_node & node, T vec) {
+    for (int i = 0; i < vec.length(); i++) {
+        node.append_attribute(QString::asprintf("d_%i", i).toStdString().c_str()).set_value(vec[i]);
+    }
+}
+
+int main(int argc, char ** argv) {
+    xml_document doc;
+    doc.set_name("test doc");
+    xml_node xnode = doc.root();
+    xml_node tmpnode = xnode.append_child("child1");
+    save_vec(tmpnode, glm::vec3(1.0f));
+    tmpnode = xnode.append_child("child2");
+    save_vec(tmpnode, glm::vec3(1.1f));
+    tmpnode = xnode.append_child("child3");
+    save_vec(tmpnode, glm::vec3(1.2f));
+    tmpnode = xnode.append_child("child4");
+    save_vec(tmpnode, glm::vec3(1.3f));
+    tmpnode = xnode.append_child("childs");
+    xml_node tmp = tmpnode.append_child("tmp1");
+    save_vec(tmp, glm::vec3(1.4f));
+    tmp = tmpnode.append_child("tmp2");
+    save_vec(tmp, glm::vec3(1.5f));
+    tmp = tmpnode.append_child("tmp3");
+    save_vec(tmp, glm::vec3(1.6f));
+    tmp = tmpnode.append_child("tmp4");
+    save_vec(tmp, glm::vec3(1.7f));
+    ofstream f("test.xml");
+    doc.save(f);
+    return 0;
+}
+#endif
+
+#if 0
+using namespace std;
+using namespace pugi;
+void print_node(xml_node & node) {
+    cout << node.name() << " = " << node.value() << endl;
+    for (auto it = node.attributes_begin();
+            it != node.attributes_end();
+            it++) {
+        cout << it->name() << " = " << it->value() << endl;
+    }
+    for (auto it = node.begin();
+            it != node.end();
+            it++) {
+        print_node(*it);
+    }
+}
+
+int main(int argc, char ** argv) {
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file("test.xml");
+    std::cout << "Load result: " << result.description() << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
+    xml_node tmp = doc.root();
+    print_node(tmp);
+    return 0;
+}
+#endif

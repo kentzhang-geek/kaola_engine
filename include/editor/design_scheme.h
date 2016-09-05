@@ -12,6 +12,8 @@
 #include "resource_and_network/global_material.h"
 #include "utils/gl3d_utils.h"
 #include "kaola_engine/gl3d_general_light_source.h"
+#include "pugiconfig.hpp"
+#include "pugixml.hpp"
 
 #define KLM_SCHEME_ID 65535
 
