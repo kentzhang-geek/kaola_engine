@@ -7,6 +7,7 @@
 QT       += core gui opengl widgets
 
 win32: QMAKE_CXXFLAGS += /MP
+win32: QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
 
 TRANSLATIONS += zh.ts
 
