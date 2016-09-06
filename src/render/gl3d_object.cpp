@@ -10,6 +10,8 @@
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_material.hpp"
 #include <QVector>
+#include "pugixml.hpp"
+#include "pugiconfig.hpp"
 
 using namespace gl3d;
 using namespace Assimp;
@@ -167,8 +169,6 @@ bool object::init(char *filename) {
         mtl = scene->mMaterials[i];
         this->mtls.insert(i, new gl3d_material(mtl));
     }
-
-    GL3D_GL()->glBindVertexArray(0);
 
     return true;
 }
@@ -403,6 +403,10 @@ void object::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
 }
 
 bool object::save_to_xml(pugi::xml_node &node) {
+    if (this->get_obj_type() != type_furniture) {
+        node.append_attribute("error").set_value("save obj type is not furniture");
+        return false;
+    }
     // set type
     node.append_attribute("type").set_value("gl3d_object");
     // resource id
@@ -417,7 +421,13 @@ bool object::save_to_xml(pugi::xml_node &node) {
     // position
     att = node.append_child("position");
     gl3d::xml::save_vec_to_xml(this->this_property.position, att);
-    return false;
+    // render code
+    node.append_attribute("render_code_low").set_value((unsigned int)this->get_render_authority());
+    node.append_attribute("render_code_high").set_value((unsigned int)(this->get_render_authority() >> 32));
+    // control code
+    node.append_attribute("control_code_low").set_value((unsigned int)this->get_control_authority());
+    node.append_attribute("control_code_high").set_value((unsigned int)(this->get_control_authority() >> 32));
+    return true;
 }
 
 object *object::load_from_xml(pugi::xml_node node) {
@@ -425,22 +435,70 @@ object *object::load_from_xml(pugi::xml_node node) {
     if (type != "gl3d_object") {
         return NULL;
     }
+    // load resource
     QString resid(node.attribute("res_id").value());
-    object *obj = new object(
-            (char *) klm::resource::manager::shared_instance()->get_res_item(resid.toStdString()).c_str());
-    return NULL;
+    object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
+            resid.toStdString())).c_str());
+    obj->set_obj_type(obj->type_furniture);
+    // load position and rotate
+    glm::vec3 pos(0.0f);
+    glm::mat4 rot(1.0f);
+    gl3d::xml::load_xml_to_mat(node.child("rotate_mat"), rot);
+    gl3d::xml::load_xml_to_vec(node.child("position"), pos);
+    obj->get_property()->position = pos;
+    obj->get_property()->rotate_mat = rot;
+    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
+    // laod code
+    obj->set_control_authority(node.attribute("control_code_low").as_uint() |
+                               (((GLuint64) node.attribute("control_code_high").as_uint()) << 32));
+    obj->set_render_authority(node.attribute("render_code_low").as_uint() |
+                              (((GLuint64) node.attribute("render_code_high").as_uint()) << 32));
+    // preprocess
+    obj->pre_scale();
+    obj->merge_meshes();
+    obj->recalculate_normals();
+    obj->convert_left_hand_to_right_hand();
+    return obj;
 }
 
-#if 1
+#if 0
 using namespace pugi;
 
 int main() {
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     xml_document doc;
-    doc.load_file("mat.xml");
-    xml_node tmp = doc.root().child("mat_test");
-    glm::mat4 ppp(0.0f);
-    gl3d::xml::load_xml_to_mat(tmp, ppp);
+    xml_node nd = doc.root();
+    nd = nd.append_child("fur1");
+    object *obj = new object(
+            (char *) klm::resource::manager::shared_instance()->get_res_item("000001").c_str());
+    obj->get_property()->position = glm::vec3(1.2f);
+    obj->get_property()->rotate_mat = glm::mat4(2.2f);
+    obj->set_render_authority(1204);
+    obj->set_control_authority(1203);
+    obj->set_obj_type(obj->type_furniture);
+    // preprocess
+    obj->pre_scale();
+    obj->merge_meshes();
+    obj->recalculate_normals();
+    obj->convert_left_hand_to_right_hand();
+    obj->set_res_id("000001");
+
+    obj->save_to_xml(nd);
+    doc.save_file("test_obj.xml");
     return 0;
 }
 
+#endif
+
+#if 0
+using namespace pugi;
+int main() {
+    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
+    xml_document doc;
+    doc.load_file("test_obj.xml");
+    xml_node nd = doc.root();
+    object * obj = object::load_from_xml(nd.child("fur1"));
+
+    return 0;
+}
 #endif

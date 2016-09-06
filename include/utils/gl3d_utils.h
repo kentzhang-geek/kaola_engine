@@ -90,7 +90,7 @@ namespace gl3d {
         }
 
         template <typename T>
-        void load_xml_to_vec(pugi::xml_node & node, T & vec) {
+        void load_xml_to_vec(pugi::xml_node node, T & vec) {
             vec = T(0.0f);
             std::string type = (node.attribute("type").value());
             int dimenson = vec.length();
