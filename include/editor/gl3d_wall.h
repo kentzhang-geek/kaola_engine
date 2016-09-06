@@ -180,6 +180,10 @@ namespace gl3d {
 
         static int global_hole_id;
 
+        // save and load
+        bool save_to_xml(pugi::xml_node &node);
+        static hole * load_from_xml(pugi::xml_node node);
+
     private:
         void init();
     };

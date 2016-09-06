@@ -1383,6 +1383,43 @@ room* room::load_from_xml(pugi::xml_node &node) {
     return n_r;
 }
 
+bool hole::save_to_xml(pugi::xml_node &node) {
+    // set type
+    node.append_attribute("type").set_value("gl3d_hole");
+    // 2 points
+    pugi::xml_node nd = node.append_child("pointa");
+    gl3d::xml::save_vec_to_xml(this->pta, nd);
+    nd = node.append_child("pointb");
+    gl3d::xml::save_vec_to_xml(this->ptb, nd);
+    // hole id
+    node.append_attribute("hole_id").set_value(this->hole_id);
+    // wall id
+    node.append_attribute("on_wall_id").set_value(this->on_witch_wall->get_id());
+    return true;
+}
+
+hole* hole::load_from_xml(pugi::xml_node node) {
+    QString type(node.attribute("type").value());
+    if (type != "gl3d_hole") {
+        return NULL;
+    }
+    // search on witch wall
+    int on_wall_id = node.attribute("on_wall_id").as_int();
+    gl3d::scene * msc = (gl3d::scene *) gl3d_global_param::shared_instance()->main_scene;
+    if (msc->get_attached_sketch()->get_objects()->contains(on_wall_id)) {
+        gl3d_wall * w = (gl3d_wall *) msc->get_obj(on_wall_id);
+        glm::vec3 pta;
+        glm::vec3 ptb;
+        xml::load_xml_to_vec(node.child("pointa"), pta);
+        xml::load_xml_to_vec(node.child("pointb"), ptb);
+        hole * h = new hole(w, pta, ptb);
+        h->set_hole_id(node.attribute("hole_id").as_int());
+        return h;
+    }
+
+    return NULL;
+}
+
 // test code
 #if 0
 int main(int argc, char ** argv) {
