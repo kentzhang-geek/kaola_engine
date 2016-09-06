@@ -1420,6 +1420,111 @@ hole* hole::load_from_xml(pugi::xml_node node) {
     return NULL;
 }
 
+using namespace pugi;
+bool gl3d_wall_attach::save_to_xml(pugi::xml_node &node) {
+    // type
+    node.append_attribute("type").set_value("gl3d_wall_attach");
+    // attach wall
+    node.append_attribute("attach_wall_id").set_value(this->attach->get_id());
+    // attach point
+    node.append_attribute("attach_point").set_value((int) this->attach_point);
+    return true;
+}
+
+void gl3d_wall_attach::load_from_xml(pugi::xml_node node) {
+    QString type(node.attribute("type").value());
+    if (type != "gl3d_wall_attach") {
+        return;
+    }
+    int aid = node.attribute("attach_wall_id").as_int();
+    gl3d::scene * msc = (gl3d::scene *)gl3d_global_param::shared_instance()->main_scene;
+    if (msc->get_attached_sketch()->get_objects()->contains(aid)) {
+        this->attach = (gl3d_wall *) msc->get_obj(aid);
+        this->attach_point = (attachment_point) node.attribute("attach_point").as_int();
+    }
+
+    return;
+}
+
+// TODO : test wall save
+bool gl3d_wall::save_to_xml(pugi::xml_node &node) {
+    // save type
+    node.append_attribute("type").set_value("gl3d_wall");
+    // geometry properties
+    xml_node ndc = node.append_child("start_pt");
+    xml::save_vec_to_xml(this->start_point, ndc);
+    ndc = node.append_child("end_pt");
+    xml::save_vec_to_xml(this->end_point, ndc);
+    node.append_attribute("thickness").set_value(this->thickness);
+    node.append_attribute("height").set_value(this->hight);
+    // fix and attach
+    node.append_attribute("st_fixed").set_value(this->start_point_fixed);
+    node.append_attribute("ed_fixed").set_value(this->end_point_fixed);
+    ndc = node.append_child("start_attach");
+    this->start_point_attach.save_to_xml(ndc);
+    ndc = node.append_child("end_attach");
+    this->end_point_attach.save_to_xml(ndc);
+    // sfcs
+    for (int i = 0; i < this->sfcs.size(); i++) {
+        ndc = node.append_child("wall_sfc");
+        ndc.append_attribute("sid").set_value(i);
+        this->sfcs.at(i)->save(ndc);
+    }
+    // holes
+    Q_FOREACH(hole * hit, this->holes_on_this_wall) {
+            ndc = node.append_child("wall_hole");
+            hit->save_to_xml(ndc);
+        }
+
+    return true;
+}
+
+// TODO : test wall load
+gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
+    // validate type
+    QString type(node.attribute("type").value());
+    if (type != "gl3d_wall") {
+        return NULL;
+    }
+    // load geometry properties
+    glm::vec2 st_tmp;
+    glm::vec2 ed_tmp;
+    xml::load_xml_to_vec(node.child("start_pt"), st_tmp);
+    xml::load_xml_to_vec(node.child("end_pt"), ed_tmp);
+    gl3d_wall *w = new gl3d_wall(st_tmp, ed_tmp, node.attribute("thickness").as_float(),
+                                 node.attribute("height").as_float());
+    // load attachment
+    w->start_point_fixed = node.attribute("st_fixed").as_bool();
+    w->end_point_fixed = node.attribute("ed_fixed").as_bool();
+    w->get_start_point_attach()->load_from_xml(node.child("start_attach"));
+    w->get_end_point_attach()->load_from_xml(node.child("end_attach"));
+
+    // wall sfcs
+    xpath_node_set nset = node.select_nodes("//wall_sfc");
+    QMap<int , klm::Surface *> tmp_sfcs;
+    for (auto it = nset.begin();
+            it != nset.end();
+            it++) {
+        int sid = it->node().attribute("sid").as_int();
+        klm::Surface * s = new klm::Surface();
+        if (s->load(it->node().child("surface")))
+            tmp_sfcs.insert(sid, s);
+    }
+    for (int i = 0; i < tmp_sfcs.size(); i++) {
+        w->sfcs.push_back(tmp_sfcs.value(i));
+    }
+
+    // wall holes
+    nset = node.select_nodes("//wall_hole");
+    for (auto it = nset.begin();
+            it != nset.end();
+            it++) {
+        hole * h = hole::load_from_xml(it->node());
+        w->holes_on_this_wall.insert(h->get_hole_id(), h);
+    }
+    return NULL;
+}
+
 // test code
 #if 0
 int main(int argc, char ** argv) {

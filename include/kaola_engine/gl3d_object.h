@@ -216,7 +216,7 @@ namespace gl3d {
         virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
 
         // save or load with xml
-        bool save_to_xml(pugi::xml_node &node);
+        virtual bool save_to_xml(pugi::xml_node &node);
         static object * load_from_xml(pugi::xml_node node);
 
     private:

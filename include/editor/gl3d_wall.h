@@ -61,6 +61,10 @@ namespace gl3d {
         attachment_point attach_point;
 
         gl3d_wall_attach();
+
+        // save and load
+        virtual bool save_to_xml(pugi::xml_node &node);
+        void load_from_xml(pugi::xml_node node);
     };
 
     class hole;
@@ -148,6 +152,10 @@ namespace gl3d {
         // set material of this wall
         bool set_material(std::string res_id);
 
+        // save and load
+        virtual bool save_to_xml(pugi::xml_node &node);
+        static gl3d_wall * load_from_xml(pugi::xml_node node);
+
     private:
         void release_last_data();
 
@@ -181,7 +189,7 @@ namespace gl3d {
         static int global_hole_id;
 
         // save and load
-        bool save_to_xml(pugi::xml_node &node);
+        virtual bool save_to_xml(pugi::xml_node &node);
         static hole * load_from_xml(pugi::xml_node node);
 
     private:
@@ -203,7 +211,7 @@ namespace gl3d {
         void clear_relate_surfaces(QSet<klm::Surface *> &surfaces);
         void set_material(std::string res_id);
 
-        bool save_to_xml(pugi::xml_node & node);
+        virtual bool save_to_xml(pugi::xml_node & node);
         static room * load_from_xml(pugi::xml_node & node);
 
     private:
