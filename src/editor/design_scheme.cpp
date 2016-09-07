@@ -552,14 +552,48 @@ bool scheme::save_to_xml(pugi::xml_node &node) {
 }
 
 // TODO : load from xml
-scheme* scheme::load_from_xml(pugi::xml_node node) {
+bool scheme::load_from_xml(pugi::xml_node node) {
     using namespace pugi;
     // check type
     QString type(node.attribute("type").value());
     if (type != "design_scheme") {
-        return NULL;
+        return false;
     }
-    return NULL;
+    // wall start id
+    this->wall_id_start = node.attribute("wall_id_start").as_int();
+    xpath_node_set nset;
+    // walls
+    nset = node.select_nodes("wall");
+    for (auto nit = nset.begin();
+            nit != nset.end();
+            nit++) {
+        gl3d_wall * w = gl3d_wall::load_from_xml(nit->node());
+        if (NULL != w) {
+            this->walls.insert(w);
+            this->objects.insert(w->get_id(), w);
+        }
+    }
+    // rooms
+    nset = node.select_nodes("room");
+    for (auto nit = nset.begin();
+            nit != nset.end();
+            nit++) {
+        gl3d::room * r = room::load_from_xml(nit->node());
+        if (NULL != r) {
+            this->rooms.insert(r);
+        }
+    }
+    // furnitures
+    nset = node.select_nodes("furniture");
+    for (auto nit = nset.begin();
+            nit != nset.end();
+            nit++) {
+        gl3d::object * o = gl3d::object::load_from_xml(nit->node());
+        if (o != NULL) {
+            this->objects.insert(o->get_id(), o);
+        }
+    }
+    return true;
 }
 
 // test code

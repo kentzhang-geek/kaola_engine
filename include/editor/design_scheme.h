@@ -63,8 +63,8 @@ namespace klm {
             bool draw_assistant_image(QImage * img);
 
             // save and load
-            bool save_to_xml(pugi::xml_node & node);
-            static scheme * load_from_xml(pugi::xml_node node);
+            virtual bool save_to_xml(pugi::xml_node & node);
+            virtual bool load_from_xml(pugi::xml_node node);
 
         private:
             void init();

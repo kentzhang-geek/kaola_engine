@@ -409,6 +409,8 @@ bool object::save_to_xml(pugi::xml_node &node) {
     }
     // set type
     node.append_attribute("type").set_value("gl3d_object");
+    // abstract obj properties
+    node.append_attribute("id").set_value(this->get_id());
     // resource id
     node.append_attribute("res_id").set_value(this->res_id.c_str());
     // object file name
@@ -440,6 +442,8 @@ object *object::load_from_xml(pugi::xml_node node) {
     object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
             resid.toStdString())).c_str());
     obj->set_obj_type(obj->type_furniture);
+    // abstract obj properties
+    obj->set_id(node.attribute("id").as_int());
     // load position and rotate
     glm::vec3 pos(0.0f);
     glm::mat4 rot(1.0f);

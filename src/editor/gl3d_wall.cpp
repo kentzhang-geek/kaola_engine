@@ -1450,6 +1450,8 @@ void gl3d_wall_attach::load_from_xml(pugi::xml_node node) {
 bool gl3d_wall::save_to_xml(pugi::xml_node &node) {
     // save type
     node.append_attribute("type").set_value("gl3d_wall");
+    // object properties
+    node.append_attribute("id").set_value(this->get_id());
     // geometry properties
     xml_node ndc = node.append_child("start_pt");
     xml::save_vec_to_xml(this->start_point, ndc);
@@ -1497,6 +1499,10 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     xml::load_xml_to_vec(node.child("end_pt"), ed_tmp);
     gl3d_wall *w = new gl3d_wall(st_tmp, ed_tmp, node.attribute("thickness").as_float(),
                                  node.attribute("height").as_float());
+    // obj properties
+    w->set_id(node.attribute("id").as_int());
+    w->set_obj_type(w->type_wall);
+    w->get_property()->scale_unit = scale::length_unit::wall;
     // load attachment
     w->start_point_fixed = node.attribute("st_fixed").as_bool();
     w->end_point_fixed = node.attribute("ed_fixed").as_bool();

@@ -76,6 +76,7 @@ void MOpenGLView::do_init() {
 
     // create sketch and scene
     this->create_scene();
+    gl3d_global_param::shared_instance()->main_scene = this->main_scene;
     // test codes
 //    if (gl3d_global_param::shared_instance()->old_sketch_test != NULL)
 //        this->sketch = (klm::design::scheme *) gl3d_global_param::shared_instance()->old_sketch_test;
@@ -101,6 +102,16 @@ void MOpenGLView::do_init() {
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
     //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
+
+    // TODO : test load sketch
+    if (QFile("sketch.xml").exists()) {
+        pugi::xml_document doc;
+        doc.load_file("sketch.xml");
+        pugi::xml_node nd = doc.root().child("sketch");
+        if (this->sketch->load_from_xml(nd)) {
+            cout << "load sketch successed" << endl;
+        }
+    }
 }
 
 #define MAX_FILE_SIZE 10000
