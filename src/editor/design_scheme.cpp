@@ -594,6 +594,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
             this->objects.insert(o->get_id(), o);
         }
     }
+    this->recalculate_rooms();
     return true;
 }
 
