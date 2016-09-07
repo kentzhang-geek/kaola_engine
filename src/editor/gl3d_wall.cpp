@@ -1460,10 +1460,14 @@ bool gl3d_wall::save_to_xml(pugi::xml_node &node) {
     // fix and attach
     node.append_attribute("st_fixed").set_value(this->start_point_fixed);
     node.append_attribute("ed_fixed").set_value(this->end_point_fixed);
-    ndc = node.append_child("start_attach");
-    this->start_point_attach.save_to_xml(ndc);
-    ndc = node.append_child("end_attach");
-    this->end_point_attach.save_to_xml(ndc);
+    if (this->start_point_fixed) {
+        ndc = node.append_child("start_attach");
+        this->start_point_attach.save_to_xml(ndc);
+    }
+    if (this->end_point_fixed) {
+        ndc = node.append_child("end_attach");
+        this->end_point_attach.save_to_xml(ndc);
+    }
     // sfcs
     for (int i = 0; i < this->sfcs.size(); i++) {
         ndc = node.append_child("wall_sfc");
@@ -1496,8 +1500,10 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     // load attachment
     w->start_point_fixed = node.attribute("st_fixed").as_bool();
     w->end_point_fixed = node.attribute("ed_fixed").as_bool();
-    w->get_start_point_attach()->load_from_xml(node.child("start_attach"));
-    w->get_end_point_attach()->load_from_xml(node.child("end_attach"));
+    if (w->start_point_fixed)
+        w->get_start_point_attach()->load_from_xml(node.child("start_attach"));
+    if (w->end_point_fixed)
+        w->get_end_point_attach()->load_from_xml(node.child("end_attach"));
 
     // wall sfcs
     xpath_node_set nset = node.select_nodes("//wall_sfc");

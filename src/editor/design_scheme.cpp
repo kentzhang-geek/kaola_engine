@@ -523,6 +523,45 @@ bool scheme::draw_assistant_image(QImage *img) {
     return false;
 }
 
+// TODO : test save to xml
+bool scheme::save_to_xml(pugi::xml_node &node) {
+    using namespace pugi;
+    // save type
+    node.append_attribute("type").set_value("design_scheme");
+    // wall id start
+    node.append_attribute("wall_id_start").set_value(this->wall_id_start);
+    // rooms
+    xml_node ndc;
+    Q_FOREACH(gl3d::room * rit, this->rooms) {
+            ndc = node.append_child("room");
+            rit->save_to_xml(ndc);
+        }
+    // walls
+    Q_FOREACH(gl3d::gl3d_wall * wit, this->walls) {
+            ndc = node.append_child("wall");
+            wit->save_to_xml(ndc);
+        }
+    // furnitures
+    Q_FOREACH(gl3d::abstract_object * oit, this->objects) {
+            if (oit->get_obj_type() == oit->type_furniture) {
+                ndc = node.append_child("furniture");
+                ((gl3d::object * )oit)->save_to_xml(ndc);
+            }
+        }
+    return true;
+}
+
+// TODO : load from xml
+scheme* scheme::load_from_xml(pugi::xml_node node) {
+    using namespace pugi;
+    // check type
+    QString type(node.attribute("type").value());
+    if (type != "design_scheme") {
+        return NULL;
+    }
+    return NULL;
+}
+
 // test code
 #if 0
 
