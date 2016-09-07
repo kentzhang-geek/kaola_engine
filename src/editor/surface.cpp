@@ -464,9 +464,9 @@ void Surface::save(pugi::xml_node &node){
     pugi::xml_node surfaceNode = node.append_child(IOUtility::SURFACE.c_str());
 
     // materials
-    node.append_attribute("mtl_id").set_value(this->surfaceMaterial->getID().c_str());
+    surfaceNode.append_attribute("mtl_id").set_value(this->surfaceMaterial->getID().c_str());
     if (this->connectiveMaterial != NULL)
-        node.append_attribute("cnt_mtl_id").set_value(this->connectiveMaterial->getID().c_str());
+        surfaceNode.append_attribute("cnt_mtl_id").set_value(this->connectiveMaterial->getID().c_str());
 
     writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());
 
