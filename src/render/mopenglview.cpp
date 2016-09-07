@@ -101,17 +101,6 @@ void MOpenGLView::do_init() {
     this->main_scene->set_assistant_image(
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
-    //    this->main_scene->set_assistant_drawer(new QPainter(this->main_scene->get_assistant_image()));
-
-    // TODO : test load sketch
-    if (QFile("sketch.xml").exists()) {
-        pugi::xml_document doc;
-        doc.load_file("sketch.xml");
-        pugi::xml_node nd = doc.root().child("sketch");
-        if (this->sketch->load_from_xml(nd)) {
-            cout << "load sketch successed" << endl;
-        }
-    }
 }
 
 #define MAX_FILE_SIZE 10000

@@ -31,10 +31,6 @@ drawhomewin::drawhomewin(QWidget *parent) :
 
 void drawhomewin::closeEvent(QCloseEvent *event) {
     event->accept();
-    pugi::xml_document doc;
-    pugi::xml_node nd = doc.root().append_child("sketch");
-    this->ui->OpenGLCanvas->sketch->save_to_xml(nd);
-    doc.save_file("sketch.xml");
     this->ui->OpenGLCanvas->close();
 }
 
