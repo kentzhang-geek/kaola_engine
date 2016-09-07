@@ -304,14 +304,12 @@ static inline glm::vec2 arr_point_to_vec2(Point_2 pt) {
 void scheme::recalculate_rooms() {
     // release old rooms
     bool has_new_sfc = false;
-    QVector<QPair<glm::vec3, QString>> room_and_names;
+    QVector<QPair<glm::vec3, room *>> room_and_center;
     Q_FOREACH(room *const &rit, this->rooms) {
             glm::vec3 b_max;
             glm::vec3 b_min;
-            math::get_bounding(rit->edge_points, b_max, b_min);
-            glm::vec3 center = (b_max + b_min) / 2.0f;
-            room_and_names.push_back(QPair<glm::vec3, QString>(center, QString::fromStdString(rit->name)));
-            delete rit;
+            glm::vec3 center = math::get_center_vertex(rit->edge_points);
+            room_and_center.push_back(QPair<glm::vec3, room *>(center, rit));
         }
     this->rooms.clear();
     // clear relate room for walls
@@ -373,15 +371,16 @@ void scheme::recalculate_rooms() {
                 try{
                     r = new room(grd);
                     // check room name
-                    for (auto it = room_and_names.begin();
-                            it != room_and_names.end();
+                    for (auto it = room_and_center.begin();
+                            it != room_and_center.end();
                             it++) {
-                        glm::vec3 b_max;
-                        glm::vec3 b_min;
-                        math::get_bounding(r->edge_points, b_max, b_min);
-                        glm::vec3 center = (b_max + b_min) / 2.0f;
+                        glm::vec3 center = math::get_center_vertex(r->edge_points);
                         if (math::point_near_point(it->first, center)) {
-                            r->name = it->second.toStdString();
+                            // copy name and surfacing
+                            r->name = it->second->name;
+                            r->ground->setSurfaceMaterial(
+                                    new Surfacing(it->second->ground->getSurfaceMaterial()->getID()));
+                            break;
                         }
                     }
 
@@ -449,6 +448,11 @@ void scheme::recalculate_rooms() {
             }
         }
     }
+
+    // clear old rooms
+    Q_FOREACH(auto it, room_and_center) {
+            delete it.second;
+        }
 
     return;
 }
