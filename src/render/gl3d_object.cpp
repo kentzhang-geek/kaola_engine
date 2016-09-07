@@ -465,6 +465,18 @@ object *object::load_from_xml(pugi::xml_node node) {
     return obj;
 }
 
+bool object::scale_model(glm::vec3 xyz, bool keep_texture_ratio) {
+    if (this->data_buffered) {
+        GL3D_UTILS_THROW("can not scale after buffer data in 3ds models");
+        return false;
+    }
+
+    Q_FOREACH(gl3d::mesh * mit, this->meshes) {
+            mit->scale_model(xyz, keep_texture_ratio);
+        }
+    return true;
+}
+
 #if 0
 using namespace pugi;
 

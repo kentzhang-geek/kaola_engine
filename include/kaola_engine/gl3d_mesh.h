@@ -76,6 +76,9 @@ namespace gl3d {
         void buffer_data();
         ~mesh();
 
+        // scale points
+        bool scale_model(glm::vec3 unit, bool keep_texture_ratio = true);
+
         // properties
         GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
         GL3D_UTILS_PROPERTY(bounding_value_min, glm::vec3);

@@ -317,3 +317,35 @@ void mesh::convert_left_hand_to_right_hand() {
         pt[i].vertex_y = tmp;
     }
 }
+
+bool mesh::scale_model(glm::vec3 xyz, bool keep_texture_ratio) {
+    if (this->data_buffered) {
+        GL3D_UTILS_THROW("can not scale after buffer data in 3ds models");
+        return false;
+    }
+
+    glm::mat4 sc = glm::scale(glm::mat4(1.0f), xyz);
+    for (int i = 0; i < this->num_pts; ++i) {
+        glm::vec3 point(this->points_data[i].vertex_x,
+                        this->points_data[i].vertex_y,
+                        this->points_data[i].vertex_z);
+        glm::vec4 tmp = glm::vec4(point, 1.0f);
+        tmp = sc * tmp;
+        tmp = tmp / tmp.w;
+        this->points_data[i].vertex_x = tmp.x;
+        this->points_data[i].vertex_y = tmp.y;
+        this->points_data[i].vertex_z = tmp.z;
+        if (keep_texture_ratio) {
+            tmp = glm::vec4(this->points_data[i].texture_x,
+                            this->points_data[i].texture_y,
+                            0.0f,
+                            1.0f);
+            tmp = sc * tmp;
+            tmp = tmp / tmp.w;
+            this->points_data[i].texture_x = tmp.x;
+            this->points_data[i].texture_y = tmp.y;
+        }
+    }
+
+    return true;
+}

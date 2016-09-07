@@ -219,6 +219,9 @@ namespace gl3d {
         virtual bool save_to_xml(pugi::xml_node &node);
         static object * load_from_xml(pugi::xml_node node);
 
+        // scale to size
+        bool scale_model(glm::vec3 xyz, bool keep_texture_ratio = true);
+
     private:
         void init();
         obj_property this_property;
