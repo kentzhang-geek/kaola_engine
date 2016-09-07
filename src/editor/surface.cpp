@@ -74,7 +74,7 @@ Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(
     for(QVector<glm::vec3>::const_iterator point = points.begin();
         point != points.end(); ++point){
 
-        Vertex* vertex = new Vertex(*point);                
+        Vertex* vertex = new Vertex(*point);
 
         parentialShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
         vertex->x(vertex->x() - center.x);
@@ -84,7 +84,7 @@ Surface::Surface(const QVector<glm::vec3> &points, const Surface* parent) throw(
         transformVertex(rotation, *vertex);
         localVerticies->push_back(vertex);
         independShape->outer().push_back(bg_Point(vertex->x(), vertex->y()));
-    }           
+    }
     transformFromParent = new glm::mat4(glm::translate(center) * glm::inverse(rotation));
 
     delete boundingBox;
@@ -179,13 +179,13 @@ Surface* Surface::addSubSurface(const QVector<glm::vec3> &points){
             }
         }
     }
-    if(subSurfaceFits){        
-        subSurfaces->push_back(ret);        
+    if(subSurfaceFits){
+        subSurfaces->push_back(ret);
         updateSurfaceMesh();
         return  ret;
     } else {
         return nullptr;
-    }    
+    }
 }
 
 int Surface::getSurfaceCnt() const{
@@ -249,8 +249,8 @@ void Surface::getVerticesOnParent(QVector<Vertex*> &verticesOnParent) const{
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
         newVertex->z(0.0f);
-        verticesOnParent.push_back(newVertex);        
-    }    
+        verticesOnParent.push_back(newVertex);
+    }
 }
 
 void Surface::getVerticesToParent(QVector<Vertex *> &verticesToParent) const{
@@ -260,8 +260,8 @@ void Surface::getVerticesToParent(QVector<Vertex *> &verticesToParent) const{
         localVertex != this->localVerticies->end(); ++localVertex){
         Vertex* newVertex = new Vertex(**localVertex);
         transformVertex(trans, *newVertex);
-        verticesToParent.push_back(newVertex);       
-    }    
+        verticesToParent.push_back(newVertex);
+    }
 }
 
 void Surface::setScale(const glm::vec3 &scale){
@@ -368,21 +368,21 @@ const QVector<Surface::Vertex*>* Surface::getRenderingVertices(){
             v != ret.end(); ++v){
             delete *v;
         }
-    }    
+    }
     ret.clear();
 
     glm::mat4 trans = getRenderingTransform();
     for(QVector<Surface::Vertex*>::iterator vertex = renderingVerticies->begin();
         vertex != renderingVerticies->end(); ++vertex){
-        Surface::Vertex* v = new Surface::Vertex(**vertex);        
+        Surface::Vertex* v = new Surface::Vertex(**vertex);
         transformVertex(trans, *v);
         ret.push_back(v);
-    }   
+    }
 
     return &ret;
 }
 
-const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){    
+const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
     static QVector<Surface::Vertex*> ret;
     if(ret.size() != 0){
         for(QVector<Surface::Vertex*>::iterator v = ret.begin();
@@ -401,7 +401,7 @@ const QVector<Surface::Vertex*>* Surface::getConnectiveVerticies(){
         Surface::Vertex* v = new Surface::Vertex(**vertex);
         transformVertex(*transform, *v);
         ret.push_back(v);
-    }    
+    }
 
     delete transform;
 
@@ -412,10 +412,10 @@ const QVector<GLushort>* Surface::getRenderingIndices(){
     static QVector<GLushort> ret;
     if(ret.size() != 0){
         ret.clear();
-    }    
+    }
     for(QVector<GLushort>::iterator index = renderingIndicies->begin();
         index != renderingIndicies->end(); ++index){
-        ret.push_back(*index);        
+        ret.push_back(*index);
     }
     return &ret;
 }
@@ -463,7 +463,12 @@ Furniture* Surface::getFurniture(const string &pickID){
 void Surface::save(pugi::xml_node &node){
     pugi::xml_node surfaceNode = node.append_child(IOUtility::SURFACE.c_str());
 
-    writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());    
+    // materials
+    node.append_attribute("mtl_id").set_value(this->surfaceMaterial->getID().c_str());
+    if (this->connectiveMaterial != NULL)
+        node.append_attribute("cnt_mtl_id").set_value(this->connectiveMaterial->getID().c_str());
+
+    writeVerticies(surfaceNode, *localVerticies, IOUtility::LOCAL_VERTIICES.c_str());
 
     IOUtility::writeMatrix(surfaceNode, *transformFromParent, IOUtility::TRANSFORM_FROM_PPARENT.c_str());
     surfaceNode.append_attribute(IOUtility::SURFACE_VISIBLE.c_str()).set_value(surfaceVisible);
@@ -512,21 +517,28 @@ void Surface::save(pugi::xml_node &node){
 
 }
 
-bool Surface::load(const pugi::xml_node &node){    
+bool Surface::load(const pugi::xml_node &node){
     if(IOUtility::SURFACE.compare(std::string(node.name())) == 0){
         if(!readVerticies(node, localVerticies)){
             return false;
         }
 
+        // materials
+        std::string mtlid(node.attribute("mtl_id").value());
+        this->surfaceMaterial = new Surfacing(mtlid);
+        mtlid = std::string(node.attribute("cnt_mtl_id").value());
+        if (mtlid.size() > 0)
+            this->connectiveMaterial = new Surfacing(mtlid);
+
         static const string TFPXPath = "./"+IOUtility::MATRIX+"[@"+IOUtility::USAGE+"=\""
                 +IOUtility::TRANSFORM_FROM_PPARENT+"\"]";
         pugi::xpath_node_set matrixXPathNode = node.select_nodes(TFPXPath.c_str());
-        if(matrixXPathNode.size() != 1){            
+        if(matrixXPathNode.size() != 1){
             return false;
         }
         if(this->transformFromParent == nullptr){
             this->transformFromParent = new glm::mat4;
-        }       
+        }
 
         IOUtility::readMatrix(matrixXPathNode.first().node(), *transformFromParent);
 
@@ -655,7 +667,7 @@ bool Surface::load(const pugi::xml_node &node){
         return true;
     } else {
         return false;
-    }    
+    }
 }
 
 void Surface::updateSurfaceMesh(){
@@ -913,7 +925,7 @@ void Surface::tessVertex(const GLvoid* data){
     }
 }
 
-void Surface::tessEnd(){   
+void Surface::tessEnd(){
     if(TESS_DEBUG){
         vertexLogger(*(targetSurface->renderingVerticies),
                      *(targetSurface->renderingIndicies),
@@ -1125,7 +1137,7 @@ bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex 
         ret->push_back(nullptr);
     }
 
-    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());    
+    pugi::xpath_node_set vertexNodes = node.select_nodes(xpath.c_str());
     for(pugi::xpath_node vertexNode : vertexNodes){
         int index = vertexNode.node().attribute(IOUtility::INDEX.c_str()).as_int();
         Surface::Vertex* vertex = new Surface::Vertex();

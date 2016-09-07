@@ -580,7 +580,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
             nit++) {
         gl3d::room * r = room::load_from_xml(nit->node());
         if (NULL != r) {
-            this->rooms.insert(r);
+//            this->rooms.insert(r);
         }
     }
     // furnitures

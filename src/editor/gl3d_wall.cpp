@@ -1431,19 +1431,20 @@ bool gl3d_wall_attach::save_to_xml(pugi::xml_node &node) {
     return true;
 }
 
-void gl3d_wall_attach::load_from_xml(pugi::xml_node node) {
+bool gl3d_wall_attach::load_from_xml(pugi::xml_node node) {
     QString type(node.attribute("type").value());
     if (type != "gl3d_wall_attach") {
-        return;
+        return false;
     }
     int aid = node.attribute("attach_wall_id").as_int();
     gl3d::scene * msc = (gl3d::scene *)gl3d_global_param::shared_instance()->main_scene;
     if (msc->get_attached_sketch()->get_objects()->contains(aid)) {
         this->attach = (gl3d_wall *) msc->get_obj(aid);
         this->attach_point = (attachment_point) node.attribute("attach_point").as_int();
+        return true;
     }
 
-    return;
+    return false;
 }
 
 // TODO : test wall save
@@ -1507,9 +1508,11 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     w->start_point_fixed = node.attribute("st_fixed").as_bool();
     w->end_point_fixed = node.attribute("ed_fixed").as_bool();
     if (w->start_point_fixed)
-        w->get_start_point_attach()->load_from_xml(node.child("start_attach"));
+        if (!w->get_start_point_attach()->load_from_xml(node.child("start_attach")))
+            w->set_start_point_fixed(false);
     if (w->end_point_fixed)
-        w->get_end_point_attach()->load_from_xml(node.child("end_attach"));
+        if (!w->get_end_point_attach()->load_from_xml(node.child("end_attach")))
+            w->set_end_point_fixed(false);
 
     // wall sfcs
     xpath_node_set nset = node.select_nodes("//wall_sfc");
@@ -1534,7 +1537,7 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
         hole * h = hole::load_from_xml(it->node());
         w->holes_on_this_wall.insert(h->get_hole_id(), h);
     }
-    return NULL;
+    return w;
 }
 
 // test code

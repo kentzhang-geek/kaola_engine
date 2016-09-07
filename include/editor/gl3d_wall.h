@@ -64,7 +64,7 @@ namespace gl3d {
 
         // save and load
         virtual bool save_to_xml(pugi::xml_node &node);
-        void load_from_xml(pugi::xml_node node);
+        virtual bool load_from_xml(pugi::xml_node node);
     };
 
     class hole;
