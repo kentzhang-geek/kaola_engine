@@ -351,7 +351,15 @@ void object::pre_scale() {
             p_mesh->get_points_data()[i].vertex_z *=
                     sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
         }
+        // scale bounding
+        p_mesh->bounding_value_max *= sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
+        p_mesh->bounding_value_min *= sc->get_length_unit_to_scale_factor()->value(this->this_property.scale_unit);
     }
+    // scale bounding
+    this->this_property.bounding_value_max *= sc->get_length_unit_to_scale_factor()->value(
+            this->this_property.scale_unit);
+    this->this_property.bounding_value_min *= sc->get_length_unit_to_scale_factor()->value(
+            this->this_property.scale_unit);
     this->pre_scaled = true;
     this->this_property.scale_unit = sc->m;
 }
@@ -429,6 +437,11 @@ bool object::save_to_xml(pugi::xml_node &node) {
     // control code
     node.append_attribute("control_code_low").set_value((unsigned int)this->get_control_authority());
     node.append_attribute("control_code_high").set_value((unsigned int)(this->get_control_authority() >> 32));
+    // bounding
+    att = node.append_child("bounding_max");
+    xml::save_vec_to_xml(this->this_property.bounding_value_max, att);
+    att = node.append_child("bounding_min");
+    xml::save_vec_to_xml(this->this_property.bounding_value_min, att);
     return true;
 }
 
