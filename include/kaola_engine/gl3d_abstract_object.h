@@ -18,7 +18,8 @@ public:
         type_furniture,
         type_ground,
         type_scheme,
-        type_special
+        type_special,
+        type_loading_object
     };
 
     // public interfaces
