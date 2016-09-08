@@ -11,6 +11,7 @@
 #include "utils/gl3d_lock.h"
 #include "utils/gl3d_utils.h"
 #include "editor/command.h"
+#include "kaola_engine/loading_object.h"
 
 using namespace std;
 typedef CGAL::Quotient<CGAL::MP_Float> Number_type;
@@ -599,6 +600,16 @@ bool scheme::load_from_xml(pugi::xml_node node) {
         }
     }
     this->recalculate_rooms();
+    return true;
+}
+
+bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
+    glm::vec3 s(1.2f);
+    loading_object * o = new loading_object(s);
+    o->set_position(pos);
+    this->attached_scene->add_obj(this->wall_id_start, o);
+    resource::manager::shared_instance()->perform_async_res_load(
+            new resource::default_model_loader(this->attached_scene, this->wall_id_start++), res_id);
     return true;
 }
 

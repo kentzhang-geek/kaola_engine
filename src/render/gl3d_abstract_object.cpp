@@ -45,3 +45,19 @@ void abstract_object::buffer_data() {
 
     data_buffered = true;
 }
+
+glm::vec3 abstract_object::get_abs_position() {
+    glm::vec4 pt(0.0f);
+    pt.w = 1.0f;
+    pt = this->get_translation_mat() * pt;
+    pt = pt / pt.w;
+    return glm::vec3(pt);
+}
+
+glm::mat4 abstract_object::get_abs_rotation() {
+    glm::vec4 pt(0.0f);
+    pt.w = 1.0f;
+    pt = this->get_translation_mat() * pt;
+    pt = pt / pt.w;
+    return glm::inverse(glm::translate(glm::mat4(1.0f), glm::vec3(pt))) * this->get_translation_mat();
+}

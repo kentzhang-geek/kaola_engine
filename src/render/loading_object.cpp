@@ -168,7 +168,7 @@ void loading_object::set_translation_mat(const glm::mat4 &trans) {
     pt = trans * pt;
     pt = pt / pt.w;
     this->position = glm::vec3(pt);
-    this->roll_mat = glm::translate(glm::mat4(1.0f), this->position) * trans;
+    this->roll_mat = glm::inverse(glm::translate(glm::mat4(1.0f), this->position)) * trans;
     return;
 }
 

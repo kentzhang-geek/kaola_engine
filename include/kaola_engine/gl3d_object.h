@@ -59,7 +59,7 @@ namespace gl3d {
          *  默认构造函数，除了创建对象之外什么也不做
          */
         object();
-        ~object();
+        virtual ~object();
 
         /**
          *  @author Kent, 16-02-17 20:02:21

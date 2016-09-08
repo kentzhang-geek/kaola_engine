@@ -33,10 +33,12 @@ public:
     virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
     virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
     virtual void set_translation_mat(const glm::mat4 & trans) = 0;
+    virtual glm::vec3 get_abs_position();
+    virtual glm::mat4 get_abs_rotation();
 
     // constructor and destructor
     abstract_object();
-    ~abstract_object();
+    virtual ~abstract_object();
     // do not overwrite methods below
     GL3D_UTILS_PROPERTY(obj_type, tag_obj_type);
     GL3D_UTILS_PROPERTY(vao, GLuint );

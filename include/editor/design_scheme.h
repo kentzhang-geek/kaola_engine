@@ -66,6 +66,9 @@ namespace klm {
             virtual bool save_to_xml(pugi::xml_node & node);
             virtual bool load_from_xml(pugi::xml_node node);
 
+            // add furniture
+            bool add_furniture(std::string res_id, glm::vec3 pos = glm::vec3(0.0f));
+
         private:
             void init();
         };

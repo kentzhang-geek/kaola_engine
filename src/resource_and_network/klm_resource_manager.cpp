@@ -26,7 +26,6 @@ void res_loader::do_work(void *object) {
     return;
 }
 
-static int render_id = 10086;
 void resource::default_model_loader::do_work(void *object) {
     std::string * name = (std::string *)object;
     gl3d::object *obj = new gl3d::object((char *)name->c_str());
@@ -54,8 +53,14 @@ void resource::default_model_loader::do_work(void *object) {
 
     gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
-    this->main_scene->get_attached_sketch()->add_obj(render_id++, obj);
-//    this->main_scene->add_obj(QPair<int, gl3d::abstract_object * >(render_id++, obj));
+    abstract_object * o = this->main_scene->get_obj(this->obj_render_id);
+    if ((o->get_obj_type() == o->type_furniture) || (o->get_obj_type() == o->type_loading_object)) {
+        obj->get_property()->position = o->get_abs_position();
+        obj->get_property()->rotate_mat = o->get_abs_rotation();
+        this->main_scene->delete_obj(this->obj_render_id);
+        delete o;
+        this->main_scene->get_attached_sketch()->add_obj(this->obj_render_id, obj);
+    }
     gl3d_lock::shared_instance()->render_lock.unlock();
     gl3d_lock::shared_instance()->loader_lock.unlock();
 
