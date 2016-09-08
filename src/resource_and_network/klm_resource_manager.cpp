@@ -57,6 +57,7 @@ void resource::default_model_loader::do_work(void *object) {
     if ((o->get_obj_type() == o->type_furniture) || (o->get_obj_type() == o->type_loading_object)) {
         obj->get_property()->position = o->get_abs_position();
         obj->get_property()->rotate_mat = o->get_abs_rotation();
+        obj->set_obj_type(obj->type_furniture);
         this->main_scene->delete_obj(this->obj_render_id);
         delete o;
         this->main_scene->get_attached_sketch()->add_obj(this->obj_render_id, obj);

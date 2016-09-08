@@ -74,8 +74,6 @@ void drawhomewin::showEvent(QShowEvent *ev) {
 
     this->ui->OpenGLCanvas->sketch->get_light_srcs()->insert(1, light_1);
 
-    // test
-    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(3.0f));
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 }
 

@@ -464,7 +464,8 @@ object *object::load_from_xml(pugi::xml_node node) {
     gl3d::xml::load_xml_to_vec(node.child("position"), pos);
     obj->get_property()->position = pos;
     obj->get_property()->rotate_mat = rot;
-    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
+    obj->get_property()->scale_unit = scale::length_unit::mm; // TODO : almost every model are unit of mm
+//    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
     // laod code
     obj->set_control_authority(node.attribute("control_code_low").as_uint() |
                                (((GLuint64) node.attribute("control_code_high").as_uint()) << 32));
