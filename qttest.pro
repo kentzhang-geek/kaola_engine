@@ -68,7 +68,8 @@ SOURCES += \
     src/editor/design_scheme.cpp \
     src/Qt_tests/commands.cpp \
     src/editor/command.cpp \
-    src/Qt_tests/decoratewin.cpp
+    src/Qt_tests/decoratewin.cpp \
+    src/render/loading_object.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -124,7 +125,8 @@ HEADERS  += \
     include/editor/design_scheme.h \
     src/Qt_tests/commands.h \
     include/editor/command.h \
-    src/Qt_tests/decoratewin.h
+    src/Qt_tests/decoratewin.h \
+    include/kaola_engine/loading_object.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

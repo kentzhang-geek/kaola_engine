@@ -58,6 +58,7 @@ set(SRCS
         src/Qt_tests/commands.cpp
         src/editor/command.cpp
         src/Qt_tests/decoratewin.cpp
+        src/render/loading_object.cpp
         )
 
 set(qttest_MOCS
@@ -115,6 +116,7 @@ set(qttest_MOCS
         src/Qt_tests/commands.h
         include/editor/command.h
         src/Qt_tests/decoratewin.h
+        include/kaola_engine/loading_object.h
         )
 
 include_directories(LIBS/glm_build)
