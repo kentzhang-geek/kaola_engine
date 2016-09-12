@@ -2,6 +2,7 @@
 #include "utils/gl3d_lock.h"
 #include "utils/gl3d_global_param.h"
 #include <QMutex>
+#include <include/editor/command.h>
 
 using namespace std;
 using namespace klm;
@@ -61,6 +62,7 @@ void resource::default_model_loader::do_work(void *object) {
         this->main_scene->delete_obj(this->obj_render_id);
         delete o;
         this->main_scene->get_attached_sketch()->add_obj(this->obj_render_id, obj);
+        klm::command::command_stack::shared_instance()->push(new klm::command::add_obj(obj)); // change : add command
     }
     gl3d_lock::shared_instance()->render_lock.unlock();
     gl3d_lock::shared_instance()->loader_lock.unlock();
