@@ -9,6 +9,7 @@
 #include "kaola_engine/gl3d_scene.h"
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "editor/gl3d_wall.h"
+#include "editor/gl3d_door.h"
 #include "resource_and_network/global_material.h"
 #include "utils/gl3d_utils.h"
 #include "kaola_engine/gl3d_general_light_source.h"
@@ -39,6 +40,7 @@ namespace klm {
 
             GL3D_UTILS_PROPERTY_GET_POINTER(rooms, QSet<room *> );
             GL3D_UTILS_PROPERTY_GET_POINTER(walls, QSet<gl3d::gl3d_wall *> );
+            GL3D_UTILS_PROPERTY_GET_POINTER(doors, QSet<gl3d::gl3d_door *> );
             GL3D_UTILS_PROPERTY_GET_POINTER(drawing_walls, QSet<gl3d::gl3d_wall *> );
             GL3D_UTILS_PROPERTY(wall_id_start, int);
 

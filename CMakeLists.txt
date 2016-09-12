@@ -59,6 +59,7 @@ set(SRCS
         src/editor/command.cpp
         src/Qt_tests/decoratewin.cpp
         src/render/loading_object.cpp
+        src/editor/gl3d_door.cpp
         )
 
 set(qttest_MOCS
@@ -117,6 +118,7 @@ set(qttest_MOCS
         include/editor/command.h
         src/Qt_tests/decoratewin.h
         include/kaola_engine/loading_object.h
+        include/editor/gl3d_door.h
         )
 
 include_directories(LIBS/glm_build)

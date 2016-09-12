@@ -16,6 +16,7 @@ public:
         type_default = 0,
         type_wall,
         type_furniture,
+        type_window_and_door,
         type_ground,
         type_scheme,
         type_special,

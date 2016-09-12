@@ -527,10 +527,11 @@ bool scheme::draw_assistant_image(QImage *img) {
         }
     // TODO : Draw sign of door
     QImage door(":/images/images/door_sgn.png");
-    Q_FOREACH(gl3d_wall *wit, this->walls) {
+    Q_FOREACH(gl3d_door *dit, this->doors) {
             glm::vec2 st_on_screen;
             glm::vec2 ed_on_screen;
-            wit->get_coord_on_screen(this->attached_scene, st_on_screen, ed_on_screen);
+            st_on_screen = this->attached_scene->project_point_to_screen(dit->start_pt);
+            ed_on_screen = this->attached_scene->project_point_to_screen(dit->end_pt);
             if (math::point_in_range(st_on_screen, glm::vec2(0.0f),
                                      glm::vec2(this->attached_scene->get_width(), this->attached_scene->get_height()))
                 || math::point_in_range(ed_on_screen, glm::vec2(0.0f), glm::vec2(this->attached_scene->get_width(),
