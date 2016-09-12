@@ -527,7 +527,7 @@ bool scheme::draw_assistant_image(QImage *img) {
         }
     // TODO : Draw sign of door
     // test : draw simple image
-    QImage door(QString(GL3D_PATH_BASE) + "/images/" + "door_sgn.png");
+    QImage door(":/images/images/door_sgn.png");
     Q_FOREACH(gl3d_wall *wit, this->walls) {
             glm::vec2 st_on_screen;
             glm::vec2 ed_on_screen;

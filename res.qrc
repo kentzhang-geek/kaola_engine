@@ -27,5 +27,6 @@
         <file alias="drawwallselectd">images/drawline_selectd.png</file>
         <file alias="drawhomeselectd">images/drawhome_selectd.png</file>
         <file alias="paint_icon">images/Paint_32x.png</file>
+        <file>images/door_sgn.png</file>
     </qresource>
 </RCC>
