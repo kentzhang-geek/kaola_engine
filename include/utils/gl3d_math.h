@@ -170,6 +170,16 @@ namespace gl3d {
 
             return;
         }
+
+        template <typename T>
+        bool point_in_range(T pt, T r_min, T r_max) {
+            for (int i = 0; i < pt.length(); i++) {
+                if ((pt[i] > r_max[i]) || (pt[i] < r_min[i]))
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
 

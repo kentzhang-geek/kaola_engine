@@ -504,7 +504,7 @@ bool scheme::draw_assistant_image(QImage *img) {
                 pt.drawText(draw_pos.x, draw_pos.y, QString::asprintf("%.2f", wit->get_length()).append("M"));
             }
         }
-    // TODO : room name to image
+    // room name to image
     Q_FOREACH(room * rit, this->rooms) {
             if (rit->name.size() > 0) {
                 glm::vec2 pos;
@@ -525,7 +525,34 @@ bool scheme::draw_assistant_image(QImage *img) {
                 }
             }
         }
-    return false;
+    // TODO : Draw sign of door
+    // test : draw simple image
+    QImage door(QString(GL3D_PATH_BASE) + "/images/" + "door_sgn.png");
+    Q_FOREACH(gl3d_wall *wit, this->walls) {
+            glm::vec2 st_on_screen;
+            glm::vec2 ed_on_screen;
+            wit->get_coord_on_screen(this->attached_scene, st_on_screen, ed_on_screen);
+            if (math::point_in_range(st_on_screen, glm::vec2(0.0f),
+                                     glm::vec2(this->attached_scene->get_width(), this->attached_scene->get_height()))
+                || math::point_in_range(ed_on_screen, glm::vec2(0.0f), glm::vec2(this->attached_scene->get_width(),
+                                                                                 this->attached_scene->get_height()))) {
+                QPainter pter(img);
+                pter.translate(st_on_screen.x, st_on_screen.y);
+                QRectF src(0, 0, door.width(), door.height());
+                math::line_2d ln(st_on_screen, ed_on_screen);
+                QRectF tgt(0, 0, ln.length(), ln.length());
+                glm::vec2 dir_ins = ed_on_screen - st_on_screen;
+                dir_ins = glm::normalize(dir_ins);
+                glm::vec2 dir_pic = glm::vec2(0.0f, 1.0f);
+                float rot_degree = glm::degrees(glm::acos(glm::dot(dir_pic, dir_ins)));
+                glm::vec3 tmp = glm::cross(glm::vec3(dir_pic, 0.0f), glm::vec3(dir_ins, 0.0f));
+                if (tmp.z < 0)
+                    rot_degree = -rot_degree;
+                pter.rotate(rot_degree);
+                pter.drawImage(tgt, door, src);
+            }
+        }
+    return true;
 }
 
 // TODO : test save to xml
