@@ -147,3 +147,51 @@ glm::mat4 gl3d_door::get_scale_mat() {
 void gl3d_door::set_translation_mat(const glm::mat4 &trans) {
     return;
 }
+
+using namespace pugi;
+bool gl3d_door::save_to_xml(pugi::xml_node &node) {
+    node.append_attribute("type").set_value("gl3d_door");
+    // properties
+    node.append_attribute("height").set_value(this->height);
+    node.append_attribute("width").set_value(this->width);
+    node.append_attribute("attached_wall_id").set_value(this->attached_wall_id);
+    node.append_attribute("attached_hole_id").set_value(this->attached_hole_id);
+    pugi::xml_node nd;
+    nd = node.append_child("start_pt");
+    xml::save_vec_to_xml(this->start_pt, nd);
+    nd = node.append_child("end_pt");
+    xml::save_vec_to_xml(this->end_pt, nd);
+    nd = node.append_child("center_pt");
+    xml::save_vec_to_xml(this->center_pt, nd);
+    nd = node.append_child("pre_translate_mat");
+    xml::save_mat_to_xml(this->pre_translate_mat, nd);
+    nd = node.append_child("trans_mat");
+    xml::save_mat_to_xml(this->trans_mat, nd);
+    nd = node.append_child("rotate_mat");
+    xml::save_mat_to_xml(this->rotate_mat, nd);
+    nd = node.append_child("door_model");
+    this->door_model->save_to_xml(nd);
+    node.append_attribute("model_res_id").set_value(this->door_model->get_res_id().c_str());
+    return true;
+}
+
+gl3d_door* gl3d_door::load_from_xml(pugi::xml_node node) {
+    QString type(node.attribute("type").value());
+    if (type != "gl3d_door")
+        return NULL;
+    // properties
+    std::string res_id = std::string(node.attribute("model_res_id").value());
+    gl3d_door * door = new gl3d_door(res_id);
+    door->height = node.attribute("height").as_float();
+    door->width = node.attribute("width").as_float();
+    door->attached_wall_id = node.attribute("attached_wall_id").as_int();
+    door->attached_hole_id = node.attribute("attached_hole_id").as_int();
+    xml::load_xml_to_vec(node.child("start_pt"), door->start_pt);
+    xml::load_xml_to_vec(node.child("end_pt"), door->end_pt);
+    xml::load_xml_to_vec(node.child("center_pt"), door->center_pt);
+    xml::load_xml_to_mat(node.child("pre_translate_mat"), door->pre_translate_mat);
+    xml::load_xml_to_mat(node.child("trans_mat"), door->trans_mat);
+    xml::load_xml_to_mat(node.child("rotate_mat"), door->rotate_mat);
+
+    return door;
+}

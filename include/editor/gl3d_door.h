@@ -28,16 +28,20 @@ namespace gl3d {
         bool install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float width, float height);
         bool is_valid();
 
-        virtual bool is_data_changed() = 0;
-        virtual bool is_visible() = 0;
-        virtual glm::mat4 get_translation_mat() = 0;
-        virtual glm::mat4 get_rotation_mat() = 0;
-        virtual glm::mat4 get_scale_mat() = 0;
-        virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
-        virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
-        virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
-        virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;
-        virtual void set_translation_mat(const glm::mat4 & trans) = 0;
+        // save and load
+        bool save_to_xml(pugi::xml_node &node);
+        static gl3d_door * load_from_xml(pugi::xml_node node);
+
+        virtual bool is_data_changed();
+        virtual bool is_visible();
+        virtual glm::mat4 get_translation_mat();
+        virtual glm::mat4 get_rotation_mat();
+        virtual glm::mat4 get_scale_mat();
+        virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms);
+        virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms);
+        virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+        virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
+        virtual void set_translation_mat(const glm::mat4 & trans);
 
     private:
         void init ();
