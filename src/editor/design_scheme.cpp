@@ -31,6 +31,7 @@ void design::scheme::init() {
     this->attached_scene = NULL;
     this->rooms.clear();
     this->walls.clear();
+    this->doors.clear();
     this->drawing_walls.clear();
     this->set_render_authority(GL3D_SCENE_DRAW_GROUND | GL3D_SCENE_DRAW_SHADOW);
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL
@@ -555,7 +556,6 @@ bool scheme::draw_assistant_image(QImage *img) {
     return true;
 }
 
-// TODO : test save to xml
 bool scheme::save_to_xml(pugi::xml_node &node) {
     using namespace pugi;
     // save type
@@ -580,10 +580,14 @@ bool scheme::save_to_xml(pugi::xml_node &node) {
                 ((gl3d::object * )oit)->save_to_xml(ndc);
             }
         }
+    // doors
+    Q_FOREACH(gl3d_door * dit, this->doors) {
+            ndc = node.append_child("door");
+            dit->save_to_xml(ndc);
+        }
     return true;
 }
 
-// TODO : load from xml
 bool scheme::load_from_xml(pugi::xml_node node) {
     using namespace pugi;
     // check type
@@ -624,6 +628,16 @@ bool scheme::load_from_xml(pugi::xml_node node) {
         gl3d::object * o = gl3d::object::load_from_xml(nit->node());
         if (o != NULL) {
             this->objects.insert(o->get_id(), o);
+        }
+    }
+    // doors
+    nset = node.select_nodes("door");
+    for (auto nit = nset.begin();
+            nit != nset.end();
+            nit++) {
+        gl3d_door * d = gl3d_door::load_from_xml(nit->node());
+        if (NULL != d) {
+            this->doors.insert(d);
         }
     }
     this->recalculate_rooms();
