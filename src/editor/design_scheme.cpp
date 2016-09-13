@@ -638,6 +638,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
         gl3d_door * d = gl3d_door::load_from_xml(nit->node());
         if (NULL != d) {
             this->doors.insert(d);
+            this->objects.insert(d->get_id(), d);
         }
     }
     this->recalculate_rooms();
@@ -652,6 +653,33 @@ bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
     resource::manager::shared_instance()->perform_async_res_load(
             new resource::default_model_loader(this->attached_scene, this->wall_id_start++), res_id);
     return true;
+}
+
+// TODO : test add door and del door
+bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float height, string resource_id) {
+    math::line_2d w_ln(w->get_start_point(), w->get_end_point());
+    if (!w_ln.point_on_line(center_pt))
+        return false;
+
+    gl3d_door * n_door = new gl3d_door(resource_id);
+    if (!n_door->install_to_wall(w, center_pt, width, height)) {
+        delete n_door;
+        return false;
+    }
+
+    this->doors.insert(n_door);
+    // TODO : command of add door
+    return true;
+}
+
+void scheme::del_door(gl3d_door *w) {
+    if (this->doors.contains(w)) {
+        this->doors.remove(w);
+    }
+
+    // TODO : command of remove door
+    delete w;
+    return;
 }
 
 // test code

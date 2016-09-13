@@ -47,6 +47,10 @@ namespace klm {
             bool add_wall(gl3d::gl3d_wall * w, gl3d::gl3d_wall * & wall_to_end);
             void del_wal(gl3d::gl3d_wall * w);
 
+            bool add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float height,
+                          std::string resource_id = gl3d_door::default_model_res_id);
+            void del_door(gl3d_door *w);
+
             void release_rooms();
             void recalculate_rooms();
 
