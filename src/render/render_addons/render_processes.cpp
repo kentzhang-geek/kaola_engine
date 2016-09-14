@@ -230,7 +230,6 @@ public:
 
     void render() {
         gl3d::scene *one_scene = this->get_attached_scene();
-        one_scene->get_assistant_image()->fill(0);
         one_scene->get_attached_sketch()->draw_assistant_image(one_scene->get_assistant_image());
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
 
@@ -308,6 +307,7 @@ public:
         delete oo;
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
+        one_scene->get_assistant_image()->fill(0);
         return;
     }
 

@@ -392,7 +392,6 @@ glm::vec2 MOpenGLView::wallPeakAdsorption(glm::vec2 pt, float dis_com) {
     }
 }
 
-
 //墙体吸附坐标计算
 glm::vec2 MOpenGLView::wallLineAdsorption(glm::vec2 pt, float dis_com) {
     if (this->points_for_walls->length() != 0) {
@@ -1001,12 +1000,45 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         glm::vec2 pa = this->main_scene->project_point_to_screen(glm::vec3(0.0f));
         glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
         int _1m = (int) glm::length(pb - pa);
-        this->draw_image(":/images/drawquyu",
-                         wallLinePoint.x - (_1m / 2), wallLinePoint.y - _1m, _1m, _1m);
+        float _1m_length = (float) glm::length(this->main_scene->project_point_to_screen(glm::vec2(0.0f, 1.0f)) -
+                                               this->main_scene->project_point_to_screen(glm::vec2(0.0f)));
 
-        //        doorsWindowsImages->push_back();
+        bool not_adsorption = true;
+        Q_FOREACH(gl3d_wall * wit, *this->sketch->get_walls()) {
+                math::line_2d w_ln(this->main_scene->project_point_to_screen(wit->get_start_point()),
+                                   this->main_scene->project_point_to_screen(wit->get_end_point()));
+                if (w_ln.point_on_line(wallLinePoint)) {
+                    // find attach wall
+                    QImage doorimg(":/images/images/door_sgn.png");
+                    QRectF src(0, 0, doorimg.width(), doorimg.height());
+                    QRectF tgt(0, 0, _1m_length, _1m_length);
+                    QPainter painter(this->main_scene->get_assistant_image());
+                    glm::vec3 dir_model = glm::vec3(0.0f, 0.0f, 1.0f);
+                    glm::vec3 dir_wall = math::convert_vec2_to_vec3(wit->get_end_point() - wit->get_start_point());
+                    dir_wall = glm::normalize(dir_wall);
+                    glm::vec3 tmp = glm::cross(dir_model, dir_wall);
+                    float rot_degree = glm::dot(dir_model, dir_wall);
+                    rot_degree = glm::degrees(glm::acos(rot_degree));
+                    if (tmp.y > 0)
+                        rot_degree = -rot_degree;
+                    painter.translate(wallLinePoint.x, wallLinePoint.y);
+                    painter.rotate(rot_degree);
+                    painter.translate(0, -tgt.height() / 2.0f);
+                    painter.drawImage(tgt, doorimg, src);
+                    not_adsorption = false;
+                }
+            }
 
-
+        // not adsorption
+        if (not_adsorption) {
+            QImage doorimg(":/images/images/door_sgn.png");
+            QPainter painter(this->main_scene->get_assistant_image());
+            QRectF src(0, 0, doorimg.width(), doorimg.height());
+            QRectF tgt(0, 0, _1m_length, _1m_length);
+            painter.translate(0, -tgt.height() / 2.0f);
+            painter.translate(wallLinePoint.x, wallLinePoint.y);
+            painter.drawImage(tgt, doorimg, src);
+        }
 
         //        static int tmp = 1234;
         //        static gl3d::object * o = NULL;
