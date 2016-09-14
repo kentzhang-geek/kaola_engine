@@ -11,7 +11,7 @@
     <message>
         <location filename="src/Qt_tests/ui/drawoption.cpp" line="39"/>
         <source>M</source>
-        <translation type="unfinished"></translation>
+        <translation>米</translation>
     </message>
 </context>
 <context>
@@ -19,7 +19,7 @@
     <message>
         <location filename="src/Qt_tests/mainwindow.ui" line="20"/>
         <source>MainWindow</source>
-        <translation type="unfinished"></translation>
+        <translation>主窗口</translation>
     </message>
     <message>
         <location filename="src/Qt_tests/mainwindow.ui" line="33"/>
@@ -56,29 +56,29 @@
 <context>
     <name>PickupDig</name>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="89"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="92"/>
         <source>长度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="98"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="112"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="126"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="101"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="115"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="129"/>
         <source>M</source>
-        <translation type="unfinished"></translation>
+        <translation>米</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="103"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="106"/>
         <source>厚度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="117"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="120"/>
         <source>高度</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="174"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="177"/>
         <source>RoomName</source>
         <translation>房间名</translation>
     </message>
@@ -111,64 +111,97 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="176"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="192"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="179"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="195"/>
         <source>Unname</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="177"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="193"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="180"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="196"/>
         <source>keting</source>
         <translation>客厅</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="178"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="194"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="181"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="197"/>
         <source>cangting</source>
         <translation>餐厅</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="179"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="195"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="182"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="198"/>
         <source>zhuwo</source>
         <translation>主卧</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="180"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="196"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="183"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="199"/>
         <source>ciwo</source>
         <translation>次卧</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="181"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="197"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="184"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="200"/>
         <source>shufang</source>
         <translation>书房</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="182"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="198"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="185"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="201"/>
         <source>chufang</source>
         <translation>厨房</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="183"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="199"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="186"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="202"/>
         <source>weishengjian</source>
         <translation>卫生间</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="184"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="200"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="187"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="203"/>
         <source>yantai</source>
         <translation>阳台</translation>
     </message>
     <message>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="185"/>
-        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="201"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="188"/>
+        <location filename="src/Qt_tests/ui/pickupdig.cpp" line="204"/>
         <source>chuwujian</source>
         <translation>储物间</translation>
+    </message>
+</context>
+<context>
+    <name>decoratewin</name>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="131"/>
+        <source>考拉猫</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="180"/>
+        <source>我要吐槽</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="235"/>
+        <source>新建</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="275"/>
+        <source>保存</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/decoratewin.ui" line="315"/>
+        <source>完成</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -13,21 +13,21 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    QTranslator *translator = new QTranslator;
+    translator->load(":/translator/zh.qm");
+    if (translator->isEmpty()) {
+        QMessageBox msgBox(QMessageBox::Critical, "Error",
+                           "zh.qm", 0, NULL);
+        return msgBox.exec();
+    }
+    a.installTranslator(translator);
+
     myHelper::SetUTF8Code();
     myHelper::SetStyle("black");//黑色风格
 //    myHelper::SetStyle("blue");//蓝色风格
 //    myHelper::SetStyle("gray");//灰色风格
 //    myHelper::SetStyle("navy");//天蓝色风格
     myHelper::SetChinese();
-
-    QTranslator *translator = new QTranslator;
-    translator->load(QString(GL3D_PATH_BASE) + GL3D_PATH_SEPRATOR + "zh.qm");
-    if (translator->isEmpty()) {
-        QMessageBox msgBox(QMessageBox::Critical, "Error",
-                              "zh.qm", 0, NULL);
-        return msgBox.exec();
-    }
-    a.installTranslator(translator);
 
     MainWindow w;
     w.show();

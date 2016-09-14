@@ -29,4 +29,7 @@
         <file alias="paint_icon">images/Paint_32x.png</file>
         <file>images/door_sgn.png</file>
     </qresource>
+    <qresource prefix="/translator">
+        <file>zh.qm</file>
+    </qresource>
 </RCC>

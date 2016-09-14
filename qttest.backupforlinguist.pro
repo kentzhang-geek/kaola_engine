@@ -66,7 +66,10 @@ SOURCES += \
     src/resource_and_network/global_material.cpp \
     src/editor/design_scheme.cpp \
     src/Qt_tests/commands.cpp \
-    src/editor/command.cpp
+    src/editor/command.cpp \
+    src/Qt_tests/decoratewin.cpp \
+    src/render/loading_object.cpp \
+    src/editor/gl3d_door.cpp
 
 #HEADERS  += \
 #    include/kaola_engine/gl3d.hpp \
@@ -121,12 +124,16 @@ SOURCES += \
 #    include/resource_and_network/global_material.h \
 #    include/editor/design_scheme.h \
 #    src/Qt_tests/commands.h \
-#    include/editor/command.h
+#    include/editor/command.h \
+#    src/Qt_tests/decoratewin.h \
+#    include/kaola_engine/loading_object.h \
+#    include/editor/gl3d_door.h
 
 FORMS    += \
-    src/Qt_tests/mainwindow.ui \
-    src/Qt_tests/drawhomewin.ui \
-    src/utils/qui/frmmessagebox.ui
+src/Qt_tests/mainwindow.ui \
+src/Qt_tests/drawhomewin.ui \
+src/utils/qui/frmmessagebox.ui \
+src/Qt_tests/decoratewin.ui
 
 #PRECOMPILED_HEADER += $$HEADERS
 
