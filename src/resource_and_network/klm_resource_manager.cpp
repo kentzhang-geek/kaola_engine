@@ -143,6 +143,12 @@ void manager::test_data_init() {
                                 std::string(get_file_name_by_item(this->id_to_item.value("mtl000001"))));
     this->id_to_merchandise.insert("mtl000001", new klm::Surfacing("mtl000001"));
 
+    this->id_to_item.insert("door000000", resource::item("door000000", "door.3ds", item::res_texture_picture, true));
+    this->id_to_resource.insert("door000000",
+                                std::string(get_file_name_by_item(this->id_to_item.value("door000000"))));
+    this->id_to_merchandise.insert("door000000", new klm::Furniture("door000000"));
+
+
 //    this->id_to_item.insert("000005", resource::item("000005", "armchair.3ds", item::res_model_3ds, true));
 //    this->id_to_resource.insert("000005",
 //                                (void *)std::string(get_file_name_by_item(this->id_to_item.value("000005"))));

@@ -4,7 +4,7 @@
 using namespace gl3d;
 using namespace std;
 
-std::string gl3d_door::default_model_res_id = "";
+std::string gl3d_door::default_model_res_id = "door000000";
 
 void gl3d_door::init() {
     this->attached_hole_id = -1;
@@ -81,6 +81,8 @@ bool gl3d_door::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float t
         this->rotate_mat = glm::rotate(glm::mat4(1.0f), rot_degree, glm::vec3(0.0f, 1.0f, 0.0f));
         // TODO : scale model
 //        this->door_model->scale_model(glm::vec3(this->width, this->height,wall->get_thickness()), false);
+        // wall recalculate mesh
+        wall->calculate_mesh();
         return true;
     }
 }

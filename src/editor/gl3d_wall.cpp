@@ -401,6 +401,7 @@ void gl3d_wall::calculate_mesh() {
             if (NULL != sf) {
                 sf->setTranslate(glm::vec3(0.0f, 0.0f, this->thickness));
                 sf->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+                sf->setConnectiveMateiral(new klm::Surfacing("mtl000000"));
                 sf->hideSurface();
             }
             hole_vertex.clear();
