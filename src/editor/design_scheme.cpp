@@ -669,6 +669,7 @@ bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float heig
 
     this->doors.insert(n_door);
     // TODO : command of add door
+    this->objects.insert(n_door->get_id(), n_door);
     return true;
 }
 
@@ -676,6 +677,8 @@ void scheme::del_door(gl3d_door *w) {
     if (this->doors.contains(w)) {
         this->doors.remove(w);
     }
+    if (this->objects.contains(w->get_id()))
+        this->objects.remove(w->get_id());
 
     // TODO : command of remove door
     delete w;
