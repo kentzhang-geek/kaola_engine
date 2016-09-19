@@ -70,7 +70,8 @@ SOURCES += \
     src/editor/command.cpp \
     src/Qt_tests/decoratewin.cpp \
     src/render/loading_object.cpp \
-    src/editor/gl3d_door.cpp
+    src/editor/gl3d_door.cpp \
+    src/editor/gl3d_window.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -128,7 +129,8 @@ HEADERS  += \
     include/editor/command.h \
     src/Qt_tests/decoratewin.h \
     include/kaola_engine/loading_object.h \
-    include/editor/gl3d_door.h
+    include/editor/gl3d_door.h \
+    include/editor/gl3d_window.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
