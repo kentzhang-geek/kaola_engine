@@ -180,6 +180,26 @@ namespace gl3d {
 
             return true;
         }
+
+        template <typename T>
+        T max_vec_every_element(T a, T b) {
+            T value_ret;
+            for (int i = 0; i < a.length(); i++){
+                value_ret[i] = (a[i] > b[i])? a[i] : b[i];
+            }
+
+            return value_ret;
+        }
+
+        template <typename T>
+        T min_vec_every_element(T a, T b) {
+            T value_ret;
+            for (int i = 0; i < a.length(); i++){
+                value_ret[i] = (a[i] < b[i])? a[i] : b[i];
+            }
+
+            return value_ret;
+        }
     }
 }
 

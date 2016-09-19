@@ -349,3 +349,25 @@ bool mesh::scale_model(glm::vec3 xyz, bool keep_texture_ratio) {
 
     return true;
 }
+
+bool mesh::recalculate_boundings() {
+    if (this->data_buffered)
+        return false;
+
+    glm::vec3 b_max = trans_point_vertex_to_vec3(this->points_data[0]);
+    glm::vec3 b_min = trans_point_vertex_to_vec3(this->points_data[0]);
+    for (int i = 0; i < this->num_pts; ++i) {
+        glm::vec3 tmp = trans_point_vertex_to_vec3(this->points_data[i]);
+        b_max = math::max_vec_every_element(b_max, tmp);
+        b_min = math::min_vec_every_element(b_min, tmp);
+    }
+
+    this->bounding_value_max = b_max;
+    this->bounding_value_min = b_min;
+
+    return true;
+}
+
+glm::vec3 mesh::trans_point_vertex_to_vec3(obj_points pts) {
+    return glm::vec3(pts.vertex_x, pts.vertex_y, pts.vertex_z);
+}

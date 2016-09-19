@@ -491,6 +491,26 @@ bool object::scale_model(glm::vec3 xyz, bool keep_texture_ratio) {
     return true;
 }
 
+bool object::recalculate_boundings() {
+    glm::vec3 b_max;
+    glm::vec3 b_min;
+    // first mesh
+    if (!this->meshes.at(0)->recalculate_boundings())
+        return false;
+    b_max = this->meshes.at(0)->bounding_value_max;
+    b_min = this->meshes.at(0)->bounding_value_min;
+    Q_FOREACH(gl3d::mesh * mit, this->meshes) {
+            mit->recalculate_boundings();
+            b_max = math::max_vec_every_element(mit->bounding_value_max, b_max);
+            b_min = math::min_vec_every_element(mit->bounding_value_min, b_min);
+        }
+
+    this->this_property.bounding_value_max = b_max;
+    this->this_property.bounding_value_min = b_min;
+
+    return true;
+}
+
 #if 0
 using namespace pugi;
 

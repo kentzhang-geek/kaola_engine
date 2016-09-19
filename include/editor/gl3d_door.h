@@ -18,6 +18,7 @@ namespace gl3d {
         int attached_hole_id;
         gl3d::object * door_model;
         glm::mat4 pre_translate_mat;
+        glm::mat4 pre_scale_mat;
         glm::mat4 trans_mat;
         glm::mat4 rotate_mat;
 
@@ -27,6 +28,7 @@ namespace gl3d {
         virtual ~gl3d_door();
         bool install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float width, float height);
         bool is_valid();
+        void scale_to_install(gl3d_wall * w);
 
         // save and load
         bool save_to_xml(pugi::xml_node &node);

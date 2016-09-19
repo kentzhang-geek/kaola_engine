@@ -12,6 +12,7 @@ void gl3d_door::init() {
     this->pre_translate_mat = glm::mat4(1.0f);
     this->trans_mat = glm::mat4(1.0f);
     this->rotate_mat = glm::mat4(1.0f);
+    this->pre_scale_mat = glm::mat4(1.0f);
     this->width = 0.0f;
     this->height = 0.0f;
 
@@ -26,11 +27,23 @@ gl3d_door::gl3d_door( string model_res) {
     this->init();
     this->door_model = new gl3d::object(
             (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str());
+    // set model properties
+    this->door_model->get_property()->scale_unit = gl3d::scale::mm;
+    this->door_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
+    this->door_model->set_render_authority(GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_NORMAL);
+//  this->door_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
+//  this->door_model->set_render_authority(GL3D_SCENE_DRAW_NORMAL | GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_SHADOW);
+    this->door_model->pre_scale();
+    this->door_model->merge_meshes();
+    this->door_model->recalculate_normals();
+    this->door_model->convert_left_hand_to_right_hand();
     // pre calculate mat
+    this->door_model->recalculate_boundings();
     glm::vec3 bottom_center = this->door_model->get_property()->bounding_value_min + this->door_model->get_property()->bounding_value_max;
     bottom_center = bottom_center / 2.0f;
-    bottom_center.y = this->door_model->get_property()->bounding_value_min.y; // right hand coordinates
+    bottom_center.y = 0.0f; // right hand coordinates
     this->pre_translate_mat = glm::translate(glm::mat4(1.0f), -bottom_center);
+//    this->pre_translate_mat = glm::mat4(1.0f);
 }
 
 gl3d_door::~gl3d_door() {
@@ -72,19 +85,33 @@ bool gl3d_door::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float t
         this->trans_mat = glm::translate(glm::mat4(1.0f), math::convert_vec2_to_vec3(this->center_pt));
         glm::vec3 dir_model = glm::vec3(1.0f, 0.0f, 0.0f);
         glm::vec3 dir_wall = math::convert_vec2_to_vec3(wall->get_end_point() - wall->get_start_point());
+        dir_wall.y = 0.0f;
         dir_wall = glm::normalize(dir_wall);
         glm::vec3 tmp = glm::cross(dir_model, dir_wall);
-        float rot_degree = glm::dot(dir_model, dir_wall);
-        rot_degree = glm::degrees(glm::acos(rot_degree));
+        float rot_radian = glm::dot(dir_model, dir_wall);
+        rot_radian = glm::acos(rot_radian);
         if (tmp.y < 0)
-            rot_degree = -rot_degree;
-        this->rotate_mat = glm::rotate(glm::mat4(1.0f), rot_degree, glm::vec3(0.0f, 1.0f, 0.0f));
-        // TODO : scale model
-//        this->door_model->scale_model(glm::vec3(this->width, this->height,wall->get_thickness()), false);
+            rot_radian = -rot_radian;
+        this->rotate_mat = glm::rotate(glm::mat4(1.0f), rot_radian, glm::vec3(0.0f, 1.0f, 0.0f));
+        // scale model
+        this->scale_to_install(wall);
         // wall recalculate mesh
         wall->calculate_mesh();
         return true;
     }
+}
+
+void gl3d_door::scale_to_install(gl3d_wall * w) {
+    glm::vec3 b_max = this->door_model->get_property()->bounding_value_max;
+    glm::vec3 b_min = this->door_model->get_property()->bounding_value_min;
+    glm::vec3 bounding = b_max - b_min;
+    glm::vec3 hole_bounding = glm::vec3(
+            this->width,
+            this->height,
+            w->get_thickness());
+    this->pre_scale_mat = glm::scale(glm::mat4(1.0f), hole_bounding / bounding);
+
+    return;
 }
 
 bool gl3d_door::is_valid() {
@@ -116,7 +143,7 @@ glm::mat4 gl3d_door::get_translation_mat() {
 }
 
 glm::mat4 gl3d_door::get_rotation_mat() {
-    return this->rotate_mat * this->pre_translate_mat;
+    return this->rotate_mat * this->pre_scale_mat * this->pre_translate_mat;
 }
 
 void gl3d_door::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {

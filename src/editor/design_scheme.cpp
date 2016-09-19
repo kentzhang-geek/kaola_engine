@@ -655,6 +655,16 @@ bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
     return true;
 }
 
+int scheme::find_available_id() {
+    for (int i = 1; i < this->objects.size(); i++) {
+        if (!this->objects.contains(i))
+            return i;
+    }
+
+    GL3D_UTILS_ERROR("cant find availale id, seems impossible");
+    return -1;
+}
+
 // TODO : test add door and del door
 bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float height, string resource_id) {
     math::line_2d w_ln(w->get_start_point(), w->get_end_point());
@@ -662,6 +672,7 @@ bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float heig
         return false;
 
     gl3d_door * n_door = new gl3d_door(resource_id);
+    n_door->set_id(this->find_available_id());
     if (!n_door->install_to_wall(w, center_pt, width, height)) {
         delete n_door;
         return false;

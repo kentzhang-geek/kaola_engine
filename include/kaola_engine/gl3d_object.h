@@ -203,6 +203,9 @@ namespace gl3d {
         // 预先做scale变换
         void pre_scale();
 
+        // recalculate boundings
+        bool recalculate_boundings();
+
         // 继承抽象模型类方法并实现
         virtual bool is_data_changed();
         virtual bool is_visible();

@@ -67,6 +67,9 @@ namespace gl3d {
         // 从左手系转换到右手系
         void convert_left_hand_to_right_hand();
 
+        // recalculate boundings
+        bool recalculate_boundings();
+
         // 测试用的加mesh构造函数
         mesh(obj_points * pts, int number_of_points,
              unsigned short * idx_in, int num_of_indecis);
@@ -78,6 +81,8 @@ namespace gl3d {
 
         // scale points
         bool scale_model(glm::vec3 unit, bool keep_texture_ratio = true);
+
+        static glm::vec3 trans_point_vertex_to_vec3(obj_points pts);
 
         // properties
         GL3D_UTILS_PROPERTY(bounding_value_max, glm::vec3);
