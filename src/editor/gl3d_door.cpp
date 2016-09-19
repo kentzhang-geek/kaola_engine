@@ -16,14 +16,14 @@ void gl3d_door::init() {
     this->width = 0.0f;
     this->height = 0.0f;
 
-    this->set_obj_type(this->type_window_and_door);
+    this->set_obj_type(this->type_door);
     this->set_id(0);
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
     this->set_render_authority(GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_NORMAL);
     return;
 }
 
-gl3d_door::gl3d_door( string model_res) {
+gl3d_door::gl3d_door(string model_res) {
     this->init();
     this->door_model = new gl3d::object(
             (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str());
