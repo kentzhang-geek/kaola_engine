@@ -600,7 +600,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             }
         }
         if (now_state == gl3d_global_param::opendoor) {
-            // draw door event TODO
+            // draw door event
             glm::vec2 tmp_pt((float) event->x(), (float) event->y());
             //墙体吸附
             glm::vec2 wallLinePoint = this->wallLineAdsorption(tmp_pt, 25.0f);
@@ -615,6 +615,26 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                         glm::vec2 grd(0.0f);
                         this->main_scene->coord_ground(wallLinePoint, grd);
                         this->sketch->add_door(wit, grd, 1.5f, 2.0f);
+                        qDebug("now draw wall %d", wit->get_id());
+                    }
+                }
+        }
+        if (now_state == gl3d_global_param::openwindow) {
+            // draw window event TODO :
+            glm::vec2 tmp_pt((float) event->x(), (float) event->y());
+            //墙体吸附
+            glm::vec2 wallLinePoint = this->wallLineAdsorption(tmp_pt, 25.0f);
+            glm::vec2 pa = this->main_scene->project_point_to_screen(glm::vec3(0.0f));
+            glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
+
+            Q_FOREACH(gl3d_wall * wit, *this->sketch->get_walls()) {
+                    math::line_2d w_ln(this->main_scene->project_point_to_screen(wit->get_start_point()),
+                                       this->main_scene->project_point_to_screen(wit->get_end_point()));
+                    if (w_ln.point_on_line(wallLinePoint)) {
+                        // find attach wall , then add door to wall wit
+                        glm::vec2 grd(0.0f);
+                        this->main_scene->coord_ground(wallLinePoint, grd);
+                        this->sketch->add_window(wit, grd, 1.5f, 1.0f, 2.0f);
                         qDebug("now draw wall %d", wit->get_id());
                     }
                 }

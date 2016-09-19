@@ -32,6 +32,7 @@ void design::scheme::init() {
     this->rooms.clear();
     this->walls.clear();
     this->doors.clear();
+    this->windows.clear();
     this->drawing_walls.clear();
     this->set_render_authority(GL3D_SCENE_DRAW_GROUND | GL3D_SCENE_DRAW_SHADOW);
     this->set_control_authority(GL3D_OBJ_ENABLE_DEL
@@ -684,6 +685,25 @@ bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float heig
     return true;
 }
 
+bool scheme::add_window(gl3d_wall *w, glm::vec2 center_pt, float width, float height_min, float height_max,
+                        string resource_id) {
+    math::line_2d w_ln(w->get_start_point(), w->get_end_point());
+    if (!w_ln.point_on_line(center_pt))
+        return false;
+
+    gl3d_window * n_window = new gl3d_window(resource_id);
+    n_window->set_id(this->find_available_id());
+    if (!n_window->install_to_wall(w, center_pt, width, height_max, height_min)) {
+        delete n_window;
+        return false;
+    }
+
+    this->windows.insert(n_window);
+    // TODO : command of add door
+    this->objects.insert(n_window->get_id(), n_window);
+    return true;
+}
+
 void scheme::del_door(gl3d_door *w) {
     if (this->doors.contains(w)) {
         this->doors.remove(w);
@@ -693,6 +713,18 @@ void scheme::del_door(gl3d_door *w) {
 
     // TODO : command of remove door
     delete w;
+    return;
+}
+
+void scheme::del_window(gl3d_window *wdw) {
+    if (this->windows.contains(wdw)) {
+        this->windows.remove(wdw);
+    }
+    if (this->objects.contains(wdw->get_id()))
+        this->objects.remove(wdw->get_id());
+
+    // TODO : command of remove door
+    delete wdw;
     return;
 }
 

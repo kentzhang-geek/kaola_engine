@@ -75,7 +75,7 @@ bool gl3d_window::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float
     // set properties
     this->width = t_width;
     this->height_max = height_ceil;
-    this->height_max = height_floor;
+    this->height_min = height_floor;
     this->center_pt = center_point;
     this->start_pt = center_point + glm::normalize(wall->get_start_point() - center_point) * t_width * 0.5;
     this->end_pt = center_point + glm::normalize(wall->get_end_point() - center_point) * t_width * 0.5;

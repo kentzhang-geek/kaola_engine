@@ -13,6 +13,7 @@
 #include "resource_and_network/global_material.h"
 #include "utils/gl3d_utils.h"
 #include "kaola_engine/gl3d_general_light_source.h"
+#include "editor/gl3d_window.h"
 #include "pugiconfig.hpp"
 #include "pugixml.hpp"
 
@@ -41,6 +42,7 @@ namespace klm {
             GL3D_UTILS_PROPERTY_GET_POINTER(rooms, QSet<room *> );
             GL3D_UTILS_PROPERTY_GET_POINTER(walls, QSet<gl3d::gl3d_wall *> );
             GL3D_UTILS_PROPERTY_GET_POINTER(doors, QSet<gl3d::gl3d_door *> );
+            GL3D_UTILS_PROPERTY_GET_POINTER(windows, QSet<gl3d::gl3d_window *> );
             GL3D_UTILS_PROPERTY_GET_POINTER(drawing_walls, QSet<gl3d::gl3d_wall *> );
             GL3D_UTILS_PROPERTY(wall_id_start, int);
 
@@ -52,6 +54,10 @@ namespace klm {
             bool add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float height,
                           std::string resource_id = gl3d_door::default_model_res_id);
             void del_door(gl3d_door *w);
+
+            bool add_window(gl3d_wall *w, glm::vec2 center_pt, float width, float height_min, float height_max,
+                            std::string resource_id = gl3d_window::default_model_res_id);
+            void del_window(gl3d_window *wdw);
 
             void release_rooms();
             void recalculate_rooms();
