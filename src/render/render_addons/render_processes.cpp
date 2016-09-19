@@ -307,7 +307,7 @@ public:
         delete oo;
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
-        one_scene->get_assistant_image()->fill(0);
+//        one_scene->get_assistant_image()->fill(0);
         return;
     }
 

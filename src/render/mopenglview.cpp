@@ -1,5 +1,6 @@
 #include <include/editor/command.h>
 #include "kaola_engine/mopenglview.h"
+#include "editor/sign_config.h"
 
 using namespace std;
 
@@ -311,6 +312,7 @@ void MOpenGLView::resizeGL(int width, int height) {
 
 //滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
+    this->main_scene->get_assistant_image()->fill(0);
     auto tmp_viewer = this->main_scene->watcher;
 
     //滚动的角度，*8就是鼠标滚动的距离
@@ -476,6 +478,7 @@ glm::vec2 MOpenGLView::wallPeakRightAngleAdsorption(glm::vec2 pt) {
 
 //鼠标按下事件
 void MOpenGLView::mousePressEvent(QMouseEvent *event) {
+    this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //左键按下事件
@@ -651,12 +654,17 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             this->new_walld = NULL;
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::drawhome;
         }
+        if (now_state == gl3d::gl3d_global_param::openwindow) {
+            drawhomewin::on_draw_clear();
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        }
     } else if (event->button() == Qt::MidButton) {
     }
 }
 
 //鼠标移动事件
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
+    this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //移动墙顶点--------------------------------------------------------------
@@ -1059,21 +1067,56 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
             painter.translate(wallLinePoint.x, wallLinePoint.y);
             painter.drawImage(tgt, doorimg, src);
         }
+    }
 
-        //        static int tmp = 1234;
-        //        static gl3d::object * o = NULL;
-        //        glm::vec2 tmpcd;
-        //        this->main_scene->coord_ground(wallLinePoint, tmpcd);
-        //        if (o == NULL) {
-        //            klm::resource::manager::shared_instance()->perform_async_res_load(new klm::resource::default_model_loader(
-        //                                                                                  this->main_scene,
-        //                                                                  GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
-        //                                                                  GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
-        //                                         "000003");
-        //            o = (gl3d::object *)0xff;
-        //        } else {
-        //            o->get_property()->position = glm::vec3(tmpcd.x, 0.0f, tmpcd.y);
-        //        }
+    // open a window -------------------------------
+    if (now_state == gl3d::gl3d_global_param::openwindow) {
+        this->main_scene->get_assistant_image()->fill(0);
+        glm::vec2 tmp_pt((float) event->x(), (float) event->y());
+        //墙体吸附
+        glm::vec2 wallLinePoint = this->wallLineAdsorption(tmp_pt, 25.0f);
+        glm::vec2 pa = this->main_scene->project_point_to_screen(glm::vec3(0.0f));
+        glm::vec2 pb = this->main_scene->project_point_to_screen(glm::vec3(1.0f, 0.0f, 0.0f));
+        int _1m = (int) glm::length(pb - pa);
+        float _1m_length = (float) glm::length(this->main_scene->project_point_to_screen(glm::vec2(0.0f, 1.0f)) -
+                                               this->main_scene->project_point_to_screen(glm::vec2(0.0f)));
+
+        bool not_adsorption = true;
+        Q_FOREACH(gl3d_wall * wit, *this->sketch->get_walls()) {
+                math::line_2d w_ln(this->main_scene->project_point_to_screen(wit->get_start_point()),
+                                   this->main_scene->project_point_to_screen(wit->get_end_point()));
+                if (w_ln.point_on_line(wallLinePoint)) {
+                    // find attach wall
+                    QImage windowimg(KLM_ASSISTANT_SIGN_WINDOW_IMG);
+                    QRectF src(0, 0, windowimg.width(), windowimg.height());
+                    QRectF tgt(0, 0, _1m_length, _1m_length);
+                    QPainter painter(this->main_scene->get_assistant_image());
+                    glm::vec3 dir_model = glm::vec3(0.0f, 0.0f, 1.0f);
+                    glm::vec3 dir_wall = math::convert_vec2_to_vec3(wit->get_end_point() - wit->get_start_point());
+                    dir_wall = glm::normalize(dir_wall);
+                    glm::vec3 tmp = glm::cross(dir_model, dir_wall);
+                    float rot_degree = glm::dot(dir_model, dir_wall);
+                    rot_degree = glm::degrees(glm::acos(rot_degree));
+                    if (tmp.y > 0)
+                        rot_degree = -rot_degree;
+                    painter.translate(wallLinePoint.x, wallLinePoint.y);
+                    painter.rotate(rot_degree);
+                    painter.translate(0, -tgt.height() / 2.0f);
+                    painter.drawImage(tgt, windowimg, src);
+                    not_adsorption = false;
+                }
+            }
+
+        // not adsorption
+        if (not_adsorption) {
+            QImage windowimg(KLM_ASSISTANT_SIGN_WINDOW_IMG);
+            QPainter painter(this->main_scene->get_assistant_image());
+            QRectF src(0, 0, windowimg.width(), windowimg.height());
+            QRectF tgt(0, 0, _1m_length, _1m_length);
+            painter.translate(0, -tgt.height() / 2.0f);
+            painter.translate(wallLinePoint.x, wallLinePoint.y);
+            painter.drawImage(tgt, windowimg, src);
+        }
     }
 
 
@@ -1173,6 +1216,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
 //鼠标松开事件
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
+    this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //移动墙连接吸附墙

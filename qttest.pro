@@ -130,7 +130,8 @@ HEADERS  += \
     src/Qt_tests/decoratewin.h \
     include/kaola_engine/loading_object.h \
     include/editor/gl3d_door.h \
-    include/editor/gl3d_window.h
+    include/editor/gl3d_window.h \
+    include/editor/sign_config.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

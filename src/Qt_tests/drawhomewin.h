@@ -34,6 +34,8 @@ private slots:
 
     void on_undo_clicked();
 
+    void on_p_7_clicked();
+
 private:
     Ui::drawhomewin *ui;
     DrawOption *dop;
