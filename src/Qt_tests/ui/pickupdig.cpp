@@ -365,6 +365,8 @@ void PickupDig::on_del_window_or_wall_clicked() {
 void PickupDig::on_rotate_btn_valueChanged(int value) {
     this->pickUpObj->get_property()->rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians((float )value),
                                                               glm::vec3(0.0f, 1.0f, 0.0f));
+    QLineEdit * lne = this->findChild<QLineEdit *>("rot_angle");
+    lne->setText(QString::asprintf("%d", value));
     qDebug("rotate %d degree", value);
 }
 
