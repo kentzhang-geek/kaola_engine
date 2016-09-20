@@ -75,6 +75,10 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     this->ui->OpenGLCanvas->sketch->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
+
+    // test with furniture
+    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
+    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
 }
 
 class ray_thread : public QThread {

@@ -62,6 +62,10 @@ namespace klm {
             void release_rooms();
             void recalculate_rooms();
 
+            // add or del furniture
+            bool add_furniture(std::string fur_res, glm::vec3 pos = glm::vec3(0.0f));
+            void del_furniture(gl3d::abstract_object * obj);
+
             void delete_room(gl3d::room * r);
             gl3d::room * get_room(glm::vec2 coord_on_screen);
 
@@ -79,9 +83,6 @@ namespace klm {
             // save and load
             virtual bool save_to_xml(pugi::xml_node & node);
             virtual bool load_from_xml(pugi::xml_node node);
-
-            // add furniture
-            bool add_furniture(std::string res_id, glm::vec3 pos = glm::vec3(0.0f));
 
         private:
             void init();

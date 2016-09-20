@@ -170,6 +170,7 @@ namespace klm {
 
         class add_obj : public QUndoCommand, public obj_add_or_del {
         public:
+            bool on_create;
             add_obj(gl3d::object * o);
             void undo();
 
@@ -178,6 +179,7 @@ namespace klm {
 
         class del_obj : public QUndoCommand, public obj_add_or_del {
         public:
+            bool on_create;
             del_obj(gl3d::object * o);
             void undo();
 

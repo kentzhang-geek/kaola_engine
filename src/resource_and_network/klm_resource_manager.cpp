@@ -52,7 +52,6 @@ void resource::default_model_loader::do_work(void *object) {
         obj->user_data.insert(string("alpha"), alpha);
     }
 
-    gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
     abstract_object * o = this->main_scene->get_obj(this->obj_render_id);
     if ((o->get_obj_type() == o->type_furniture) || (o->get_obj_type() == o->type_loading_object)) {
@@ -65,7 +64,6 @@ void resource::default_model_loader::do_work(void *object) {
         klm::command::command_stack::shared_instance()->push(new klm::command::add_obj(obj)); // change : add command
     }
     gl3d_lock::shared_instance()->render_lock.unlock();
-    gl3d_lock::shared_instance()->loader_lock.unlock();
 
     this->terminate();
 }

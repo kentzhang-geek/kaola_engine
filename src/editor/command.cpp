@@ -339,17 +339,16 @@ void obj_add_or_del::do_work(void *object) {
     obj->recalculate_normals();
     obj->convert_left_hand_to_right_hand();
 
-    gl3d_lock::shared_instance()->loader_lock.lock();
     gl3d_lock::shared_instance()->render_lock.lock();
     command_stack::shared_instance()->get_sketch()->add_obj(this->obj_id, obj);
     gl3d_lock::shared_instance()->render_lock.unlock();
-    gl3d_lock::shared_instance()->loader_lock.unlock();
 
     return;
 }
 
 add_obj::add_obj(gl3d::object *o) : obj_add_or_del(o) {
     this->setText("add_obj");
+    this->on_create = true;
 }
 
 void add_obj::undo() {
@@ -357,11 +356,16 @@ void add_obj::undo() {
 }
 
 void add_obj::redo() {
-    obj_add_or_del::add_obj();
+    if (this->on_create) {
+        this->on_create = false;
+    }
+    else
+        obj_add_or_del::add_obj();
 }
 
 del_obj::del_obj(gl3d::object *o) : obj_add_or_del(o) {
     this->setText("del_obj");
+    this->on_create = true;
 }
 
 void del_obj::undo() {
@@ -369,7 +373,10 @@ void del_obj::undo() {
 }
 
 void del_obj::redo() {
-    obj_add_or_del::del_obj();
+    if (this->on_create)
+        this->on_create = false;
+    else
+        obj_add_or_del::del_obj();
 }
 
 set_obj_property::set_obj_property(gl3d::object *o) : obj_add_or_del(o), target(NULL){

@@ -676,12 +676,23 @@ bool scheme::load_from_xml(pugi::xml_node node) {
 
 bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
     glm::vec3 s(1.2f);
+    int furid = this->find_available_id();
     loading_object * o = new loading_object(s);
     o->set_position(pos);
-    this->attached_scene->add_obj(this->wall_id_start, o);
+    o->set_id(furid);
+    this->attached_scene->add_obj(furid, o);
     resource::manager::shared_instance()->perform_async_res_load(
-            new resource::default_model_loader(this->attached_scene, this->wall_id_start++), res_id);
+            new resource::default_model_loader(this->attached_scene, furid), res_id);
     return true;
+}
+
+void scheme::del_furniture(gl3d::abstract_object *obj) {
+    if (obj->get_obj_type() != abstract_object::type_furniture)
+        GL3D_UTILS_ERROR("delete a furniture which is not furniture");
+    gl3d::object * o = (gl3d::object *)obj;
+    this->del_obj(o->get_id());
+    delete o;
+    return;
 }
 
 int scheme::find_available_id() {
@@ -690,8 +701,11 @@ int scheme::find_available_id() {
             return i;
     }
 
-    GL3D_UTILS_ERROR("cant find availale id, seems impossible");
-    return -1;
+    if (this->objects.contains(this->objects.size() + 1)) {
+        GL3D_UTILS_ERROR("cant find availale id, seems impossible");
+    }
+    else
+        return this->objects.size() + 1;
 }
 
 // TODO : test add door and del door
