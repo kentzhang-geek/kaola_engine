@@ -42,6 +42,7 @@ set(SRCS
         src/editor/bounding_box.cpp
         src/editor/vertex.cpp
         src/editor/gl_utility.cpp
+        #    src/editor/klm_surface.cpp
         src/utils/gl3d_lock.cpp
         src/utils/gl3d_math.cpp
         src/Qt_tests/ui/drawoption.cpp
@@ -55,12 +56,11 @@ set(SRCS
         src/utils/io_utility.cpp
         src/resource_and_network/global_material.cpp
         src/editor/design_scheme.cpp
-        src/Qt_tests/commands.cpp
         src/editor/command.cpp
-        src/Qt_tests/decoratewin.cpp
         src/render/loading_object.cpp
         src/editor/gl3d_door.cpp
         src/editor/gl3d_window.cpp
+
         )
 
 set(qttest_MOCS
@@ -93,6 +93,7 @@ set(qttest_MOCS
         include/utils/gl3d_utils.h
         include/utils/gl3d_post_process_template.h
         include/kaola_engine/gl3d_general_light_source.h
+        #    include/editor/klm_surface.h
         include/editor/bounding_box.h
         src/Qt_tests/drawhomewin.h
         include/editor/vertex.h
@@ -114,12 +115,11 @@ set(qttest_MOCS
         include/utils/io_utility.h
         include/resource_and_network/global_material.h
         include/editor/design_scheme.h
-        src/Qt_tests/commands.h
         include/editor/command.h
-        src/Qt_tests/decoratewin.h
         include/kaola_engine/loading_object.h
         include/editor/gl3d_door.h
         include/editor/gl3d_window.h
+        include/editor/sign_config.h
         )
 
 include_directories(LIBS/glm_build)
@@ -134,11 +134,14 @@ include_directories(../build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
-qt5_wrap_ui(UI_HEADERS src/Qt_tests/mainwindow.ui
+qt5_wrap_ui(UI_HEADERS
+        src/Qt_tests/mainwindow.ui
         src/Qt_tests/drawhomewin.ui
         src/utils/qui/frmmessagebox.ui
         ui/window_or_door_selected.ui
+        ui/furniture_selected.ui
         )
+
 qt5_add_resources(QRCS res.qrc)
 add_executable(${PROJECT_NAME} ${SRCS} ${UI_HEADERS} ${QRCS})
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Core Qt5::OpenGL)
