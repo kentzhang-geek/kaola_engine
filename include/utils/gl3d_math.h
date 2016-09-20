@@ -200,6 +200,9 @@ namespace gl3d {
 
             return value_ret;
         }
+
+        // note calculate angle only support when axis is (0.0f, 1.0f, 0.0f)
+        float calculate_angle_by_mat(glm::mat4 rot_mat);
     }
 }
 

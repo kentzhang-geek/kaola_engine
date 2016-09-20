@@ -31,6 +31,8 @@ private slots:
     void slotSlider_DoubleSpinbox3();
     void on_delete_obj();
     void on_del_window_or_wall_clicked();
+    void on_rotate_btn_valueChanged(int value);
+    void on_delete_btn_clicked();
 
 private:
     void initBasicInfo();

@@ -1,6 +1,7 @@
 #include <include/editor/command.h>
 #include "pickupdig.h"
 #include "ui_window_or_door_selected.h"
+#include "ui_furniture_selected.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
                      glm::vec2 cd_scr) {
@@ -46,6 +47,17 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
             delete ui;
             break;
         }
+        case abstract_object::type_furniture : {
+            Ui_furniture_selected * ui = new Ui_furniture_selected();
+            ui->setupUi(this);
+            ui->rotate_btn->setRange(0, 359);
+            float tmp = math::calculate_angle_by_mat(this->pickUpObj->get_property()->rotate_mat);
+            if (tmp >= 359.0)
+                tmp = 0.0f;
+            ui->rotate_btn->setValue((int) tmp);
+            delete ui;
+            break;
+        }
         default: {
             break;
         }
@@ -54,16 +66,20 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
     // pick
     switch (pickUpObj->get_obj_type()) {
         case gl3d::abstract_object::type_wall : {
-            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+            gl3d_wall *w = (gl3d_wall *) pickUpObj;
             w->set_is_picked(true);
             break;
-    }
-    case gl3d::abstract_object::type_scheme : {
-            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
-            gl3d::room * r = skt->get_room(this->coord_on_screen);
+        }
+        case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme *skt = (klm::design::scheme *) pickUpObj;
+            gl3d::room *r = skt->get_room(this->coord_on_screen);
             r->set_picked(true);
             break;
-    }
+        }
+        case abstract_object::type_furniture : {
+            gl3d::object *o = (gl3d::object *) pickUpObj;
+            o->set_pick_flag(true);
+        }
         default:
             break;
     }
@@ -75,17 +91,21 @@ PickupDig::~PickupDig() {
 
     // pick
     switch (pickUpObj->get_obj_type()) {
-    case gl3d::abstract_object::type_wall : {
-            gl3d_wall * w = (gl3d_wall *)pickUpObj;
+        case gl3d::abstract_object::type_wall : {
+            gl3d_wall *w = (gl3d_wall *) pickUpObj;
             w->set_is_picked(false);
             break;
-    }
-    case gl3d::abstract_object::type_scheme : {
-            klm::design::scheme * skt = (klm::design::scheme * )pickUpObj;
-            gl3d::room * r = skt->get_room(this->coord_on_screen);
+        }
+        case gl3d::abstract_object::type_scheme : {
+            klm::design::scheme *skt = (klm::design::scheme *) pickUpObj;
+            gl3d::room *r = skt->get_room(this->coord_on_screen);
             r->set_picked(false);
             break;
-    }
+        }
+        case abstract_object::type_furniture : {
+            gl3d::object *o = (gl3d::object *) pickUpObj;
+            o->set_pick_flag(false);
+        }
         default:
             break;
     }
@@ -337,4 +357,19 @@ void PickupDig::on_del_window_or_wall_clicked() {
     this->pickUpObjID = -1;
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+}
+
+void PickupDig::on_rotate_btn_valueChanged(int value) {
+    this->pickUpObj->get_property()->rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians((float )value),
+                                                              glm::vec3(0.0f, 1.0f, 0.0f));
+    qDebug("rotate %d degree", value);
+}
+
+void PickupDig::on_delete_btn_clicked() {
+    this->sketch->del_furniture(this->pickUpObj);
+    this->pickUpObj = NULL;
+    this->pickUpObjID = -1;
+    delete this;
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+    qDebug("delete furniture btn");
 }
