@@ -36,9 +36,15 @@ private slots:
 
     void on_p_7_clicked();
 
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     Ui::drawhomewin *ui;
     DrawOption *dop;
+
+    void clear_bg_color();
 
 protected:
     void showEvent(QShowEvent *ev);

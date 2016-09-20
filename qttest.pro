@@ -66,9 +66,7 @@ SOURCES += \
     src/utils/io_utility.cpp \
     src/resource_and_network/global_material.cpp \
     src/editor/design_scheme.cpp \
-    src/Qt_tests/commands.cpp \
     src/editor/command.cpp \
-    src/Qt_tests/decoratewin.cpp \
     src/render/loading_object.cpp \
     src/editor/gl3d_door.cpp \
     src/editor/gl3d_window.cpp
@@ -125,9 +123,7 @@ HEADERS  += \
     include/utils/io_utility.h \
     include/resource_and_network/global_material.h \
     include/editor/design_scheme.h \
-    src/Qt_tests/commands.h \
     include/editor/command.h \
-    src/Qt_tests/decoratewin.h \
     include/kaola_engine/loading_object.h \
     include/editor/gl3d_door.h \
     include/editor/gl3d_window.h \
@@ -137,7 +133,6 @@ FORMS    += \
     src/Qt_tests/mainwindow.ui \
     src/Qt_tests/drawhomewin.ui \
     src/utils/qui/frmmessagebox.ui \
-    src/Qt_tests/decoratewin.ui \
     ui/window_or_door_selected.ui \
     ui/furniture_selected.ui
 

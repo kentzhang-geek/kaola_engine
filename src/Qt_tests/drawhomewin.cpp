@@ -88,17 +88,66 @@ public:
     }
 };
 
-void drawhomewin::on_switch3D_clicked() {
-    static bool flag_edit = false;
-    flag_edit = !flag_edit;
-    if (flag_edit) {
-        GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->OpenGLCanvas->main_scene);
-    }
-    else {
-        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
-    }
+//清空切换视角按钮背景颜色
+void drawhomewin::clear_bg_color() {
+    this->ui->pushButton->setStyleSheet(
+                "border-radius: 0;"
+                "background-color: rgb(240, 241, 243);"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(66, 66, 66);"
+                );
+    this->ui->switch3D->setStyleSheet(
+                "border-radius: 0;"
+                "background-color: rgb(240, 241, 243);"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(66, 66, 66);"
+                "border-left-color: rgb(240, 241, 243);"
+                "border-right-color: rgb(240, 241, 243);"
+                );
+    this->ui->pushButton_2->setStyleSheet(
+                "border-radius: 0;"
+                "background-color: rgb(240, 241, 243);"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(66, 66, 66);"
+                );
 }
 
+//修改户型视角
+void drawhomewin::on_pushButton_clicked() {
+    this->clear_bg_color();
+    this->ui->pushButton->setStyleSheet(
+                "background-color: rgb(55, 59, 66);"
+                "border-radius: 0;"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(255, 255, 255);"
+                );
+    GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->OpenGLCanvas->main_scene);
+}
+//装修视角
+void drawhomewin::on_switch3D_clicked() {
+    this->clear_bg_color();
+    this->ui->switch3D->setStyleSheet(
+                "background-color: rgb(55, 59, 66);"
+                "border-radius: 0;"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(255, 255, 255);"
+                "border-left-color: rgb(240, 241, 243);"
+                "border-right-color: rgb(240, 241, 243);"
+                );
+    GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
+}
+//3D浏览视角
+void drawhomewin::on_pushButton_2_clicked() {
+    this->clear_bg_color();
+    this->ui->pushButton_2->setStyleSheet(
+                "background-color: rgb(55, 59, 66);"
+                "border-radius: 0;"
+                "border:1px solid rgb(66, 66, 66);"
+                "color: rgb(255, 255, 255);"
+                );
+}
+
+//完成按钮
 void drawhomewin::on_colse_b_clicked() {
     this->close();
 }
@@ -145,10 +194,12 @@ void drawhomewin::on_p_2_clicked() {
     dop->show();
 }
 
+//恢复
 void drawhomewin::on_restore_clicked() {
     klm::command::command_stack::shared_instance()->redo();
 }
 
+//撤销
 void drawhomewin::on_undo_clicked() {
     klm::command::command_stack::shared_instance()->undo();
 }
