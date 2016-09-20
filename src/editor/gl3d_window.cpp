@@ -57,6 +57,7 @@ gl3d_window::~gl3d_window() {
                 hole * h = wall->holes_on_this_wall.value(this->attached_hole_id);
                 wall->holes_on_this_wall.remove(this->attached_hole_id);
                 delete h;
+                wall->calculate_mesh();
             }
         }
     // delete model
