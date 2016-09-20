@@ -52,9 +52,12 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
             ui->setupUi(this);
             ui->rotate_btn->setRange(0, 359);
             float tmp = math::calculate_angle_by_mat(this->pickUpObj->get_property()->rotate_mat);
-            if (tmp >= 359.0)
+            if (tmp >= 359.0f)
                 tmp = 0.0f;
             ui->rotate_btn->setValue((int) tmp);
+            ui->rot_angle->setText(QString::asprintf("%d", (int) tmp));
+            ui->cpos_x->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.x));
+            ui->cpos_y->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.z));
             delete ui;
             break;
         }
@@ -372,4 +375,75 @@ void PickupDig::on_delete_btn_clicked() {
     delete this;
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
     qDebug("delete furniture btn");
+}
+
+void PickupDig::on_rot_angle_editingFinished() {
+    QLineEdit * lne = this->findChildren<QLineEdit *>("rot_angle").first();
+    QString num = lne->text();
+    bool isnum;
+    int rot_degree = num.toInt(&isnum);
+    rot_degree = rot_degree % 360;
+    if (isnum) {
+        this->pickUpObj->get_property()->rotate_mat = glm::rotate(glm::mat4(1.0f), (float)rot_degree, glm::vec3(0.0f, 1.0f, 0.0f));
+        QDial * dia = this->findChild<QDial *>("rotate_btn");
+        dia->setValue(rot_degree);
+    }
+    else {
+        float deg = math::calculate_angle_by_mat(this->pickUpObj->get_property()->rotate_mat);
+        if (deg >= 359.0f)
+            deg = 0.0f;
+        lne->setText(QString::asprintf("%d", (int) deg));
+    }
+}
+
+void PickupDig::on_cpos_x_editingFinished() {
+    QLineEdit * cpos_x = this->findChild<QLineEdit *>("cpos_x");
+    bool isnum;
+    float posx;
+    posx = cpos_x->text().toFloat(&isnum);
+    if (isnum) {
+        this->pickUpObj->get_property()->position.x = posx;
+    }
+    else {
+        cpos_x->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.x));
+    }
+}
+
+void PickupDig::on_cpos_y_editingFinished() {
+    QLineEdit * cpos_y = this->findChild<QLineEdit *>("cpos_y");
+    bool isnum;
+    float posy;
+    posy = cpos_y->text().toFloat(&isnum);
+    if (isnum) {
+        this->pickUpObj->get_property()->position.z = posy;
+    }
+    else {
+        cpos_y->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.z));
+    }
+}
+
+void PickupDig::on_trans_x_editingFinished() {
+    QLineEdit *value_ln = this->findChild<QLineEdit *>("trans_x");
+    QLineEdit *show_ln = this->findChild<QLineEdit *>("cpos_x");
+    bool isnum;
+    float val;
+    val = value_ln->text().toFloat(&isnum);
+    if (isnum) {
+        this->pickUpObj->get_property()->position.x += val;
+        show_ln->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.x));
+    }
+    value_ln->clear();
+}
+
+void PickupDig::on_trans_y_editingFinished() {
+    QLineEdit *value_ln = this->findChild<QLineEdit *>("trans_y");
+    QLineEdit *show_ln = this->findChild<QLineEdit *>("cpos_y");
+    bool isnum;
+    float val;
+    val = value_ln->text().toFloat(&isnum);
+    if (isnum) {
+        this->pickUpObj->get_property()->position.z += val;
+        show_ln->setText(QString::asprintf("%f", this->pickUpObj->get_property()->position.z));
+    }
+    value_ln->clear();
 }

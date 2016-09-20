@@ -33,6 +33,11 @@ private slots:
     void on_del_window_or_wall_clicked();
     void on_rotate_btn_valueChanged(int value);
     void on_delete_btn_clicked();
+    void on_rot_angle_editingFinished();
+    void on_cpos_x_editingFinished();
+    void on_cpos_y_editingFinished();
+    void on_trans_x_editingFinished();
+    void on_trans_y_editingFinished();
 
 private:
     void initBasicInfo();
