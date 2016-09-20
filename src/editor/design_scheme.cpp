@@ -12,6 +12,7 @@
 #include "utils/gl3d_utils.h"
 #include "editor/command.h"
 #include "kaola_engine/loading_object.h"
+#include "editor/sign_config.h"
 
 using namespace std;
 typedef CGAL::Quotient<CGAL::MP_Float> Number_type;
@@ -527,7 +528,7 @@ bool scheme::draw_assistant_image(QImage *img) {
                 }
             }
         }
-    // TODO : Draw sign of door
+    // Draw sign of door
     QImage door(":/images/images/door_sgn.png");
     Q_FOREACH(gl3d_door *dit, this->doors) {
             glm::vec2 st_on_screen;
@@ -552,6 +553,33 @@ bool scheme::draw_assistant_image(QImage *img) {
                     rot_degree = -rot_degree;
                 pter.rotate(rot_degree);
                 pter.drawImage(tgt, door, src);
+            }
+        }
+    // draw sign for window
+    QImage wdw_sgn(KLM_ASSISTANT_SIGN_WINDOW_IMG);
+    Q_FOREACH(gl3d_window * wit, this->windows) {
+            glm::vec2 st_on_screen;
+            glm::vec2 ed_on_screen;
+            st_on_screen = this->attached_scene->project_point_to_screen(wit->start_pt);
+            ed_on_screen = this->attached_scene->project_point_to_screen(wit->end_pt);
+            if (math::point_in_range(st_on_screen, glm::vec2(0.0f),
+                                     glm::vec2(this->attached_scene->get_width(), this->attached_scene->get_height()))
+                || math::point_in_range(ed_on_screen, glm::vec2(0.0f), glm::vec2(this->attached_scene->get_width(),
+                                                                                 this->attached_scene->get_height()))) {
+                QPainter pter(img);
+                pter.translate(st_on_screen.x, st_on_screen.y);
+                QRectF src(0, 0, wdw_sgn.width(), wdw_sgn.height());
+                math::line_2d ln(st_on_screen, ed_on_screen);
+                QRectF tgt(0, 0, ln.length(), ln.length());
+                glm::vec2 dir_ins = ed_on_screen - st_on_screen;
+                dir_ins = glm::normalize(dir_ins);
+                glm::vec2 dir_pic = glm::vec2(0.0f, 1.0f);
+                float rot_degree = glm::degrees(glm::acos(glm::dot(dir_pic, dir_ins)));
+                glm::vec3 tmp = glm::cross(glm::vec3(dir_pic, 0.0f), glm::vec3(dir_ins, 0.0f));
+                if (tmp.z < 0)
+                    rot_degree = -rot_degree;
+                pter.rotate(rot_degree);
+                pter.drawImage(tgt, wdw_sgn, src);
             }
         }
     return true;
