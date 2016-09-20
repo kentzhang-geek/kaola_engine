@@ -462,6 +462,7 @@ void scheme::recalculate_rooms() {
 }
 
 bool scheme::add_obj(int id, abstract_object *obj) {
+    obj->set_id(id);
     this->objects.remove(id);
     this->objects.insert(id, obj);
     return true;
