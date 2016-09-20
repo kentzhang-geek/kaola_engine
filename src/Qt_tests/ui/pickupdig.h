@@ -29,11 +29,13 @@ private slots:
     void slotSlider_DoubleSpinbox2();
     void slotDoubleSpinbox_Slider3();
     void slotSlider_DoubleSpinbox3();
-
     void on_delete_obj();
+    void on_del_window_or_wall_clicked();
+
 private:
     void initBasicInfo();
     void initBasicSchemeInfo();
+    void initNormalLayout();
 
     QWidget* baseWidget;
     QSlider *slider;

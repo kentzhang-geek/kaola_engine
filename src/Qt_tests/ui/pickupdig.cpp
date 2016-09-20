@@ -1,5 +1,6 @@
 #include <include/editor/command.h>
 #include "pickupdig.h"
+#include "ui_window_or_door_selected.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
                      glm::vec2 cd_scr) {
@@ -22,11 +23,32 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
     pickUpObj = (gl3d::object *) this->main_scene->get_obj(pickUpObjID);
     wall = (gl3d::gl3d_wall *) pickUpObj;
 
-    if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_wall) {
-        //初始化墙操作窗口
-        initBasicInfo();
-    } else if(pickUpObj->get_obj_type() == gl3d::abstract_object::type_scheme) {
-        initBasicSchemeInfo();
+    switch (pickUpObj->get_obj_type()) {
+        case abstract_object::type_wall : {
+            initBasicInfo();
+            initNormalLayout();
+            break;
+        }
+        case abstract_object::type_scheme : {
+            initBasicSchemeInfo();
+            initNormalLayout();
+            break;
+        }
+        case abstract_object::type_window : {
+            Ui_window_or_door_selected * ui = new Ui_window_or_door_selected();
+            ui->setupUi(this);
+            delete ui;
+            break;
+        }
+        case abstract_object::type_door : {
+            Ui_window_or_door_selected * ui = new Ui_window_or_door_selected();
+            ui->setupUi(this);
+            delete ui;
+            break;
+        }
+        default: {
+            break;
+        }
     }
 
     // pick
@@ -45,13 +67,6 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
         default:
             break;
     }
-
-    QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
-    layout->addWidget(baseWidget);                      //加入baseWidget
-    layout->setSizeConstraint(QLayout::SetFixedSize);   //设置窗体缩放模式，此处设置为固定大小
-    layout->setSpacing(6);                              //窗口部件之间间隔大小
-    layout->setMargin(5);
-    setLayout(layout);                                  //加载到窗体上
 }
 
 PickupDig::~PickupDig() {
@@ -75,6 +90,15 @@ PickupDig::~PickupDig() {
             break;
     }
 
+}
+
+void PickupDig::initNormalLayout() {
+    QVBoxLayout *layout = new QVBoxLayout;              //定义一个垂直布局类实体，QHBoxLayout为水平布局类实体
+    layout->addWidget(baseWidget);                      //加入baseWidget
+    layout->setSizeConstraint(QLayout::SetFixedSize);   //设置窗体缩放模式，此处设置为固定大小
+    layout->setSpacing(6);                              //窗口部件之间间隔大小
+    layout->setMargin(5);
+    setLayout(layout);                                  //加载到窗体上
 }
 
 //墙
@@ -292,6 +316,22 @@ void PickupDig::on_delete_obj() {
         // TODO : 删除房间
         gl3d::room * r = this->sketch->get_room(this->coord_on_screen);
         this->sketch->delete_room(r);
+    }
+    this->pickUpObj = NULL;
+    this->pickUpObjID = -1;
+    delete this;
+    gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+}
+
+// delete window or door
+void PickupDig::on_del_window_or_wall_clicked() {
+    if (pickUpObj->get_obj_type() == gl3d::abstract_object::type_window) {
+        //del window
+        this->sketch->del_window((gl3d_window *) pickUpObj);
+    }
+    if (pickUpObj->get_obj_type() == abstract_object::type_door) {
+        // del door
+        this->sketch->del_door((gl3d_door *) pickUpObj);
     }
     this->pickUpObj = NULL;
     this->pickUpObjID = -1;

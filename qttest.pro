@@ -137,7 +137,8 @@ FORMS    += \
     src/Qt_tests/mainwindow.ui \
     src/Qt_tests/drawhomewin.ui \
     src/utils/qui/frmmessagebox.ui \
-    src/Qt_tests/decoratewin.ui
+    src/Qt_tests/decoratewin.ui \
+    ui/window_or_door_selected.ui
 
 PRECOMPILED_HEADER += $$HEADERS
 

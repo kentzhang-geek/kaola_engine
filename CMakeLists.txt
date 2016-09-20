@@ -137,6 +137,7 @@ find_package(Qt5OpenGL REQUIRED)
 qt5_wrap_ui(UI_HEADERS src/Qt_tests/mainwindow.ui
         src/Qt_tests/drawhomewin.ui
         src/utils/qui/frmmessagebox.ui
+        ui/window_or_door_selected.ui
         )
 qt5_add_resources(QRCS res.qrc)
 add_executable(${PROJECT_NAME} ${SRCS} ${UI_HEADERS} ${QRCS})

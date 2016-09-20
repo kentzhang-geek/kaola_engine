@@ -16,60 +16,61 @@ TARGET = qttest
 TEMPLATE = app
 
 SOURCES += \
-    src/Qt_tests/main.cpp \
-    src/Qt_tests/mainwindow.cpp \
-    src/Qt_tests/models_cfg.cpp \
-    src/Qt_tests/ray_tracer.cpp \
-    src/render/render_addons/default_shader_param.cpp \
-    src/render/gl3d_framebuffer.cpp \
-    src/render/gl3d_general_texture.cpp \
-    src/render/gl3d_image.cpp \
-    src/render/gl3d_material.cpp \
-    src/render/gl3d_mesh.cpp \
-    src/render/gl3d_object.cpp \
-    src/render/gl3d_render_process.cpp \
-    src/render/gl3d_scene.cpp \
-    src/render/gl3d_texture.cpp \
-    src/render/gl3d_viewer.cpp \
-    src/render/model_manager.cpp \
-    src/render/mopenglview.cpp \
-    src/render/Program.cpp \
-    src/render/render_addons/render_processes.cpp \
-    src/render/Shader.cpp \
-    src/render/render_addons/shader_list.cpp \
-    src/render/shader_manager.cpp \
-    src/utils/gl3d_scale.cpp \
-    src/utils/gl3d_global_param.cpp \
-    src/render/gl3d_post_process.cpp \
-    src/render/render_addons/post_processer_1.cpp \
-    src/render/render_addons/gl3d_post_process_template.cpp \
-    src/render/gl3d_general_light_source.cpp \
-    src/render/light_system/simple_directional_light.cpp \
-    src/editor/gl3d_wall.cpp \
-    src/Qt_tests/drawhomewin.cpp \
-    src/Qt_tests/ui/pickupdig.cpp \
-    src/editor/bounding_box.cpp \
-    src/editor/vertex.cpp \
-    src/editor/gl_utility.cpp \
+src/Qt_tests/main.cpp \
+src/Qt_tests/mainwindow.cpp \
+src/Qt_tests/models_cfg.cpp \
+src/Qt_tests/ray_tracer.cpp \
+src/render/render_addons/default_shader_param.cpp \
+src/render/gl3d_framebuffer.cpp \
+src/render/gl3d_general_texture.cpp \
+src/render/gl3d_image.cpp \
+src/render/gl3d_material.cpp \
+src/render/gl3d_mesh.cpp \
+src/render/gl3d_object.cpp \
+src/render/gl3d_render_process.cpp \
+src/render/gl3d_scene.cpp \
+src/render/gl3d_texture.cpp \
+src/render/gl3d_viewer.cpp \
+src/render/model_manager.cpp \
+src/render/mopenglview.cpp \
+src/render/Program.cpp \
+src/render/render_addons/render_processes.cpp \
+src/render/Shader.cpp \
+src/render/render_addons/shader_list.cpp \
+src/render/shader_manager.cpp \
+src/utils/gl3d_scale.cpp \
+src/utils/gl3d_global_param.cpp \
+src/render/gl3d_post_process.cpp \
+src/render/render_addons/post_processer_1.cpp \
+src/render/render_addons/gl3d_post_process_template.cpp \
+src/render/gl3d_general_light_source.cpp \
+src/render/light_system/simple_directional_light.cpp \
+src/editor/gl3d_wall.cpp \
+src/Qt_tests/drawhomewin.cpp \
+src/Qt_tests/ui/pickupdig.cpp \
+src/editor/bounding_box.cpp \
+src/editor/vertex.cpp \
+src/editor/gl_utility.cpp \
 #    src/editor/klm_surface.cpp \
-    src/utils/gl3d_lock.cpp \
-    src/utils/gl3d_math.cpp \
-    src/Qt_tests/ui/drawoption.cpp \
-    src/utils/qui/frmmessagebox.cpp \
-    src/utils/qui/iconhelper.cpp \
-    src/editor/gl3d_surface_object.cpp \
-    src/render/gl3d_abstract_object.cpp \
-    src/editor/surface.cpp \
-    src/editor/merchandise.cpp \
-    src/resource_and_network/klm_resource_manager.cpp \
-    src/utils/io_utility.cpp \
-    src/resource_and_network/global_material.cpp \
-    src/editor/design_scheme.cpp \
-    src/Qt_tests/commands.cpp \
-    src/editor/command.cpp \
-    src/Qt_tests/decoratewin.cpp \
-    src/render/loading_object.cpp \
-    src/editor/gl3d_door.cpp
+src/utils/gl3d_lock.cpp \
+src/utils/gl3d_math.cpp \
+src/Qt_tests/ui/drawoption.cpp \
+src/utils/qui/frmmessagebox.cpp \
+src/utils/qui/iconhelper.cpp \
+src/editor/gl3d_surface_object.cpp \
+src/render/gl3d_abstract_object.cpp \
+src/editor/surface.cpp \
+src/editor/merchandise.cpp \
+src/resource_and_network/klm_resource_manager.cpp \
+src/utils/io_utility.cpp \
+src/resource_and_network/global_material.cpp \
+src/editor/design_scheme.cpp \
+src/Qt_tests/commands.cpp \
+src/editor/command.cpp \
+src/Qt_tests/decoratewin.cpp \
+src/render/loading_object.cpp \
+src/editor/gl3d_door.cpp \
+src/editor/gl3d_window.cpp
 
 #HEADERS  += \
 #    include/kaola_engine/gl3d.hpp \
@@ -133,7 +134,9 @@ FORMS    += \
 src/Qt_tests/mainwindow.ui \
 src/Qt_tests/drawhomewin.ui \
 src/utils/qui/frmmessagebox.ui \
-src/Qt_tests/decoratewin.ui
+src/Qt_tests/decoratewin.ui \
+ui/window_or_door_selected.ui
+
 
 #PRECOMPILED_HEADER += $$HEADERS
 
