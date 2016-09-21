@@ -25,7 +25,8 @@ public:
         opendoor = 6,
         movewall = 7,
         movewalling = 8,
-        openwindow = 9
+        openwindow = 9,
+        movefurniture = 10
     } current_work_state ;
 private:
     gl3d_global_param();

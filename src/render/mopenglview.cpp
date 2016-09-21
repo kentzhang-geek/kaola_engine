@@ -499,12 +499,19 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             }
         }
 
-        //取消拾取
+        // 取消拾取
         if ((now_state == gl3d::gl3d_global_param::pickup)
             && (pickUpObjID != this->main_scene->get_object_id_by_coordination(event->x(), event->y()))) {
             puDig->close();
             delete puDig;
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
+        }
+
+        // moving object
+        if ((now_state == gl3d::gl3d_global_param::pickup)
+            && (pickUpObjID == this->main_scene->get_object_id_by_coordination(event->x(), event->y()))) {
+            this->user_data.insert("mouse_start", new glm::vec2(event->x(), event->y()));
+            gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::movefurniture;
         }
 
         this->tmp_point_x = event->x();
@@ -1228,6 +1235,24 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                                  conn_dot.x - 12, conn_dot.y - 12, 24, 24);
             }
         }
+        // move furnitures
+        if (now_state == gl3d_global_param::work_state::movefurniture) {
+            glm::vec2 mouse_start = *(glm::vec2 *)this->user_data.value("mouse_start");
+            if (!math::point_near_point(mouse_start, glm::vec2(event->x(), event->y()))) {
+                glm::vec2 incord(event->x(), event->y());
+                glm::vec2 outcord;
+                this->main_scene->coord_ground(incord, outcord);
+                abstract_object * obj = this->main_scene->get_obj(this->pickUpObjID);
+                if (obj->get_obj_type() == obj->type_furniture) {
+                    gl3d::object * o = (gl3d::object *)obj;
+                    o->get_property()->position = math::convert_vec2_to_vec3(outcord);
+                    this->puDig->move(event->x() + this->x(), event->y() + this->y());
+                    this->puDig->findChild<QLineEdit *>("cpos_x")->setText(QString::asprintf("%f", o->get_property()->position.x));
+                    this->puDig->findChild<QLineEdit *>("cpos_y")->setText(QString::asprintf("%f", o->get_property()->position.z));
+//                    this->puDig->move(event->x() + (this->puDig->width() * 0.75f), event->y() + (this->puDig->height() * 0.1f));
+                }
+            }
+        }
     } else if (event->buttons() & Qt::LeftButton) {
         //        cout << "right move: " << event->x() << ", " << event->y() << endl;
     } else if (event->buttons() & Qt::LeftButton) {
@@ -1264,5 +1289,11 @@ void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     if (now_state != gl3d::gl3d_global_param::drawwall
         && now_state != gl3d::gl3d_global_param::drawhome) {
         setCursor(Qt::ArrowCursor);
+    }
+
+    if (now_state == gl3d_global_param::work_state::movefurniture) {
+        delete (glm::vec3 *)this->user_data.value("mouse_start");
+        this->user_data.remove("mouse_start");
+        gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::pickup;
     }
 }

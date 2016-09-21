@@ -61,6 +61,7 @@ class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
 
 public:
     gl3d::scene * main_scene;
+    QMap<QString, void *> user_data;
     klm::design::scheme * sketch;
     void do_init();
     void create_scene();
