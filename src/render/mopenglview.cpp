@@ -500,7 +500,8 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
 
         //取消拾取
-        if (now_state == gl3d::gl3d_global_param::pickup) {
+        if ((now_state == gl3d::gl3d_global_param::pickup)
+            && (pickUpObjID != this->main_scene->get_object_id_by_coordination(event->x(), event->y()))) {
             puDig->close();
             delete puDig;
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
