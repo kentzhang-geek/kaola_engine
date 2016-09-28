@@ -16,11 +16,11 @@ void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
 
 void MOpenGLView::closeEvent(QCloseEvent *event) {
     // test save file
-    pugi::xml_document doc;
-    pugi::xml_node rootnode = doc.root();
-    rootnode = rootnode.append_child("scheme");
-    this->sketch->save_to_xml(rootnode);
-    doc.save_file("test_sketch.xml");
+//    pugi::xml_document doc;
+//    pugi::xml_node rootnode = doc.root();
+//    rootnode = rootnode.append_child("scheme");
+//    this->sketch->save_to_xml(rootnode);
+//    doc.save_file("test_sketch.xml");
 
     this->hide();
     // clear undo and redo
@@ -110,6 +110,11 @@ void MOpenGLView::do_init() {
     this->main_scene->set_assistant_image(
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
+
+    // test load xml
+    pugi::xml_document doc;
+    doc.load_file("test_sketch.xml");
+    this->sketch->load_from_xml(doc.root().child("scheme"));
 }
 
 #define MAX_FILE_SIZE 10000
