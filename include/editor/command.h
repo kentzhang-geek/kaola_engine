@@ -11,6 +11,8 @@
 #include <QThread>
 
 #include "editor/gl3d_wall.h"
+#include "editor/gl3d_window.h"
+#include "editor/gl3d_door.h"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
 #include "utils/gl3d_utils.h"
@@ -203,6 +205,89 @@ namespace klm {
             gl3d::object * obj;
         };
 
+        // TODO add or del door command
+        class add_or_del_door : public utils::noncopyable {
+        public:
+            add_or_del_door(gl3d_door * d);
+            virtual ~add_or_del_door();
+            bool on_sketch;
+
+            int obj_id;
+            std::string res_id;
+            glm::vec2 start_pt;
+            glm::vec2 end_pt;
+            glm::vec2 center_pt;
+            float height;
+            float width;
+            float thickness;
+            int attached_wall_id;
+            int attached_hole_id;
+            glm::mat4 pre_translate_mat;
+            glm::mat4 pre_scale_mat;
+            glm::mat4 trans_mat;
+            glm::mat4 rotate_mat;
+
+            void add_door();
+            void del_door();
+        };
+
+        class add_door : public QUndoCommand, public add_or_del_door {
+        public:
+            bool on_create;
+            add_door(gl3d_door * d);
+            void undo();
+            void redo();
+        };
+
+        class del_door : public QUndoCommand, public add_or_del_door {
+        public:
+            bool on_create;
+            del_door(gl3d_door * d);
+            void undo();
+            void redo();
+        };
+
+        class add_or_del_window : public utils::noncopyable {
+        public:
+            add_or_del_window(gl3d_window * w);
+            virtual ~add_or_del_window();
+            bool on_sketch;
+
+            std::string res_id;
+            glm::vec2 start_pt;
+            glm::vec2 end_pt;
+            glm::vec2 center_pt;
+            float height_max;
+            float height_min;
+            float width;
+            float thickness;
+            int attached_wall_id;
+            int attached_hole_id;
+            glm::mat4 pre_translate_mat;
+            glm::mat4 pre_scale_mat;
+            glm::mat4 trans_mat;
+            glm::mat4 rotate_mat;
+            int obj_id;
+
+            void add_window();
+            void del_window();
+        };
+
+        class add_window : public QUndoCommand, public add_or_del_window {
+        public:
+            bool on_create;
+            add_window(gl3d_window * win);
+            void undo();
+            void redo();
+        };
+
+        class del_window : public QUndoCommand, public add_or_del_window {
+        public:
+            bool on_create;
+            del_window(gl3d_window * win);
+            void undo();
+            void redo();
+        };
     }
 }
 

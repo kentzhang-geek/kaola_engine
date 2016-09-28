@@ -420,3 +420,182 @@ set_obj_property::~set_obj_property() {
     if (NULL != this->target)
         delete this->target;
 }
+
+add_or_del_door::add_or_del_door(gl3d_door *d) {
+    // copy important data
+    this->res_id = d->door_model->get_res_id();
+    this->start_pt = d->start_pt;
+    this->end_pt = d->end_pt;
+    this->center_pt = d->center_pt;
+    this->height = d->height;
+    this->width = d->width;
+    this->thickness = d->thickness;
+    this->attached_wall_id = d->attached_wall_id;
+    this->attached_hole_id = d->attached_hole_id;
+    this->pre_translate_mat = d->pre_translate_mat;
+    this->pre_scale_mat = d->pre_scale_mat;
+    this->trans_mat = d->trans_mat;
+    this->rotate_mat = d->rotate_mat;
+    this->obj_id = d->get_id();
+}
+
+add_or_del_door::~add_or_del_door() {
+    // TODO : seems not need
+}
+
+void add_or_del_door::add_door() {
+    scheme * skt = command_stack::shared_instance()->get_sketch();
+    gl3d_wall * w = (gl3d_wall *)skt->get_obj(this->attached_wall_id);
+
+    gl3d_door * d = new gl3d_door(this->res_id);
+    d->set_id(skt->find_available_id());
+    if ((w == NULL) || (w->get_obj_type() != abstract_object::type_wall)) {
+        return;
+    }
+
+    if (!d->install_to_wall(w, this->center_pt, this->width, this->height)) {
+        delete d;
+        return;
+    }
+
+    this->obj_id = d->get_id();
+    this->attached_hole_id = d->attached_hole_id;
+    skt->get_doors()->insert(d);
+    skt->get_objects()->insert(d->get_id(), d);
+}
+
+void add_or_del_door::del_door() {
+    scheme * skt = command_stack::shared_instance()->get_sketch();
+    if (skt->get_obj(this->obj_id) != NULL) {
+        gl3d_door * d = (gl3d_door *)skt->get_obj(this->obj_id);
+        if (d->get_obj_type() == abstract_object::type_door) {
+            gl3d_wall * w = (gl3d_wall *)skt->get_obj(d->attached_wall_id);
+            w->holes_on_this_wall.remove(d->attached_hole_id);
+            skt->get_doors()->remove(d);
+            skt->get_objects()->remove(d->get_id());
+            delete d;
+        }
+    }
+}
+
+add_door::add_door(gl3d_door *d) : add_or_del_door(d) {
+    this->on_create = true;
+    this->setText("add_door");
+}
+
+void add_door::redo() {
+    if (this->on_create)
+        this->on_create = false;
+    else
+        add_or_del_door::add_door();
+}
+
+void add_door::undo() {
+    add_or_del_door::del_door();
+}
+
+del_door::del_door(gl3d_door *d):add_or_del_door(d) {
+    this->on_create = true;
+    this->setText("del_door");
+}
+
+void del_door::redo() {
+    if (this->on_create)
+        this->on_create = false;
+    else
+        add_or_del_door::del_door();
+}
+
+void del_door::undo() {
+    add_or_del_door::add_door();
+}
+
+add_or_del_window::add_or_del_window(gl3d_window *w) {
+    // copy important data
+    this->res_id = w->window_model->get_res_id();
+    this->start_pt = w->start_pt;
+    this->end_pt = w->end_pt;
+    this->center_pt = w->center_pt;
+    this->height_max = w->height_max;
+    this->height_min = w->height_min;
+    this->width = w->width;
+    this->thickness = w->thickness;
+    this->attached_wall_id = w->attached_wall_id;
+    this->attached_hole_id = w->attached_hole_id;
+    this->pre_translate_mat = w->pre_translate_mat;
+    this->pre_scale_mat = w->pre_scale_mat;
+    this->trans_mat = w->trans_mat;
+    this->rotate_mat = w->rotate_mat;
+    this->obj_id = w->get_id();
+}
+
+add_or_del_window::~add_or_del_window() {
+    // TODO : seems not need
+}
+
+void add_or_del_window::add_window() {
+    scheme * skt = command_stack::shared_instance()->get_sketch();
+    gl3d_wall * wall = (gl3d_wall *)skt->get_obj(this->attached_wall_id);
+
+    gl3d_window * win = new gl3d_window(this->res_id);
+    win->set_id(skt->find_available_id());
+    if ((wall == NULL) || (wall->get_obj_type() != abstract_object::type_wall)) {
+        return;
+    }
+
+    if (!win->install_to_wall(wall, this->center_pt, this->width, this->height_max, this->height_min)) {
+        delete win;
+        return;
+    }
+
+    this->obj_id = win->get_id();
+    this->attached_hole_id = win->attached_hole_id;
+    skt->get_windows()->insert(win);
+    skt->get_objects()->insert(win->get_id(), win);
+}
+
+void add_or_del_window::del_window() {
+    scheme * skt = command_stack::shared_instance()->get_sketch();
+    if (skt->get_obj(this->obj_id) != NULL) {
+        gl3d_window * win = (gl3d_window *)skt->get_obj(this->obj_id);
+        if (win->get_obj_type() == abstract_object::type_window) {
+            gl3d_wall * wall = (gl3d_wall *)skt->get_obj(win->attached_wall_id);
+            wall->holes_on_this_wall.remove(win->attached_hole_id);
+            skt->get_windows()->remove(win);
+            skt->get_objects()->remove(win->get_id());
+            delete win;
+        }
+    }
+}
+
+add_window::add_window(gl3d_window *win):add_or_del_window(win) {
+    this->on_create = true;
+    this->setText("add_window");
+}
+
+void add_window::redo() {
+    if (this->on_create)
+        this->on_create = false;
+    else
+        add_or_del_window::add_window();
+}
+
+void add_window::undo() {
+    add_or_del_window::del_window();
+}
+
+del_window::del_window(gl3d_window *win):add_or_del_window(win) {
+    this->on_create = true;
+    this->setText("del_window");
+}
+
+void del_window::redo() {
+    if (this->on_create)
+        this->on_create = false;
+    else
+        add_or_del_window::del_window();
+}
+
+void del_window::undo() {
+    add_or_del_window::add_window();
+}

@@ -725,7 +725,6 @@ int scheme::find_available_id() {
         return this->objects.size() + 1;
 }
 
-// TODO : test add door and del door
 bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float height, string resource_id) {
     math::line_2d w_ln(w->get_start_point(), w->get_end_point());
     if (!w_ln.point_on_line(center_pt))
