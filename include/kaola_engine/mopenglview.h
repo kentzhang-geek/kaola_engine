@@ -131,6 +131,9 @@ private:
 
     gl3d::gl3d_wall * move_change_wall;
     bool move_change_is_start_or_end;
+
+    bool move_vision;
+    glm::vec2 mouse_move_vision;
 };
 
 #endif // MOPENGLVIEW_H

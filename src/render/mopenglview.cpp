@@ -67,6 +67,7 @@ void MOpenGLView::do_init() {
     this->old_wall = NULL;
     this->connect_wall = NULL;
     this->start_connect_wall = NULL;
+    this->move_vision = false;
 
     // set OPENGL context
     timer = new QTimer(this);
@@ -219,29 +220,16 @@ void MOpenGLView::initializeGL() {
 }
 
 void MOpenGLView::view_change() {
-    if (this->key_press == 'w') {
-        this->main_scene->watcher->go_raise(2.0);
-    }
     if (this->key_press == 'a') {
-        this->main_scene->watcher->go_rotate(-2.0);
-    }
-    if (this->key_press == 's') {
-        this->main_scene->watcher->go_raise(-2.0);
-    }
-    if (this->key_press == 'd') {
-        this->main_scene->watcher->go_rotate(2.0);
-    }
-
-    if (this->key_press == 'j') {
         this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0));
     }
-    if (this->key_press == 'k') {
+    if (this->key_press == 's') {
         this->main_scene->watcher->change_position(glm::vec3(0.0, -1.0, 0.0));
     }
-    if (this->key_press == 'l') {
+    if (this->key_press == 'd') {
         this->main_scene->watcher->change_position(glm::vec3(1.0, 0.0, 0.0));
     }
-    if (this->key_press == 'i') {
+    if (this->key_press == 'w') {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0));
     }
 
@@ -262,16 +250,6 @@ void MOpenGLView::keyPressEvent(QKeyEvent *event) {
         this->key_press = 's';
     if (event->key() == Qt::Key_D)
         this->key_press = 'd';
-
-
-    if (event->key() == Qt::Key_K)
-        this->key_press = 'k';
-    if (event->key() == Qt::Key_J)
-        this->key_press = 'j';
-    if (event->key() == Qt::Key_L)
-        this->key_press = 'l';
-    if (event->key() == Qt::Key_I)
-        this->key_press = 'i';
 }
 
 MOpenGLView::MOpenGLView(QWidget *x) : QGLWidget(x) {
@@ -686,6 +664,10 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             drawhomewin::on_draw_clear();
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
         }
+
+        // drag event
+        this->move_vision = true;
+        this->mouse_move_vision = glm::vec2(event->x(), event->y());
     } else if (event->button() == Qt::MidButton) {
     }
 }
@@ -694,6 +676,17 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
+    // move vision
+    if (move_vision) {
+        glm::vec2 new_mouse(event->x(), event->y());
+        float delta_horizen = new_mouse.x - this->mouse_move_vision.x;
+        float delta_vertical = new_mouse.y - this->mouse_move_vision.y;
+        this->mouse_move_vision = new_mouse;
+        const float increase = 1.5f;
+        this->main_scene->watcher->go_rotate(delta_horizen * increase);
+        this->main_scene->watcher->go_raise(-delta_vertical * increase);
+    }
 
     //移动墙顶点--------------------------------------------------------------
     if (now_state == gl3d::gl3d_global_param::normal || now_state == gl3d::gl3d_global_param::movewall) {
@@ -1264,6 +1257,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+    this->move_vision = false;
 
     //移动墙连接吸附墙
     if (now_state == gl3d::gl3d_global_param::movewalling) {
