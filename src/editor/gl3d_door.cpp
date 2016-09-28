@@ -70,7 +70,7 @@ gl3d_door::~gl3d_door() {
 bool gl3d_door::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float t_width, float t_height) {
     math::line_2d w_line(wall->get_start_point(), wall->get_end_point());
     if (!w_line.point_on_line(center_point)) {
-        // center not on wall so isntall failed
+        // center not on wall so install failed
         return false;
     }
 
