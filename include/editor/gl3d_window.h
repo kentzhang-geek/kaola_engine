@@ -15,6 +15,7 @@ namespace gl3d {
         float height_max;
         float height_min;
         float width;
+        float thickness;
         int attached_wall_id;
         int attached_hole_id;
         gl3d::object * window_model;
@@ -30,7 +31,7 @@ namespace gl3d {
         bool
         install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float width, float height_ceil, float height_floor);
         bool is_valid();
-        void scale_to_install(gl3d_wall * w);
+        void scale_to_install(float thickness);
 
         // save and load
         bool save_to_xml(pugi::xml_node &node);

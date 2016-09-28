@@ -16,6 +16,7 @@ void gl3d_window::init() {
     this->width = 0.0f;
     this->height_max = 0.0f;
     this->height_min = 0.0f;
+    this->thickness = 0.0f;
 
     this->set_obj_type(this->type_window);
     this->set_id(0);
@@ -28,6 +29,8 @@ gl3d_window::gl3d_window(string model_res) {
     this->init();
     this->window_model = new gl3d::object(
             (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str());
+    this->window_model->set_res_id(model_res);
+    this->window_model->set_obj_type(abstract_object::type_window);
     // set model properties
     this->window_model->get_property()->scale_unit = gl3d::scale::mm;
     this->window_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
@@ -100,21 +103,22 @@ bool gl3d_window::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float
             rot_radian = -rot_radian;
         this->rotate_mat = glm::rotate(glm::mat4(1.0f), rot_radian, glm::vec3(0.0f, 1.0f, 0.0f));
         // scale model
-        this->scale_to_install(wall);
+        this->thickness = wall->get_thickness();
+        this->scale_to_install(this->thickness);
         // wall recalculate mesh
         wall->calculate_mesh();
         return true;
     }
 }
 
-void gl3d_window::scale_to_install(gl3d_wall * w) {
+void gl3d_window::scale_to_install(float tkness) {
     glm::vec3 b_max = this->window_model->get_property()->bounding_value_max;
     glm::vec3 b_min = this->window_model->get_property()->bounding_value_min;
     glm::vec3 bounding = b_max - b_min;
     glm::vec3 hole_bounding = glm::vec3(
             this->width,
             this->height_max - this->height_min,
-            w->get_thickness());
+            tkness);
     this->pre_scale_mat = glm::scale(glm::mat4(1.0f), hole_bounding / bounding);
 
     return;
@@ -190,6 +194,7 @@ bool gl3d_window::save_to_xml(pugi::xml_node &node) {
     node.append_attribute("height_min").set_value(this->height_min);
     node.append_attribute("height_max").set_value(this->height_max);
     node.append_attribute("width").set_value(this->width);
+    node.append_attribute("thickness").set_value(this->thickness);
     node.append_attribute("attached_wall_id").set_value(this->attached_wall_id);
     node.append_attribute("attached_hole_id").set_value(this->attached_hole_id);
     pugi::xml_node nd;
@@ -217,18 +222,21 @@ gl3d_window* gl3d_window::load_from_xml(pugi::xml_node node) {
         return NULL;
     // properties
     std::string res_id = std::string(node.attribute("model_res_id").value());
-    gl3d_window * door = new gl3d_window(res_id);
-    door->height_max = node.attribute("height_max").as_float();
-    door->height_min = node.attribute("height_min").as_float();
-    door->width = node.attribute("width").as_float();
-    door->attached_wall_id = node.attribute("attached_wall_id").as_int();
-    door->attached_hole_id = node.attribute("attached_hole_id").as_int();
-    xml::load_xml_to_vec(node.child("start_pt"), door->start_pt);
-    xml::load_xml_to_vec(node.child("end_pt"), door->end_pt);
-    xml::load_xml_to_vec(node.child("center_pt"), door->center_pt);
-    xml::load_xml_to_mat(node.child("pre_translate_mat"), door->pre_translate_mat);
-    xml::load_xml_to_mat(node.child("trans_mat"), door->trans_mat);
-    xml::load_xml_to_mat(node.child("rotate_mat"), door->rotate_mat);
+    gl3d_window * win = new gl3d_window(res_id);
+    win->height_max = node.attribute("height_max").as_float();
+    win->height_min = node.attribute("height_min").as_float();
+    win->width = node.attribute("width").as_float();
+    win->thickness = node.attribute("thickness").as_float();
+    win->attached_wall_id = node.attribute("attached_wall_id").as_int();
+    win->attached_hole_id = node.attribute("attached_hole_id").as_int();
+    xml::load_xml_to_vec(node.child("start_pt"), win->start_pt);
+    xml::load_xml_to_vec(node.child("end_pt"), win->end_pt);
+    xml::load_xml_to_vec(node.child("center_pt"), win->center_pt);
+    xml::load_xml_to_mat(node.child("pre_translate_mat"), win->pre_translate_mat);
+    xml::load_xml_to_mat(node.child("trans_mat"), win->trans_mat);
+    xml::load_xml_to_mat(node.child("rotate_mat"), win->rotate_mat);
+    win->window_model->set_obj_type(win->window_model->type_window);
+    win->scale_to_install(win->thickness);
 
-    return door;
+    return win;
 }

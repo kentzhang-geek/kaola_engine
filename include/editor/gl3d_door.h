@@ -14,6 +14,7 @@ namespace gl3d {
         glm::vec2 center_pt;
         float height;
         float width;
+        float thickness;
         int attached_wall_id;
         int attached_hole_id;
         gl3d::object * door_model;
@@ -28,7 +29,7 @@ namespace gl3d {
         virtual ~gl3d_door();
         bool install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float width, float height);
         bool is_valid();
-        void scale_to_install(gl3d_wall * w);
+        void scale_to_install(float thickness);
 
         // save and load
         bool save_to_xml(pugi::xml_node &node);

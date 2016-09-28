@@ -463,8 +463,9 @@ Furniture* Surface::getFurniture(const string &pickID){
 void Surface::save(pugi::xml_node &node){
     pugi::xml_node surfaceNode = node.append_child(IOUtility::SURFACE.c_str());
 
-    // materials
-    surfaceNode.append_attribute("mtl_id").set_value(this->surfaceMaterial->getID().c_str());
+    // materials hot fix
+    if (this->surfaceMaterial != NULL)
+        surfaceNode.append_attribute("mtl_id").set_value(this->surfaceMaterial->getID().c_str());
     if (this->connectiveMaterial != NULL)
         surfaceNode.append_attribute("cnt_mtl_id").set_value(this->connectiveMaterial->getID().c_str());
 

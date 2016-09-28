@@ -15,6 +15,7 @@ void gl3d_door::init() {
     this->pre_scale_mat = glm::mat4(1.0f);
     this->width = 0.0f;
     this->height = 0.0f;
+    this->thickness = 0.0f;
 
     this->set_obj_type(this->type_door);
     this->set_id(0);
@@ -27,6 +28,8 @@ gl3d_door::gl3d_door(string model_res) {
     this->init();
     this->door_model = new gl3d::object(
             (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str());
+    this->door_model->set_res_id(model_res);
+    this->door_model->set_obj_type(abstract_object::type_door);
     // set model properties
     this->door_model->get_property()->scale_unit = gl3d::scale::mm;
     this->door_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
@@ -95,21 +98,22 @@ bool gl3d_door::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float t
             rot_radian = -rot_radian;
         this->rotate_mat = glm::rotate(glm::mat4(1.0f), rot_radian, glm::vec3(0.0f, 1.0f, 0.0f));
         // scale model
-        this->scale_to_install(wall);
+        this->thickness = wall->get_thickness();
+        this->scale_to_install(wall->get_thickness());
         // wall recalculate mesh
         wall->calculate_mesh();
         return true;
     }
 }
 
-void gl3d_door::scale_to_install(gl3d_wall * w) {
+void gl3d_door::scale_to_install(float thick) {
     glm::vec3 b_max = this->door_model->get_property()->bounding_value_max;
     glm::vec3 b_min = this->door_model->get_property()->bounding_value_min;
     glm::vec3 bounding = b_max - b_min;
     glm::vec3 hole_bounding = glm::vec3(
             this->width,
             this->height,
-            w->get_thickness());
+            thick);
     this->pre_scale_mat = glm::scale(glm::mat4(1.0f), hole_bounding / bounding);
 
     return;
@@ -184,6 +188,7 @@ bool gl3d_door::save_to_xml(pugi::xml_node &node) {
     // properties
     node.append_attribute("height").set_value(this->height);
     node.append_attribute("width").set_value(this->width);
+    node.append_attribute("thickness").set_value(this->thickness);
     node.append_attribute("attached_wall_id").set_value(this->attached_wall_id);
     node.append_attribute("attached_hole_id").set_value(this->attached_hole_id);
     pugi::xml_node nd;
@@ -214,6 +219,7 @@ gl3d_door* gl3d_door::load_from_xml(pugi::xml_node node) {
     gl3d_door * door = new gl3d_door(res_id);
     door->height = node.attribute("height").as_float();
     door->width = node.attribute("width").as_float();
+    door->thickness = node.attribute("thickness").as_float();
     door->attached_wall_id = node.attribute("attached_wall_id").as_int();
     door->attached_hole_id = node.attribute("attached_hole_id").as_int();
     xml::load_xml_to_vec(node.child("start_pt"), door->start_pt);
@@ -222,6 +228,8 @@ gl3d_door* gl3d_door::load_from_xml(pugi::xml_node node) {
     xml::load_xml_to_mat(node.child("pre_translate_mat"), door->pre_translate_mat);
     xml::load_xml_to_mat(node.child("trans_mat"), door->trans_mat);
     xml::load_xml_to_mat(node.child("rotate_mat"), door->rotate_mat);
+    door->door_model->set_obj_type(door->door_model->type_door);
+    door->scale_to_install(door->thickness);
 
     return door;
 }

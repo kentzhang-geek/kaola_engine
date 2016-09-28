@@ -615,6 +615,11 @@ bool scheme::save_to_xml(pugi::xml_node &node) {
             ndc = node.append_child("door");
             dit->save_to_xml(ndc);
         }
+    // windows
+    Q_FOREACH(gl3d_window * wit, this->windows) {
+            ndc = node.append_child("window");
+            wit->save_to_xml(ndc);
+        }
     return true;
 }
 
@@ -669,6 +674,17 @@ bool scheme::load_from_xml(pugi::xml_node node) {
         if (NULL != d) {
             this->doors.insert(d);
             this->objects.insert(d->get_id(), d);
+        }
+    }
+    // windows
+    nset = node.select_nodes("window");
+    for (auto nit = nset.begin();
+            nit != nset.end();
+            nit++) {
+        gl3d_window * w = gl3d_window::load_from_xml(nit->node());
+        if (NULL != w) {
+            this->windows.insert(w);
+            this->objects.insert(w->get_id(), w);
         }
     }
     this->recalculate_rooms();

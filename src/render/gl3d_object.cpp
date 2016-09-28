@@ -411,12 +411,14 @@ void object::clear_abstract_mtls(QMap<unsigned int, gl3d_material *> &mt) {
 }
 
 bool object::save_to_xml(pugi::xml_node &node) {
-    if (this->get_obj_type() != type_furniture) {
+    if ((this->get_obj_type() != type_furniture) && (this->get_obj_type() != type_window) && (this->get_obj_type() != type_door)) {
         node.append_attribute("error").set_value("save obj type is not furniture");
         return false;
     }
     // set type
     node.append_attribute("type").set_value("gl3d_object");
+    // set obj type
+    node.append_attribute("obj_type").set_value((int) this->get_obj_type());
     // abstract obj properties
     node.append_attribute("id").set_value(this->get_id());
     // resource id
@@ -454,7 +456,7 @@ object *object::load_from_xml(pugi::xml_node node) {
     QString resid(node.attribute("res_id").value());
     object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
             resid.toStdString())).c_str());
-    obj->set_obj_type(obj->type_furniture);
+    obj->set_obj_type((abstract_object::tag_obj_type) node.attribute("obj_type").as_int());
     // abstract obj properties
     obj->set_id(node.attribute("id").as_int());
     // load position and rotate
