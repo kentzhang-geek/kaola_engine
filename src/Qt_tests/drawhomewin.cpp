@@ -79,6 +79,11 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     // test with furniture
     this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
     this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
+
+    // test load xml
+    pugi::xml_document doc;
+    doc.load_file("test_sketch.xml");
+    this->ui->OpenGLCanvas->sketch->load_from_xml(doc.root().child("scheme"));
 }
 
 class ray_thread : public QThread {

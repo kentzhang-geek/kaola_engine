@@ -84,7 +84,7 @@ bool gl3d_window::install_to_wall(gl3d_wall *wall, glm::vec2 center_point, float
     this->start_pt = center_point + glm::normalize(wall->get_start_point() - center_point) * t_width * 0.5;
     this->end_pt = center_point + glm::normalize(wall->get_end_point() - center_point) * t_width * 0.5;
 
-    gl3d::hole * n_h = new hole(wall, math::convert_vec2_to_vec3(center_point), t_width, height_floor, height_ceil);
+    gl3d::hole * n_h = new hole(wall, math::convert_vec2_to_vec3(center_point), t_width, height_floor, height_ceil, wall->get_availble_hole_id());
     if (n_h->is_valid()) {
         this->attached_hole_id = n_h->get_hole_id();
         this->attached_wall_id = wall->get_id();
@@ -236,7 +236,14 @@ gl3d_window* gl3d_window::load_from_xml(pugi::xml_node node) {
     xml::load_xml_to_mat(node.child("trans_mat"), win->trans_mat);
     xml::load_xml_to_mat(node.child("rotate_mat"), win->rotate_mat);
     win->window_model->set_obj_type(win->window_model->type_window);
-    win->scale_to_install(win->thickness);
 
+    // install
+    scene * scs = (scene *)gl3d_global_param::shared_instance()->main_scene;
+    gl3d_wall * w = (gl3d_wall *)scs->get_attached_sketch()->get_obj(win->attached_wall_id);
+    if (w->holes_on_this_wall.contains(win->attached_hole_id)) {
+        delete w->holes_on_this_wall.value(win->attached_hole_id);
+        w->holes_on_this_wall.remove(win->attached_hole_id);
+    }
+    win->install_to_wall(w, win->center_pt, win->width, win->height_max, win->height_min);
     return win;
 }

@@ -93,6 +93,16 @@ gl3d_wall::~gl3d_wall() {
     this->sfcs.clear();
 }
 
+int gl3d_wall::get_availble_hole_id() {
+    int i = 0;
+    for (i = 0; i < this->holes_on_this_wall.size(); i++) {
+        if (!this->holes_on_this_wall.contains(i))
+            return i;
+    }
+
+    return i + 1;
+}
+
 glm::vec2 gl3d_wall::get_start_point() {
     return this->start_point;
 }
@@ -1041,8 +1051,9 @@ hole::hole(const hole &cp) {
     return;
 }
 
-hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b) {
+hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b, int hid) {
     this->init();
+    this->hole_id = hid;
     this->pta = point_a;
     this->ptb = point_b;
     this->on_witch_wall = w;
@@ -1054,8 +1065,9 @@ hole::hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b) {
     }
 }
 
-hole::hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height) {
+hole::hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height, int hid) {
     this->init();
+    this->hole_id = hid;
 
     // now calculate point a and point b
     glm::vec3 dir = math::convert_vec2_to_vec3(
@@ -1414,12 +1426,26 @@ hole* hole::load_from_xml(pugi::xml_node node) {
         glm::vec3 ptb;
         xml::load_xml_to_vec(node.child("pointa"), pta);
         xml::load_xml_to_vec(node.child("pointb"), ptb);
-        hole * h = new hole(w, pta, ptb);
+        hole * h = new hole(w, pta, ptb, w->get_availble_hole_id());
         h->set_hole_id(node.attribute("hole_id").as_int());
         return h;
     }
 
     return NULL;
+}
+
+hole* hole::load_from_xml(pugi::xml_node node, gl3d_wall * wall) {
+    QString type(node.attribute("type").value());
+    if (type != "gl3d_hole") {
+        return NULL;
+    }
+    // install on wall
+    glm::vec3 pta;
+    glm::vec3 ptb;
+    xml::load_xml_to_vec(node.child("pointa"), pta);
+    xml::load_xml_to_vec(node.child("pointb"), ptb);
+    hole *h = new hole(wall, pta, ptb, node.attribute("hole_id").as_int());
+    return h;
 }
 
 using namespace pugi;
@@ -1536,8 +1562,27 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     for (auto it = nset.begin();
             it != nset.end();
             it++) {
-        hole * h = hole::load_from_xml(it->node());
-        w->holes_on_this_wall.insert(h->get_hole_id(), h);
+        hole * h = hole::load_from_xml(it->node(), w);
+        if (h->is_valid())
+            w->holes_on_this_wall.insert(h->get_hole_id(), h);
+        else {
+            glm::vec3 vdir = h->get_ptb() - h->get_pta();
+            hole * n_h = new hole(w,
+                                  (h->get_pta() + h->get_ptb()) / 2.0f,
+                                  glm::length(glm::vec2(vdir.x, vdir.z)),
+                                  glm::min(h->get_pta().y, h->get_ptb().y),
+                                  glm::max(h->get_pta().y, h->get_ptb().y),
+                                  w->get_availble_hole_id()
+                                  );
+            n_h->set_hole_id(h->get_hole_id());
+            delete h;
+            if (n_h->is_valid()) {
+                w->holes_on_this_wall.insert(n_h->get_hole_id(), n_h);
+            }
+            else {
+                delete n_h;
+            }
+        }
     }
     return w;
 }

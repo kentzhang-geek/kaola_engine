@@ -110,11 +110,6 @@ void MOpenGLView::do_init() {
     this->main_scene->set_assistant_image(
             new QImage(this->width(), this->height(), QImage::Format_RGBA8888));
     this->main_scene->get_assistant_image()->fill(0);
-
-    // test load xml
-    pugi::xml_document doc;
-    doc.load_file("test_sketch.xml");
-    this->sketch->load_from_xml(doc.root().child("scheme"));
 }
 
 #define MAX_FILE_SIZE 10000

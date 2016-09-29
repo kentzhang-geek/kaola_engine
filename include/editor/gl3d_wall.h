@@ -152,6 +152,9 @@ namespace gl3d {
         // set material of this wall
         bool set_material(std::string res_id);
 
+        // get availble hole id
+        int get_availble_hole_id();
+
         // save and load
         virtual bool save_to_xml(pugi::xml_node &node);
         static gl3d_wall * load_from_xml(pugi::xml_node node);
@@ -180,8 +183,8 @@ namespace gl3d {
         hole(const hole &cp);
 
         // create new hole on wall w
-        hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b);
-        hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height);
+        hole(gl3d_wall *w, glm::vec3 point_a, glm::vec3 point_b, int hole_id);
+        hole(gl3d_wall *w, glm::vec3 center_point, float width, float min_height, float max_height, int hole_id);
 
         // check is this hole valid to the wall
         bool is_valid();
@@ -191,6 +194,7 @@ namespace gl3d {
         // save and load
         virtual bool save_to_xml(pugi::xml_node &node);
         static hole * load_from_xml(pugi::xml_node node);
+        static hole * load_from_xml(pugi::xml_node node, gl3d::gl3d_wall * wall);
 
     private:
         void init();

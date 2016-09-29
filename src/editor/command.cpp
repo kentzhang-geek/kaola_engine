@@ -236,7 +236,7 @@ void add_hole::undo() {
 
 void add_hole::redo() {
     gl3d_wall * w = (gl3d_wall * ) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
-    hole * ph = new hole(w, this->center, this->width, this->min_height, this->max_height);
+    hole * ph = new hole(w, this->center, this->width, this->min_height, this->max_height, w->get_availble_hole_id());
     // change key of the hole
     if (ph->is_valid()) {
         w->holes_on_this_wall.remove(ph->get_hole_id());
@@ -270,7 +270,7 @@ del_hole::del_hole(int hid, gl3d_wall *w) {
 
 void del_hole::undo() {
     gl3d_wall * w = (gl3d_wall * ) command_stack::shared_instance()->get_main_scene()->get_obj(this->wall_id);
-    hole * h = new hole(w, this->pa, this->pb);
+    hole * h = new hole(w, this->pa, this->pb, w->get_availble_hole_id());
     if (h->is_valid()) {
         // change key
         w->holes_on_this_wall.remove(this->hole_id);
