@@ -545,7 +545,7 @@ color: rgb(245, 245, 245);
                   <x>10</x>
                   <y>410</y>
                   <width>241</width>
-                  <height>73</height>
+                  <height>77</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
@@ -629,7 +629,7 @@ border-image:url(:/images/drawwallselectd);
                   <x>10</x>
                   <y>190</y>
                   <width>241</width>
-                  <height>150</height>
+                  <height>159</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_2">
@@ -1097,7 +1097,7 @@ color: rgb(245, 245, 245);
                   <x>8</x>
                   <y>50</y>
                   <width>241</width>
-                  <height>73</height>
+                  <height>77</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout">
@@ -1353,10 +1353,94 @@ color: rgb(245, 245, 245);
                  <string>开门窗</string>
                 </property>
                </widget>
+               <widget class="QWidget" name="gridLayoutWidget_4">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>520</y>
+                  <width>241</width>
+                  <height>77</height>
+                 </rect>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_4">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_14">
+                   <property name="font">
+                    <font>
+                     <family>微软雅黑</family>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#label_11 {
+color: rgb(229, 229, 229);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Rule</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="p_11">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#p_10 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}
+
+#p_10:hover {
+border-image:url(:/images/drawwallselectd);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../res.qrc">
+                     <normaloff>:/images/drawline</normaloff>:/images/drawline</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </widget>
               <widget class="QWidget" name="tab_2">
                <attribute name="icon">
-                <iconset resource="../../res.qrc">
+                <iconset>
                  <normaloff>:/images/box</normaloff>:/images/box</iconset>
                </attribute>
                <attribute name="title">

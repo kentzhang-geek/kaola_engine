@@ -76,6 +76,8 @@ public:
     void resizeGL(int width, int height);
     void closeEvent(QCloseEvent *event);
 
+    QString work_state_flag;
+
     //yananli codes -----------------------------------------------------
     enum button_state {
         clear = 0,

@@ -518,6 +518,23 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             this->wall_temp_id = this->wall_temp_id + 4;
         }
 
+        if (now_state == gl3d_global_param::ruling) {
+            if (this->user_data.contains("rule_start")) {
+                delete (glm::vec2 *)this->user_data.value("rule_start");
+                this->user_data.remove("rule_start");
+            }
+            else {
+                glm::vec2 incod(event->x(), event->y());
+                glm::vec2 outcod;
+                this->main_scene->coord_ground(incod, outcod);
+                glm::vec2 pt = this->wallPeakAdsorption(incod, 18.0f);
+                if (math::point_near_point(pt, incod)) {
+                    pt = this->wallLineAdsorption(incod, 25.0f);
+                }
+                glm::vec2 stcod_scr = pt;
+                this->user_data.insert("rule_start", new glm::vec2(stcod_scr));
+            }
+        }
 
         //画墙节点开始
         if (now_state == gl3d::gl3d_global_param::drawwall) {
@@ -671,6 +688,14 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             drawhomewin::on_draw_clear();
             gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::normal;
         }
+        if (now_state == gl3d_global_param::work_state::ruling) {
+            this->work_state_flag.clear();
+            if (this->user_data.contains("rule_start")) {
+                delete (glm::vec2 *)this->user_data.value("rule_start");
+                this->user_data.remove("rule_start");
+            }
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
 
         // drag event
         this->move_vision = true;
@@ -693,6 +718,39 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         const float increase = 1.5f;
         this->main_scene->watcher->go_rotate(delta_horizen * increase);
         this->main_scene->watcher->go_raise(-delta_vertical * increase);
+    }
+
+    if (now_state == gl3d_global_param::ruling) {
+        glm::vec2 incod(event->x(), event->y());
+        glm::vec2 outcod;
+        this->main_scene->coord_ground(incod, outcod);
+        this->getWallsPoint();
+        glm::vec2 pt = this->wallPeakAdsorption(incod, 18.0f);
+        if (math::point_near_point(pt, incod)) {
+            pt = this->wallLineAdsorption(incod, 25.0f);
+        }
+        glm::vec2 stcod_scr = pt;
+        // draw assistant circle
+        QPainter ptr(this->main_scene->get_assistant_image());
+        ptr.setPen(QColor(255, 0, 0, 255));
+        const int ptsize = 16;
+        ptr.drawEllipse(QPoint(stcod_scr.x, stcod_scr.y), ptsize, ptsize);
+
+        if (this->user_data.contains("rule_start")) {
+            // draw line
+            QFont f;
+            f.setPixelSize(24);
+            ptr.setFont(f);
+            glm::vec2 edcod_scr = *(glm::vec2 *)this->user_data.value("rule_start");
+            ptr.drawLine(QPoint(stcod_scr.x, stcod_scr.y), QPoint(edcod_scr.x, edcod_scr.y));
+            glm::vec2 stpt;
+            glm::vec2 edpt;
+            this->main_scene->coord_ground(stcod_scr, stpt);
+            this->main_scene->coord_ground(edcod_scr, edpt);
+            glm::vec2 textpos = stcod_scr + edcod_scr;
+            textpos = textpos / 2.0f;
+            ptr.drawText(QPoint(textpos.x, textpos.y), QString::asprintf("%.2f", glm::length(stpt - edpt)) + tr("M"));
+        }
     }
 
     //移动墙顶点--------------------------------------------------------------

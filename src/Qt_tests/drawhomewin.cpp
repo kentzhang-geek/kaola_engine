@@ -214,3 +214,9 @@ void drawhomewin::on_p_7_clicked() {
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::openwindow;
     this->ui->p_7->setIcon(QIcon(":/images/window_selected"));
 }
+
+void drawhomewin::on_p_11_clicked()
+{
+    // set rule tool
+    gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::ruling;
+}
