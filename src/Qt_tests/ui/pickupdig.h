@@ -38,6 +38,7 @@ private slots:
     void on_cpos_y_editingFinished();
     void on_trans_x_editingFinished();
     void on_trans_y_editingFinished();
+    void on_test_window_or_door_clicked();
 
 private:
     void initBasicInfo();

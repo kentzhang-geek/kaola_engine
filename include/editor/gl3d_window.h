@@ -37,6 +37,9 @@ namespace gl3d {
         bool save_to_xml(pugi::xml_node &node);
         static gl3d_window * load_from_xml(pugi::xml_node node);
 
+        // change model
+        void change_model(std::string res_id);
+
         virtual bool is_data_changed();
         virtual bool is_visible();
         virtual glm::mat4 get_translation_mat();

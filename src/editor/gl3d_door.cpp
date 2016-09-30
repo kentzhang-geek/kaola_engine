@@ -243,3 +243,27 @@ gl3d_door* gl3d_door::load_from_xml(pugi::xml_node node) {
 
     return door;
 }
+
+void gl3d_door::change_model(std::string res_id) {
+    object * o_del = this->door_model;
+    // load new model
+    this->door_model = new gl3d::object(
+            (char *) klm::resource::manager::shared_instance()->get_res_item(res_id).c_str());
+    this->door_model->set_res_id(res_id);
+    this->door_model->set_obj_type(abstract_object::type_door);
+    // set model properties
+    this->door_model->get_property()->scale_unit = gl3d::scale::mm;
+    this->door_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
+    this->door_model->set_render_authority(GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_NORMAL);
+    this->door_model->pre_scale();
+    this->door_model->merge_meshes();
+    this->door_model->recalculate_normals();
+    this->door_model->convert_left_hand_to_right_hand();
+    // pre calculate mat
+    this->door_model->recalculate_boundings();
+    glm::vec3 bottom_center = this->door_model->get_property()->bounding_value_min + this->door_model->get_property()->bounding_value_max;
+    bottom_center = bottom_center / 2.0f;
+    bottom_center.y = 0.0f; // right hand coordinates
+    this->pre_translate_mat = glm::translate(glm::mat4(1.0f), -bottom_center);
+    this->scale_to_install(this->thickness);
+}

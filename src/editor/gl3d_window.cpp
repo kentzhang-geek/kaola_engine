@@ -249,3 +249,28 @@ gl3d_window* gl3d_window::load_from_xml(pugi::xml_node node) {
     win->install_to_wall(w, win->center_pt, win->width, win->height_max, win->height_min);
     return win;
 }
+
+void gl3d_window::change_model(std::string res_id) {
+    object * o_del = this->window_model;
+    // load new model
+    this->window_model = new gl3d::object(
+            (char *) klm::resource::manager::shared_instance()->get_res_item(res_id).c_str());
+    this->window_model->set_res_id(res_id);
+    this->window_model->set_obj_type(abstract_object::type_door);
+    // set model properties
+    this->window_model->get_property()->scale_unit = gl3d::scale::mm;
+    this->window_model->set_control_authority(GL3D_OBJ_ENABLE_DEL | GL3D_OBJ_ENABLE_PICKING);
+    this->window_model->set_render_authority(GL3D_SCENE_DRAW_IMAGE | GL3D_SCENE_DRAW_NORMAL);
+    this->window_model->pre_scale();
+    this->window_model->merge_meshes();
+    this->window_model->recalculate_normals();
+    this->window_model->convert_left_hand_to_right_hand();
+    // pre calculate mat
+    this->window_model->recalculate_boundings();
+    this->window_model->recalculate_boundings();
+    glm::vec3 bottom_center = this->window_model->get_property()->bounding_value_min + this->window_model->get_property()->bounding_value_max;
+    bottom_center = bottom_center / 2.0f;
+    bottom_center.y = 0.0f; // right hand coordinates
+    this->pre_translate_mat = glm::translate(glm::mat4(1.0f), -bottom_center);
+    this->scale_to_install(this->thickness);
+}

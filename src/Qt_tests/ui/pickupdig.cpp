@@ -449,3 +449,14 @@ void PickupDig::on_trans_y_editingFinished() {
     }
     value_ln->clear();
 }
+
+void PickupDig::on_test_window_or_door_clicked() {
+    if (this->pickUpObj->get_obj_type() == abstract_object::type_door) {
+        gl3d_door * d = (gl3d_door *) this->pickUpObj;
+        d->change_model("000002");
+    }
+    else if (this->pickUpObj->get_obj_type() == abstract_object::type_window) {
+        gl3d_window * w = (gl3d_window *) this->pickUpObj;
+        w->change_model("000002");
+    }
+}
