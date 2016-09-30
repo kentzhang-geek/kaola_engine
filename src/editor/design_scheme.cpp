@@ -710,6 +710,7 @@ void scheme::del_furniture(gl3d::abstract_object *obj) {
         GL3D_UTILS_ERROR("delete a furniture which is not furniture");
     gl3d::object * o = (gl3d::object *)obj;
     this->del_obj(o->get_id());
+    command::command_stack::shared_instance()->push(new command::del_obj(o));
     delete o;
     return;
 }
@@ -742,6 +743,7 @@ bool scheme::add_door(gl3d_wall *w, glm::vec2 center_pt, float width, float heig
     this->doors.insert(n_door);
     // TODO : command of add door
     this->objects.insert(n_door->get_id(), n_door);
+    command::command_stack::shared_instance()->push(new command::add_door(n_door));
     return true;
 }
 
@@ -761,6 +763,7 @@ bool scheme::add_window(gl3d_wall *w, glm::vec2 center_pt, float width, float he
     this->windows.insert(n_window);
     // TODO : command of add door
     this->objects.insert(n_window->get_id(), n_window);
+    command::command_stack::shared_instance()->push(new command::add_window(n_window));
     return true;
 }
 
@@ -772,6 +775,7 @@ void scheme::del_door(gl3d_door *w) {
         this->objects.remove(w->get_id());
 
     // TODO : command of remove door
+    command::command_stack::shared_instance()->push(new command::del_door(w));
     delete w;
     return;
 }
@@ -784,6 +788,7 @@ void scheme::del_window(gl3d_window *wdw) {
         this->objects.remove(wdw->get_id());
 
     // TODO : command of remove door
+    command::command_stack::shared_instance()->push(new command::del_window(wdw));
     delete wdw;
     return;
 }

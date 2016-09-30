@@ -67,6 +67,7 @@ void resource::default_model_loader::do_work(void *object) {
     }
     else {
         this->main_scene->get_attached_sketch()->add_obj(this->obj_render_id, obj);
+        command::command_stack::shared_instance()->push(new command::add_obj(obj));  // add obj undo
     }
     gl3d_lock::shared_instance()->render_lock.unlock();
 

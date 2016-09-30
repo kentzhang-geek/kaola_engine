@@ -77,12 +77,17 @@ bool add_or_del_wall::add_wall() {
     this->wall->calculate_mesh();
     this->wall->buffer_data();
     command_stack::shared_instance()->get_sketch()->get_objects()->insert(this->wall_id, this->wall);
+    command_stack::shared_instance()->get_sketch()->get_walls()->insert(this->wall);
     this->wall_exist = true;
+    command_stack::shared_instance()->get_sketch()->recalculate_rooms();
     return true;
 }
 
 bool add_or_del_wall::del_wall() {
-    if (command_stack::shared_instance()->get_sketch()->get_objects()->contains(this->wall_id)) {
+    scheme * skt = command_stack::shared_instance()->get_sketch();
+    if (skt->get_objects()->contains(this->wall_id)) {
+        gl3d_wall * w = (gl3d_wall *)skt->get_obj(this->wall_id);
+        skt->get_walls()->remove(w);
         command_stack::shared_instance()->get_main_scene()->delete_obj(this->wall_id);
         if (this->wall->get_start_point_fixed()) {
             gl3d_wall * w = this->wall->get_start_point_attach()->attach;
@@ -102,6 +107,7 @@ bool add_or_del_wall::del_wall() {
 //            }
 //        }
     this->wall_exist = false;
+    command_stack::shared_instance()->get_sketch()->recalculate_rooms();
     return false;
 }
 
