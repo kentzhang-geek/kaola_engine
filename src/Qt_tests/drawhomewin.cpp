@@ -77,8 +77,8 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 
     // test with furniture
-    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
-    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
+//    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
+//    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
 
     // test load xml
     pugi::xml_document doc;

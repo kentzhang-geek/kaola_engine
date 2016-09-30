@@ -16,11 +16,11 @@ void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
 
 void MOpenGLView::closeEvent(QCloseEvent *event) {
     // test save file
-//    pugi::xml_document doc;
-//    pugi::xml_node rootnode = doc.root();
-//    rootnode = rootnode.append_child("scheme");
-//    this->sketch->save_to_xml(rootnode);
-//    doc.save_file("test_sketch.xml");
+    pugi::xml_document doc;
+    pugi::xml_node rootnode = doc.root();
+    rootnode = rootnode.append_child("scheme");
+    this->sketch->save_to_xml(rootnode);
+    doc.save_file("test_sketch.xml");
 
     this->hide();
     // clear undo and redo

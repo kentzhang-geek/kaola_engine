@@ -191,6 +191,7 @@ using namespace pugi;
 bool gl3d_window::save_to_xml(pugi::xml_node &node) {
     node.append_attribute("type").set_value("gl3d_window");
     // properties
+    node.append_attribute("obj_id").set_value(this->get_id());
     node.append_attribute("height_min").set_value(this->height_min);
     node.append_attribute("height_max").set_value(this->height_max);
     node.append_attribute("width").set_value(this->width);
@@ -223,6 +224,7 @@ gl3d_window* gl3d_window::load_from_xml(pugi::xml_node node) {
     // properties
     std::string res_id = std::string(node.attribute("model_res_id").value());
     gl3d_window * win = new gl3d_window(res_id);
+    win->set_id(node.attribute("obj_id").as_int());
     win->height_max = node.attribute("height_max").as_float();
     win->height_min = node.attribute("height_min").as_float();
     win->width = node.attribute("width").as_float();

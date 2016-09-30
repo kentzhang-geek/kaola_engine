@@ -1566,22 +1566,7 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
         if (h->is_valid())
             w->holes_on_this_wall.insert(h->get_hole_id(), h);
         else {
-            glm::vec3 vdir = h->get_ptb() - h->get_pta();
-            hole * n_h = new hole(w,
-                                  (h->get_pta() + h->get_ptb()) / 2.0f,
-                                  glm::length(glm::vec2(vdir.x, vdir.z)),
-                                  glm::min(h->get_pta().y, h->get_ptb().y),
-                                  glm::max(h->get_pta().y, h->get_ptb().y),
-                                  w->get_availble_hole_id()
-                                  );
-            n_h->set_hole_id(h->get_hole_id());
             delete h;
-            if (n_h->is_valid()) {
-                w->holes_on_this_wall.insert(n_h->get_hole_id(), n_h);
-            }
-            else {
-                delete n_h;
-            }
         }
     }
     return w;

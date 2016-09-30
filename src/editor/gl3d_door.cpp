@@ -186,6 +186,7 @@ using namespace pugi;
 bool gl3d_door::save_to_xml(pugi::xml_node &node) {
     node.append_attribute("type").set_value("gl3d_door");
     // properties
+    node.append_attribute("obj_id").set_value(this->get_id());
     node.append_attribute("height").set_value(this->height);
     node.append_attribute("width").set_value(this->width);
     node.append_attribute("thickness").set_value(this->thickness);
@@ -217,6 +218,7 @@ gl3d_door* gl3d_door::load_from_xml(pugi::xml_node node) {
     // properties
     std::string res_id = std::string(node.attribute("model_res_id").value());
     gl3d_door * door = new gl3d_door(res_id);
+    door->set_id(node.attribute("obj_id").as_int());
     door->height = node.attribute("height").as_float();
     door->width = node.attribute("width").as_float();
     door->thickness = node.attribute("thickness").as_float();

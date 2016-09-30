@@ -672,6 +672,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
             nit++) {
         gl3d_door * d = gl3d_door::load_from_xml(nit->node());
         if (NULL != d) {
+            d->set_id(this->find_available_id());
             this->doors.insert(d);
             this->objects.insert(d->get_id(), d);
         }
@@ -683,6 +684,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
             nit++) {
         gl3d_window * w = gl3d_window::load_from_xml(nit->node());
         if (NULL != w) {
+            w->set_id(this->find_available_id());
             this->windows.insert(w);
             this->objects.insert(w->get_id(), w);
         }
