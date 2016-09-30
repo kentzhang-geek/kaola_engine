@@ -468,6 +468,9 @@ void add_or_del_door::add_door() {
     this->attached_hole_id = d->attached_hole_id;
     skt->get_doors()->insert(d);
     skt->get_objects()->insert(d->get_id(), d);
+
+    skt->get_attached_scene()->get_assistant_image()->fill(0);
+    skt->draw_assistant_image(skt->get_attached_scene()->get_assistant_image());
 }
 
 void add_or_del_door::del_door() {
@@ -482,6 +485,8 @@ void add_or_del_door::del_door() {
             delete d;
         }
     }
+    skt->get_attached_scene()->get_assistant_image()->fill(0);
+    skt->draw_assistant_image(skt->get_attached_scene()->get_assistant_image());
 }
 
 add_door::add_door(gl3d_door *d) : add_or_del_door(d) {
@@ -558,6 +563,9 @@ void add_or_del_window::add_window() {
     this->attached_hole_id = win->attached_hole_id;
     skt->get_windows()->insert(win);
     skt->get_objects()->insert(win->get_id(), win);
+
+    skt->get_attached_scene()->get_assistant_image()->fill(0);
+    skt->draw_assistant_image(skt->get_attached_scene()->get_assistant_image());
 }
 
 void add_or_del_window::del_window() {
@@ -572,6 +580,9 @@ void add_or_del_window::del_window() {
             delete win;
         }
     }
+    
+    skt->get_attached_scene()->get_assistant_image()->fill(0);
+    skt->draw_assistant_image(skt->get_attached_scene()->get_assistant_image());
 }
 
 add_window::add_window(gl3d_window *win):add_or_del_window(win) {
