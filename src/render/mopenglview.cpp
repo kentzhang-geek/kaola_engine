@@ -32,6 +32,9 @@ void MOpenGLView::closeEvent(QCloseEvent *event) {
     spack.save_to_xml(rtnd);
     sdoc.save_file("test_style.xml");
 
+    // save local database
+    klm::resource::manager::shared_instance()->save_local_databse();
+
     this->hide();
     // clear undo and redo
     klm::command::command_stack::shared_instance()->clear();

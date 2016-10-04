@@ -65,11 +65,15 @@ namespace klm {
             // preload resources like ground and some else
             void preload_resources(gl3d::scene * sc);
 
+            QMap<std::string, std::string> local_resource_map;
+            void load_local_databse();
+            void save_local_databse();
+
+            // test
+            void test_data();
+
         private:
             manager();
-
-            // init map data for test
-            void test_data_init();
 
             // resource id to
             QMap<string, item> id_to_item;

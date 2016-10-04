@@ -88,7 +88,8 @@ manager::manager() {
     this->id_to_resource.clear();
 
     // for test
-    this->test_data_init();
+    this->local_resource_map.clear();
+    this->load_local_databse();
     return;
 }
 
@@ -116,7 +117,44 @@ void manager::release_all_resources() {
     return;
 }
 
-void manager::test_data_init() {
+void manager::load_local_databse() {
+    pugi::xml_document doc;
+    doc.load_file(GL3D_LOCAL_DATABASE);
+    pugi::xml_node rt = doc.root().child("local_res");
+    auto reses = rt.children("res");
+    for (auto rit = reses.begin();
+         rit != reses.end();
+         rit++) {
+        string resid = string(rit->attribute("id").as_string());
+        string res_value = string(rit->attribute("value").as_string());
+        int type = rit->attribute("item_type").as_int();
+        this->id_to_item.insert(resid, resource::item(resid, res_value, (item::resource_type) type, true));
+        this->id_to_resource.insert(resid, get_file_name_by_item(this->id_to_item.value(resid)));
+        if (type == item::resource_type::res_model_3ds) {
+            this->id_to_merchandise.insert(resid, new klm::Furniture(resid));
+        }
+        else if (type == item::resource_type::res_texture_picture) {
+            this->id_to_merchandise.insert(resid, new klm::Surfacing(resid));
+        }
+    }
+}
+
+void manager::save_local_databse() {
+    pugi::xml_document doc;
+    pugi::xml_node rt = doc.root().append_child("local_res");
+    Q_FOREACH(auto iit, this->id_to_item) {
+            auto nd = rt.append_child("res");
+            nd.append_attribute("id").set_value(iit.get_res_id().c_str());
+            nd.append_attribute("value").set_value(iit.get_full_file_name().c_str());
+            nd.append_attribute("item_type").set_value((int) iit.get_res_type());
+        }
+    doc.save_file(GL3D_LOCAL_DATABASE);
+
+    return;
+}
+
+#if 1
+void manager::test_data() {
     this->id_to_item.insert("000000", resource::item("000000", "floor.3ds", item::res_model_3ds, true));
     this->id_to_resource.insert("000000",
                                 std::string(get_file_name_by_item(this->id_to_item.value("000000"))));
@@ -137,7 +175,7 @@ void manager::test_data_init() {
                                 std::string(get_file_name_by_item(this->id_to_item.value("000003"))));
     this->id_to_merchandise.insert("000003", new klm::Furniture("000003"));
 
-    this->id_to_item.insert("mtl000000", resource::item("mtl000000", "58.jpg", item::res_texture_picture, true));
+    this->id_to_item.insert("mtl000000", resource::item("mtl000000", "__2.jpg", item::res_texture_picture, true));
     this->id_to_resource.insert("mtl000000",
                                 std::string(get_file_name_by_item(this->id_to_item.value("mtl000000"))));
     this->id_to_merchandise.insert("mtl000000", new klm::Surfacing("mtl000000"));
@@ -172,6 +210,7 @@ void manager::test_data_init() {
 //                                (void *)std::string(get_file_name_by_item(this->id_to_item.value("000006"))));
 //    this->id_to_merchandise.insert("000006", new klm::Furniture("000006"));
 }
+#endif
 
 // preload resources like ground and some else
 void manager::preload_resources(gl3d::scene * sc) {
