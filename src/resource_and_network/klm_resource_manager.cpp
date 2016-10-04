@@ -128,13 +128,17 @@ void manager::load_local_databse() {
         string resid = string(rit->attribute("id").as_string());
         string res_value = string(rit->attribute("value").as_string());
         int type = rit->attribute("item_type").as_int();
-        this->id_to_item.insert(resid, resource::item(resid, res_value, (item::resource_type) type, true));
-        this->id_to_resource.insert(resid, get_file_name_by_item(this->id_to_item.value(resid)));
-        if (type == item::resource_type::res_model_3ds) {
-            this->id_to_merchandise.insert(resid, new klm::Furniture(resid));
-        }
-        else if (type == item::resource_type::res_texture_picture) {
-            this->id_to_merchandise.insert(resid, new klm::Surfacing(resid));
+        QFile f(QString::fromStdString(
+                get_file_name_by_item(resource::item(resid, res_value, (item::resource_type) type, true))));
+        if (f.exists()) {
+            this->id_to_item.insert(resid, resource::item(resid, res_value, (item::resource_type) type, true));
+            this->id_to_resource.insert(resid, get_file_name_by_item(this->id_to_item.value(resid)));
+            if (type == item::resource_type::res_model_3ds) {
+                this->id_to_merchandise.insert(resid, new klm::Furniture(resid));
+            }
+            else if (type == item::resource_type::res_texture_picture) {
+                this->id_to_merchandise.insert(resid, new klm::Surfacing(resid));
+            }
         }
     }
 }
