@@ -60,7 +60,7 @@ set(SRCS
         src/render/loading_object.cpp
         src/editor/gl3d_door.cpp
         src/editor/gl3d_window.cpp
-
+        src/editor/style_package.cpp
         )
 
 set(qttest_MOCS
@@ -120,6 +120,7 @@ set(qttest_MOCS
         include/editor/gl3d_door.h
         include/editor/gl3d_window.h
         include/editor/sign_config.h
+        include/editor/style_package.h
         )
 
 include_directories(LIBS/glm_build)

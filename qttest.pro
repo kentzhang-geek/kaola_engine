@@ -69,7 +69,8 @@ SOURCES += \
     src/editor/command.cpp \
     src/render/loading_object.cpp \
     src/editor/gl3d_door.cpp \
-    src/editor/gl3d_window.cpp
+    src/editor/gl3d_window.cpp \
+    src/editor/style_package.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -127,7 +128,8 @@ HEADERS  += \
     include/kaola_engine/loading_object.h \
     include/editor/gl3d_door.h \
     include/editor/gl3d_window.h \
-    include/editor/sign_config.h
+    include/editor/sign_config.h \
+    include/editor/style_package.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \

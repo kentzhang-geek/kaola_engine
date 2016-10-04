@@ -68,7 +68,8 @@ src/editor/design_scheme.cpp \
 src/editor/command.cpp \
 src/render/loading_object.cpp \
 src/editor/gl3d_door.cpp \
-src/editor/gl3d_window.cpp
+src/editor/gl3d_window.cpp \
+src/editor/style_package.cpp
 
 
 
