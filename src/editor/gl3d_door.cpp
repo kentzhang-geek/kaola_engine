@@ -267,3 +267,4 @@ void gl3d_door::change_model(std::string res_id) {
     this->pre_translate_mat = glm::translate(glm::mat4(1.0f), -bottom_center);
     this->scale_to_install(this->thickness);
 }
+

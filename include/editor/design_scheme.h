@@ -84,6 +84,10 @@ namespace klm {
             virtual bool save_to_xml(pugi::xml_node & node);
             virtual bool load_from_xml(pugi::xml_node node);
 
+            // get wall's related room
+            gl3d::room * get_related_room_of_wall(gl3d::gl3d_wall * wall, glm::vec2 coord_scr);
+            klm::Surface * get_related_surface_of_wall(gl3d::gl3d_wall * wall, glm::vec2 coord_scr);
+
         private:
             void init();
         };

@@ -71,6 +71,9 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
         case gl3d::abstract_object::type_wall : {
             gl3d_wall *w = (gl3d_wall *) pickUpObj;
             w->set_is_picked(true);
+//            // test set material
+//            this->main_scene->get_attached_sketch()->get_related_room_of_wall(w, glm::vec2(x, y))->set_material(
+//                    "mtl000002");
             break;
         }
         case gl3d::abstract_object::type_scheme : {

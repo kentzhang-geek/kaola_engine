@@ -793,6 +793,45 @@ void scheme::del_window(gl3d_window *wdw) {
     return;
 }
 
+
+
+gl3d::room* scheme::get_related_room_of_wall(gl3d::gl3d_wall *wall, glm::vec2 coord_scr) {
+    // TODO : get related room
+    klm::Surface * sfc = this->get_related_surface_of_wall(wall, coord_scr);
+
+    Q_FOREACH(gl3d::room * rit, this->rooms) {
+            QSet<klm::Surface *> sfcs;
+            rit->get_relate_surfaces(sfcs);
+            Q_FOREACH(klm::Surface * sit, sfcs) {
+                    if (sfc == sit) {
+                        return rit;
+                    }
+                }
+        }
+
+    return NULL;
+}
+
+klm::Surface* scheme::get_related_surface_of_wall(gl3d::gl3d_wall *wall, glm::vec2 coord_scr) {
+    // TODO : get related surface
+    glm::vec3 coord_on_wall;
+    glm::vec3 coord_normal;
+    if (wall->get_coord_on_wall(this->attached_scene, coord_scr, coord_on_wall, coord_normal)) {
+        Q_FOREACH(klm::Surface * sit, *(wall->get_sfcs())) {
+                QVector<math::triangle_facet >faces;
+                faces.clear();
+                gl3d::get_faces_from_surface(sit, faces);
+                Q_FOREACH(math::triangle_facet fit, faces) {
+                        if (fit.is_point_in_facet(coord_on_wall)) {
+                            return sit;
+                        }
+                    }
+            }
+    }
+
+    return NULL;
+}
+
 // test code
 #if 0
 
