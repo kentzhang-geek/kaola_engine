@@ -1,6 +1,7 @@
 #include <include/editor/command.h>
 #include "kaola_engine/mopenglview.h"
 #include "editor/sign_config.h"
+#include "editor/style_package.h"
 
 using namespace std;
 
@@ -21,6 +22,15 @@ void MOpenGLView::closeEvent(QCloseEvent *event) {
     rootnode = rootnode.append_child("scheme");
     this->sketch->save_to_xml(rootnode);
     doc.save_file("test_sketch.xml");
+
+    // test save style
+    pugi::xml_document sdoc;
+    pugi::xml_node rtnd = sdoc.root();
+    rtnd = rtnd.append_child("style");
+    klm::design::common_style_package spack;
+    spack.read_from_scheme(this->sketch);
+    spack.save_to_xml(rtnd);
+    sdoc.save_file("test_style.xml");
 
     this->hide();
     // clear undo and redo

@@ -42,7 +42,7 @@ namespace klm {
         // define common interface
         class abstract_style_package {
             virtual QString get_style_name() = 0;
-            virtual bool save_to_style(scheme * sketch) = 0;
+            virtual bool read_from_scheme(scheme * sketch) = 0;
             virtual int apply_style(scheme * sketch) = 0;
         };
 
@@ -52,7 +52,7 @@ namespace klm {
             virtual ~common_style_package();
 
             QString get_style_name();
-            bool save_to_style(scheme * sketch);
+            bool read_from_scheme(scheme * sketch);
             int apply_style(scheme * sketch);
 
             // save and load

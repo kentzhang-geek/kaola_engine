@@ -14,6 +14,7 @@
 #include "utils/gl3d_path_config.h"
 #include "resource_and_network/klm_resource_manager.h"
 #include "editor/command.h"
+#include "editor/style_package.h"
 
 using namespace std;
 
