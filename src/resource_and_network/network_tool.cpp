@@ -58,7 +58,6 @@ void login_tool::process_post() {
         QJsonObject jobj = doc.object();
         if (jobj.contains("status")) {
             if (jobj.value("status").toString() == "OK") {
-                qDebug("fuck");
                 emit login_success(true);
                 return;
             }
