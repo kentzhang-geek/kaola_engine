@@ -15,4 +15,6 @@ gl3d_global_param::gl3d_global_param(){
     memset(this, 0, sizeof(gl3d_global_param));
     this->wall_thick = 0.12f;
     this->old_sketch_test = NULL;
+    this->password = new QString("a");
+    this->username = new QString("z");
 }

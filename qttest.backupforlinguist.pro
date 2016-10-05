@@ -69,7 +69,8 @@ src/editor/command.cpp \
 src/render/loading_object.cpp \
 src/editor/gl3d_door.cpp \
 src/editor/gl3d_window.cpp \
-src/editor/style_package.cpp
+src/editor/style_package.cpp \
+src/resource_and_network/network_tool.cpp
 
 
 
@@ -78,7 +79,8 @@ src/Qt_tests/mainwindow.ui \
 src/Qt_tests/drawhomewin.ui \
 src/utils/qui/frmmessagebox.ui \
 ui/window_or_door_selected.ui \
-ui/furniture_selected.ui
+ui/furniture_selected.ui \
+ui/login.ui
 
 
 #PRECOMPILED_HEADER += $$HEADERS

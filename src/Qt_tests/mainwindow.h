@@ -18,11 +18,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void on_login_signin_button_clicked();
+
 private slots:
     void on_testtiaozhuan_clicked();
 
 private:
-    Ui::MainWindow *ui;
     drawhomewin * dhw;
 };
 

@@ -3,11 +3,14 @@
 
 #include <QVector>
 #include <QMap>
+#include <QString>
 
 namespace gl3d {
 class gl3d_global_param {
 public:
     static gl3d_global_param * shared_instance();
+    QString * username;
+    QString * password;
     float canvas_width;
     float canvas_height;
     float wall_thick;
