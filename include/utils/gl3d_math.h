@@ -182,6 +182,17 @@ namespace gl3d {
         }
 
         template <typename T>
+        T point_clamp_in_range(T pt, T r_min, T r_max) {
+            for (int i = 0; i < pt.length(); i++) {
+                if (pt[i] > r_max[i])
+                    pt[i] = r_max[i];
+                if (pt[i] < r_min[i])
+                    pt[i] = r_min[i];
+            }
+            return pt;
+        }
+
+        template <typename T>
         T max_vec_every_element(T a, T b) {
             T value_ret;
             for (int i = 0; i < a.length(); i++){

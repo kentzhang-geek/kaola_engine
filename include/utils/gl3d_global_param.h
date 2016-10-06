@@ -30,7 +30,8 @@ public:
         movewalling = 8,
         openwindow = 9,
         movefurniture = 10,
-        ruling = 11
+        ruling = 11,
+        draw_area = 12
     } current_work_state ;
 private:
     gl3d_global_param();

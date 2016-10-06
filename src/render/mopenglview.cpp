@@ -662,6 +662,21 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                     }
                 }
         }
+        if (now_state == gl3d_global_param::draw_area) {
+            // drawing area
+            QVector<glm::vec3 > * apts = (QVector<glm::vec3 > *)this->user_data.value("area_points");
+            glm::vec3 * nowpt = (glm::vec3 *)this->user_data.value("current_point");
+
+            bool b_ins = true;
+            Q_FOREACH(glm::vec3 fpit, *apts) {
+                    if (math::point_near_point(*nowpt, fpit))
+                        b_ins = false;
+                }
+
+            if (b_ins) {
+                apts->append(*nowpt);
+            }
+        }
     } else if (event->button() == Qt::RightButton) {
         //右键按下事件
         //点击右键-取消画墙,画房间状态
@@ -709,6 +724,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             }
             gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
         }
+        if (now_state == gl3d_global_param::work_state::draw_area) {
+            delete (QVector<glm::vec3> *)this->user_data.value("area_points");
+            delete (glm::vec3 *)this->user_data.value("current_point");
+            this->user_data.remove("area_points");
+            this->user_data.remove("current_point");
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
 
         // drag event
         this->move_vision = true;
@@ -720,6 +742,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
 //鼠标移动事件
 void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
+    this->draw_assistant_img();
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     // move vision
@@ -837,7 +860,7 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         //墙顶点直角吸附
         if (!is_drawwall_start_point) {
             glm::vec2 point = this->wallPeakRightAngleAdsorption(tmp_pt);
-            if (glm::length(point - tmp_pt) > 0.01) {
+            if (glm::length(point - tmp_pt) > 0.01f) {
                 conn_dot = point;
                 is_drawwall_start_point = true;
             }
@@ -850,7 +873,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
                              conn_dot.x - 12, conn_dot.y - 12, 24, 24);
         }
     }
-
 
     //画墙中----------------------------------------------------------------
     if (now_state == gl3d::gl3d_global_param::drawwalling) {
@@ -1117,7 +1139,6 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         }
     }
 
-
     //选择开门位置----------------------------------------------------------------
     if (now_state == gl3d::gl3d_global_param::opendoor) {
         this->main_scene->get_assistant_image()->fill(0);
@@ -1218,6 +1239,16 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
         }
     }
 
+    // draw area points
+    if (now_state == gl3d_global_param::work_state::draw_area) {
+        QVector<glm::vec3 > * apts = (QVector<glm::vec3> *)this->user_data.value("area_points");
+        glm::vec3 * nowpt = (glm::vec3 *)this->user_data.value("current_point");
+
+        glm::vec2 in_scr_cod(event->x(), event->y());
+        glm::vec2 out_grd_cod;
+        this->main_scene->coord_ground(in_scr_cod, out_grd_cod);
+        *nowpt = glm::vec3(out_grd_cod.x, 0.0f, out_grd_cod.y);
+    }
 
     if (event->buttons() & Qt::LeftButton) {
         //获取画布上所有墙的顶点（用于吸附）
@@ -1367,5 +1398,27 @@ void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
         delete (glm::vec3 *)this->user_data.value("mouse_start");
         this->user_data.remove("mouse_start");
         gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::pickup;
+    }
+}
+
+void MOpenGLView::draw_assistant_img() {
+    QPainter ptr(this->main_scene->get_assistant_image());
+    auto now_work = gl3d_global_param::shared_instance()->current_work_state;
+    if (now_work == gl3d_global_param::draw_area) {
+        // draw area
+        auto apts = (QVector<glm::vec3> *) this->user_data.value("area_points");
+        auto nowapt = (glm::vec3 *) this->user_data.value("current_point");
+        QPolygon poly;
+        Q_FOREACH(glm::vec3 pit, *apts) {
+                if (!math::point_near_point(*nowapt, pit)) {
+                    glm::vec2 ptin = this->main_scene->project_point_to_screen(pit);
+                    ptin = math::point_clamp_in_range(ptin, glm::vec2(0.0f), glm::vec2(this->width(), this->height()));
+                    poly.append(QPoint(ptin.x, ptin.y));
+                }
+            }
+        QBrush br(QColor(250, 0, 0, 128), Qt::SolidPattern);
+        ptr.setBrush(br);
+        if (poly.size() >= 3)
+            ptr.drawConvexPolygon(poly);
     }
 }

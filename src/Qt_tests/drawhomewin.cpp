@@ -221,3 +221,11 @@ void drawhomewin::on_p_11_clicked()
     // set rule tool
     gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::ruling;
 }
+
+void drawhomewin::on_p_12_clicked() {
+    // set area tool
+    gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::draw_area;
+    auto new_pts = new QVector<glm::vec3>;
+    this->ui->OpenGLCanvas->user_data.insert("area_points", new_pts);
+    this->ui->OpenGLCanvas->user_data.insert("current_point", new glm::vec3(0.0f));
+}

@@ -77,6 +77,7 @@ public:
     void closeEvent(QCloseEvent *event);
 
     QString work_state_flag;
+    void draw_assistant_img();
 
     //yananli codes -----------------------------------------------------
     enum button_state {

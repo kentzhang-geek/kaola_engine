@@ -549,7 +549,7 @@ color: rgb(245, 245, 245);
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_3">
-                 <item row="1" column="0">
+                 <item row="1" column="1">
                   <widget class="QLabel" name="label_11">
                    <property name="font">
                     <font>
@@ -569,7 +569,7 @@ color: rgb(229, 229, 229);
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
+                 <item row="0" column="1">
                   <widget class="QPushButton" name="p_10">
                    <property name="enabled">
                     <bool>true</bool>
@@ -618,6 +618,81 @@ border-image:url(:/images/drawwallselectd);
                      <width>48</width>
                      <height>48</height>
                     </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="p_12">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                   <property name="cursor">
+                    <cursorShape>PointingHandCursor</cursorShape>
+                   </property>
+                   <property name="mouseTracking">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#p_4 {
+border-radius: 0;
+background-color: rgb(28, 29, 32);
+border:0;
+}
+
+#p_4:hover {
+border-image:url(:/images/doorselectd);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../../res.qrc">
+                     <normaloff>:/images/door</normaloff>:/images/door</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>48</width>
+                     <height>48</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_15">
+                   <property name="font">
+                    <font>
+                     <family>微软雅黑</family>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">#label_11 {
+color: rgb(229, 229, 229);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Area</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
                    </property>
                   </widget>
                  </item>

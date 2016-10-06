@@ -8,6 +8,12 @@ using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
+    // for test
+    Ui::MainWindow * ui = new Ui::MainWindow;
+    ui->setupUi(this);
+    delete ui;
+    return;
+
     web = new QWebEngineView(this);
     web->resize(this->width(), this->height());
     web->load(QUrl("file:///D:/User/Desktop/KLM/build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/test.html"));
@@ -37,11 +43,26 @@ void MainWindow::test_text(const QString &text) {
     box->setText(text);
 //    box->show();
     box->exec();
+
+    if (text == "login") {
+        // hide all children
+        QObjectList olist = this->children();
+        for (auto oit = olist.begin();
+             oit != olist.end();
+             oit++) {
+            if (oit.i->t()->isWidgetType()) {
+                ((QWidget *)oit.i->t())->hide();
+            }
+        }
+        Ui::MainWindow * ui = new Ui::MainWindow;
+        ui->setupUi(this);
+        delete ui;
+    }
     return;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *ev) {
-    web->resize(this->width(), this->height());
+//    web->resize(this->width(), this->height()); // TODO : resize web view
 }
 
 MainWindow::~MainWindow()
