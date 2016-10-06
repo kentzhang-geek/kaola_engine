@@ -8,16 +8,40 @@ using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
+    web = new QWebEngineView(this);
+    web->resize(this->width(), this->height());
+    web->load(QUrl("file:///D:/User/Desktop/KLM/build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/test.html"));
+    web->show();
+
+//    QString code = QString::fromLocal8Bit("alert(\'wwww aaaa\')");
+//    web->page()->runJavaScript(code);
+    this->channel = new QWebChannel(this);
+    web->page()->setWebChannel(this->channel);
+    this->channel->registerObject(QStringLiteral("twin"), this);
+
     // for test only
 //    this->on_testtiaozhuan_clicked();
 
-    auto test = gl3d::gl3d_global_param::shared_instance();
-    Ui::Login * lgui = new Ui::Login;
-    lgui->setupUi(this);
-    lgui->login_password->setEchoMode(QLineEdit::Password);
-    delete lgui;
-    myHelper::FormInCenter(this);
-    setWindowState(Qt::WindowMaximized);
+//    auto test = gl3d::gl3d_global_param::shared_instance();
+//    Ui::Login * lgui = new Ui::Login;
+//    lgui->setupUi(this);
+//    lgui->login_password->setEchoMode(QLineEdit::Password);
+//    delete lgui;
+//    myHelper::FormInCenter(this);
+//    setWindowState(Qt::WindowMaximized);
+}
+
+void MainWindow::test_text(const QString &text) {
+    QMessageBox * box = new QMessageBox();
+    box->setWindowTitle("now test hitted");
+    box->setText(text);
+//    box->show();
+    box->exec();
+    return;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *ev) {
+    web->resize(this->width(), this->height());
 }
 
 MainWindow::~MainWindow()

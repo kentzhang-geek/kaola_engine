@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl widgets network
+QT       += core gui opengl widgets network webview webenginewidgets
 
 win32: QMAKE_CXXFLAGS += /MP
 win32: QMAKE_LFLAGS_DEBUG += /INCREMENTAL:NO
