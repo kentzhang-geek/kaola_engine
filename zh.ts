@@ -15,9 +15,37 @@
     </message>
 </context>
 <context>
+    <name>Login</name>
+    <message>
+        <location filename="ui/login.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/login.ui" line="52"/>
+        <source>UserName</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/login.ui" line="65"/>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/login.ui" line="78"/>
+        <source>Signin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ui/login.ui" line="91"/>
+        <source>Signup</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MOpenGLView</name>
     <message>
-        <location filename="src/render/mopenglview.cpp" line="752"/>
+        <location filename="src/render/mopenglview.cpp" line="765"/>
         <source>M</source>
         <translation type="unfinished">米</translation>
     </message>
@@ -59,6 +87,26 @@
         <location filename="src/Qt_tests/mainwindow.ui" line="64"/>
         <source>测试工具栏-2-2-1</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/mainwindow.cpp" line="43"/>
+        <source>Please insert your password and username</source>
+        <translation>请输入用户名与密码</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/mainwindow.cpp" line="44"/>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/mainwindow.cpp" line="93"/>
+        <source>Signin Failed, Please confirm your infomation and retry</source>
+        <translation>登陆失败，请确认密码后重试</translation>
+    </message>
+    <message>
+        <location filename="src/Qt_tests/mainwindow.cpp" line="94"/>
+        <source>Signin Failed</source>
+        <translation>登陆失败</translation>
     </message>
 </context>
 <context>

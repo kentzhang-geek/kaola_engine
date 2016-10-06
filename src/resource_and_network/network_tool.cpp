@@ -4,6 +4,8 @@ using namespace klm;
 using namespace klm::network;
 using namespace klm::network::common_tools;
 
+QNetworkAccessManager manager;
+
 poster::poster() {
     this->rply = NULL;
     return;
@@ -35,6 +37,7 @@ login_tool::login_tool() {
     return ;
 }
 
+#if 0
 void login_tool::login_with(QString username, QString password) {
     this->per = new common_tools::poster;
     this->per->host = this->server_url;
@@ -46,6 +49,7 @@ void login_tool::login_with(QString username, QString password) {
     this->per->post_request(ss, data);
     return;
 }
+#endif
 
 void login_tool::process_post() {
     if (this->per->rply->error()) {
@@ -58,6 +62,7 @@ void login_tool::process_post() {
         QJsonObject jobj = doc.object();
         if (jobj.contains("status")) {
             if (jobj.value("status").toString() == "OK") {
+                qDebug("OK");
                 emit login_success(true);
                 return;
             }
@@ -67,3 +72,52 @@ void login_tool::process_post() {
     emit login_success(false);
     return;
 }
+
+bool http_post_request(const std::string &url, const QUrlQuery &data){
+    QEventLoop loop;
+
+    QNetworkRequest request(QUrl(url.c_str()));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QObject::connect(&manager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+    QNetworkReply* reply = manager.post(request, data.toString(QUrl::FullyEncoded).toUtf8());
+    loop.exec();
+
+    if(reply->error()){
+        qDebug("Error in request");
+    } else {
+        QByteArray data = reply->readAll();
+        qDebug(data.data());
+        QJsonDocument doc;
+        doc = QJsonDocument::fromJson(data);
+        if (!doc.isEmpty()) {
+            QJsonObject jobj = doc.object();
+            if (jobj.contains("status")) {
+                if (jobj.value("status").toString() == "OK") {
+                    qDebug("OK");
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+#if 1
+void login_tool::login_with(QString uname, QString pwd) {
+    const std::string userName = uname.toUtf8().constData();
+    const std::string password = pwd.toUtf8().constData();
+    QUrlQuery data;
+    data.addQueryItem("id", userName.c_str());
+    data.addQueryItem("pwd", password.c_str());
+
+    std::string url(this->server_url.toStdString() + "login");
+    bool is_success = http_post_request(url, data);
+    if (is_success) {
+        emit login_success(true);
+    }
+    else {
+        emit login_success(false);
+    }
+}
+#endif

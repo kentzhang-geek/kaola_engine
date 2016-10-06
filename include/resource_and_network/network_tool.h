@@ -86,7 +86,7 @@ namespace klm {
         class login_tool : public QObject{
             Q_OBJECT
         public:
-            const QString server_url = "http://192.168.0.105:8080/";
+            const QString server_url = "http://192.168.0.102:8080/";
             common_tools::poster * per;
             login_tool();
             void login_with(QString username, QString password);
