@@ -29,8 +29,9 @@ drawhomewin::drawhomewin(QWidget *parent) :
     ui->setupUi(this);
     dhw = this;
 
-    QWidget * wweb = this->findChild<QWidget *>("web_goods");
-    this->web = new QWebEngineView(wweb);
+    QWebEngineView * wweb = this->findChild<QWebEngineView *>("web_goods");
+    this->web = wweb;
+    this->web->setFixedWidth(410);
 //    this->web->setGeometry(wweb->geometry());
     this->web->load(QUrl(KLM_WEB_GOODS_URL));
     this->web->show();

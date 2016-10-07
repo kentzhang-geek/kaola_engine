@@ -9,10 +9,10 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     // for test
-//    Ui::MainWindow * ui = new Ui::MainWindow;
-//    ui->setupUi(this);
-//    delete ui;
-//    return;
+    Ui::MainWindow * ui = new Ui::MainWindow;
+    ui->setupUi(this);
+    delete ui;
+    return;
 
     auto ssize = QApplication::desktop()->availableGeometry();
     this->setGeometry((ssize.width() - 300) / 2 + ssize.x(), (ssize.height() - 300) / 2 + ssize.y(), 300, 360);

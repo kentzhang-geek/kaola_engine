@@ -91,7 +91,7 @@ void MOpenGLView::do_init() {
 
     // set OPENGL context
     timer = new QTimer(this);
-    timer->start(100);
+    timer->start(200);
 
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
