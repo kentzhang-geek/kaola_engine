@@ -28,6 +28,8 @@ drawhomewin::drawhomewin(QWidget *parent) :
     setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
+
+    QWidget * wweb = this->findChild<QWidget *>("web_goods");
 }
 
 void drawhomewin::closeEvent(QCloseEvent *event) {
