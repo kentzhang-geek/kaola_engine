@@ -14,35 +14,41 @@ MainWindow::MainWindow(QWidget *parent) :
 //    delete ui;
 //    return;
 
-    this->resize(640, 640);
+    auto ssize = QApplication::desktop()->availableGeometry();
+    this->setGeometry((ssize.width() - 300) / 2 + ssize.x(), (ssize.height() - 300) / 2 + ssize.y(), 300, 360);
     web = new QWebEngineView(this);
     web->resize(this->width(), this->height());
-    web->load(QUrl("http://192.168.0.100:8080/index.html#/app/login"));
+    web->load(QUrl(KLM_WEB_LOGIN_URL));
     web->show();
+    connect(web, SIGNAL(loadFinished(bool)), this, SLOT(web_loaded(bool)));
 
-//    QString code = QString::fromLocal8Bit("alert(\'wwww aaaa\')");
-//    web->page()->runJavaScript(code);
     this->channel = new QWebChannel(this);
     web->page()->setWebChannel(this->channel);
     this->channel->registerObject(QStringLiteral("twin"), this);
+}
 
-    // for test only
-//    this->on_testtiaozhuan_clicked();
+void MainWindow::web_loaded(bool ib) {
+    if (ib) {
+        QString code = QString::fromLocal8Bit("qtinit()");
+        web->page()->runJavaScript(code);
+    }
+}
 
-//    auto test = gl3d::gl3d_global_param::shared_instance();
-//    Ui::Login * lgui = new Ui::Login;
-//    lgui->setupUi(this);
-//    lgui->login_password->setEchoMode(QLineEdit::Password);
-//    delete lgui;
-//    myHelper::FormInCenter(this);
-//    setWindowState(Qt::WindowMaximized);
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key::Key_F5)
+        this->web->reload();
+}
+
+void MainWindow::login(const QString &uname, const QString &pwd) {
+    this->lg = new klm::network::login_tool;
+    connect(this->lg, SIGNAL(login_success(bool)), this, SLOT(process_login(bool)));
+    this->lg->login_with(uname, pwd);
 }
 
 void MainWindow::test_text(const QString &text) {
     QMessageBox * box = new QMessageBox();
     box->setWindowTitle("now test hitted");
     box->setText(text);
-//    box->show();
     box->exec();
 
     if (text == "login") {
@@ -110,15 +116,6 @@ void MainWindow::process_login(bool isok) {
     delete this->lg;
     this->lg = NULL;
 
-    QLineEdit * uname = this->findChild<QLineEdit *>("login_username");
-    QLineEdit * pword = this->findChild<QLineEdit *>("login_password");
-    QPushButton * btn = this->findChild<QPushButton *>("login_signin_button");
-
-    // set invisible
-    uname->setReadOnly(false);
-    pword->setReadOnly(false);
-    btn->setEnabled(true);
-
     if (isok) {
         // hide all children
         QObjectList olist = this->children();
@@ -139,6 +136,7 @@ void MainWindow::process_login(bool isok) {
         box.setText(tr("Signin Failed, Please confirm your infomation and retry"));
         box.setWindowTitle(tr("Signin Failed"));
         box.exec();
+        this->web->reload();
         return;
     }
 }

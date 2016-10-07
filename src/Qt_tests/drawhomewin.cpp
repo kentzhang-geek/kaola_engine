@@ -30,6 +30,25 @@ drawhomewin::drawhomewin(QWidget *parent) :
     dhw = this;
 
     QWidget * wweb = this->findChild<QWidget *>("web_goods");
+    this->web = new QWebEngineView(wweb);
+//    this->web->setGeometry(wweb->geometry());
+    this->web->load(QUrl(KLM_WEB_GOODS_URL));
+    this->web->show();
+    this->channel = new QWebChannel(this);
+    web->page()->setWebChannel(this->channel);
+    this->channel->registerObject(QStringLiteral("draw_win"), this);
+    connect(web, SIGNAL(loadFinished(bool)), this, SLOT(webload_finished(bool)));
+}
+
+void drawhomewin::webload_finished(bool isok) {
+    if (isok) {
+        qDebug("goods web ok");
+        QString code = QString::fromLocal8Bit("qtinit()");
+        web->page()->runJavaScript(code);
+    }
+    else {
+        qDebug("goods web fucked");
+    }
 }
 
 void drawhomewin::closeEvent(QCloseEvent *event) {

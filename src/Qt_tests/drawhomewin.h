@@ -3,6 +3,12 @@
 
 #include <QWidget>
 #include <QShowEvent>
+#include <QtWebView>
+#include <QtWebView/QtWebView>
+#include <QtWebEngineWidgets>
+#include <QtWebEngineWidgets/QWebEngineView>
+#include <QtWebChannel>
+#include <QtWebChannel/QWebChannel>
 #include "ui/drawoption.h"
 
 namespace Ui {
@@ -18,6 +24,12 @@ public:
     ~drawhomewin();
 
     static void on_draw_clear();
+
+    QWebEngineView * web;
+    QWebChannel * channel;
+
+public slots:
+    void webload_finished(bool isok);
 
 private slots:
     void on_switch3D_clicked();

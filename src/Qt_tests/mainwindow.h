@@ -30,11 +30,14 @@ public:
     QWebChannel * channel;
 
     klm::network::login_tool * lg;
+    void keyPressEvent(QKeyEvent *event);
 
 public slots:
     void on_login_signin_button_clicked();
     void process_login(bool isok);
     void test_text(const QString &text);
+    void web_loaded(bool ib);
+    void login(const QString & uname, const QString & pwd);
 
 private slots:
     void on_testtiaozhuan_clicked();
