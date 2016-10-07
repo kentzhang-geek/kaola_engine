@@ -9,14 +9,15 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     // for test
-    Ui::MainWindow * ui = new Ui::MainWindow;
-    ui->setupUi(this);
-    delete ui;
-    return;
+//    Ui::MainWindow * ui = new Ui::MainWindow;
+//    ui->setupUi(this);
+//    delete ui;
+//    return;
 
+    this->resize(640, 640);
     web = new QWebEngineView(this);
     web->resize(this->width(), this->height());
-    web->load(QUrl("file:///D:/User/Desktop/KLM/build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/test.html"));
+    web->load(QUrl("http://192.168.0.100:8080/index.html#/app/login"));
     web->show();
 
 //    QString code = QString::fromLocal8Bit("alert(\'wwww aaaa\')");

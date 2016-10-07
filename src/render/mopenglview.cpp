@@ -1409,14 +1409,21 @@ void MOpenGLView::draw_assistant_img() {
         auto apts = (QVector<glm::vec3> *) this->user_data.value("area_points");
         auto nowapt = (glm::vec3 *) this->user_data.value("current_point");
         QPolygon poly;
+        bool add_nowpt = true;
         Q_FOREACH(glm::vec3 pit, *apts) {
-                if (!math::point_near_point(*nowapt, pit)) {
-                    glm::vec2 ptin = this->main_scene->project_point_to_screen(pit);
-                    ptin = math::point_clamp_in_range(ptin, glm::vec2(0.0f), glm::vec2(this->width(), this->height()));
-                    poly.append(QPoint(ptin.x, ptin.y));
+                glm::vec2 ptin = this->main_scene->project_point_to_screen(pit);
+                ptin = math::point_clamp_in_range(ptin, glm::vec2(0.0f), glm::vec2(this->width(), this->height()));
+                poly.append(QPoint(ptin.x, ptin.y));
+                if (math::point_near_point(*nowapt, pit)) {
+                    add_nowpt = false;
                 }
             }
-        QBrush br(QColor(250, 0, 0, 128), Qt::SolidPattern);
+        if (add_nowpt) {
+            glm::vec2 ptin = this->main_scene->project_point_to_screen(*nowapt);
+            ptin = math::point_clamp_in_range(ptin, glm::vec2(0.0f), glm::vec2(this->width(), this->height()));
+            poly.append(QPoint(ptin.x, ptin.y));
+        }
+        QBrush br(QColor(250, 0, 0, 64), Qt::SolidPattern);
         ptr.setBrush(br);
         if (poly.size() >= 3)
             ptr.drawConvexPolygon(poly);
