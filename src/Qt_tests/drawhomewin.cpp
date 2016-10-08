@@ -38,7 +38,7 @@ drawhomewin::drawhomewin(QWidget *parent) :
 //    qt->setWindowFlags(Qt::FramelessWindowHint);
 //    qt->show();
 //    qt->setFixedWidth(410);
-    this->web->setFixedWidth(400);
+//    this->web->setFixedWidth(400);
 //    this->web->resize(410, 900);
     this->web->load(QUrl(KLM_WEB_GOODS_URL));
     this->web->show();
