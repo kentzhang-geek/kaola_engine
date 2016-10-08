@@ -43,6 +43,9 @@ namespace gl3d {
         bool is_empty;
         void buffer_data();
         bool data_buffered;
+
+        static gl3d_material * from_color(glm::vec3 rgb, int alpha = 255);
+
     private:
         void init();
     };

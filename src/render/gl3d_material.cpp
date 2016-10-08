@@ -198,3 +198,16 @@ gl3d_material::gl3d_material(string file_name) {
     this->colors.insert(diffuse, glm::vec3(0.0));
     this->colors.insert(specular, glm::vec3(0.0));
 }
+
+gl3d_material* gl3d_material::from_color(glm::vec3 rgb, int alpha) {
+    gl3d_material * mat = new gl3d_material();
+
+    mat->colors.clear();
+    mat->colors.insert(ambient, rgb * 0.3f);
+    mat->colors.insert(diffuse, rgb);
+    mat->colors.insert(ambient, rgb);
+
+    mat->is_empty = false;
+
+    return mat;
+}
