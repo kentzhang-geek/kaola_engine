@@ -31,14 +31,23 @@ drawhomewin::drawhomewin(QWidget *parent) :
 
     QWebEngineView * wweb = this->findChild<QWebEngineView *>("web_goods");
     this->web = wweb;
-    this->web->setFixedWidth(410);
-//    this->web->setGeometry(wweb->geometry());
+//    QWidget * qt = new QWidget(NULL);
+//    qt->thread()->setPriority(QThread::HighestPriority);
+//    qt->resize(410, 900);
+//    this->web->setParent(qt);
+//    qt->setWindowFlags(Qt::FramelessWindowHint);
+//    qt->show();
+//    qt->setFixedWidth(410);
+    this->web->setFixedWidth(400);
+//    this->web->resize(410, 900);
     this->web->load(QUrl(KLM_WEB_GOODS_URL));
     this->web->show();
     this->channel = new QWebChannel(this);
     web->page()->setWebChannel(this->channel);
     this->channel->registerObject(QStringLiteral("draw_win"), this);
     connect(web, SIGNAL(loadFinished(bool)), this, SLOT(webload_finished(bool)));
+
+    this->web->thread()->setPriority(QThread::HighestPriority);
 }
 
 void drawhomewin::webload_finished(bool isok) {
