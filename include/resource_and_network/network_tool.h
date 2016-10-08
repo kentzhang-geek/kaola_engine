@@ -55,6 +55,7 @@
 #include "utils/gl3d_utils.h"
 #include "utils/gl3d_scale.h"
 #include "utils/gl3d_global_param.h"
+#include "utils/gl3d_path_config.h"
 #include "kaola_engine/gl3d_general_light_source.h"
 #include "kaola_engine/gl3d_mesh.h"
 #include "kaola_engine/gl3d_object.h"
@@ -86,7 +87,7 @@ namespace klm {
         class login_tool : public QObject{
             Q_OBJECT
         public:
-            const QString server_url = "http://192.168.0.102:8080/";
+            const QString server_url = KLM_SERVER_URL;
             common_tools::poster * per;
             login_tool();
             void login_with(QString username, QString password);
