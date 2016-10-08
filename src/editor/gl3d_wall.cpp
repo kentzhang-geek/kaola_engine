@@ -902,6 +902,25 @@ void gl3d::get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_face
     return;
 }
 
+klm::Surface* gl3d::pick_up_surface_in_surface(klm::Surface *sfc, glm::vec3 pt) {
+    QVector<math::triangle_facet> faces;
+    faces.clear();
+    gl3d::get_faces_from_surface(sfc, faces);
+    Q_FOREACH(auto fit, faces) {
+            if (fit.is_point_in_facet(pt)) {
+                return sfc;
+            }
+        }
+
+    for (int i = 0; i < sfc->getSurfaceCnt(); i++) {
+        klm::Surface * ret_sfc = pick_up_surface_in_surface(sfc->getSubSurface(i), pt);
+        if (NULL != ret_sfc)
+            return ret_sfc;
+    }
+
+    return NULL;
+}
+
 static bool is_point_in_faces(QVector<math::triangle_facet> faces, glm::vec3 pt) {
     for (auto it = faces.begin();
          it != faces.end();

@@ -832,6 +832,39 @@ klm::Surface* scheme::get_related_surface_of_wall(gl3d::gl3d_wall *wall, glm::ve
     return NULL;
 }
 
+void scheme::add_area_on_ground_of_room(QVector<glm::vec3> apts) {
+    glm::vec3 tmppt = apts.at(0);
+    glm::vec2 scrpt = this->attached_scene->project_point_to_screen(tmppt);
+    room * rfirst = this->get_room(scrpt);
+    if (rfirst != NULL) {
+        klm::Surface * sfirst = gl3d::pick_up_surface_in_surface(rfirst->ground, tmppt);
+        glm::mat4 inv_trans = sfirst->getRenderingTransform();
+        inv_trans = glm::inverse(inv_trans);
+        bool add_new_area = true;
+        QVector<glm::vec3 > newpts;
+        Q_FOREACH(glm::vec3 pit, apts) {
+                if (rfirst != this->get_room(this->attached_scene->project_point_to_screen(pit))) {
+                    add_new_area = false;   // check all point in same room
+                }
+                else if (sfirst != gl3d::pick_up_surface_in_surface(rfirst->ground, pit)) {
+                    add_new_area = false;   // check all point in same surface
+                }
+                glm::vec4 npt = inv_trans * glm::vec4(pit, 1.0f);
+                npt = npt / npt.w;
+                newpts.append(glm::vec3(npt));
+            }
+
+        if (add_new_area) {
+            // TODO : add new area
+            klm::Surface *sfc = sfirst->addSubSurface(newpts);
+            if (NULL != sfc) {
+                sfc->setSurfaceMaterial(new klm::Surfacing("mtl000000"));
+                sfc->setConnectiveMateiral(new klm::Surfacing("mtl000000"));
+            }
+        }
+    }
+}
+
 // test code
 #if 0
 

@@ -82,18 +82,6 @@ void MainWindow::on_testtiaozhuan_clicked() {
     this->releaseMouse();
     this->releaseKeyboard();
     this->hide();
-
-//    QWidget * qt = new QWidget(NULL);
-//    qt->thread()->setPriority(QThread::HighestPriority);
-//    qt->resize(410, 900);
-//    this->web = new QWebEngineView(qt);
-//    qt->setWindowFlags(Qt::FramelessWindowHint);
-//    qt->show();
-//    qt->setFixedWidth(410);
-//    this->web->setFixedWidth(400);
-////    this->web->resize(410, 900);
-//    this->web->load(QUrl(KLM_WEB_GOODS_URL));
-//    this->web->show();
 }
 
 void MainWindow::on_login_signin_button_clicked() {

@@ -44,6 +44,7 @@ namespace gl3d {
         void buffer_data();
         bool data_buffered;
 
+        // build pure color material
         static gl3d_material * from_color(glm::vec3 rgb, int alpha = 255);
 
     private:

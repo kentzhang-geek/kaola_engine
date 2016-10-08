@@ -3,6 +3,9 @@
 #include "editor/sign_config.h"
 #include "editor/style_package.h"
 
+
+#include "editor/surface.h"
+
 using namespace std;
 
 // 全局OpenGL Functions
@@ -725,11 +728,23 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
         }
         if (now_state == gl3d_global_param::work_state::draw_area) {
-            delete (QVector<glm::vec3> *)this->user_data.value("area_points");
-            delete (glm::vec3 *)this->user_data.value("current_point");
-            this->user_data.remove("area_points");
-            this->user_data.remove("current_point");
-            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+            QVector<glm::vec3> * apts = (QVector<glm::vec3> *)this->user_data.value("area_points");
+            glm::vec3 * now_pt = (glm::vec3 *)this->user_data.value("current_point");
+            if (apts->size() < 3) {
+                delete apts;
+                delete now_pt;
+                this->user_data.remove("area_points");
+                this->user_data.remove("current_point");
+                gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+            }
+            else {
+                // TODO : create area
+                this->sketch->add_area_on_ground_of_room(*apts);
+
+                // clear now points
+                apts->clear();
+                *now_pt = glm::vec3(0.0f);
+            }
         }
 
         // drag event

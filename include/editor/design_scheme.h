@@ -88,6 +88,8 @@ namespace klm {
             gl3d::room * get_related_room_of_wall(gl3d::gl3d_wall * wall, glm::vec2 coord_scr);
             klm::Surface * get_related_surface_of_wall(gl3d::gl3d_wall * wall, glm::vec2 coord_scr);
 
+            void add_area_on_ground_of_room(QVector<glm::vec3> apts);
+
         private:
             void init();
         };
