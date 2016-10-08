@@ -854,6 +854,19 @@ void scheme::add_area_on_ground_of_room(QVector<glm::vec3> apts) {
                 newpts.append(glm::vec3(npt));
             }
 
+        // check if need revserse
+        glm::vec3 test_reverse(0.0f);
+        for (int i = 0; i < (newpts.size() - 1); i++) {
+            test_reverse = test_reverse + glm::cross(newpts[0], newpts[1]);
+        }
+        if (test_reverse.z < 0.0f) {
+            QVector<glm::vec3> backup = newpts;
+            newpts.clear();
+            Q_FOREACH(auto pit, backup) {
+                    newpts.push_front(pit);
+                }
+        }
+
         if (add_new_area) {
             // TODO : add new area
             klm::Surface *sfc = sfirst->addSubSurface(newpts);
