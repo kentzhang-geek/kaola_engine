@@ -46,6 +46,7 @@ namespace klm {
 namespace gl3d {
     void surface_to_mesh(klm::Surface *sfc, QVector<gl3d::mesh *> &vct, bool picked = false);
     void get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
+    void get_face_from_root_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces);
     klm::Surface * pick_up_surface_in_surface(klm::Surface * sfc, glm::vec3 pt);
 
     class gl3d_wall;

@@ -2,6 +2,7 @@
 #include "pickupdig.h"
 #include "ui_window_or_door_selected.h"
 #include "ui_furniture_selected.h"
+#include "editor/surface.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
                      glm::vec2 cd_scr) {
@@ -221,6 +222,9 @@ void PickupDig::initBasicSchemeInfo() {
     QPushButton *delButton = new QPushButton();
     delButton->setText("删除");
     connect(delButton, SIGNAL(clicked()), this, SLOT(on_delete_obj()));
+    QPushButton * rm_area = new QPushButton();
+    rm_area->setText(tr("remove area"));
+    connect(rm_area, SIGNAL(clicked()), this, SLOT(on_rm_area_clicked()));
     QPushButton *splitButton = new QPushButton();
     splitButton->setText("清空家具");
 
@@ -272,11 +276,11 @@ void PickupDig::initBasicSchemeInfo() {
     hlayoutButtons->setContentsMargins(0, 0, 0, 10);
     hlayoutButtons->addWidget(delButton);
     hlayoutButtons->addWidget(splitButton);
+    hlayoutButtons->addWidget(rm_area);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addWidget(lbl_caption);
     hlayout->addWidget(cbo);
-
 
     QVBoxLayout *vboxLayout = new QVBoxLayout;          //窗体顶级布局，布局本身也是一种窗口部件
     vboxLayout->addLayout(hlayoutButtons);
@@ -462,4 +466,31 @@ void PickupDig::on_test_window_or_door_clicked() {
         gl3d_window * w = (gl3d_window *) this->pickUpObj;
         w->change_model("000002");
     }
+}
+
+void delete_sub_surface(klm::Surface * root, klm::Surface * target) {
+    if (root == target) {
+        return;
+    }
+
+    for (int i = 0; i < root->getSurfaceCnt(); i++) {
+        if (root->getSubSurface(i) == target) {
+            root->removeSubSurface(target);
+            return;
+        }
+        else {
+            delete_sub_surface(root->getSubSurface(i), target);
+        }
+    }
+
+    return;
+}
+
+void PickupDig::on_rm_area_clicked() {
+    room * r = ((klm::design::scheme *)this->pickUpObj)->get_room(this->coord_on_screen);
+    glm::vec2 cod_scr(this->coord_on_screen);
+    glm::vec2 cod_grd;
+    this->main_scene->coord_ground(cod_scr, cod_grd);
+    klm::Surface * sfc = gl3d::pick_up_surface_in_surface(r->ground, glm::vec3(cod_grd.x, 0.0f, cod_grd.y));
+    delete_sub_surface(r->ground, sfc);
 }

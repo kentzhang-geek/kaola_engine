@@ -203,6 +203,7 @@ bool Surface::removeSubSurface(const Surface *subSurface){
         if((*sub) == subSurface){
             subSurfaces->erase(sub);
             delete subSurface;
+            updateSurfaceMesh();
             return true;
         } else {
             sub ++;

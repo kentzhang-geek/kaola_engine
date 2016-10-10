@@ -905,7 +905,7 @@ void gl3d::get_faces_from_surface(klm::Surface *sfc, QVector<math::triangle_face
 klm::Surface* gl3d::pick_up_surface_in_surface(klm::Surface *sfc, glm::vec3 pt) {
     QVector<math::triangle_facet> faces;
     faces.clear();
-    gl3d::get_faces_from_surface(sfc, faces);
+    gl3d::get_face_from_root_surface(sfc, faces);
     Q_FOREACH(auto fit, faces) {
             if (fit.is_point_in_facet(pt)) {
                 return sfc;
@@ -1591,58 +1591,49 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     return w;
 }
 
-// test code
-#if 0
-int main(int argc, char ** argv) {
-    gl3d_wall *w1 = new gl3d_wall(glm::vec2(0.0f),
-                                  glm::vec2(1.0f, 0.0f),
-                                  0.2f,
-                                  2.0f);
-    gl3d_wall *w2 = new gl3d_wall(glm::vec2(1.0f, 0.0f),
-                                  glm::vec2(1.0f),
-                                  0.2f,
-                                  2.0f);
-    gl3d_wall *w3 = new gl3d_wall(glm::vec2(1.0f),
-                                  glm::vec2(0.0f, 1.0f),
-                                  0.2f,
-                                  2.0f);
-    gl3d_wall *w4 = new gl3d_wall(glm::vec2(0.0f, 1.0f),
-                                  glm::vec2(0.0f),
-                                  0.2f,
-                                  2.0f);
-    QVector<glm::vec3 > pts;
-    pts.push_back(glm::vec3(0.0f));
-    pts.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-    pts.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
-    pts.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-    w1->set_id(1);
-    w2->set_id(2);
-    w3->set_id(3);
-    w4->set_id(4);
+void gl3d::get_face_from_root_surface(klm::Surface *sfc, QVector<math::triangle_facet> &faces) {
+    // process local verticles
+    const QVector<Surface::Vertex *> *vertexes = sfc->getRenderingVertices();
+    const QVector<GLushort> *indecis = sfc->getRenderingIndices();
+    for (int i = 0; i < (indecis->size() / 3); i++) {
+        GLushort b0 = indecis->at(i * 3 + 0);
+        GLushort b1 = indecis->at(i * 3 + 1);
+        GLushort b2 = indecis->at(i * 3 + 2);
 
-    room * r = new room(pts);
-    r->name = "what";
-    r->relate_walls.insert(w1);
-    r->relate_walls.insert(w2);
-    r->relate_walls.insert(w3);
-    r->relate_walls.insert(w4);
+        glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                  vertexes->at(b0)->y(),
+                                  vertexes->at(b0)->z());
+        glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                  vertexes->at(b1)->y(),
+                                  vertexes->at(b1)->z());
+        glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                  vertexes->at(b2)->y(),
+                                  vertexes->at(b2)->z());
+        faces.push_back(math::triangle_facet(pta, ptb, ptc));
+    }
 
-    pugi::xml_document doc;
-    pugi::xml_node n = doc.root().append_child("room");
-    r->save_to_xml(n);
-    doc.save_file("room.xml");
-    return 0;
+    // process conective surface
+    // have conective surface , then process meshes
+    if (sfc->isConnectiveSurface()) {
+        vertexes = sfc->getConnectiveVerticies();
+        indecis = sfc->getConnectiveIndicies();
+        for (int i = 0; i < (indecis->size() / 3); i++) {
+            GLushort b0 = indecis->at(i * 3 + 0);
+            GLushort b1 = indecis->at(i * 3 + 1);
+            GLushort b2 = indecis->at(i * 3 + 2);
+
+            glm::vec3 pta = glm::vec3(vertexes->at(b0)->x(),
+                                      vertexes->at(b0)->y(),
+                                      vertexes->at(b0)->z());
+            glm::vec3 ptb = glm::vec3(vertexes->at(b1)->x(),
+                                      vertexes->at(b1)->y(),
+                                      vertexes->at(b1)->z());
+            glm::vec3 ptc = glm::vec3(vertexes->at(b2)->x(),
+                                      vertexes->at(b2)->y(),
+                                      vertexes->at(b2)->z());
+            faces.push_back(math::triangle_facet(pta, ptb, ptc));
+        }
+    }
+
+    return;
 }
-#endif
-
-#if 0
-int main() {
-    pugi::xml_document doc;
-    doc.load_file("room.xml");
-    pugi::xml_node inn = doc.root().child("room");
-    room * r = room::load_from_xml(inn);
-    cout << r->name << endl;
-
-    return 0;
-}
-#endif
