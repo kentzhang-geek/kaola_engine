@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     klm::pack_tool::init_with_password("123");
     tfs.append("test.html");
     tfs.append("*.xml");
-    tfs.append("debug");
+    tfs.append("debug/*.obj");
+//    pack->unpack("t.7z", "tout");
     pack->pack(tfs, "t.7z");
 //    this->lg = new klm::network::login_tool;
 //    this->lg->login_with("627420278@qq.com", "123456789");
