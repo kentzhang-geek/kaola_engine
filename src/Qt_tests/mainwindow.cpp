@@ -9,6 +9,8 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     // for test
+//    this->lg = new klm::network::login_tool;
+//    this->lg->login_with("627420278@qq.com", "123456789");
     Ui::MainWindow * ui = new Ui::MainWindow;
     ui->setupUi(this);
     delete ui;

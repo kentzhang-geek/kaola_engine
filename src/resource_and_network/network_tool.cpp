@@ -111,6 +111,12 @@ void login_tool::login_with(QString uname, QString pwd) {
     data.addQueryItem("id", userName.c_str());
     data.addQueryItem("pwd", password.c_str());
 
+    QString sysinfo = QSysInfo::kernelType();
+    sysinfo += QSysInfo::kernelVersion();
+    sysinfo += QSysInfo::currentCpuArchitecture();
+
+    data.addQueryItem("os", sysinfo.toStdString().c_str());
+
     std::string url(this->server_url.toStdString() + "login");
     bool is_success = http_post_request(url, data);
     if (is_success) {
