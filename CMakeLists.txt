@@ -62,6 +62,7 @@ set(SRCS
         src/editor/gl3d_window.cpp
         src/editor/style_package.cpp
         src/resource_and_network/network_tool.cpp
+        src/resource_and_network/pack_tool.cpp
         )
 
 set(qttest_MOCS
@@ -123,6 +124,7 @@ set(qttest_MOCS
         include/editor/sign_config.h
         include/editor/style_package.h
         include/resource_and_network/network_tool.h
+        include/resource_and_network/pack_tool.h
         )
 
 include_directories(LIBS/glm_build)

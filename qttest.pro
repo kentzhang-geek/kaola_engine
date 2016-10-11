@@ -71,7 +71,8 @@ SOURCES += \
     src/editor/gl3d_door.cpp \
     src/editor/gl3d_window.cpp \
     src/editor/style_package.cpp \
-    src/resource_and_network/network_tool.cpp
+    src/resource_and_network/network_tool.cpp \
+    src/resource_and_network/pack_tool.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -131,7 +132,8 @@ HEADERS  += \
     include/editor/gl3d_window.h \
     include/editor/sign_config.h \
     include/editor/style_package.h \
-    include/resource_and_network/network_tool.h
+    include/resource_and_network/network_tool.h \
+    include/resource_and_network/pack_tool.h
 
 FORMS    += \
     src/Qt_tests/mainwindow.ui \
