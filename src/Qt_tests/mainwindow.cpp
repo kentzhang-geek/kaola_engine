@@ -11,14 +11,14 @@ using namespace std;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     // for test
-    klm::pack_tool * pack = new klm::pack_tool;
-    QVector<QString> tfs;
-    klm::pack_tool::init_with_password("123");
-    tfs.append("test.html");
-    tfs.append("*.xml");
-    tfs.append("debug/*.obj");
+//    klm::pack_tool * pack = new klm::pack_tool;
+//    QVector<QString> tfs;
+//    klm::pack_tool::init_with_password("123");
+//    tfs.append("test.html");
+//    tfs.append("*.xml");
+//    tfs.append("debug/*.obj");
 //    pack->unpack("t.7z", "tout");
-    pack->pack(tfs, "t.7z");
+//    pack->pack(tfs, "t.7z");
 //    this->lg = new klm::network::login_tool;
 //    this->lg->login_with("627420278@qq.com", "123456789");
     Ui::MainWindow * ui = new Ui::MainWindow;

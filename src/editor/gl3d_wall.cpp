@@ -1380,13 +1380,13 @@ room* room::load_from_xml(pugi::xml_node &node) {
     }
     QMap<int , glm::vec3> edgept_map;
     // load edge
-    pugi::xpath_node_set nset = node.select_nodes("//edge_point");
-    for (pugi::xpath_node_set::iterator xit = nset.begin();
+    auto nset = node.children("edge_point");
+    for (auto xit = nset.begin();
             xit != nset.end();
             xit++) {
-        int seq_id = xit->node().attribute("seq_id").as_int();
+        int seq_id = xit->attribute("seq_id").as_int();
         glm::vec3 inspt;
-        pugi::xml_node tmp = xit->node();
+        pugi::xml_node tmp = *xit;
         gl3d::xml::load_xml_to_vec(tmp, inspt);
         edgept_map.insert(seq_id, inspt);
     }
@@ -1401,13 +1401,12 @@ room* room::load_from_xml(pugi::xml_node &node) {
     n_r->ground = new klm::Surface;
     n_r->ground->load(node.child("ground").first_child());
     // related walls
-    nset = node.select_nodes("//relate_wall_id");
+    nset = node.children("relate_wall_id");
     for (auto xit = nset.begin();
             xit != nset.end();
             xit++) {
-//        cout << "get room id" << xit->node().attribute("wall_id").as_int() << endl; // test output
         gl3d::scene * msc = (gl3d::scene * ) gl3d_global_param::shared_instance()->main_scene;
-        int wallid = xit->node().attribute("wall_id").as_int();
+        int wallid = xit->attribute("wall_id").as_int();
         if (msc->get_attached_sketch()->get_objects()->contains(wallid)) {
             n_r->relate_walls.insert((gl3d_wall *) msc->get_attached_sketch()->get_obj(wallid));
         }
@@ -1562,14 +1561,14 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
             w->set_end_point_fixed(false);
 
     // wall sfcs
-    xpath_node_set nset = node.select_nodes("//wall_sfc");
+    auto nset = node.children("wall_sfc");
     QMap<int , klm::Surface *> tmp_sfcs;
     for (auto it = nset.begin();
             it != nset.end();
             it++) {
-        int sid = it->node().attribute("sid").as_int();
+        int sid = it->attribute("sid").as_int();
         klm::Surface * s = new klm::Surface();
-        if (s->load(it->node().child("surface")))
+        if (s->load(it->child("surface")))
             tmp_sfcs.insert(sid, s);
     }
     for (int i = 0; i < tmp_sfcs.size(); i++) {
@@ -1577,11 +1576,11 @@ gl3d_wall* gl3d_wall::load_from_xml(pugi::xml_node node) {
     }
 
     // wall holes
-    nset = node.select_nodes("//wall_hole");
+    nset = node.children("wall_hole");
     for (auto it = nset.begin();
             it != nset.end();
             it++) {
-        hole * h = hole::load_from_xml(it->node(), w);
+        hole * h = hole::load_from_xml(*it, w);
         if (h->is_valid())
             w->holes_on_this_wall.insert(h->get_hole_id(), h);
         else {

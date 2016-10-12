@@ -592,16 +592,16 @@ bool scheme::save_to_xml(pugi::xml_node &node) {
     node.append_attribute("type").set_value("design_scheme");
     // wall id start
     node.append_attribute("wall_id_start").set_value(this->wall_id_start);
-    // rooms
     xml_node ndc;
-    Q_FOREACH(gl3d::room * rit, this->rooms) {
-            ndc = node.append_child("room");
-            rit->save_to_xml(ndc);
-        }
     // walls
     Q_FOREACH(gl3d::gl3d_wall * wit, this->walls) {
             ndc = node.append_child("wall");
             wit->save_to_xml(ndc);
+        }
+    // rooms
+    Q_FOREACH(gl3d::room * rit, this->rooms) {
+            ndc = node.append_child("room");
+            rit->save_to_xml(ndc);
         }
     // furnitures
     Q_FOREACH(gl3d::abstract_object * oit, this->objects) {
