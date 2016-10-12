@@ -154,6 +154,9 @@ glm::mat4 gl3d_door::get_rotation_mat() {
 void gl3d_door::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
     this->door_model->buffer_data();
     this->door_model->get_abstract_meshes(ms);
+    Q_FOREACH(gl3d::mesh * mit, ms) {
+            mit->set_is_blink(this->get_pick_flag());
+        }
     return ;
 }
 

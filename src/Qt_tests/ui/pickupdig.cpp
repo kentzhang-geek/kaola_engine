@@ -37,12 +37,16 @@ PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene
             break;
         }
         case abstract_object::type_window : {
+            gl3d_window * w = (gl3d_window *)this->pickUpObj;
+            w->set_pick_flag(true);
             Ui_window_or_door_selected * ui = new Ui_window_or_door_selected();
             ui->setupUi(this);
             delete ui;
             break;
         }
         case abstract_object::type_door : {
+            gl3d_door * w = (gl3d_door *)this->pickUpObj;
+            w->set_pick_flag(true);
             Ui_window_or_door_selected * ui = new Ui_window_or_door_selected();
             ui->setupUi(this);
             delete ui;
@@ -112,6 +116,17 @@ PickupDig::~PickupDig() {
         case abstract_object::type_furniture : {
             gl3d::object *o = (gl3d::object *) pickUpObj;
             o->set_pick_flag(false);
+            break;
+        }
+        case abstract_object::type_window : {
+            gl3d_window * w = (gl3d_window *)this->pickUpObj;
+            w->set_pick_flag(false);
+            break;
+        }
+        case abstract_object::type_door : {
+            gl3d_door * w = (gl3d_door *)this->pickUpObj;
+            w->set_pick_flag(false);
+            break;
         }
         default:
             break;
