@@ -53,7 +53,7 @@ gl3d_window::gl3d_window(string model_res) {
 gl3d_window::~gl3d_window() {
     // delete hole
     if (this->attached_wall_id > 0)
-        if (this->attached_hole_id > 0) {
+        if (this->attached_hole_id >= 0) {
             gl3d::scene * msc = (gl3d::scene *) gl3d::gl3d_global_param::shared_instance()->main_scene;
             gl3d_wall * wall = (gl3d_wall *) msc->get_attached_sketch()->get_obj(this->attached_wall_id);
             if (wall->get_obj_type() == wall->type_wall) {
