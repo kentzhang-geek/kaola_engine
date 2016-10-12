@@ -223,6 +223,7 @@ bool scheme::add_wall(gl3d::gl3d_wall *w, gl3d::gl3d_wall *&wall_to_end) {
 void scheme::del_wal(gl3d::gl3d_wall *w) {
     gl3d_lock::shared_instance()->scheme_lock.lock();
     this->walls.remove(w);
+    w->clean();
     klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(w));
     this->recalculate_rooms();
     gl3d_lock::shared_instance()->scheme_lock.unlock();
@@ -236,6 +237,7 @@ void scheme::release_rooms() {
         }
     this->rooms.clear();
     Q_FOREACH(gl3d::gl3d_wall *const &wit, this->walls) {
+            wit->clean();
             this->attached_scene->delete_obj(wit->get_id());
             delete wit;
         }
@@ -260,10 +262,11 @@ void scheme::delete_room(gl3d::room *r) {
     Q_FOREACH(gl3d_wall * wit, wls) {
             wit->get_relate_rooms()->remove(r);
             if (wit->get_relate_rooms()->size() == 0) {
+                // clean wall
+                wit->clean();
                 klm::command::command_stack::shared_instance()->push(new klm::command::del_wall(wit));
 //                this->attached_scene->delete_obj(wit->get_id());
                 this->walls.remove(wit);
-//                delete wit;
             }
         }
 

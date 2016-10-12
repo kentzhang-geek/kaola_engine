@@ -68,6 +68,38 @@ gl3d_wall::gl3d_wall(glm::vec2 s_pt, glm::vec2 e_pt, float t_thickness, float t_
     this->calculate_mesh();
 }
 
+void gl3d_wall::clean() {
+    if (this->start_point_fixed) {
+        this->seperate(this->start_point_attach);
+    }
+
+    if (this->end_point_fixed) {
+        this->seperate(this->end_point_attach);
+    }
+
+    for (auto it = this->holes_on_this_wall.begin();
+         it != this->holes_on_this_wall.end();
+         it++) {
+        it.value()->set_on_witch_wall(NULL);
+        delete it.value();
+    }
+    this->holes_on_this_wall.clear();
+
+    // delete related doors and windows
+    scene * msc = (scene *)gl3d_global_param::shared_instance()->main_scene;
+    klm::design::scheme * skt = msc->get_attached_sketch();
+    Q_FOREACH(gl3d_door * dit, *(skt->get_doors())) {
+            if (dit->attached_wall_id == this->get_id()) {
+                skt->del_door(dit);
+            }
+        }
+    Q_FOREACH(gl3d_window * wit, *(skt->get_windows())) {
+            if (wit->attached_wall_id == this->get_id()) {
+                skt->del_window(wit);
+            }
+        }
+}
+
 gl3d_wall::~gl3d_wall() {
     if (this->start_point_fixed) {
         this->seperate(this->start_point_attach);
@@ -91,6 +123,20 @@ gl3d_wall::~gl3d_wall() {
         delete *it;
     }
     this->sfcs.clear();
+
+    // delete related doors and windows
+    scene * msc = (scene *)gl3d_global_param::shared_instance()->main_scene;
+    klm::design::scheme * skt = msc->get_attached_sketch();
+    Q_FOREACH(gl3d_door * dit, *(skt->get_doors())) {
+            if (dit->attached_wall_id == this->get_id()) {
+                skt->del_door(dit);
+            }
+        }
+    Q_FOREACH(gl3d_window * wit, *(skt->get_windows())) {
+            if (wit->attached_wall_id == this->get_id()) {
+                skt->del_window(wit);
+            }
+        }
 }
 
 int gl3d_wall::get_availble_hole_id() {

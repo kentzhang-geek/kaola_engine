@@ -157,6 +157,9 @@ namespace gl3d {
         // get availble hole id
         int get_availble_hole_id();
 
+        // clean items on wall
+        void clean();
+
         // save and load
         virtual bool save_to_xml(pugi::xml_node &node);
         static gl3d_wall * load_from_xml(pugi::xml_node node);
