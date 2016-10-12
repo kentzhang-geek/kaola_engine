@@ -326,18 +326,30 @@ void scheme::recalculate_rooms() {
 
     // use CGAL to calculate all the areas
     Arrangement_2 arr;
-    QVector<math::line_2d> lns;
+//    QVector<math::line_2d> lns;
     Q_FOREACH(gl3d_wall *const &wit, this->walls) {
             glm::vec2 st_tmp = wit->get_start_point();
             glm::vec2 ed_tmp = wit->get_end_point();
-            float v_length = glm::length(ed_tmp - st_tmp);
-            glm::vec2 st = ed_tmp + (v_length + 0.05) * glm::normalize(st_tmp - ed_tmp);
-            glm::vec2 ed = st_tmp + (v_length + 0.05) * glm::normalize(ed_tmp - st_tmp);
-            Segment_2 seg_l = Segment_2(Point_2(wit->get_start_point().x, wit->get_start_point().y),
-                                        Point_2(wit->get_end_point().x, wit->get_end_point().y));
+            Point_2 st_pt = Point_2(wit->get_start_point().x, wit->get_start_point().y);
+            Point_2 ed_pt = Point_2(wit->get_end_point().x, wit->get_end_point().y);
+            for (auto pit = arr.vertices_begin();   // snape to each point in arrangement
+                    pit != arr.vertices_end();
+                    pit++) {
+                Point_2 tmpt = pit->point();
+                if (math::point_near_point(st_tmp, arr_point_to_vec2(tmpt))) {
+                    st_pt = tmpt;
+                }
+                else if (math::point_near_point(ed_tmp, arr_point_to_vec2(tmpt))) {
+                    ed_pt = tmpt;
+                }
+            }
+//            float v_length = glm::length(ed_tmp - st_tmp);
+//            glm::vec2 st = ed_tmp + (v_length + 0.05) * glm::normalize(st_tmp - ed_tmp);
+//            glm::vec2 ed = st_tmp + (v_length + 0.05) * glm::normalize(ed_tmp - st_tmp);
+            Segment_2 seg_l = Segment_2(st_pt, ed_pt);
 //            Segment_2 seg_l = Segment_2(Point_2(st.x, st.y),
 //                                        Point_2(ed.x, ed.y));
-            lns.push_back(math::line_2d(st, ed));
+//            lns.push_back(math::line_2d(st, ed));
             CGAL::insert(arr, seg_l);
         }
 
