@@ -408,7 +408,7 @@ void PickupDig::on_rot_angle_editingFinished() {
     int rot_degree = num.toInt(&isnum);
     rot_degree = rot_degree % 360;
     if (isnum) {
-        this->pickUpObj->get_property()->rotate_mat = glm::rotate(glm::mat4(1.0f), (float)rot_degree, glm::vec3(0.0f, 1.0f, 0.0f));
+        this->pickUpObj->get_property()->rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians((float)rot_degree), glm::vec3(0.0f, 1.0f, 0.0f));
         QDial * dia = this->findChild<QDial *>("rotate_btn");
         dia->setValue(rot_degree);
     }
@@ -418,6 +418,10 @@ void PickupDig::on_rot_angle_editingFinished() {
             deg = 0.0f;
         lne->setText(QString::asprintf("%d", (int) deg));
     }
+}
+
+void PickupDig::on_rot_angle_returnPressed() {
+    this->on_rot_angle_editingFinished();
 }
 
 void PickupDig::on_cpos_x_editingFinished() {
