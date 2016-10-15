@@ -9,6 +9,8 @@
 #include "kaola_engine/gl3d_obj_authority.h"
 #include <QThread>
 #include <QTextCodec>
+#include <include/resource_and_network/pack_tool.h>
+#include <include/resource_and_network/network_tool.h>
 #include "editor/gl3d_wall.h"
 #include "utils/gl3d_global_param.h"
 #include "utils/gl3d_path_config.h"
@@ -259,4 +261,138 @@ void drawhomewin::on_p_12_clicked() {
     auto new_pts = new QVector<glm::vec3>;
     this->ui->OpenGLCanvas->user_data.insert("area_points", new_pts);
     this->ui->OpenGLCanvas->user_data.insert("current_point", new glm::vec3(0.0f));
+}
+
+static bool flag_save = false;
+
+void drawhomewin::on_save_b_clicked() {
+    if (flag_save)
+        return;
+
+    QDir tmp("tmp");
+    if (!tmp.exists()) {
+        QDir::current().mkdir("tmp");
+    }
+
+    pugi::xml_document doc;
+    pugi::xml_node rootnode = doc.root();
+    rootnode = rootnode.append_child("sketch");
+    this->ui->OpenGLCanvas->sketch->save_to_xml(rootnode);
+    doc.save_file("tmp/sketch.xml");
+
+    pugi::xml_document doc2;
+    pugi::xml_node root2 = doc2.root();
+    root2 = root2.append_child("style");
+    klm::design::common_style_package st;
+    st.read_from_scheme(this->ui->OpenGLCanvas->sketch);
+    st.save_to_xml(root2);
+    doc2.save_file("tmp/style.xml");
+
+    klm::pack_tool * newpack = new klm::pack_tool;
+    QVector<QString> fs;
+    fs.append("tmp/sketch.xml");
+    fs.append("tmp/style.xml");
+    newpack->pack(fs, "tmp/design.chd");
+    connect(newpack, SIGNAL(finished()), this, SLOT(save_ok()));
+
+    flag_save = true;
+}
+
+void drawhomewin::save_ok() {
+    flag_save = false;
+
+    QMessageBox info1;
+    info1.setWindowTitle(tr("uploading"));
+    info1.setText(tr("uploading"));
+    info1.exec();
+
+    QEventLoop loop;
+    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+
+    QUrl uploadingURL(QString(KLM_SERVER_URL) + "/p/new_house_design.cat");
+    uploadingURL.setUrl(QString(KLM_SERVER_URL) + "/p/new_house_design.cat");
+    QNetworkRequest u_request(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery qua;
+    qua.addQueryItem("name", "whatthefuck");
+    qua.addQueryItem("url", "http://www.baidu.com/");
+    QNetworkReply* reply = gMgr->post(u_request, qua.toString(QUrl::FullyEncoded).toUtf8());
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+    }
+    else {
+        qDebug(reply->readAll().data());
+    }
+
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    QHttpPart filePart;
+    QString content = "form-data; name=\"cat_file\"; filename=\"design.chd\"";
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content));
+    QFile* file = new QFile("tmp/design.chd");
+    file->open(QFile::ReadOnly);
+    filePart.setBodyDevice(file);
+//    filePart.setBody(file->readAll());
+    file->setParent(multiPart);
+//    file->close();
+//    delete file;
+
+    QHttpPart idPart;
+    idPart = QHttpPart();
+//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"id\""));
+    idPart.setBody(QVariant(QString("41")).toByteArray());
+    multiPart->append(idPart);
+
+    idPart = QHttpPart();
+//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"r_id\""));
+    idPart.setBody(QVariant(QString("41")).toByteArray());
+//    multiPart->append(idPart);
+
+    idPart = QHttpPart();
+//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"name\""));
+    idPart.setBody(QVariant(QString("whatthefuck")).toByteArray());
+//    multiPart->append(idPart);
+
+    idPart = QHttpPart();
+//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"url\""));
+    idPart.setBody(QVariant(QString("http://www.baidu.com/")).toByteArray());
+//    multiPart->append(idPart);
+
+    multiPart->append(filePart);
+
+    uploadingURL = QUrl(QString(KLM_SERVER_URL) + "/p/file_house_design.cat");
+    uploadingURL.setUrl(QString(KLM_SERVER_URL) + "/p/file_house_design.cat");
+    u_request = QNetworkRequest(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, QString("multipart/form-data; boundary=") + multiPart->boundary());
+    u_request.setRawHeader("Accept", "application/json, text/plain, */*");
+//    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+//    reply = gMgr->post(u_request, quq.toString(QUrl::FullyEncoded).toUtf8());
+    reply = gMgr->post(u_request, multiPart);
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+    }
+    else {
+        qDebug(reply->readAll().data());
+    }
+
+    QMessageBox info;
+    info.setWindowTitle(tr("save ok"));
+    info.setText(tr("save complete"));
+    info.exec();
+
+    QFile::remove("tmp/sketch.xml");
+    QFile::remove("tmp/style.xml");
+    QFile::remove("tmp/design.chd");
+
+    return;
 }

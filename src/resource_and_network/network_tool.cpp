@@ -6,6 +6,10 @@ using namespace klm::network::common_tools;
 
 QNetworkAccessManager manager;
 
+QNetworkAccessManager* klm::network::shared_mgr() {
+    return &manager;
+}
+
 poster::poster() {
     this->rply = NULL;
     return;

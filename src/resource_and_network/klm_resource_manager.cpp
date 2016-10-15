@@ -90,6 +90,14 @@ manager::manager() {
     // for test
     this->local_resource_map.clear();
     this->load_local_databse();
+
+    // make tmp dir
+    QDir tmp("tmp");
+    if (!tmp.exists()) {
+        QDir::current().mkdir("tmp");
+    }
+    local_dir = QDir::currentPath();
+
     return;
 }
 

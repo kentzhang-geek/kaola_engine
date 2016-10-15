@@ -56,6 +56,10 @@ private slots:
 
     void on_p_12_clicked();
 
+    void on_save_b_clicked();
+
+    void save_ok();
+
 private:
     Ui::drawhomewin *ui;
     DrawOption *dop;

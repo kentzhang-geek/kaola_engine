@@ -65,6 +65,7 @@
 
 namespace klm {
     namespace network {
+        QNetworkAccessManager * shared_mgr();
         namespace common_tools {
             class poster : public QObject {
                 Q_OBJECT

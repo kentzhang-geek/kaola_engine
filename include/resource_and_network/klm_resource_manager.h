@@ -50,6 +50,7 @@ namespace klm {
 
         class manager {
         public:
+            QString local_dir;
             static manager *shared_instance();
 
             std::string get_res_item(string id);

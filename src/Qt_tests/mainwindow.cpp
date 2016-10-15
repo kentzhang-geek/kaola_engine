@@ -19,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    tfs.append("debug/*.obj");
 //    pack->unpack("t.7z", "tout");
 //    pack->pack(tfs, "t.7z");
-//    this->lg = new klm::network::login_tool;
-//    this->lg->login_with("627420278@qq.com", "123456789");
+    this->lg = new klm::network::login_tool;
+    this->lg->login_with("934635461@qq.com", "hl320619");
     Ui::MainWindow * ui = new Ui::MainWindow;
     ui->setupUi(this);
     delete ui;
