@@ -36,6 +36,34 @@ void poster::reply_finished() {
     emit complete();
 }
 
+bool klm::network::call_web_download(QString url, QString local_file, QString base_url) {
+    QEventLoop loop;
+    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+
+    QUrl uploadingURL(base_url + url);
+    uploadingURL.setUrl(base_url + url);
+    QNetworkRequest u_request(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QNetworkReply* reply = gMgr->get(u_request);
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+        return false;
+    }
+    else {
+        QByteArray data = reply->readAll();
+        QFile f(local_file);
+        f.open(QFile::Truncate | QFile::ReadWrite);
+        f.write(data);
+        f.close();
+        qDebug("down load file %s to %s", url.toStdString().c_str(), local_file.toStdString().c_str());
+    }
+    delete reply;
+
+    return true;
+}
+
 QJsonDocument klm::network::call_web_new(QString name, QString url, QString web_new_url) {
     QEventLoop loop;
     QNetworkAccessManager * gMgr = klm::network::shared_mgr();

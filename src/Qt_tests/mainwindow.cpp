@@ -24,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     Ui::MainWindow * ui = new Ui::MainWindow;
     ui->setupUi(this);
     delete ui;
+
+    klm::network::call_web_download(
+            "file/2c4469d2-d073-422a-b841-1676f20a31e7/RUU/534a235d-0a75-4bc1-b3d2-6a1fe90c32d0/test.cfn", "tmp/s.7z");
     return;
 
     auto ssize = QApplication::desktop()->availableGeometry();

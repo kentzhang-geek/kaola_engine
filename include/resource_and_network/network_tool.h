@@ -69,6 +69,7 @@ namespace klm {
 
         QJsonDocument call_web_new(QString name, QString url, QString web_new_url);
         QJsonDocument call_web_file_upload(QString id, QString filename, QString upload_fn, QString upload_url);
+        bool call_web_download(QString url, QString local_file, QString base_url = KLM_SERVER_URL);
 
         namespace common_tools {
             class poster : public QObject {
