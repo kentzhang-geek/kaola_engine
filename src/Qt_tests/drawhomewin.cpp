@@ -306,89 +306,24 @@ void drawhomewin::save_ok() {
     info1.setText(tr("uploading"));
     info1.exec();
 
-    QEventLoop loop;
-    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+    QJsonDocument doc = klm::network::call_web_new("whatthehell", "http://www.baidu.com/", KLM_SERVER_URL_NEW);
+    QString id = "5";
+//    doc.object().contains("resource_id");
+//    id = doc.object().value("resource_id").toString();
 
-    QUrl uploadingURL(QString(KLM_SERVER_URL) + "/p/new_house_design.cat");
-    uploadingURL.setUrl(QString(KLM_SERVER_URL) + "/p/new_house_design.cat");
-    QNetworkRequest u_request(uploadingURL);
-    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QUrlQuery qua;
-    qua.addQueryItem("name", "whatthefuck");
-    qua.addQueryItem("url", "http://www.baidu.com/");
-    QNetworkReply* reply = gMgr->post(u_request, qua.toString(QUrl::FullyEncoded).toUtf8());
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    if (reply->error()) {
-        qDebug(reply->errorString().toStdString().c_str());
+    doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD);
+    if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+        QMessageBox info;
+        info.setWindowTitle(tr("save failed"));
+        info.setText(tr("save failed"));
+        info.exec();
     }
     else {
-        qDebug(reply->readAll().data());
+        QMessageBox info;
+        info.setWindowTitle(tr("save ok"));
+        info.setText(tr("save complete"));
+        info.exec();
     }
-
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-    QHttpPart filePart;
-    QString content = "form-data; name=\"cat_file\"; filename=\"design.chd\"";
-    filePart.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content));
-    QFile* file = new QFile("tmp/design.chd");
-    file->open(QFile::ReadOnly);
-    filePart.setBodyDevice(file);
-//    filePart.setBody(file->readAll());
-    file->setParent(multiPart);
-//    file->close();
-//    delete file;
-
-    QHttpPart idPart;
-    idPart = QHttpPart();
-//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"id\""));
-    idPart.setBody(QVariant(QString("41")).toByteArray());
-    multiPart->append(idPart);
-
-    idPart = QHttpPart();
-//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"r_id\""));
-    idPart.setBody(QVariant(QString("41")).toByteArray());
-//    multiPart->append(idPart);
-
-    idPart = QHttpPart();
-//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"name\""));
-    idPart.setBody(QVariant(QString("whatthefuck")).toByteArray());
-//    multiPart->append(idPart);
-
-    idPart = QHttpPart();
-//    idPart.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"url\""));
-    idPart.setBody(QVariant(QString("http://www.baidu.com/")).toByteArray());
-//    multiPart->append(idPart);
-
-    multiPart->append(filePart);
-
-    uploadingURL = QUrl(QString(KLM_SERVER_URL) + "/p/file_house_design.cat");
-    uploadingURL.setUrl(QString(KLM_SERVER_URL) + "/p/file_house_design.cat");
-    u_request = QNetworkRequest(uploadingURL);
-    u_request.setHeader(QNetworkRequest::ContentTypeHeader, QString("multipart/form-data; boundary=") + multiPart->boundary());
-    u_request.setRawHeader("Accept", "application/json, text/plain, */*");
-//    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-//    reply = gMgr->post(u_request, quq.toString(QUrl::FullyEncoded).toUtf8());
-    reply = gMgr->post(u_request, multiPart);
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    if (reply->error()) {
-        qDebug(reply->errorString().toStdString().c_str());
-    }
-    else {
-        qDebug(reply->readAll().data());
-    }
-
-    QMessageBox info;
-    info.setWindowTitle(tr("save ok"));
-    info.setText(tr("save complete"));
-    info.exec();
 
     QFile::remove("tmp/sketch.xml");
     QFile::remove("tmp/style.xml");

@@ -66,6 +66,10 @@
 namespace klm {
     namespace network {
         QNetworkAccessManager * shared_mgr();
+
+        QJsonDocument call_web_new(QString name, QString url, QString web_new_url);
+        QJsonDocument call_web_file_upload(QString id, QString filename, QString upload_fn, QString upload_url);
+
         namespace common_tools {
             class poster : public QObject {
                 Q_OBJECT
