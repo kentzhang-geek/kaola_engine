@@ -36,11 +36,12 @@ void model_manager::release_loaders() {
 }
 
 void model_manager::init_objs(gl3d::scene *main_scene) {
+    GL3D_UTILS_THROW("deprecated class model_manager");
     auto iter = this->models.begin();
     this->available_id = 0;
     gl3d::object * obj_tmp;
     for (; iter != this->models.end(); iter++) {
-        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + (*iter)->file_name).c_str());
+//        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + (*iter)->file_name).c_str());
         (*iter)->obj = obj_tmp;
         // 默认参数
         ::gl3d::obj_property * obj_pro = obj_tmp->get_property();
@@ -72,8 +73,9 @@ model_param::model_param() : id(-1), file_name(string("")), obj(NULL) {
 }
 
 void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm::vec2 coord) {
+    GL3D_UTILS_THROW("deprecated class");
     // 新建obj
-    gl3d::object * obj = new object((char *)(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + obj_filename).c_str());
+    gl3d::object * obj = NULL; //new object((char *)( GL3D_PATH_SEPRATOR + obj_filename).c_str());
     // 默认参数
     ::gl3d::obj_property * obj_pro = obj->get_property();
     obj_pro->scale_unit = gl3d::scale::mm;

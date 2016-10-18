@@ -66,7 +66,7 @@ namespace gl3d {
          *
          *  可以使用obj格式文件的数据创建object
          */
-        object(char * path_to_obj_file);
+        object(char * path_to_obj_file, std::string base_path);
 
         /**
          *  @author Kent, 16-02-17 20:02:26
@@ -90,7 +90,7 @@ namespace gl3d {
 
          - returns: 是否初始化成功
          */
-        bool init(char * path_to_obj_file);
+        bool init(char * path_to_obj_file, std::string base_path);
         bool init(obj_points * pts, int number_of_points,
                   unsigned short * indecis, int num_of_indecis);
         bool init(obj_points * pts, int number_of_points,

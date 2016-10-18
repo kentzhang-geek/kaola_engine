@@ -3,6 +3,8 @@
 #include "utils/gl3d_global_param.h"
 #include <QMutex>
 #include <include/editor/command.h>
+#include "resource_and_network/network_tool.h"
+#include "resource_and_network/pack_tool.h"
 
 using namespace std;
 using namespace klm;
@@ -12,7 +14,9 @@ using namespace gl3d;
 static resource::manager *local_manager = NULL;
 
 static inline std::string get_file_name_by_item(resource::item in) {
-    return gl3d_sandbox_path + GL3D_PATH_SEPRATOR + in.get_full_file_name();
+    string ret;
+    ret = string(KLM_DOWNLOAD_TMP_PATH) + GL3D_PATH_SEPRATOR + in.get_res_id() + GL3D_PATH_SEPRATOR + in.get_full_file_name();
+    return ret;
 }
 
 void res_loader::run() {
@@ -29,7 +33,8 @@ void res_loader::do_work(void *object) {
 
 void resource::default_model_loader::do_work(void *object) {
     std::string * name = (std::string *)object;
-    gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    gl3d::object *obj = new gl3d::object((char *) name->c_str(),
+                                         klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()));
     obj->set_res_id(this->get_obj_res_id());
 
     // set property
@@ -101,6 +106,10 @@ manager::manager() {
     return;
 }
 
+string manager::get_base_path_by_resid(string resid) {
+    return string(KLM_DOWNLOAD_TMP_PATH) + GL3D_PATH_SEPRATOR + resid + GL3D_PATH_SEPRATOR;
+}
+
 string manager::get_res_item(string id) {
     return this->id_to_resource.value(id);
 }
@@ -147,6 +156,9 @@ void manager::load_local_databse() {
             else if (type == item::resource_type::res_texture_picture) {
                 this->id_to_merchandise.insert(resid, new klm::Surfacing(resid));
             }
+        }
+        else {
+            qDebug("local data %s not exist", f.fileName().toStdString().c_str());
         }
     }
 }
@@ -230,4 +242,26 @@ void manager::preload_resources(gl3d::scene * sc) {
 //                                                          GL3D_SCENE_DRAW_SHADOW | GL3D_SCENE_DRAW_GROUND,
 //                                                          GL3D_OBJ_ENABLE_CHANGEMTL | GL3D_OBJ_ENABLE_PICKING),
 //                                 "000000");
+}
+
+void manager::downlaod_res(QString url, QString res_id, QString filename, resource::item::resource_type rtype) {
+    klm::network::call_web_download(url, "tmp/stmp.7z");
+    klm::pack_tool pkt;
+    pkt.unpack("tmp/stmp.7z", QString("tmp\\") + res_id + GL3D_PATH_SEPRATOR);
+    QFile::remove("tmp/stmp.7z");
+
+    // insert resource item to localdatabase
+    this->id_to_item.insert(res_id.toStdString(),
+                            resource::item(res_id.toStdString(), filename.toStdString(), (item::resource_type) rtype,
+                                           true));
+    this->id_to_resource.insert(res_id.toStdString(),
+                                get_file_name_by_item(this->id_to_item.value(res_id.toStdString())));
+    if (rtype == item::resource_type::res_model_3ds) {
+        this->id_to_merchandise.insert(res_id.toStdString(), new klm::Furniture(res_id.toStdString()));
+    }
+    else if (rtype == item::resource_type::res_texture_picture) {
+        this->id_to_merchandise.insert(res_id.toStdString(), new klm::Surfacing(res_id.toStdString()));
+    }
+
+    return;
 }

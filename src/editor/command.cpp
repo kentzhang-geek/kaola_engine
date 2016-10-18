@@ -331,7 +331,8 @@ void obj_add_or_del::add_obj() {
 
 void obj_add_or_del::do_work(void *object) {
     std::string * name = (std::string *)object;
-    gl3d::object *obj = new gl3d::object((char *)name->c_str());
+    gl3d::object *obj = new gl3d::object((char *) name->c_str(),
+                                         klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()));
     obj->set_res_id(this->get_obj_res_id());
 
     // set property

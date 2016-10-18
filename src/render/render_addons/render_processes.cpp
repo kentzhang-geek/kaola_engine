@@ -207,7 +207,7 @@ public:
         obj->set_repeat(true);
         obj->get_meshes()->at(0)->set_texture_repeat(true);
         obj->get_meshes()->at(0)->set_material_index(0);
-        obj->get_mtls()->insert(0, new gl3d_material(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + "net.jpg"));
+        obj->get_mtls()->insert(0, new gl3d_material(string(KLM_RES_PATH) + GL3D_PATH_SEPRATOR + "net.jpg"));
         obj->get_property()->scale_unit = gl3d::scale::m;
         obj->set_render_authority(GL3D_SCENE_DRAW_NET);
         obj->set_control_authority(GL3D_OBJ_ENABLE_DEL);

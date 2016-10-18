@@ -76,7 +76,6 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     QWidget::showEvent(ev);
 
     // for test
-    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
     // 绑定画布的参数
@@ -111,8 +110,8 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 
     // test with furniture
-//    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
-//    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
+    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
+    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
 
     // test load xml
     pugi::xml_document doc;

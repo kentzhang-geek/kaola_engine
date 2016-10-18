@@ -48,40 +48,6 @@ namespace klm {
             void do_work(void *object);
         };
 
-        class manager {
-        public:
-            QString local_dir;
-            static manager *shared_instance();
-
-            std::string get_res_item(string id);
-
-            klm::Merchandise *get_merchandise_item(string id);
-
-            // start a thread to load data from disk
-            void perform_async_res_load(res_loader *ld, string id);
-
-            // release all data in mem
-            void release_all_resources();
-
-            // preload resources like ground and some else
-            void preload_resources(gl3d::scene * sc);
-
-            QMap<std::string, std::string> local_resource_map;
-            void load_local_databse();
-            void save_local_databse();
-
-            // test
-            void test_data();
-
-        private:
-            manager();
-
-            // resource id to
-            QMap<string, item> id_to_item;
-            QMap<string, std::string > id_to_resource;
-            QMap<string, klm::Merchandise *> id_to_merchandise;
-        };
-
         // internal resource item  class , use to acknowledgement resource property
         class item {
         public:
@@ -104,6 +70,45 @@ namespace klm {
             item(const item &cp) : res_id(cp.res_id), res_type(cp.res_type),
                                    is_local(cp.is_local), full_file_name(cp.full_file_name) {};
         };
+
+        class manager {
+        public:
+            QString local_dir;
+            static manager *shared_instance();
+            static string get_base_path_by_resid(string resid);
+
+            std::string get_res_item(string id);
+
+            klm::Merchandise *get_merchandise_item(string id);
+
+            // start a thread to load data from disk
+            void perform_async_res_load(res_loader *ld, string id);
+
+            // release all data in mem
+            void release_all_resources();
+
+            // preload resources like ground and some else
+            void preload_resources(gl3d::scene * sc);
+
+            // download resource from server
+            void downlaod_res(QString url, QString res_id, QString filename, resource::item::resource_type rtype);
+
+            QMap<std::string, std::string> local_resource_map;
+            void load_local_databse();
+            void save_local_databse();
+
+            // test
+            void test_data();
+
+        private:
+            manager();
+
+            // resource id to
+            QMap<string, item> id_to_item;
+            QMap<string, std::string > id_to_resource;
+            QMap<string, klm::Merchandise *> id_to_merchandise;
+        };
+
     };
 }
 

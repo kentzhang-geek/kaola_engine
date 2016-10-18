@@ -34,7 +34,7 @@ namespace gl3d {
         QMap<material_type, ::glm::vec3> colors;
         QMap<material_type, gl3d_image *> type_to_image;
         
-        gl3d_material(aiMaterial * mtls);
+        gl3d_material(aiMaterial * mtls, string base_path);
         gl3d_material(string file_name);
         gl3d_material();
         gl3d_material(gl3d_general_texture * gtext);

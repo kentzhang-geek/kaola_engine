@@ -55,8 +55,8 @@
 [NSString stringWithUTF8String : SHADER_LOCATE(x)] encoding: NSUTF8StringEncoding error:nil] UTF8String]
 
 // 全局的沙盒位置
-extern string gl3d_sandbox_path;
-#define GL3D_INIT_SANDBOX_PATH(path) { \
-gl3d_sandbox_path = std::string(path); }
+//extern string gl3d_sandbox_path;
+//#define GL3D_INIT_SANDBOX_PATH(path) { \
+//gl3d_sandbox_path = std::string(path); }
 
 #endif /* gl3d_hpp */

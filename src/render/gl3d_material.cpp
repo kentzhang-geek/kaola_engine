@@ -15,9 +15,9 @@ using namespace gl3d;
 
 extern std::string gl3d_sandbox_path;
 
-gl3d_material::gl3d_material(aiMaterial * mtl) {
+gl3d_material::gl3d_material(aiMaterial * mtl, string base_path) {
     this->init();
-    string path = gl3d_sandbox_path;
+    string path = base_path;
     path = path + string(GL3D_PATH_SEPRATOR);
     string text_file_name;
     aiString text_path;

@@ -28,7 +28,8 @@ void gl3d_window::init() {
 gl3d_window::gl3d_window(string model_res) {
     this->init();
     this->window_model = new gl3d::object(
-            (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str());
+            (char *) klm::resource::manager::shared_instance()->get_res_item(model_res).c_str(),
+            klm::resource::manager::get_base_path_by_resid(model_res));
     this->window_model->set_res_id(model_res);
     this->window_model->set_obj_type(abstract_object::type_window);
     // set model properties
@@ -257,7 +258,8 @@ void gl3d_window::change_model(std::string res_id) {
     object * o_del = this->window_model;
     // load new model
     this->window_model = new gl3d::object(
-            (char *) klm::resource::manager::shared_instance()->get_res_item(res_id).c_str());
+            (char *) klm::resource::manager::shared_instance()->get_res_item(res_id).c_str(),
+            klm::resource::manager::get_base_path_by_resid(res_id));
     this->window_model->set_res_id(res_id);
     this->window_model->set_obj_type(abstract_object::type_door);
     // set model properties

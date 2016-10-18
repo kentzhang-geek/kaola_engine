@@ -65,8 +65,8 @@ object::~object() {
     }
 }
 
-object::object(char *path_to_obj_file) {
-    if (!this->init(path_to_obj_file)) log_c("faild to init from file %s", path_to_obj_file);
+object::object(char *path_to_obj_file, std::string base_path) {
+    if (!this->init(path_to_obj_file, base_path)) log_c("faild to init from file %s", path_to_obj_file);
     this->obj_file_name = QString(path_to_obj_file);
     return;
 }
@@ -86,11 +86,11 @@ object::object(obj_points *pts, int number_of_points,
 }
 
 // try assimp
-bool object::init(char *filename) {
+bool object::init(char *filename, std::string base_path) {
     this->init();
     // Create a logger instance
     Assimp::Importer importer;
-    string pFile = string(filename);
+    string pFile = filename;
 
     // 设置最多每个mesh最多65000个点, 法线平滑角度80度
     importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 65000);
@@ -167,7 +167,7 @@ bool object::init(char *filename) {
     aiMaterial *mtl;
     for (i = 0; i < tex_cnt; i++) {
         mtl = scene->mMaterials[i];
-        this->mtls.insert(i, new gl3d_material(mtl));
+        this->mtls.insert(i, new gl3d_material(mtl, base_path));
     }
 
     return true;
@@ -455,7 +455,7 @@ object *object::load_from_xml(pugi::xml_node node) {
     // load resource
     QString resid(node.attribute("res_id").value());
     object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
-            resid.toStdString())).c_str());
+            resid.toStdString())).c_str(), klm::resource::manager::get_base_path_by_resid(resid.toStdString()));
     obj->set_obj_type((abstract_object::tag_obj_type) node.attribute("obj_type").as_int());
     // abstract obj properties
     obj->set_id(node.attribute("id").as_int());
