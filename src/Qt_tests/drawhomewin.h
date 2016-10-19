@@ -25,6 +25,8 @@ public:
 
     static void on_draw_clear();
 
+    void load_sketch();
+
     QWebEngineView * web;
     QWebChannel * channel;
 

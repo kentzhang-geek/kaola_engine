@@ -5,6 +5,7 @@
 #include <include/editor/command.h>
 #include "resource_and_network/network_tool.h"
 #include "resource_and_network/pack_tool.h"
+#include "resource_and_network/global_info.h"
 
 using namespace std;
 using namespace klm;
@@ -264,4 +265,25 @@ void manager::downlaod_res(QString url, QString res_id, QString filename, resour
     }
 
     return;
+}
+
+static klm::info * one_info = NULL;
+
+klm::info::info() :
+is_login(false),
+username(),
+password(),
+design_id(),
+plan_id(),
+d_p_path()
+{
+
+}
+
+info* klm::info::shared_instance() {
+    if (NULL == one_info) {
+        one_info = new klm::info();
+    }
+
+    return one_info;
 }

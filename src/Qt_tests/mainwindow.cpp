@@ -5,6 +5,7 @@
 #include "resource_and_network/network_tool.h"
 
 #include "resource_and_network/pack_tool.h"
+#include "resource_and_network/global_info.h"
 
 using namespace std;
 
@@ -19,23 +20,26 @@ MainWindow::MainWindow(QWidget *parent) :
 //    tfs.append("debug/*.obj");
 //    pack->unpack("t.7z", "tout");
 //    pack->pack(tfs, "t.7z");
-    this->lg = new klm::network::login_tool;
-    this->lg->login_with("934635461@qq.com", "hl320619");
-    Ui::MainWindow * ui = new Ui::MainWindow;
-    ui->setupUi(this);
-    delete ui;
-
 //    klm::network::call_web_download(
 //            "file/2c4469d2-d073-422a-b841-1676f20a31e7/RUU/534a235d-0a75-4bc1-b3d2-6a1fe90c32d0/test.cfn", "tmp/s.7z");
 //    klm::pack_tool pkt;
 //    pkt.unpack("tmp/s.7z", "tmp");
-    return;
+
+//    this->lg = new klm::network::login_tool;
+//    this->lg->login_with("934635461@qq.com", "hl320619");
+//    Ui::MainWindow * ui = new Ui::MainWindow;
+//    ui->setupUi(this);
+//    delete ui;
+//
+//    return;
 
     auto ssize = QApplication::desktop()->availableGeometry();
-    this->setGeometry((ssize.width() - 300) / 2 + ssize.x(), (ssize.height() - 300) / 2 + ssize.y(), 300, 360);
+    this->setGeometry(0, 0, ssize.width(), ssize.height());
+    this->setWindowState(Qt::WindowMaximized);
     web = new QWebEngineView(this);
     web->resize(this->width(), this->height());
-    web->load(QUrl(KLM_WEB_LOGIN_URL));
+//    web->load(QUrl(KLM_WEB_LOGIN_URL));
+    web->load(QUrl(KLM_SERVER_URL_MAIN));
     web->show();
     connect(web, SIGNAL(loadFinished(bool)), this, SLOT(web_loaded(bool)));
 
@@ -58,6 +62,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
 void MainWindow::login(const QString &uname, const QString &pwd) {
     this->lg = new klm::network::login_tool;
+    klm::info::shared_instance()->username = uname;
+    klm::info::shared_instance()->password = pwd;
     connect(this->lg, SIGNAL(login_success(bool)), this, SLOT(process_login(bool)));
     this->lg->login_with(uname, pwd);
 }
@@ -133,21 +139,10 @@ void MainWindow::process_login(bool isok) {
     this->lg = NULL;
 
     if (isok) {
-        // hide all children
-        QObjectList olist = this->children();
-        for (auto oit = olist.begin();
-                oit != olist.end();
-                oit++) {
-            if (oit.i->t()->isWidgetType()) {
-                ((QWidget *)oit.i->t())->hide();
-            }
-        }
-        // new ui
-        Ui::MainWindow * ui = new Ui::MainWindow;
-        ui->setupUi(this);
-        delete ui;
+        klm::info::shared_instance()->is_login = true;
     }
     else {
+        klm::info::shared_instance()->is_login = false;
         QMessageBox box;
         box.setText(tr("Signin Failed, Please confirm your infomation and retry"));
         box.setWindowTitle(tr("Signin Failed"));
@@ -157,3 +152,16 @@ void MainWindow::process_login(bool isok) {
     }
 }
 
+void MainWindow::open_sketch(const QString & plan_id, const QString & design_id, const QString & path) {
+    klm::info::shared_instance()->design_id = design_id;
+    klm::info::shared_instance()->plan_id = plan_id;
+    klm::info::shared_instance()->d_p_path = path;
+
+    // begin design
+    dhw = new drawhomewin(this->parentWidget());
+    dhw->show();
+    this->releaseMouse();
+    this->releaseKeyboard();
+
+    this->setWindowState(Qt::WindowMinimized);
+}

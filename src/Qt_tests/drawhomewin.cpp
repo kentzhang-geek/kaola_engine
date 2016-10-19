@@ -17,6 +17,7 @@
 #include "resource_and_network/klm_resource_manager.h"
 #include "editor/command.h"
 #include "editor/style_package.h"
+#include "resource_and_network/global_info.h"
 
 using namespace std;
 
@@ -110,13 +111,28 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 
     // test with furniture
-    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
-    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
+//    this->ui->OpenGLCanvas->sketch->add_furniture("000001", glm::vec3(2.0, 0.0, 2.0));
+//    this->ui->OpenGLCanvas->sketch->add_furniture("000002", glm::vec3(-2.0, 0.0, -2.0));
 
-    // test load xml
-    pugi::xml_document doc;
-    doc.load_file("test_sketch.xml");
-    this->ui->OpenGLCanvas->sketch->load_from_xml(doc.root().child("scheme"));
+    // load design if there is one
+    this->load_sketch();
+}
+
+void drawhomewin::load_sketch() {
+    // down load sketch
+    if (klm::info::shared_instance()->d_p_path.size() >= 1) {
+        if (klm::network::call_web_download(klm::info::shared_instance()->d_p_path, "tmp\\dptmp.7z", "")) {
+            klm::pack_tool packer;
+            QEventLoop loop;
+            connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
+            packer.unpack("tmp\\dptmp.7z", "tmp");
+            loop.exec();
+
+            pugi::xml_document doc;
+            doc.load_file("tmp\\sketch.xml");
+            this->ui->OpenGLCanvas->sketch->load_from_xml(doc.root().child("scheme"));
+        }
+    }
 }
 
 class ray_thread : public QThread {

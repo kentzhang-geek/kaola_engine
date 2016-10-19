@@ -125,6 +125,7 @@ set(qttest_MOCS
         include/editor/style_package.h
         include/resource_and_network/network_tool.h
         include/resource_and_network/pack_tool.h
+        include/resource_and_network/global_info.h
         )
 
 include_directories(LIBS/glm_build)

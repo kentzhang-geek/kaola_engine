@@ -38,6 +38,7 @@ public slots:
     void test_text(const QString &text);
     void web_loaded(bool ib);
     void login(const QString & uname, const QString & pwd);
+    void open_sketch(const QString & plan_id, const QString & design_id, const QString & path);
 
 private slots:
     void on_testtiaozhuan_clicked();
