@@ -648,3 +648,88 @@ glm::vec2 scene::project_point_to_screen(glm::vec2 point_on_world_ground) {
     glm::vec3 pointin = glm::vec3(point_on_world_ground.x, 0.0f, point_on_world_ground.y);
     return this->project_point_to_screen(pointin);
 }
+
+static object *draw_coord() {
+    gl3d::obj_points pt[4] = {
+            {-100.0, -1.0, 100.0,  // vt
+                    0.0, 0.0, 0.0,       // normal
+                    0.0, 0.0, 0.0, 0.0,  // color
+                    0.0,   400.0,     // text
+                    0},
+            {-100.0, -1.0, -100.0,  // vt
+                    0.0, 0.0, 0.0,   // normal
+                    0.0, 0.0, 0.0, 0.0, // color
+                    0.0,   0.0,     // text
+                    0},
+            {100.0,  -1.0, 100.0,   // vt
+                    0.0, 0.0, 0.0,   // normal
+                    0.0, 0.0, 0.0, 0.0, // color
+                    400.0, 400.0,     // text
+                    0},
+            {100.0,  -1.0, -100.0,  // vt
+                    0.0, 0.0, 0.0,   // normal
+                    0.0, 0.0, 0.0, 0.0, // color
+                    400.0, 0.0,     // text
+                    0},
+    };
+
+    static GLushort idx[6] = {
+            0, 2, 1,
+            1, 2, 3,
+    };
+
+    gl3d::object *obj = new object(pt, 4, idx, 6);
+    obj->set_repeat(true);
+    obj->get_meshes()->at(0)->set_texture_repeat(true);
+    obj->get_meshes()->at(0)->set_material_index(0);
+    obj->get_mtls()->insert(0, new gl3d_material(string(KLM_RES_PATH) + GL3D_PATH_SEPRATOR + "net.jpg"));
+    obj->get_property()->scale_unit = gl3d::scale::m;
+    obj->set_render_authority(GL3D_SCENE_DRAW_NET);
+    obj->set_control_authority(GL3D_OBJ_ENABLE_DEL);
+
+    return obj;
+}
+
+QImage* scene::draw_screenshot() {
+    QImage * img = new QImage;
+    int _width = this->get_width();
+    int _height = this->get_height();
+    gl3d_framebuffer * frame = new gl3d_framebuffer(GL3D_FRAME_HAS_ALL, _width, _height);
+
+    // 选择全局渲染器渲染地面网格
+    frame->use_this_frame();
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("lines");
+    current_shader_param->user_data.insert(string("scene"), this);
+    this->get_property()->global_shader = QString("lines");
+    this->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
+    this->prepare_canvas(false);
+    object *oo = draw_coord();
+    int id = this->attached_sketch->find_available_id();
+    this->add_obj(23332, oo);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glViewport(0, 0, _width, _height);
+    this->draw(true);
+    this->delete_obj(23332);
+    delete oo;
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    current_shader_param = GL3D_GET_PARAM("multiple_text_vector");
+    current_shader_param->user_data.insert(string("scene"), this);
+    // 选择全局渲染器
+    this->get_property()->global_shader = QString("multiple_text_vector");
+    this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glViewport(0, 0, _width, _height);
+    this->draw(true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    img = frame->save_to_img();
+    frame->unbind_this_frame();
+    delete frame;
+
+    // scale and revert
+    QMatrix mat;
+    mat.scale(1, -1);
+    *img = img->transformed(mat, Qt::FastTransformation);
+    return img;
+}

@@ -33,6 +33,10 @@ namespace gl3d {
         viewer(GLfloat height, GLfloat width);
         // 销毁对象
         ~viewer();
+        // copy constructor
+        viewer(const viewer & src);
+        // copy method
+        viewer &operator = (const viewer & src);
         // 旋转屏幕
         void screen_change(GLfloat height, GLfloat width);
 

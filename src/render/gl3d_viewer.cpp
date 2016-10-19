@@ -33,6 +33,34 @@ viewer::viewer(GLfloat h, GLfloat w) {
 viewer::~viewer() {
 }
 
+viewer::viewer(const viewer &src) {
+    // copy from another
+    this->look_direction = src.look_direction;
+    this->head_direction = src.head_direction;
+    this->current_position = src.current_position;
+    this->width = src.width;
+    this->height = src.height;
+    this->projection_matrix = src.projection_matrix;
+    this->viewing_matrix = src.viewing_matrix;
+    this->translationMatrix = src.translationMatrix;
+    this->top_view_size = src.top_view_size;
+    this->view_mode = src.view_mode;
+}
+
+viewer& viewer::operator=(const viewer &src) {
+    this->look_direction = src.look_direction;
+    this->head_direction = src.head_direction;
+    this->current_position = src.current_position;
+    this->width = src.width;
+    this->height = src.height;
+    this->projection_matrix = src.projection_matrix;
+    this->viewing_matrix = src.viewing_matrix;
+    this->translationMatrix = src.translationMatrix;
+    this->top_view_size = src.top_view_size;
+    this->view_mode = src.view_mode;
+    return *this;
+}
+
 void viewer::screen_change(GLfloat h, GLfloat w) {
     this->height = h;
     this->width = w;

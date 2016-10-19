@@ -182,3 +182,12 @@ bool gl3d_framebuffer::save_to_file(QString filename) {
     QImage img((uchar *)data, this->width, this->height, QImage::Format_RGBA8888);
     return img.save(filename);
 }
+
+QImage* gl3d_framebuffer::save_to_img() {
+    this->use_this_frame();
+    char * data = (char *)malloc(this->width * this->height * 4);
+    GL3D_GL()->glReadPixels(0, 0, this->width, this->height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    this->unbind_this_frame();
+    QImage * img = new QImage((uchar *)data, this->width, this->height, QImage::Format_RGBA8888);
+    return img;
+}

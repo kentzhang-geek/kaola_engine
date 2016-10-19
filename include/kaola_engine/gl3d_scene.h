@@ -258,6 +258,9 @@ namespace gl3d {
          */
         void draw_stencil();
 
+        // draw screen shot
+        QImage * draw_screenshot();
+
         // 屏幕长宽
         GL3D_UTILS_PROPERTY(width, GLfloat);
         GL3D_UTILS_PROPERTY(height, GLfloat);

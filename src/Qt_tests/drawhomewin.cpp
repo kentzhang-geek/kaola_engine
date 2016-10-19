@@ -300,15 +300,30 @@ void drawhomewin::on_save_b_clicked() {
 void drawhomewin::save_ok() {
     flag_save = false;
 
+    gl3d::viewer copy = *this->ui->OpenGLCanvas->main_scene->watcher;
+    this->ui->OpenGLCanvas->main_scene->watcher->set_top_view();
+    this->ui->OpenGLCanvas->main_scene->watcher->calculate_mat();
+    QImage * img = this->ui->OpenGLCanvas->main_scene->draw_screenshot();
+    img->save("test.jpg");
+    delete img;
+    *this->ui->OpenGLCanvas->main_scene->watcher = copy;
+
     QMessageBox info1;
     info1.setWindowTitle(tr("uploading"));
     info1.setText(tr("uploading"));
     info1.exec();
 
     QJsonDocument doc = klm::network::call_web_new("whatthehell", "http://www.baidu.com/", KLM_SERVER_URL_NEW);
+//    for (auto kit = doc.object().begin();
+//            kit != doc.object().end();
+//         kit++) {
+//        if (!kit->isNull())
+//            qDebug("%d", kit->type());
+//    }
+
     QString id = "5";
-//    doc.object().contains("resource_id");
-//    id = doc.object().value("resource_id").toString();
+    static int ffff = 5;
+    id = QString::asprintf("%d", ffff++);
 
     doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD);
     if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
