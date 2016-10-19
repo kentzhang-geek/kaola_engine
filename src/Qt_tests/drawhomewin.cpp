@@ -329,20 +329,43 @@ void drawhomewin::save_ok() {
     info1.setText(tr("uploading"));
     info1.exec();
 
-    QJsonDocument doc = klm::network::call_web_new("whatthehell", "http://www.baidu.com/", KLM_SERVER_URL_NEW);
+    QJsonDocument doc;
+    if ((klm::info::shared_instance()->design_id.size() <= 1) && (klm::info::shared_instance()->plan_id.size() <= 1)) {
+        doc = klm::network::call_web_new("housename", "http://www.baidu.com/", KLM_SERVER_URL_NEW_DESIGN);
+        // TODO : Debug
+        for (auto kit = doc.object().begin();
+             kit != doc.object().end();
+             kit++) {
+            if (!kit->isNull())
+                qDebug("%d", kit->type());
+        }
+        doc = klm::network::call_web_new("housename", "http://www.baidu.com/", KLM_SERVER_URL_NEW_PLAN);
 //    for (auto kit = doc.object().begin();
 //            kit != doc.object().end();
 //         kit++) {
 //        if (!kit->isNull())
 //            qDebug("%d", kit->type());
 //    }
+    }
 
-    QString id = "5";
-    static int ffff = 5;
-    id = QString::asprintf("%d", ffff++);
+    bool upload_flag = true;
+    QString id;
+    id = klm::info::shared_instance()->design_id;
+    if (id.size() >= 1) {
+        doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD_DESIGN);
+        if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+            upload_flag = false;
+        }
+    }
+    id = klm::info::shared_instance()->plan_id;
+    if (id.size() >= 1) {
+        doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chp", KLM_SERVER_URL_UPLOAD_PLAN);
+        if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+            upload_flag = false;
+        }
+    }
 
-    doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD);
-    if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+    if (upload_flag) {
         QMessageBox info;
         info.setWindowTitle(tr("save failed"));
         info.setText(tr("save failed"));
