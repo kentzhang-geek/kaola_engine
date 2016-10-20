@@ -27,11 +27,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->lg = new klm::network::login_tool;
 //    this->lg->login_with("934635461@qq.com", "hl320619");
-//    Ui::MainWindow * ui = new Ui::MainWindow;
-//    ui->setupUi(this);
-//    delete ui;
-//
-//    return;
+    Ui::MainWindow * ui = new Ui::MainWindow;
+    ui->setupUi(this);
+    delete ui;
+
+    return;
 
     auto ssize = QApplication::desktop()->availableGeometry();
     this->setGeometry(0, 0, ssize.width(), ssize.height());

@@ -3,6 +3,7 @@
 #include "utils/gl3d_lock.h"
 #include "editor/surface.h"
 #include "resource_and_network/global_material.h"
+#include "utils/gl3d_global_param.h"
 
 using namespace std;
 using namespace gl3d;
@@ -1193,9 +1194,16 @@ bool hole::is_valid() {
 }
 
 room::room(QVector<glm::vec3> e_pts) {
+    this->edge_points = e_pts;
     this->ground = new Surface(e_pts);
     this->ground->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
-    this->edge_points = e_pts;
+    QVector<glm::vec3> ceil_pts;
+    Q_FOREACH(glm::vec3 pit, e_pts) {
+            pit.y = gl3d::gl3d_global_param::shared_instance()->room_height;
+            ceil_pts.push_front(pit);
+        }
+    this->ceil = new Surface(ceil_pts);
+    this->ceil->setSurfaceMaterial(new klm::Surfacing("mtl000001"));
     this->name = "";
     this->relate_walls.clear();
     this->picked = false;
@@ -1216,6 +1224,10 @@ room::~room() {
     if (NULL != this->ground) {
         delete this->ground;
         this->ground = NULL;
+    }
+    if (NULL != this->ceil) {
+        delete this->ceil;
+        this->ceil = NULL;
     }
     Q_FOREACH(gl3d_wall *wit, this->relate_walls) {
             if (this->relate_walls.contains(wit))
@@ -1404,6 +1416,9 @@ bool room::save_to_xml(pugi::xml_node &node) {
     // add ground
     pugi::xml_node tmp = node.append_child("ground");
     this->ground->save(tmp);
+    // add ceil
+    tmp = node.append_child("ceil");
+    this->ceil->save(tmp);
     // save edge points
     for (int i = 0; i < this->edge_points.size(); i++) {
         tmp = node.append_child("edge_point");
@@ -1446,6 +1461,8 @@ room* room::load_from_xml(pugi::xml_node &node) {
     // ground
     n_r->ground = new klm::Surface;
     n_r->ground->load(node.child("ground").first_child());
+    n_r->ceil = new klm::Surface;
+    n_r->ceil->load(node.child("ceil").first_child());
     // related walls
     nset = node.children("relate_wall_id");
     for (auto xit = nset.begin();

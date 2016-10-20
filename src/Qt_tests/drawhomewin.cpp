@@ -332,7 +332,7 @@ void drawhomewin::save_ok() {
     QJsonDocument doc;
     if ((klm::info::shared_instance()->design_id.size() <= 1) && (klm::info::shared_instance()->plan_id.size() <= 1)) {
         doc = klm::network::call_web_new("housename", "http://www.baidu.com/", KLM_SERVER_URL_NEW_DESIGN);
-        // TODO : Debug
+        // TODO : Debug : get id from json
         for (auto kit = doc.object().begin();
              kit != doc.object().end();
              kit++) {

@@ -14,6 +14,7 @@ public:
     float canvas_width;
     float canvas_height;
     float wall_thick;
+    float room_height;
     unsigned int framebuffer;
     void *old_sketch_test;
     void * main_scene;

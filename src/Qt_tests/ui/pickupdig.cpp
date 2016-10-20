@@ -109,8 +109,9 @@ PickupDig::~PickupDig() {
         }
         case gl3d::abstract_object::type_scheme : {
             klm::design::scheme *skt = (klm::design::scheme *) pickUpObj;
-            gl3d::room *r = skt->get_room(this->coord_on_screen);
-            r->set_picked(false);
+            Q_FOREACH(room * rit, *(skt->get_rooms())) {
+                    rit->set_picked(false);
+                }
             break;
         }
         case abstract_object::type_furniture : {

@@ -210,6 +210,7 @@ namespace gl3d {
         room(QVector<glm::vec3> edge_points);
         ~room();
         klm::Surface * ground;
+        klm::Surface * ceil;
         QVector<glm::vec3> edge_points;
         QSet<gl3d::gl3d_wall *> relate_walls;
         std::string name;
