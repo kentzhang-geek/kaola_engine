@@ -26,13 +26,13 @@ extern MOpenGLView *one_view;
 static drawhomewin *dhw = NULL;
 
 drawhomewin::drawhomewin(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::drawhomewin) {
+        QWidget(parent),
+        ui(new Ui::drawhomewin) {
     setWindowState(Qt::WindowMaximized);
     ui->setupUi(this);
     dhw = this;
 
-    QWebEngineView * wweb = this->findChild<QWebEngineView *>("web_goods");
+    QWebEngineView *wweb = this->findChild<QWebEngineView *>("web_goods");
     this->web = wweb;
     this->on_load_may_need_reload_web = true;
 //    QWidget * qt = new QWidget(NULL);
@@ -61,9 +61,9 @@ void drawhomewin::webload_finished(bool isok) {
 //            this->on_load_may_need_reload_web = false;
 //        }
 //        else {
-            qDebug("goods web ok");
-            QString code = QString::fromLocal8Bit("qtinit()");
-            web->page()->runJavaScript(code);
+        qDebug("goods web ok");
+        QString code = QString::fromLocal8Bit("qtinit()");
+        web->page()->runJavaScript(code);
 //        }
     }
     else {
@@ -97,9 +97,9 @@ void drawhomewin::showEvent(QShowEvent *ev) {
     this->ui->OpenGLCanvas->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
     this->ui->OpenGLCanvas->main_scene->set_width(
-                this->ui->OpenGLCanvas->size().width());
+            this->ui->OpenGLCanvas->size().width());
     this->ui->OpenGLCanvas->main_scene->set_height(
-                this->ui->OpenGLCanvas->size().height());
+            this->ui->OpenGLCanvas->size().height());
     // 加载所有要加载的模型
     klm::resource::manager::shared_instance()->preload_resources(this->ui->OpenGLCanvas->main_scene);
 
@@ -130,10 +130,10 @@ void drawhomewin::load_sketch() {
     if (klm::info::shared_instance()->d_p_path.size() >= 1) {
         QString filename;
         switch (gl3d_global_param::shared_instance()->sketch_mode) {
-            case gl3d_global_param::new_plan:{
+            case gl3d_global_param::new_plan: {
                 break;
             }
-            case gl3d_global_param::change_design:{
+            case gl3d_global_param::change_design: {
                 filename = "design.chd";
                 break;
             }
@@ -145,11 +145,12 @@ void drawhomewin::load_sketch() {
                 filename = "design.chp";
                 break;
             }
-            default:break;
+            default:
+                break;
         }
         if (klm::network::call_web_download(
                 QString(KLM_SERVER_URL) + klm::info::shared_instance()->d_p_path,
-                                            "tmp\\dptmp.7z", "")) {
+                "tmp\\dptmp.7z", "")) {
             klm::pack_tool packer;
             QEventLoop loop;
             connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -171,7 +172,8 @@ void drawhomewin::load_sketch() {
                 this->ui->OpenGLCanvas->sketch->clear_sketch();
                 break;
             }
-            default:break;
+            default:
+                break;
         }
         // remove temp file
         QFile::remove("tmp/sketch.xml");
@@ -190,60 +192,62 @@ public:
 //清空切换视角按钮背景颜色
 void drawhomewin::clear_bg_color() {
     this->ui->pushButton->setStyleSheet(
-                "border-radius: 0;"
-                "background-color: rgb(240, 241, 243);"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(66, 66, 66);"
-                );
+            "border-radius: 0;"
+                    "background-color: rgb(240, 241, 243);"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(66, 66, 66);"
+    );
     this->ui->switch3D->setStyleSheet(
-                "border-radius: 0;"
-                "background-color: rgb(240, 241, 243);"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(66, 66, 66);"
-                "border-left-color: rgb(240, 241, 243);"
-                "border-right-color: rgb(240, 241, 243);"
-                );
+            "border-radius: 0;"
+                    "background-color: rgb(240, 241, 243);"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(66, 66, 66);"
+                    "border-left-color: rgb(240, 241, 243);"
+                    "border-right-color: rgb(240, 241, 243);"
+    );
     this->ui->pushButton_2->setStyleSheet(
-                "border-radius: 0;"
-                "background-color: rgb(240, 241, 243);"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(66, 66, 66);"
-                );
+            "border-radius: 0;"
+                    "background-color: rgb(240, 241, 243);"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(66, 66, 66);"
+    );
 }
 
 //修改户型视角
 void drawhomewin::on_pushButton_clicked() {
     this->clear_bg_color();
     this->ui->pushButton->setStyleSheet(
-                "background-color: rgb(55, 59, 66);"
-                "border-radius: 0;"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(255, 255, 255);"
-                );
+            "background-color: rgb(55, 59, 66);"
+                    "border-radius: 0;"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(255, 255, 255);"
+    );
     GL3D_SET_CURRENT_RENDER_PROCESS(editing, this->ui->OpenGLCanvas->main_scene);
 }
+
 //装修视角
 void drawhomewin::on_switch3D_clicked() {
     this->clear_bg_color();
     this->ui->switch3D->setStyleSheet(
-                "background-color: rgb(55, 59, 66);"
-                "border-radius: 0;"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(255, 255, 255);"
-                "border-left-color: rgb(240, 241, 243);"
-                "border-right-color: rgb(240, 241, 243);"
-                );
+            "background-color: rgb(55, 59, 66);"
+                    "border-radius: 0;"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(255, 255, 255);"
+                    "border-left-color: rgb(240, 241, 243);"
+                    "border-right-color: rgb(240, 241, 243);"
+    );
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->OpenGLCanvas->main_scene);
 }
+
 //3D浏览视角
 void drawhomewin::on_pushButton_2_clicked() {
     this->clear_bg_color();
     this->ui->pushButton_2->setStyleSheet(
-                "background-color: rgb(55, 59, 66);"
-                "border-radius: 0;"
-                "border:1px solid rgb(66, 66, 66);"
-                "color: rgb(255, 255, 255);"
-                );
+            "background-color: rgb(55, 59, 66);"
+                    "border-radius: 0;"
+                    "border:1px solid rgb(66, 66, 66);"
+                    "color: rgb(255, 255, 255);"
+    );
 }
 
 //完成按钮
@@ -260,7 +264,7 @@ void drawhomewin::on_draw_clear() {
     dhw->ui->p_2->setIcon(QIcon(":/images/drawhome"));
     dhw->ui->p_7->setIcon(QIcon(":/images/window"));
 
-    if(now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
+    if (now_state == gl3d::gl3d_global_param::drawwall || now_state == gl3d::gl3d_global_param::drawhome) {
         dhw->dop->close();
         delete dhw->dop;
     }
@@ -269,13 +273,13 @@ void drawhomewin::on_draw_clear() {
 }
 
 
-
 //开门功能按钮
 void drawhomewin::on_p_4_clicked() {
     this->on_draw_clear();
     gl3d::gl3d_global_param::shared_instance()->current_work_state = gl3d::gl3d_global_param::opendoor;
     this->ui->p_4->setIcon(QIcon(":/images/doorselectd"));
 }
+
 //画墙功能按钮
 void drawhomewin::on_p_1_clicked() {
     this->on_draw_clear();
@@ -284,6 +288,7 @@ void drawhomewin::on_p_1_clicked() {
     dop = new DrawOption(this->ui->OpenGLCanvas);
     dop->show();
 }
+
 //画房间功能按钮
 void drawhomewin::on_p_2_clicked() {
     this->on_draw_clear();
@@ -309,8 +314,7 @@ void drawhomewin::on_p_7_clicked() {
     this->ui->p_7->setIcon(QIcon(":/images/window_selected"));
 }
 
-void drawhomewin::on_p_11_clicked()
-{
+void drawhomewin::on_p_11_clicked() {
     // set rule tool
     gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::work_state::ruling;
 }
@@ -348,7 +352,7 @@ void drawhomewin::on_save_b_clicked() {
     st.save_to_xml(root2);
     doc2.save_file("tmp/style.xml");
 
-    klm::pack_tool * newpack = new klm::pack_tool;
+    klm::pack_tool *newpack = new klm::pack_tool;
     QVector<QString> fs;
     fs.append("tmp/sketch.xml");
     fs.append("tmp/style.xml");
@@ -364,7 +368,7 @@ void drawhomewin::save_ok() {
     gl3d::viewer copy = *this->ui->OpenGLCanvas->main_scene->watcher;
     this->ui->OpenGLCanvas->main_scene->watcher->set_top_view();
     this->ui->OpenGLCanvas->main_scene->watcher->calculate_mat();
-    QImage * img = this->ui->OpenGLCanvas->main_scene->draw_screenshot();
+    QImage *img = this->ui->OpenGLCanvas->main_scene->draw_screenshot();
     img->save("icon.jpg");
     delete img;
     *this->ui->OpenGLCanvas->main_scene->watcher = copy;
@@ -456,9 +460,11 @@ void drawhomewin::new_plan() {
 
     // TODO : upload cover now
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
-                                                   design_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+                                                   design_pdn, "icon.jpg", "upload.jpg",
+                                                   KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->plan_id,
-                                                   plan_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_PLAN_COVER);
+                                                   plan_pdn, "icon.jpg", "upload.jpg",
+                                                   KLM_SERVER_URL_UPLOAD_PLAN_COVER);
 }
 
 void drawhomewin::new_design() {
@@ -504,7 +510,8 @@ void drawhomewin::new_design() {
 
     // upload design cover
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
-                                                   design_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+                                                   design_pdn, "icon.jpg", "upload.jpg",
+                                                   KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
 }
 
 void drawhomewin::change_design() {
@@ -585,5 +592,25 @@ void drawhomewin::change_plan() {
 
     // upload plan cover
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->plan_id,
-                                                   plan_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_PLAN_COVER);
+                                                   plan_pdn, "icon.jpg", "upload.jpg",
+                                                   KLM_SERVER_URL_UPLOAD_PLAN_COVER);
+}
+
+void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString &url_path) {
+    // check is texture or furniture
+    if (url_path.endsWith("ctx")) {
+        // add texture to wall
+        if (!klm::resource::manager::shared_instance()->local_resource_map.contains(res_id.toStdString())) {
+            QMessageBox info1;
+            info1.setWindowTitle(tr("downloading resource"));
+            info1.setText(tr("downloading resource"));
+            info1.exec();
+
+            klm::resource::manager::shared_instance()->downlaod_res()
+        }
+
+    }
+    else if (url_path.endsWith("cfn")) {
+        // add furniture
+    }
 }

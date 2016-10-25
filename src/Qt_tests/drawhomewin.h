@@ -39,6 +39,7 @@ public:
 
 public slots:
     void webload_finished(bool isok);
+    void add_furniture_or_texture(const QString & res_id, const QString & url_path);
 
 private slots:
     void on_switch3D_clicked();
