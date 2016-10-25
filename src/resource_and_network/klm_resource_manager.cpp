@@ -34,7 +34,9 @@ void res_loader::do_work(void *object) {
 
 void resource::default_model_loader::do_work(void *object) {
     // download furniture
-    klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
+    if (!klm::resource::manager::shared_instance()->local_resource_map.contains(this->get_obj_res_id())) {
+        klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
+    }
     // unpack
     klm::pack_tool packer;
     QEventLoop loop;
@@ -43,7 +45,9 @@ void resource::default_model_loader::do_work(void *object) {
     loop.exec();
     QFile::remove("tmp\\tmpfile.7z");
     // load obj
-    gl3d::object *obj = new gl3d::object((char *) KLM_FURNITURE_FILENAME,
+    gl3d::object *obj = new gl3d::object((char *)
+            (klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()) + GL3D_PATH_SEPRATOR +
+             KLM_FURNITURE_FILENAME).c_str(),
                                          klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()));
     obj->set_res_id(this->get_obj_res_id());
 

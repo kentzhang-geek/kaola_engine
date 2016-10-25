@@ -56,6 +56,8 @@ void pack_tool::unpack(QString pack_file, QString dst_dir) {
         cmd += " -o" + dst_dir;
     }
 
+    cmd += " -aoa ";
+
     qDebug(cmd.toStdString().c_str());
     QProcess * zip_process = new QProcess;
     zip_process->start(cmd);
