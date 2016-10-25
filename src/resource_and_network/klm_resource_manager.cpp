@@ -33,8 +33,17 @@ void res_loader::do_work(void *object) {
 }
 
 void resource::default_model_loader::do_work(void *object) {
-    std::string * name = (std::string *)object;
-    gl3d::object *obj = new gl3d::object((char *) name->c_str(),
+    // download furniture
+    klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
+    // unpack
+    klm::pack_tool packer;
+    QEventLoop loop;
+    packer.unpack("tmp\\tmpfile.7z", klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()).c_str());
+    connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    QFile::remove("tmp\\tmpfile.7z");
+    // load obj
+    gl3d::object *obj = new gl3d::object((char *) KLM_FURNITURE_FILENAME,
                                          klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()));
     obj->set_res_id(this->get_obj_res_id());
 

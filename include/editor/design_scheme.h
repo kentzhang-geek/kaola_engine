@@ -63,7 +63,7 @@ namespace klm {
             void recalculate_rooms();
 
             // add or del furniture
-            bool add_furniture(std::string fur_res, glm::vec3 pos = glm::vec3(0.0f));
+            bool add_furniture(std::string fur_res, QString url, glm::vec3 pos = glm::vec3(0.0f));
             void del_furniture(gl3d::abstract_object * obj);
 
             void delete_room(gl3d::room * r);

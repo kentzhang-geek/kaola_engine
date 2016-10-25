@@ -32,8 +32,10 @@ namespace klm {
             GLuint64 render_code;
             GLuint64 control_code;
             int obj_render_id;
+            QString url;
 
             default_model_loader(gl3d::scene *sc,
+                                 QString _url,
                                  int _id = 1,
                                   GLuint64 _render_code = GL3D_SCENE_DRAW_NORMAL |
                                                           GL3D_SCENE_DRAW_IMAGE |
@@ -41,6 +43,7 @@ namespace klm {
                                   GLuint64 _control_code = GL3D_OBJ_ENABLE_ALL &
                                                            (~GL3D_OBJ_ENABLE_CULLING)) :
                     main_scene(sc),
+                    url(_url),
                     obj_render_id(_id),
                     render_code(_render_code),
                     control_code(_control_code) {}

@@ -680,6 +680,46 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 apts->append(*nowpt);
             }
         }
+        if (now_state == gl3d_global_param::add_furniture) {
+            // add furniture
+            glm::vec2 coordin(event->x(), event->y());
+            glm::vec2 coordgrd;
+            this->main_scene->coord_ground(coordin, coordgrd);
+            QString rid = *((QString *)this->user_data.value("resid"));
+            QString url = *((QString *)this->user_data.value("url"));
+            this->sketch->add_furniture(rid.toStdString(), url, math::convert_vec2_to_vec3(coordgrd));
+            this->user_data.remove("resid");
+            this->user_data.remove("url");
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
+        if (now_state == gl3d_global_param::add_texture) {
+            // add texture
+            glm::vec2 coordin(event->x(), event->y());
+            QString rid = *((QString *)this->user_data.value("resid"));
+            QString url = *((QString *)this->user_data.value("url"));
+            int oid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+            if (oid >= 0) {
+                abstract_object * obj = this->main_scene->get_obj(oid);
+                switch (obj->get_obj_type()) {
+                    case abstract_object::type_scheme: {
+                        // set ground texture
+                        gl3d::room * room_tar = this->sketch->get_room(coordin);
+                        room_tar->ground->setSurfaceMaterial(new klm::Surfacing(rid.toStdString()));
+                        break;
+                    }
+                    case abstract_object::type_wall: {
+                        // TODO : set wall textures
+                        gl3d_wall * w = (gl3d_wall *)obj;
+                        w->set_material(rid.toStdString());
+                        break;
+                    }
+                    default:break;
+                }
+            }
+            this->user_data.remove("resid");
+            this->user_data.remove("url");
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
     } else if (event->button() == Qt::RightButton) {
         //右键按下事件
         //点击右键-取消画墙,画房间状态

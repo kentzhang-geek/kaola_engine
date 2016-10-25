@@ -598,6 +598,9 @@ void drawhomewin::change_plan() {
 }
 
 void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString &url_path) {
+    this->ui->OpenGLCanvas->user_data.insert("resid", new QString(res_id));
+    this->ui->OpenGLCanvas->user_data.insert("url", new QString(url_path));
+
     // check is texture or furniture
     if (url_path.endsWith("ctx")) {
         // downloading material
@@ -615,9 +618,10 @@ void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString 
             proc.hide();
         }
         // add texture to wall
-
+        gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::add_texture;
     }
     else if (url_path.endsWith("cfn")) {
         // add furniture
+        gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::add_furniture;
     }
 }

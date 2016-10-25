@@ -40,7 +40,9 @@ public:
         openwindow = 9,
         movefurniture = 10,
         ruling = 11,
-        draw_area = 12
+        draw_area = 12,
+        add_furniture = 13,
+        add_texture = 14
     } current_work_state;
 private:
     gl3d_global_param();

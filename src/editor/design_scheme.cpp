@@ -713,7 +713,7 @@ bool scheme::load_from_xml(pugi::xml_node node) {
     return true;
 }
 
-bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
+bool scheme::add_furniture(std::string res_id, QString url, glm::vec3 pos) {
     glm::vec3 s(1.2f);
     int furid = this->find_available_id();
     loading_object * o = new loading_object(s);
@@ -721,7 +721,7 @@ bool scheme::add_furniture(std::string res_id, glm::vec3 pos) {
     o->set_id(furid);
     this->attached_scene->add_obj(furid, o);
     resource::manager::shared_instance()->perform_async_res_load(
-            new resource::default_model_loader(this->attached_scene, furid), res_id);
+            new resource::default_model_loader(this->attached_scene, url, furid), res_id);
     return true;
 }
 
