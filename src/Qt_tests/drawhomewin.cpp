@@ -18,6 +18,7 @@
 #include "editor/command.h"
 #include "editor/style_package.h"
 #include "resource_and_network/global_info.h"
+#include "ui_proc.h"
 
 using namespace std;
 
@@ -599,15 +600,21 @@ void drawhomewin::change_plan() {
 void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString &url_path) {
     // check is texture or furniture
     if (url_path.endsWith("ctx")) {
-        // add texture to wall
+        // downloading material
         if (!klm::resource::manager::shared_instance()->local_resource_map.contains(res_id.toStdString())) {
-            QMessageBox info1;
-            info1.setWindowTitle(tr("downloading resource"));
-            info1.setText(tr("downloading resource"));
-            info1.exec();
-
-            klm::resource::manager::shared_instance()->downlaod_res()
+            QWidget proc(NULL); // show a process ui
+            Ui::Proc u;
+            u.setupUi(&proc);
+            u.name->setText(tr("Downloading Material"));
+            u.prog->setMinimum(0);
+            u.prog->setMaximum(100);
+            u.prog->setValue(0);
+            proc.show();
+            klm::resource::manager::shared_instance()->downlaod_res(url_path, res_id, "texture.jpg",
+                                                                    klm::resource::item::res_texture_picture);
+            proc.hide();
         }
+        // add texture to wall
 
     }
     else if (url_path.endsWith("cfn")) {

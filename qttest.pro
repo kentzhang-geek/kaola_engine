@@ -142,7 +142,8 @@ FORMS    += \
     src/utils/qui/frmmessagebox.ui \
     ui/window_or_door_selected.ui \
     ui/furniture_selected.ui \
-    ui/login.ui
+    ui/login.ui \
+    ui/proc.ui
 
 PRECOMPILED_HEADER += $$HEADERS
 
