@@ -786,6 +786,16 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                 *now_pt = glm::vec3(0.0f);
             }
         }
+        if (now_state == gl3d_global_param::add_furniture) {
+            this->user_data.remove("resid");
+            this->user_data.remove("url");
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
+        if (now_state == gl3d_global_param::add_texture) {
+            this->user_data.remove("resid");
+            this->user_data.remove("url");
+            gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;
+        }
 
         // drag event
         this->move_vision = true;
