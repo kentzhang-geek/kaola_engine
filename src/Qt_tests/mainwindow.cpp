@@ -51,14 +51,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::web_loaded(bool ib) {
     if (ib) {
-        if (this->on_load_reload) {
-            this->on_load_reload = false;
-            this->web->reload();
-        }
-        else {
+//        if (this->on_load_reload) {
+//            this->on_load_reload = false;
+//            this->web->reload();
+//        }
+//        else {
             QString code = QString::fromLocal8Bit("qtinit()");
             web->page()->runJavaScript(code);
-        }
+//        }
     }
 }
 

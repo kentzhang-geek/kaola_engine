@@ -56,15 +56,15 @@ drawhomewin::drawhomewin(QWidget *parent) :
 
 void drawhomewin::webload_finished(bool isok) {
     if (isok) {
-        if (this->on_load_may_need_reload_web) {
-            this->web->reload();
-            this->on_load_may_need_reload_web = false;
-        }
-        else {
+//        if (this->on_load_may_need_reload_web) {
+//            this->web->reload();
+//            this->on_load_may_need_reload_web = false;
+//        }
+//        else {
             qDebug("goods web ok");
             QString code = QString::fromLocal8Bit("qtinit()");
             web->page()->runJavaScript(code);
-        }
+//        }
     }
     else {
         qDebug("goods web fucked");
