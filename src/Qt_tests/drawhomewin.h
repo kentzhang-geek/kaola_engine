@@ -21,6 +21,7 @@ class drawhomewin : public QWidget
 
 public:
     explicit drawhomewin(QWidget *parent = 0);
+    bool on_load_may_need_reload_web;
     ~drawhomewin();
 
     static void on_draw_clear();
@@ -29,6 +30,12 @@ public:
 
     QWebEngineView * web;
     QWebChannel * channel;
+
+    // save actions
+    void new_plan();
+    void new_design();
+    void change_plan();
+    void change_design();
 
 public slots:
     void webload_finished(bool isok);

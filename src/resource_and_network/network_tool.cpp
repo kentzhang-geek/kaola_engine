@@ -93,6 +93,36 @@ QJsonDocument klm::network::call_web_new(QString name, QString url, QString web_
     return doc;
 }
 
+QJsonDocument klm::network::call_web_update(QString id, QString name, QString url, QString web_new_url) {
+    QEventLoop loop;
+    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+
+    QUrl uploadingURL(QString(KLM_SERVER_URL) + web_new_url);
+    uploadingURL.setUrl(QString(KLM_SERVER_URL) + web_new_url);
+    QNetworkRequest u_request(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery qua;
+    qua.addQueryItem("name", name);
+    qua.addQueryItem("url", url);
+    qua.addQueryItem("r_id", id);
+    QNetworkReply* reply = gMgr->post(u_request, qua.toString(QUrl::FullyEncoded).toUtf8());
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    QJsonDocument doc;
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+    }
+    else {
+        QByteArray data = reply->readAll();
+        qDebug(data.data());
+        doc = QJsonDocument::fromJson(data);
+    }
+    delete reply;
+
+    return doc;
+}
+
 QJsonDocument
 klm::network::call_web_file_upload(QString id, QString filename, QString upload_fn, QString upload_url) {
     QEventLoop loop;
@@ -235,3 +265,66 @@ void login_tool::login_with(QString uname, QString pwd) {
     }
 }
 #endif
+
+QJsonDocument klm::network::call_web_file_upload_cover(QString id, QString pdn, QString filename, QString upload_fn,
+                                                       QString upload_url) {
+    QEventLoop loop;
+    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+    QHttpPart filePart;
+    QString content = "form-data; name=\"wangEditorH5File\"; filename=\"" + upload_fn + "\"";
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, "image/jpg");
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(content));
+    QFile* file = new QFile(filename);
+    file->open(QFile::ReadOnly);
+    filePart.setBodyDevice(file);
+    file->setParent(multiPart);
+
+    QHttpPart idPart;
+
+    // append id
+//    idPart = QHttpPart();
+//    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"id\""));
+//    idPart.setBody(QVariant(id).toByteArray());
+//    multiPart->append(idPart);
+
+    // set cii = 1
+    idPart = QHttpPart();
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"cii\""));
+    idPart.setBody(QVariant("1").toByteArray());
+    multiPart->append(idPart);
+
+    // set pdn
+    idPart = QHttpPart();
+    idPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"pdn\""));
+    idPart.setBody(QVariant(pdn).toByteArray());
+    multiPart->append(idPart);
+
+    multiPart->append(filePart);
+
+    QUrl uploadingURL = QUrl(QString(KLM_SERVER_URL) + upload_url);
+    uploadingURL.setUrl(QString(KLM_SERVER_URL) + upload_url);
+    QNetworkRequest u_request = QNetworkRequest(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, QString("multipart/form-data; boundary=") + multiPart->boundary());
+    u_request.setRawHeader("Accept", "application/json, text/plain, */*");
+    QNetworkReply * reply = gMgr->post(u_request, multiPart);
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    file->close();
+    delete file;
+
+    QJsonDocument doc;
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+    }
+    else {
+        QByteArray data = reply->readAll();
+        qDebug(data.data());
+        doc = QJsonDocument::fromJson(data);
+    }
+    delete reply;
+
+    return doc;
+}

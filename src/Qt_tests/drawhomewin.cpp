@@ -34,6 +34,7 @@ drawhomewin::drawhomewin(QWidget *parent) :
 
     QWebEngineView * wweb = this->findChild<QWebEngineView *>("web_goods");
     this->web = wweb;
+    this->on_load_may_need_reload_web = true;
 //    QWidget * qt = new QWidget(NULL);
 //    qt->thread()->setPriority(QThread::HighestPriority);
 //    qt->resize(410, 900);
@@ -55,9 +56,15 @@ drawhomewin::drawhomewin(QWidget *parent) :
 
 void drawhomewin::webload_finished(bool isok) {
     if (isok) {
-        qDebug("goods web ok");
-        QString code = QString::fromLocal8Bit("qtinit()");
-        web->page()->runJavaScript(code);
+        if (this->on_load_may_need_reload_web) {
+            this->web->reload();
+            this->on_load_may_need_reload_web = false;
+        }
+        else {
+            qDebug("goods web ok");
+            QString code = QString::fromLocal8Bit("qtinit()");
+            web->page()->runJavaScript(code);
+        }
     }
     else {
         qDebug("goods web fucked");
@@ -119,19 +126,57 @@ void drawhomewin::showEvent(QShowEvent *ev) {
 }
 
 void drawhomewin::load_sketch() {
-    // down load sketch
+    // down load sketch TODO : test
     if (klm::info::shared_instance()->d_p_path.size() >= 1) {
-        if (klm::network::call_web_download(klm::info::shared_instance()->d_p_path, "tmp\\dptmp.7z", "")) {
+        QString filename;
+        switch (gl3d_global_param::shared_instance()->sketch_mode) {
+            case gl3d_global_param::new_plan:{
+                break;
+            }
+            case gl3d_global_param::change_design:{
+                filename = "design.chd";
+                break;
+            }
+            case gl3d_global_param::change_plan: {
+                filename = "design.chp";
+                break;
+            }
+            case gl3d_global_param::new_design: {
+                filename = "design.chp";
+                break;
+            }
+            default:break;
+        }
+        if (klm::network::call_web_download(
+                QString(KLM_SERVER_URL) + klm::info::shared_instance()->d_p_path,
+                                            "tmp\\dptmp.7z", "")) {
             klm::pack_tool packer;
             QEventLoop loop;
             connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
-            packer.unpack("tmp\\dptmp.7z", "tmp");
+            packer.unpack("tmp\\dptmp.7z", "");
             loop.exec();
 
             pugi::xml_document doc;
             doc.load_file("tmp\\sketch.xml");
-            this->ui->OpenGLCanvas->sketch->load_from_xml(doc.root().child("scheme"));
+            this->ui->OpenGLCanvas->sketch->load_from_xml(doc.root().child("sketch"));
         }
+
+        switch (gl3d_global_param::shared_instance()->sketch_mode) {
+            // clear sketch if needed
+            case gl3d_global_param::change_plan: {
+                this->ui->OpenGLCanvas->sketch->clear_sketch();
+                break;
+            }
+            case gl3d_global_param::new_design: {
+                this->ui->OpenGLCanvas->sketch->clear_sketch();
+                break;
+            }
+            default:break;
+        }
+        // remove temp file
+        QFile::remove("tmp/sketch.xml");
+        QFile::remove("tmp/style.xml");
+        QFile::remove("tmp/dptmp.7z");
     }
 }
 
@@ -320,9 +365,44 @@ void drawhomewin::save_ok() {
     this->ui->OpenGLCanvas->main_scene->watcher->set_top_view();
     this->ui->OpenGLCanvas->main_scene->watcher->calculate_mat();
     QImage * img = this->ui->OpenGLCanvas->main_scene->draw_screenshot();
-    img->save("test.jpg");
+    img->save("icon.jpg");
     delete img;
     *this->ui->OpenGLCanvas->main_scene->watcher = copy;
+
+    // choose save action
+    switch (gl3d_global_param::shared_instance()->sketch_mode) {
+        case gl3d_global_param::new_plan: {
+            this->new_plan();
+            break;
+        }
+        case gl3d_global_param::new_design: {
+            this->new_design();
+            break;
+        }
+        case gl3d_global_param::change_design: {
+            this->change_design();
+            break;
+        }
+        case gl3d_global_param::change_plan: {
+            this->change_plan();
+            break;
+        }
+        default: {
+            qDebug("sketch mode save failed");
+            break;
+        }
+    }
+
+    QFile::remove("tmp/sketch.xml");
+    QFile::remove("tmp/style.xml");
+    QFile::remove("tmp/design.chd");
+    QFile::remove("icon.jpg");
+
+    return;
+}
+
+void drawhomewin::new_plan() {
+    QString pdn;
 
     QMessageBox info1;
     info1.setWindowTitle(tr("uploading"));
@@ -330,23 +410,19 @@ void drawhomewin::save_ok() {
     info1.exec();
 
     QJsonDocument doc;
-    if ((klm::info::shared_instance()->design_id.size() <= 1) && (klm::info::shared_instance()->plan_id.size() <= 1)) {
-        doc = klm::network::call_web_new("housename", "http://www.baidu.com/", KLM_SERVER_URL_NEW_DESIGN);
-        // TODO : Debug : get id from json
-        for (auto kit = doc.object().begin();
-             kit != doc.object().end();
-             kit++) {
-            if (!kit->isNull())
-                qDebug("%d", kit->type());
-        }
-        doc = klm::network::call_web_new("housename", "http://www.baidu.com/", KLM_SERVER_URL_NEW_PLAN);
-//    for (auto kit = doc.object().begin();
-//            kit != doc.object().end();
-//         kit++) {
-//        if (!kit->isNull())
-//            qDebug("%d", kit->type());
-//    }
-    }
+    QString plan_pdn;
+    QString design_pdn;
+
+    doc = klm::network::call_web_new(klm::info::shared_instance()->housename,
+                                     klm::info::shared_instance()->house_url, KLM_SERVER_URL_NEW_PLAN);
+    int tval = doc.object().find("results").value().toArray()[0].toObject().value("resource_id").toInt();
+    klm::info::shared_instance()->plan_id = QString::asprintf("%d", tval);
+    plan_pdn = doc.object().find("results").value().toArray()[0].toObject().value("path").toString();
+    doc = klm::network::call_web_new(klm::info::shared_instance()->housename,
+                                     klm::info::shared_instance()->house_url, KLM_SERVER_URL_NEW_DESIGN);
+    tval = doc.object().find("results").value().toArray()[0].toObject().value("resource_id").toInt();
+    klm::info::shared_instance()->design_id = QString::asprintf("%d", tval);
+    design_pdn = doc.object().find("results").value().toArray()[0].toObject().value("path").toString();
 
     bool upload_flag = true;
     QString id;
@@ -365,7 +441,7 @@ void drawhomewin::save_ok() {
         }
     }
 
-    if (upload_flag) {
+    if (!upload_flag) {
         QMessageBox info;
         info.setWindowTitle(tr("save failed"));
         info.setText(tr("save failed"));
@@ -378,9 +454,136 @@ void drawhomewin::save_ok() {
         info.exec();
     }
 
-    QFile::remove("tmp/sketch.xml");
-    QFile::remove("tmp/style.xml");
-    QFile::remove("tmp/design.chd");
+    // TODO : upload cover now
+    doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
+                                                   design_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+    doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->plan_id,
+                                                   plan_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_PLAN_COVER);
+}
 
-    return;
+void drawhomewin::new_design() {
+    QMessageBox info1;
+    info1.setWindowTitle(tr("uploading"));
+    info1.setText(tr("uploading"));
+    info1.exec();
+
+    QJsonDocument doc;
+    QString plan_pdn;
+    QString design_pdn;
+
+    // new design
+    doc = klm::network::call_web_new(klm::info::shared_instance()->housename,
+                                     klm::info::shared_instance()->house_url, KLM_SERVER_URL_NEW_DESIGN);
+    int tval = doc.object().find("results").value().toArray()[0].toObject().value("resource_id").toInt();
+    klm::info::shared_instance()->design_id = QString::asprintf("%d", tval);
+    design_pdn = doc.object().find("results").value().toArray()[0].toObject().value("path").toString();
+
+    // upload plan and design
+    bool upload_flag = true;
+    QString id;
+    id = klm::info::shared_instance()->design_id;
+    if (id.size() >= 1) {
+        doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD_DESIGN);
+        if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+            upload_flag = false;
+        }
+    }
+
+    if (!upload_flag) {
+        QMessageBox info;
+        info.setWindowTitle(tr("save failed"));
+        info.setText(tr("save failed"));
+        info.exec();
+    }
+    else {
+        QMessageBox info;
+        info.setWindowTitle(tr("save ok"));
+        info.setText(tr("save complete"));
+        info.exec();
+    }
+
+    // upload design cover
+    doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
+                                                   design_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+}
+
+void drawhomewin::change_design() {
+    QString pdn;
+
+    QMessageBox info1;
+    info1.setWindowTitle(tr("uploading"));
+    info1.setText(tr("uploading"));
+    info1.exec();
+
+    QJsonDocument doc;
+    QString plan_pdn;
+    QString design_pdn;
+
+    bool upload_flag = true;
+    QString id;
+    id = klm::info::shared_instance()->design_id;
+    if (id.size() >= 1) {
+        doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chd", KLM_SERVER_URL_UPLOAD_DESIGN);
+        if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+            upload_flag = false;
+        }
+    }
+
+    if (!upload_flag) {
+        QMessageBox info;
+        info.setWindowTitle(tr("save failed"));
+        info.setText(tr("save failed"));
+        info.exec();
+    }
+    else {
+        QMessageBox info;
+        info.setWindowTitle(tr("save ok"));
+        info.setText(tr("save complete"));
+        info.exec();
+    }
+
+    // TODO : upload cover now
+    doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
+                                                   design_pdn, "icon.jpg", "upload.jpg",
+                                                   KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+}
+
+void drawhomewin::change_plan() {
+    QString pdn;
+
+    QMessageBox info1;
+    info1.setWindowTitle(tr("uploading"));
+    info1.setText(tr("uploading"));
+    info1.exec();
+
+    QJsonDocument doc;
+    QString plan_pdn;
+    QString design_pdn;
+
+    bool upload_flag = true;
+    QString id;
+    id = klm::info::shared_instance()->plan_id;
+    if (id.size() >= 1) {
+        doc = klm::network::call_web_file_upload(id, "tmp/design.chd", "design.chp", KLM_SERVER_URL_UPLOAD_PLAN);
+        if ((!doc.object().contains("status")) || (doc.object().value("status").toString() != "OK")) {
+            upload_flag = false;
+        }
+    }
+
+    if (!upload_flag) {
+        QMessageBox info;
+        info.setWindowTitle(tr("save failed"));
+        info.setText(tr("save failed"));
+        info.exec();
+    }
+    else {
+        QMessageBox info;
+        info.setWindowTitle(tr("save ok"));
+        info.setText(tr("save complete"));
+        info.exec();
+    }
+
+    // upload plan cover
+    doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->plan_id,
+                                                   plan_pdn, "icon.jpg", "upload.jpg", KLM_SERVER_URL_UPLOAD_PLAN_COVER);
 }

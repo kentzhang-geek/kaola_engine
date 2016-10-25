@@ -90,6 +90,9 @@ namespace klm {
 
             void add_area_on_ground_of_room(QVector<glm::vec3> apts);
 
+            // clear furnitures
+            void clear_sketch();
+
         private:
             void init();
         };

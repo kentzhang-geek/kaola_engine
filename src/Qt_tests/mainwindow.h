@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    bool on_load_reload;
     ~MainWindow();
     QWebEngineView * web;
     void resizeEvent(QResizeEvent *ev);
@@ -38,7 +39,9 @@ public slots:
     void test_text(const QString &text);
     void web_loaded(bool ib);
     void login(const QString & uname, const QString & pwd);
-    void open_sketch(const QString & plan_id, const QString & design_id, const QString & path);
+    void open_sketch(const QString & plan_id, const QString & design_id, const QString & path, const QString & pdn);
+    void open_sketch_change_plan(const QString & plan_id, const QString & design_id, const QString & path, const QString & pdn);
+    void reg_info(const QString & housename, const QString & url);
 
 private slots:
     void on_testtiaozhuan_clicked();

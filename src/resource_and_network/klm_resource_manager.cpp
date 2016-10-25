@@ -275,7 +275,9 @@ username(),
 password(),
 design_id(),
 plan_id(),
-d_p_path()
+d_p_path(),
+housename("housename"),
+house_url("http://www.baidu.com/")
 {
 
 }

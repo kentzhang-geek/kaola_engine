@@ -8,6 +8,14 @@
 namespace gl3d {
 class gl3d_global_param {
 public:
+    enum e_sketch_mode {
+        new_design = 0,
+        change_plan,
+        change_design,
+        new_plan
+    };
+    e_sketch_mode sketch_mode;
+
     static gl3d_global_param * shared_instance();
     QString * username;
     QString * password;
@@ -33,7 +41,7 @@ public:
         movefurniture = 10,
         ruling = 11,
         draw_area = 12
-    } current_work_state ;
+    } current_work_state;
 private:
     gl3d_global_param();
 };

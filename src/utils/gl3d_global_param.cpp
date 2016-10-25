@@ -17,5 +17,5 @@ gl3d_global_param::gl3d_global_param(){
     this->old_sketch_test = NULL;
     this->password = new QString();
     this->username = new QString();
-    this->room_height = 3.0f;
+    this->room_height = 2.8f;
 }

@@ -6,6 +6,8 @@
 
 #include "resource_and_network/pack_tool.h"
 #include "resource_and_network/global_info.h"
+#include <QtWebEngineCore/QWebEngineCookieStore>
+#include <QtWebEngineWidgets/QWebEngineProfile>
 
 using namespace std;
 
@@ -27,18 +29,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->lg = new klm::network::login_tool;
 //    this->lg->login_with("934635461@qq.com", "hl320619");
-    Ui::MainWindow * ui = new Ui::MainWindow;
-    ui->setupUi(this);
-    delete ui;
-
-    return;
+//    Ui::MainWindow * ui = new Ui::MainWindow;
+//    ui->setupUi(this);
+//    delete ui;
+//    return;
 
     auto ssize = QApplication::desktop()->availableGeometry();
     this->setGeometry(0, 0, ssize.width(), ssize.height());
     this->setWindowState(Qt::WindowMaximized);
     web = new QWebEngineView(this);
     web->resize(this->width(), this->height());
-//    web->load(QUrl(KLM_WEB_LOGIN_URL));
+    this->on_load_reload = true;
     web->load(QUrl(KLM_SERVER_URL_MAIN));
     web->show();
     connect(web, SIGNAL(loadFinished(bool)), this, SLOT(web_loaded(bool)));
@@ -50,14 +51,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::web_loaded(bool ib) {
     if (ib) {
-        QString code = QString::fromLocal8Bit("qtinit()");
-        web->page()->runJavaScript(code);
+        if (this->on_load_reload) {
+            this->on_load_reload = false;
+            this->web->reload();
+        }
+        else {
+            QString code = QString::fromLocal8Bit("qtinit()");
+            web->page()->runJavaScript(code);
+        }
     }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key::Key_F5)
+    if (event->key() == Qt::Key::Key_F5) {
         this->web->reload();
+    }
 }
 
 void MainWindow::login(const QString &uname, const QString &pwd) {
@@ -152,10 +160,25 @@ void MainWindow::process_login(bool isok) {
     }
 }
 
-void MainWindow::open_sketch(const QString & plan_id, const QString & design_id, const QString & path) {
+void
+MainWindow::open_sketch(const QString &plan_id, const QString &design_id, const QString &path, const QString &pdn) {
     klm::info::shared_instance()->design_id = design_id;
     klm::info::shared_instance()->plan_id = plan_id;
     klm::info::shared_instance()->d_p_path = path;
+    klm::info::shared_instance()->pdn = QString();
+
+    if (path.size() == 0) {
+        gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::new_plan;
+    }
+    else if ((plan_id.size() == 0) && (design_id.size() > 0)) {
+        gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::change_design;
+    }
+    else if (pdn.size() == 0) {
+        gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::new_design;
+    }
+    else {
+        gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::change_plan;
+    }
 
     // begin design
     dhw = new drawhomewin(this->parentWidget());
@@ -164,4 +187,13 @@ void MainWindow::open_sketch(const QString & plan_id, const QString & design_id,
     this->releaseKeyboard();
 
     this->setWindowState(Qt::WindowMinimized);
+}
+
+void MainWindow::open_sketch_change_plan(const QString &plan_id, const QString &design_id, const QString &path,
+                                         const QString &pdn){
+    this->open_sketch(plan_id, design_id, path, pdn);
+}
+
+void MainWindow::reg_info(const QString &housename, const QString &url) {
+    klm::info::shared_instance();
 }

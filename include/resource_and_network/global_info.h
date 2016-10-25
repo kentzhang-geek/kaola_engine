@@ -15,6 +15,9 @@ namespace klm {
       QString design_id;
       QString plan_id;
       QString d_p_path;
+      QString housename;
+      QString house_url;
+      QString pdn;
 
   private:
       info();

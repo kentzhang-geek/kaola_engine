@@ -898,6 +898,15 @@ void scheme::add_area_on_ground_of_room(QVector<glm::vec3> apts) {
     }
 }
 
+void scheme::clear_sketch() {
+    Q_FOREACH(gl3d::abstract_object * fit, this->objects) {
+            if (fit->get_obj_type() == type_furniture) {
+                this->objects.remove(fit->get_id());
+                delete fit;
+            }
+        }
+}
+
 // test code
 #if 0
 
