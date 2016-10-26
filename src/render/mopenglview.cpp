@@ -708,7 +708,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             }
             mat_loader.unlock();
             int oid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
-            if (oid >= 0) {
+            if (oid > 0) {
                 abstract_object * obj = this->main_scene->get_obj(oid);
                 switch (obj->get_obj_type()) {
                     case abstract_object::type_scheme: {
@@ -819,6 +819,13 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     this->draw_assistant_img();
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
+
+    if ((now_state == gl3d_global_param::add_furniture) || (now_state == gl3d_global_param::add_texture)) {
+        setCursor(Qt::CrossCursor);
+    }
+    else {
+        setCursor(Qt::ArrowCursor);
+    }
 
     // move vision
     if (move_vision) {

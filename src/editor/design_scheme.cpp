@@ -813,8 +813,6 @@ void scheme::del_window(gl3d_window *wdw) {
     return;
 }
 
-
-
 gl3d::room* scheme::get_related_room_of_wall(gl3d::gl3d_wall *wall, glm::vec2 coord_scr) {
     // TODO : get related room
     klm::Surface * sfc = this->get_related_surface_of_wall(wall, coord_scr);

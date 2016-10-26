@@ -295,7 +295,7 @@ design_id(),
 plan_id(),
 d_p_path(),
 housename("housename"),
-house_url("http://www.baidu.com/")
+house_url("http://www.kaolamao.com/")
 {
 
 }
