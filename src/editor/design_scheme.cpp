@@ -299,6 +299,22 @@ gl3d::room *scheme::get_room(glm::vec2 coord_on_screen) {
     return NULL;
 }
 
+gl3d::room* scheme::get_room_by_grd(glm::vec2 coord_on_grd) {
+    // check is point in surface
+    QVector<math::triangle_facet> faces;
+    Q_FOREACH(room *rit, this->rooms) {
+            faces.clear();
+            gl3d::get_faces_from_surface(rit->ground, faces);
+            Q_FOREACH(math::triangle_facet fit, faces) {
+                    if (fit.is_point_in_facet(math::convert_vec2_to_vec3(coord_on_grd))) {
+                        return rit;
+                    }
+                }
+        }
+
+    return NULL;
+}
+
 static inline glm::vec3 arr_point_to_vec3(Point_2 pt) {
     double tx = CGAL::to_double(pt.x());
     double ty = CGAL::to_double(pt.y());

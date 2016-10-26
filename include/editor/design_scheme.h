@@ -68,6 +68,7 @@ namespace klm {
 
             void delete_room(gl3d::room * r);
             gl3d::room * get_room(glm::vec2 coord_on_screen);
+            gl3d::room * get_room_by_grd(glm::vec2 coord_on_grd);
 
             // objects in sketch
             GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );

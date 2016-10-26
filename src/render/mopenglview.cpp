@@ -726,6 +726,15 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
                     default:break;
                 }
             }
+            else {
+                coordin = glm::vec2(event->x(), event->y());
+                glm::vec2 coord_ceil;
+                this->main_scene->coord_ground(coordin, coord_ceil, gl3d_global_param::shared_instance()->room_height);
+                room * room_tar = this->sketch->get_room_by_grd(coord_ceil);
+                if (NULL != room_tar) {
+                    room_tar->ceil->setSurfaceMaterial(new klm::Surfacing(rid.toStdString()));
+                }
+            }
             this->user_data.remove("resid");
             this->user_data.remove("url");
             gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::normal;

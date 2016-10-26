@@ -13,27 +13,6 @@ using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
-    // for test
-//    klm::pack_tool * pack = new klm::pack_tool;
-//    QVector<QString> tfs;
-//    klm::pack_tool::init_with_password("123");
-//    tfs.append("test.html");
-//    tfs.append("*.xml");
-//    tfs.append("debug/*.obj");
-//    pack->unpack("t.7z", "tout");
-//    pack->pack(tfs, "t.7z");
-//    klm::network::call_web_download(
-//            "file/2c4469d2-d073-422a-b841-1676f20a31e7/RUU/534a235d-0a75-4bc1-b3d2-6a1fe90c32d0/test.cfn", "tmp/s.7z");
-//    klm::pack_tool pkt;
-//    pkt.unpack("tmp/s.7z", "tmp");
-
-//    this->lg = new klm::network::login_tool;
-//    this->lg->login_with("934635461@qq.com", "hl320619");
-//    Ui::MainWindow * ui = new Ui::MainWindow;
-//    ui->setupUi(this);
-//    delete ui;
-//    return;
-
     auto ssize = QApplication::desktop()->availableGeometry();
     this->setGeometry(0, 0, ssize.width(), ssize.height());
     this->setWindowState(Qt::WindowMaximized);
@@ -51,14 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::web_loaded(bool ib) {
     if (ib) {
-//        if (this->on_load_reload) {
-//            this->on_load_reload = false;
-//            this->web->reload();
-//        }
-//        else {
             QString code = QString::fromLocal8Bit("qtinit()");
             web->page()->runJavaScript(code);
-//        }
     }
 }
 
