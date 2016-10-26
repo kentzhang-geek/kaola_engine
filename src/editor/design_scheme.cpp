@@ -86,7 +86,8 @@ void scheme::get_abstract_meshes(QVector<gl3d::mesh *> &ms) {
             gl3d::surface_to_mesh(rit->ground, ms, rit->get_picked());
             // hot fix : TODO : do not pick up ceil
             if (this->attached_scene->get_property()->global_shader != QString("picking_mask")) {
-                if (!(this->attached_scene->get_property()->current_draw_authority & GL3D_SCENE_DRAW_SHADOW))
+                if ((!(this->attached_scene->get_property()->current_draw_authority & GL3D_SCENE_DRAW_SHADOW)) &&
+                        (this->get_attached_scene()->watcher->get_view_mode() == viewer::normal_view))
                     gl3d::surface_to_mesh(rit->ceil, ms, rit->get_picked());
             }
         }
