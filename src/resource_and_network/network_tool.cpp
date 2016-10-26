@@ -328,3 +328,32 @@ QJsonDocument klm::network::call_web_file_upload_cover(QString id, QString pdn, 
 
     return doc;
 }
+
+QJsonDocument klm::network::call_web_post_tag(QString id, QString tag, QString url) {
+    QEventLoop loop;
+    QNetworkAccessManager * gMgr = klm::network::shared_mgr();
+
+    QUrl uploadingURL(QString(KLM_SERVER_URL) + url);
+    uploadingURL.setUrl(QString(KLM_SERVER_URL) + url);
+    QNetworkRequest u_request(uploadingURL);
+    u_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QUrlQuery qua;
+    qua.addQueryItem("tag_id", tag);
+    qua.addQueryItem("target_id", id);
+    QNetworkReply* reply = gMgr->post(u_request, qua.toString(QUrl::FullyEncoded).toUtf8());
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    QJsonDocument doc;
+    if (reply->error()) {
+        qDebug(reply->errorString().toStdString().c_str());
+    }
+    else {
+        QByteArray data = reply->readAll();
+        qDebug(data.data());
+        doc = QJsonDocument::fromJson(data);
+    }
+    delete reply;
+
+    return doc;
+}

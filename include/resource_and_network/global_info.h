@@ -16,6 +16,7 @@ namespace klm {
       QString plan_id;
       QString d_p_path;
       QString housename;
+      QString tag;
       QString house_url;
       QString pdn;
 

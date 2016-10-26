@@ -186,6 +186,8 @@ MainWindow::open_sketch(const QString &plan_id, const QString &design_id, const 
     this->releaseMouse();
     this->releaseKeyboard();
 
+    connect(dhw, SIGNAL(send_url(QString)), this, SLOT(on_catch_url(QString)));
+
     this->setWindowState(Qt::WindowMinimized);
 }
 
@@ -194,6 +196,13 @@ void MainWindow::open_sketch_change_plan(const QString &plan_id, const QString &
     this->open_sketch(plan_id, design_id, path, pdn);
 }
 
-void MainWindow::reg_info(const QString &housename, const QString &url) {
-    klm::info::shared_instance();
+void MainWindow::reg_info(const QString &_housename, const QString &_tag) {
+    klm::info::shared_instance()->housename = _housename;
+    klm::info::shared_instance()->tag = _tag;
+}
+
+void MainWindow::on_catch_url(QString url) {
+    QString test = url.mid(1);
+    this->web->setUrl(QString(KLM_SERVER_URL) + url.mid(1));
+    this->web->reload();
 }

@@ -37,9 +37,13 @@ public:
     void change_plan();
     void change_design();
 
+signals:
+    void send_url(QString url);
+
 public slots:
     void webload_finished(bool isok);
     void add_furniture_or_texture(const QString & res_id, const QString & url_path);
+    void open_url_main(const QString & url);
 
 private slots:
     void on_switch3D_clicked();

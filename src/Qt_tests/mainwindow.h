@@ -41,7 +41,8 @@ public slots:
     void login(const QString & uname, const QString & pwd);
     void open_sketch(const QString & plan_id, const QString & design_id, const QString & path, const QString & pdn);
     void open_sketch_change_plan(const QString & plan_id, const QString & design_id, const QString & path, const QString & pdn);
-    void reg_info(const QString & housename, const QString & url);
+    void reg_info(const QString & housename, const QString & tag);
+    void on_catch_url(QString url);
 
 private slots:
     void on_testtiaozhuan_clicked();

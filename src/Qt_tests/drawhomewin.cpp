@@ -18,6 +18,8 @@
 #include "editor/command.h"
 #include "editor/style_package.h"
 #include "resource_and_network/global_info.h"
+#include <QMainWindow>
+#include "mainwindow.h"
 #include "ui_proc.h"
 
 using namespace std;
@@ -466,6 +468,12 @@ void drawhomewin::new_plan() {
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->plan_id,
                                                    plan_pdn, "icon.jpg", "upload.jpg",
                                                    KLM_SERVER_URL_UPLOAD_PLAN_COVER);
+    doc = klm::network::call_web_post_tag(klm::info::shared_instance()->design_id,
+                                          klm::info::shared_instance()->tag,
+                                          KLM_SERVER_URL_TAG_DESIGN);
+    doc = klm::network::call_web_post_tag(klm::info::shared_instance()->plan_id,
+                                          klm::info::shared_instance()->tag,
+                                          KLM_SERVER_URL_TAG_PLAN);
 }
 
 void drawhomewin::new_design() {
@@ -513,6 +521,9 @@ void drawhomewin::new_design() {
     doc = klm::network::call_web_file_upload_cover(klm::info::shared_instance()->design_id,
                                                    design_pdn, "icon.jpg", "upload.jpg",
                                                    KLM_SERVER_URL_UPLOAD_DESIGN_COVER);
+    doc = klm::network::call_web_post_tag(klm::info::shared_instance()->design_id,
+                                          klm::info::shared_instance()->tag,
+                                          KLM_SERVER_URL_TAG_DESIGN);
 }
 
 void drawhomewin::change_design() {
@@ -624,4 +635,9 @@ void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString 
         // add furniture
         gl3d_global_param::shared_instance()->current_work_state = gl3d_global_param::add_furniture;
     }
+}
+
+void drawhomewin::open_url_main(const QString &url) {
+    // TODO： open url in parent
+    emit send_url(url);
 }
