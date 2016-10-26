@@ -437,7 +437,7 @@ border:0
               </property>
               <property name="minimumSize">
                <size>
-                <width>415</width>
+                <width>410</width>
                 <height>0</height>
                </size>
               </property>

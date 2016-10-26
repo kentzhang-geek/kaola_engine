@@ -32,11 +32,17 @@ void res_loader::do_work(void *object) {
     return;
 }
 
+static QMutex download_lock;
 void resource::default_model_loader::do_work(void *object) {
     // download furniture
+    download_lock.lock();
     if (!klm::resource::manager::shared_instance()->local_resource_map.contains(this->get_obj_res_id())) {
-        klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
+        klm::resource::manager::shared_instance()->downlaod_res(this->url, this->get_obj_res_id(),
+                                                                KLM_FURNITURE_FILENAME, item::res_model_3ds);
+//        bool down_result = klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
     }
+    download_lock.unlock();
+
     // unpack
     klm::pack_tool packer;
     QEventLoop loop;
