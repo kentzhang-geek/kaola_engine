@@ -697,6 +697,16 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             glm::vec2 coordin(event->x(), event->y());
             QString rid = *((QString *)this->user_data.value("resid"));
             QString url = *((QString *)this->user_data.value("url"));
+            static QMutex mat_loader;
+            mat_loader.lock();
+            if (global_material_lib::shared_instance()->is_mtl_loaded(rid.toStdString())) {
+                global_material_lib::shared_instance()->insert_new_mtl(
+                        rid.toStdString(),
+                        new gl3d_material(
+                                klm::resource::manager::shared_instance()->get_base_path_by_resid(
+                                        rid.toStdString()) + KLM_TEXTURE_FILENAME));
+            }
+            mat_loader.unlock();
             int oid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
             if (oid >= 0) {
                 abstract_object * obj = this->main_scene->get_obj(oid);

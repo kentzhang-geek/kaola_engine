@@ -36,20 +36,20 @@ static QMutex download_lock;
 void resource::default_model_loader::do_work(void *object) {
     // download furniture
     download_lock.lock();
-    if (!klm::resource::manager::shared_instance()->local_resource_map.contains(this->get_obj_res_id())) {
-        klm::resource::manager::shared_instance()->downlaod_res(this->url, this->get_obj_res_id(),
+    if (!klm::resource::manager::shared_instance()->is_res_local(this->get_obj_res_id().c_str())) {
+        klm::resource::manager::shared_instance()->downlaod_res(this->url, this->get_obj_res_id().c_str(),
                                                                 KLM_FURNITURE_FILENAME, item::res_model_3ds);
 //        bool down_result = klm::network::call_web_download(this->url, "tmp\\tmpfile.7z");
     }
     download_lock.unlock();
 
     // unpack
-    klm::pack_tool packer;
-    QEventLoop loop;
-    packer.unpack("tmp\\tmpfile.7z", klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()).c_str());
-    connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-    QFile::remove("tmp\\tmpfile.7z");
+//    klm::pack_tool packer;
+//    QEventLoop loop;
+//    packer.unpack("tmp\\tmpfile.7z", klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()).c_str());
+//    connect(&packer, SIGNAL(finished()), &loop, SLOT(quit()));
+//    loop.exec();
+//    QFile::remove("tmp\\tmpfile.7z");
     // load obj
     gl3d::object *obj = new gl3d::object((char *)
             (klm::resource::manager::get_base_path_by_resid(this->get_obj_res_id()) + GL3D_PATH_SEPRATOR +
@@ -113,7 +113,6 @@ manager::manager() {
     this->id_to_resource.clear();
 
     // for test
-    this->local_resource_map.clear();
     this->load_local_databse();
 
     // make tmp dir
@@ -307,4 +306,8 @@ info* klm::info::shared_instance() {
     }
 
     return one_info;
+}
+
+bool manager::is_res_local(QString res_id) {
+    return this->id_to_item.contains(res_id.toStdString());
 }

@@ -96,9 +96,10 @@ namespace klm {
             // download resource from server
             void downlaod_res(QString url, QString res_id, QString filename, resource::item::resource_type rtype);
 
-            QMap<std::string, std::string> local_resource_map;
             void load_local_databse();
             void save_local_databse();
+
+            bool is_res_local(QString res_id);
 
             // test
             void test_data();

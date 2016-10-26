@@ -604,7 +604,7 @@ void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString 
     // check is texture or furniture
     if (url_path.endsWith("ctx")) {
         // downloading material
-        if (!klm::resource::manager::shared_instance()->local_resource_map.contains(res_id.toStdString())) {
+        if (!klm::resource::manager::shared_instance()->is_res_local(res_id)) {
             QWidget proc(NULL); // show a process ui
             Ui::Proc u;
             u.setupUi(&proc);
@@ -613,7 +613,7 @@ void drawhomewin::add_furniture_or_texture(const QString &res_id, const QString 
             u.prog->setMaximum(100);
             u.prog->setValue(0);
             proc.show();
-            klm::resource::manager::shared_instance()->downlaod_res(url_path, res_id, "texture.jpg",
+            klm::resource::manager::shared_instance()->downlaod_res(url_path, res_id, KLM_TEXTURE_FILENAME,
                                                                     klm::resource::item::res_texture_picture);
             proc.hide();
         }
