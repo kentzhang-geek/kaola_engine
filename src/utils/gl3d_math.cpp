@@ -283,7 +283,7 @@ glm::mat4 gl3d::math::get_rotation_from_a_to_b(glm::vec3 a, glm::vec3 b) {
     return glm::rotate(glm::mat4(1.0f), glm::radians(alpha), axis);
 }
 
-float math::calculate_angle_by_mat(glm::mat4 rot_mat) {
+float math::calculate_angle_by_mat(glm::mat4 & rot_mat) {
     glm::vec3 src(1.0f, 0.0f, 0.0f);
     glm::vec4 tmp = rot_mat * glm::vec4(src, 1.0f);
     tmp = tmp / tmp.w;

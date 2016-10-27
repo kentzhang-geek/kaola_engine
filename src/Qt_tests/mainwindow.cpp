@@ -26,6 +26,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->channel = new QWebChannel(this);
     web->page()->setWebChannel(this->channel);
     this->channel->registerObject(QStringLiteral("twin"), this);
+
+    // test
+    gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::new_plan;
+    this->on_testtiaozhuan_clicked();
 }
 
 void MainWindow::web_loaded(bool ib) {

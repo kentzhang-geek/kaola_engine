@@ -13,7 +13,7 @@ TRANSLATIONS += zh.ts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = qttest
+TARGET = kaolamao
 TEMPLATE = app
 
 SOURCES += \
@@ -104,7 +104,6 @@ HEADERS  += \
     include/utils/gl3d_utils.h \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
-#    include/editor/klm_surface.h \
     include/editor/bounding_box.h \
     src/Qt_tests/drawhomewin.h \
     include/editor/vertex.h \
@@ -151,14 +150,6 @@ win32:INCLUDEPATH += include
 
 win32:INCLUDEPATH += LIBS/cgal/auxiliary/gmp/include/
 
-#INCLUDEPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
-#DEPENDPATH += $$PWD/../../../../usr/local/Cellar/glm/0.9.7.1/include
-
-#INCLUDEPATH += /usr/local/include/
-
-#mac: LIBS += -framework GLUT -L/usr/local/lib/ -lassimp
-#else:unix|win32: LIBS += -lGLUT
-
 INCLUDEPATH += LIBS\assimp-3.2\include
 INCLUDEPATH += LIBS\glm_build
 INCLUDEPATH += LIBS\boost_1_61_0
@@ -185,34 +176,11 @@ INSTALLS += target
 
 OBJECTIVE_SOURCES +=
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/assimp_build/code/release/ -lassimp-vc130-mtd
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/assimp_build/code/debug/ -lassimp-vc130-mtd
-#else:unix: LIBS += -L$$PWD/LIBS/assimp_build/code/ -lassimp-vc130-mtd
 
 INCLUDEPATH += $$PWD/LIBS/assimp-3.2/include
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/release/libassimp-vc130-mtd.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/debug/libassimp-vc130-mtd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/release/assimp-vc130-mtd.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/debug/assimp-vc130-mtd.lib
-#else:unix: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/code/libassimp-vc130-mtd.a
-
-#win32: LIBS += -L$$PWD/LIBS/glew-1.13.0/lib/Release/x64/ -lglew32
-
-#INCLUDEPATH += $$PWD/LIBS/glew-1.13.0/include
-#DEPENDPATH += $$PWD/LIBS/glew-1.13.0/include
-
-#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/glew-1.13.0/lib/Release/x64/glew32.lib
-#else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/glew-1.13.0/lib/Release/x64/libglew32.a
-
 win32: LIBS += -lGlU32
-
-macx: LIBS += -L$$PWD/LIBS/assimp-3.2/lib/ -lassimp
-
-DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
-
-macx: PRE_TARGETDEPS += $$PWD/LIBS/assimp-3.2/lib/libassimp.a
 
 macx: LIBS += -L$$PWD/LIBS/pugixml-1.7/scripts/ -lpugixml
 
@@ -221,38 +189,32 @@ DEPENDPATH += $$PWD/LIBS/pugixml-1.7/src
 
 macx: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
 
-win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/ -lpugixml
-
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/x64_Debug/pugixml.lib
-
-
-win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL_Core-vc140-mt-gd-4.8.1
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL_Core-vc140-mt-4.8.1
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL-vc140-mt-4.8.1
 
 INCLUDEPATH += $$PWD/LIBS/cgal/include
 DEPENDPATH += $$PWD/LIBS/cgal/include
 INCLUDEPATH += $$PWD/LIBS/cgal_lib/include
 DEPENDPATH += $$PWD/LIBS/cgal_lib/include
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL_Core-vc140-mt-gd-4.8.1.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL_Core-vc140-mt-gd-4.8.1.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/CGAL_Core-vc140-mt-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/libCGAL_Core-vc140-mt-4.8.1.a
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/LIBS/cgal_lib/lib/ -lCGAL-vc140-mt-gd-4.8.1
+win32: LIBS += -L$$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/ -lassimp
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/libCGAL-vc140-mt-gd-4.8.1.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/CGAL-vc140-mt-gd-4.8.1.lib
+INCLUDEPATH += $$PWD/LIBS/assimp-3.2/include
+DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
-win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL_Core-vc140-mt-gd-4.8.1
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/assimp.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/libassimp.a
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL_Core-vc140-mt-gd-4.8.1.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL_Core-vc140-mt-gd-4.8.1.a
+win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/ -lpugixml
 
-win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL-vc140-mt-gd-4.8.1
+INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
+DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL-vc140-mt-gd-4.8.1.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL-vc140-mt-gd-4.8.1.a
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/pugixml.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/libpugixml.a

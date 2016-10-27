@@ -17,6 +17,18 @@
         return this->member_name; \
     }
 
+#define GL3D_UTILS_PROPERTY_FIX_BUG(member_name, ...) \
+    private: \
+    __VA_ARGS__ member_name;\
+    public: \
+    void set_##member_name(__VA_ARGS__ & member_name##_tag) { \
+        this->member_name = member_name##_tag; \
+    } \
+    __VA_ARGS__ get_##member_name() { \
+        return this->member_name; \
+    }
+
+
 #define GL3D_UTILS_PROPERTY_VIRTUAL(member_name, ...) \
     private: \
     __VA_ARGS__ member_name;\
@@ -79,7 +91,7 @@ namespace utils {
 namespace gl3d {
     namespace xml {
         template <typename T>
-        void save_vec_to_xml(T vec, pugi::xml_node & node) {
+        void save_vec_to_xml(T & vec, pugi::xml_node & node) {
             int dimenson = vec.length();
             node.append_attribute("type").set_value(QString::asprintf("glm_vec%i", dimenson).toStdString().c_str());
             for (int i = 0; i < vec.length(); i++) {
@@ -103,7 +115,7 @@ namespace gl3d {
         }
 
         template <typename T>
-        void save_mat_to_xml(T mt, pugi::xml_node & node) {
+        void save_mat_to_xml(T & mt, pugi::xml_node & node) {
             int dimeson = mt.length();
             node.append_attribute("type").set_value(QString::asprintf("glm_mat%i", dimeson).toStdString().c_str());
             for (int i = 0; i < mt.length(); i++) {

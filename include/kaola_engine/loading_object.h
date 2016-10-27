@@ -33,7 +33,7 @@ namespace gl3d {
     GL3D_UTILS_PROPERTY_GET_POINTER(sfcs, QVector<klm::Surface *>);
     GL3D_UTILS_PROPERTY(position, glm::vec3);
     GL3D_UTILS_PROPERTY(bounds, glm::vec3);
-    GL3D_UTILS_PROPERTY(roll_mat, glm::mat4);
+    GL3D_UTILS_PROPERTY_FIX_BUG(roll_mat, glm::mat4);
     GL3D_UTILS_PROPERTY(real_res_id, std::string);
     GL3D_UTILS_PROPERTY(loading_mtl, gl3d_material *);
     GL3D_UTILS_PROPERTY(is_picked, bool);

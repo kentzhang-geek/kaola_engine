@@ -241,7 +241,7 @@ bool scene::draw(bool use_global_shader) {
     return true;
 }
 
-static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 pvm) {
+static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 & pvm) {
     glm::vec3 bounding_box[8];
     for (int ii = 0; ii < 4; ii++) {
         bounding_box[ii] = xyzmax;
