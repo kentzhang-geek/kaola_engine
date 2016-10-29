@@ -11,6 +11,8 @@
 
 using namespace std;
 
+#include "editor/surface.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     auto ssize = QApplication::desktop()->availableGeometry();
@@ -28,8 +30,15 @@ MainWindow::MainWindow(QWidget *parent) :
     this->channel->registerObject(QStringLiteral("twin"), this);
 
     // test
-    gl3d_global_param::shared_instance()->sketch_mode = gl3d_global_param::new_plan;
-    this->on_testtiaozhuan_clicked();
+    QVector<glm::vec3> points;
+    points.clear();
+    points.append(glm::vec3(0.0, 0.0, 0.0));
+    points.append(glm::vec3(0.0, 0.0, 1.0));
+    points.append(glm::vec3(0.0, 1.0, 1.0));
+    points.append(glm::vec3(0.0, 1.0, 0.0));
+//    klm::Surface *s = new klm::Surface(points);
+
+    this->open_sketch("", "", "", "");
 }
 
 void MainWindow::web_loaded(bool ib) {

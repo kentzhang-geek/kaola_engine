@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 # root of your msvc14 x64 prebuild, there should be a `/lib/cmake` dir
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{QT5_DIR})
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.6.1/5.6/msvc2015_64") # remember to add `C:QtVS2015x64Qt5.6.05.6msvc2015_64bin` to %PATH%
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.7.0/5.7/msvc2015") # remember to add `C:QtVS2015x64Qt5.6.05.6msvc2015_64bin` to %PATH%
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(SRCS

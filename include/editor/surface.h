@@ -47,7 +47,7 @@
   *
   */
 
-#define TESS_DEBUG false
+#define TESS_DEBUG true
 #define CONN_DEBUG false
 #define LOADING_DEBUG false
 

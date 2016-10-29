@@ -192,29 +192,45 @@ macx: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/scripts/libpugixml.a
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL_Core-vc140-mt-4.8.1
-win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL-vc140-mt-4.8.1
-
 INCLUDEPATH += $$PWD/LIBS/cgal/include
 DEPENDPATH += $$PWD/LIBS/cgal/include
 INCLUDEPATH += $$PWD/LIBS/cgal_lib/include
 DEPENDPATH += $$PWD/LIBS/cgal_lib/include
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/CGAL_Core-vc140-mt-4.8.1.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/libCGAL_Core-vc140-mt-4.8.1.a
+#win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL_Core-vc140-mt-4.8.1
+#win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL-vc140-mt-4.8.1
 
-win32: LIBS += -L$$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/ -lassimp
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/CGAL_Core-vc140-mt-4.8.1.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Release/libCGAL_Core-vc140-mt-4.8.1.a
+
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Debug/ -lCGAL_Core-vc140-mt-gd-4.8.1
+win32: LIBS += -L$$PWD/LIBS/cgal_lib/lib/Release/ -lCGAL-vc140-mt-gd-4.8.1
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/CGAL_Core-vc140-mt-gd-4.8.1.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/cgal_lib/lib/Debug/libCGAL_Core-vc140-mt-gd-4.8.1.a
 
 INCLUDEPATH += $$PWD/LIBS/assimp-3.2/include
 DEPENDPATH += $$PWD/LIBS/assimp-3.2/include
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/assimp.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/libassimp.a
+#win32: LIBS += -L$$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/ -lassimp
 
-win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/ -lpugixml
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/assimp.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Release/libassimp.a
+
+win32: LIBS += -L$$PWD/LIBS/assimp_build/tools/assimp_cmd/Debug/ -lassimpd
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Debug/assimpd.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/assimp_build/tools/assimp_cmd/Debug/libassimpd.a
 
 INCLUDEPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 DEPENDPATH += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/src
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/pugixml.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/libpugixml.a
+#win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/ -lpugixml
+
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/pugixml.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Release/libpugixml.a
+
+win32: LIBS += -L$$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/ -lpugixml
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/pugixml.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/LIBS/pugixml-1.7/pugixml-1.7/scripts/vs2015/Win32_Debug/libpugixml.a
