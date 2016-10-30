@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     points.append(glm::vec3(0.0, 0.0, 1.0));
     points.append(glm::vec3(0.0, 1.0, 1.0));
     points.append(glm::vec3(0.0, 1.0, 0.0));
-//    klm::Surface *s = new klm::Surface(points);
+    klm::Surface *s = new klm::Surface(points);
 
     this->open_sketch("", "", "", "");
 }
