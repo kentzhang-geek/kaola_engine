@@ -764,7 +764,7 @@ void Surface::updateConnectionMesh(){
 
     } else {
         if(CONN_DEBUG){
-            cout<<"no connective surface for Surface ("<<this<<")";
+            qDebug()<<"no connective surface for Surface ("<<this<<")";
         }
     }
 }
@@ -789,7 +789,7 @@ bool Surface::tesselate(Surface *surface){
     }
     if(targetSurface != nullptr){
         if(TESS_DEBUG){
-            cout <<"Tessellation begin with target Surface is not null";
+            qDebug() <<"Tessellation begin with target Surface is not null";
         }
         return false;
     }
@@ -815,12 +815,12 @@ bool Surface::tesselate(Surface *surface){
 
     gluTessBeginPolygon(tess, 0);
     if(TESS_DEBUG){
-        cout<<"gluTessBeginPolygon(tess, 0);";
+        qDebug()<<"gluTessBeginPolygon(tess, 0);";
     }
     {
         gluTessBeginContour(tess);
         if(TESS_DEBUG){
-            cout<<"\tgluTessBeginContour(tess);";
+            qDebug()<<"\tgluTessBeginContour(tess);";
         }
 
         targetSurface->getLocalVertices(*verticies);
@@ -830,14 +830,14 @@ bool Surface::tesselate(Surface *surface){
             GLdouble *vertexDataElement = vertexData->getData();
             gluTessVertex(tess, vertexDataElement, vertexDataElement);
             if(TESS_DEBUG){
-                cout <<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
-                cout <<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")";
+                qDebug() <<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
+                qDebug() <<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")";
             }
         }
 
         gluTessEndContour(tess);
         if(TESS_DEBUG){
-            cout<<"\tgluTessEndContour(tess);";
+            qDebug()<<"\tgluTessEndContour(tess);";
         }
 
         for(QVector<Surface*>::iterator subSurface = targetSurface->subSurfaces->begin();
@@ -847,7 +847,7 @@ bool Surface::tesselate(Surface *surface){
 
             gluTessBeginContour(tess);
             if(TESS_DEBUG){
-                cout<<"\tgluTessBeginContour(tess);";
+                qDebug()<<"\tgluTessBeginContour(tess);";
             }
 
             for(QVector<Surface::Vertex*>::iterator vertex = verticies->begin();
@@ -857,20 +857,20 @@ bool Surface::tesselate(Surface *surface){
                 GLdouble* vertexDataElement = vertexData->getData();
                 gluTessVertex(tess, vertexDataElement, vertexDataElement);
                 if(TESS_DEBUG){
-                    cout<<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
-                    cout<<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")";
+                    qDebug()<<"\t\tgluTessVertex(tess, vertexDataElement, vertexDataElement);";
+                    qDebug()<<" ("<<vertexData->x()<<","<<vertexData->y()<<","<<vertexData->z()<<")";
                 }
             }
 
             gluTessEndContour(tess);
             if(TESS_DEBUG){
-                cout<<"\tgluTessEndContour(tess);";
+                qDebug()<<"\tgluTessEndContour(tess);";
             }
         }
     }
     gluTessEndPolygon(tess);
     if(TESS_DEBUG){
-        cout<<"gluTessEndPolygon(tess);";
+        qDebug()<<"gluTessEndPolygon(tess);";
     }
     targetSurface = nullptr;
     tess_locker.unlock();
@@ -898,7 +898,7 @@ void Surface::tessCombine(GLdouble coords[], GLdouble *vertex_data[],
 
 void Surface::tessBegin(GLenum type){
     if(TESS_DEBUG){
-        cout<<"tessellation process has began for Surface : ("
+        qDebug()<<"tessellation process has began for Surface : ("
             <<targetSurface<<")";
     }
     return;
@@ -938,10 +938,10 @@ void Surface::tessEnd(){
 void Surface::tessEdge(){return;}
 
 void Surface::tessError(GLenum type){
-    cout<<"Tessellation Error has been called";
+    qDebug()<<"Tessellation Error has been called";
     const GLubyte *errStr;
     errStr = gluErrorString(type);
-    cout<<"[ERROR] : "<<errStr;
+    qDebug()<<"[ERROR] : "<<errStr;
 }
 
 bool Surface::equalVecr(const glm::vec3 &v1, const glm::vec3 &v2){
@@ -1163,25 +1163,25 @@ bool Surface::readVerticies(const pugi::xml_node &node, QVector<Surface::Vertex 
 void Surface::vertexLogger(const QVector<Surface::Vertex *> &verticies,
                            const QVector<GLushort> &indicies,
                            const string title){
-    cout<<title.c_str()<<" : ";
-    cout<<"{";
+    qDebug()<<title.c_str()<<" : ";
+    qDebug()<<"{";
     for(QVector<Surface::Vertex*>::const_iterator vertex = verticies.begin();
         vertex != verticies.end(); ++vertex){
-        cout<<"{"<<(*vertex)->x()<<", "<<(*vertex)->y()<<", "<<(*vertex)->z()<<", "
+        qDebug()<<"{"<<(*vertex)->x()<<", "<<(*vertex)->y()<<", "<<(*vertex)->z()<<", "
            <<(*vertex)->w()<<", "<<(*vertex)->h()<<"},";
     }
-    cout<<"}";
+    qDebug()<<"}";
 
-    cout<<"indices = "<<"{";
+    qDebug()<<"indices = "<<"{";
     int cnt = 0;
     for(QVector<GLushort>::const_iterator index = indicies.begin();
         index != indicies.end(); ++index){
-        cout<<*index<<",";
+        qDebug()<<*index<<",";
         if(cnt++ % 3 == 0){
-            cout;
+            qDebug();
         }
     }
-    cout<<"}";
+    qDebug()<<"}";
 }
 
 Surface::Vertex::Vertex(){

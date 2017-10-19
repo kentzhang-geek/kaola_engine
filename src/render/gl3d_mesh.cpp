@@ -6,6 +6,7 @@
 //  Copyright © 2016年 Kent. All rights reserved.
 //
 
+#include "utils/gl3d_math.h"
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/gl3d_out_headers.h"
 

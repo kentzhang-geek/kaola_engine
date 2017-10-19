@@ -54,7 +54,6 @@ using namespace gl3d;
 void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
     this->this_property.global_shader.clear();
-    this->attached_sketch = NULL;
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
     //    using namespace Assimp;

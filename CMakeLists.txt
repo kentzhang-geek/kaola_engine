@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 2.8.11)
 
 # root of your msvc14 x64 prebuild, there should be a `/lib/cmake` dir
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{QT5_DIR})
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.7.0/5.7/msvc2015") # remember to add `C:QtVS2015x64Qt5.6.05.6msvc2015_64bin` to %PATH%
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.8.0/5.8/mingw53_32") # remember to add `C:QtVS2015x64Qt5.6.05.6msvc2015_64bin` to %PATH%
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(SRCS
+        demomainwindow.cpp
         src/Qt_tests/main.cpp
         src/Qt_tests/mainwindow.cpp
         src/Qt_tests/models_cfg.cpp
@@ -66,6 +67,7 @@ set(SRCS
         )
 
 set(qttest_MOCS
+        demomainwindow.h
         include/kaola_engine/gl3d.hpp
         include/kaola_engine/gl3d_framebuffer.hpp
         include/kaola_engine/gl3d_general_texture.hpp
@@ -132,17 +134,12 @@ include_directories(LIBS/glm_build)
 include_directories(include)
 include_directories(LIBS/assimp-3.2/include)
 include_directories(LIBS/pugixml-1.7/pugixml-1.7/src)
-include_directories(LIBS/boost_1_61_0)
-include_directories(LIBS/cgal/include)
-include_directories(LIBS/cgal_lib/include)
-include_directories(LIBS/cgal/auxiliary/gmp/include/)
-include_directories(../build-qttest-Desktop_Qt_5_6_1_MSVC2015_64bit-Debug)
+#include_directories()
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 qt5_wrap_ui(UI_HEADERS
-        src/Qt_tests/mainwindow.ui
-        src/Qt_tests/drawhomewin.ui
+        demomainwindow.ui
         src/utils/qui/frmmessagebox.ui
         ui/window_or_door_selected.ui
         ui/furniture_selected.ui

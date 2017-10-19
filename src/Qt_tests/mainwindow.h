@@ -26,11 +26,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     bool on_load_reload;
     ~MainWindow();
-    QWebEngineView * web;
     void resizeEvent(QResizeEvent *ev);
-    QWebChannel * channel;
-
-    klm::network::login_tool * lg;
     void keyPressEvent(QKeyEvent *event);
 
 public slots:

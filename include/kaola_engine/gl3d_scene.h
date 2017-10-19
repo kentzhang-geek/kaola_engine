@@ -24,9 +24,6 @@
 #include "kaola_engine/gl3d_framebuffer.hpp"
 #include "kaola_engine/gl3d_abstract_object.h"
 
-// klm layout scheme
-#include "editor/design_scheme.h"
-
 namespace gl3d {
     // 一个场景（scene）下有多个物件（object）与最多4个光源
     class scene : public utils::noncopyable {
@@ -264,8 +261,6 @@ namespace gl3d {
         // 屏幕长宽
         GL3D_UTILS_PROPERTY(width, GLfloat);
         GL3D_UTILS_PROPERTY(height, GLfloat);
-
-        GL3D_UTILS_PROPERTY(attached_sketch, klm::design::scheme *);
 
         // 设置输入参数位置
         static void set_attribute(GLuint pro);

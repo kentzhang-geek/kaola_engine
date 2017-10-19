@@ -6,6 +6,7 @@
 //  Copyright © 2016年 Kent. All rights reserved.
 //
 
+#include "utils/gl3d_math.h"
 #include "kaola_engine/gl3d.hpp"
 #include "kaola_engine/gl3d_out_headers.h"
 #include "kaola_engine/gl3d_material.hpp"
@@ -448,37 +449,38 @@ bool object::save_to_xml(pugi::xml_node &node) {
 }
 
 object *object::load_from_xml(pugi::xml_node node) {
-    QString type(node.attribute("type").value());
-    if (type != "gl3d_object") {
-        return NULL;
-    }
-    // load resource
-    QString resid(node.attribute("res_id").value());
-    object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
-            resid.toStdString())).c_str(), klm::resource::manager::get_base_path_by_resid(resid.toStdString()));
-    obj->set_obj_type((abstract_object::tag_obj_type) node.attribute("obj_type").as_int());
-    // abstract obj properties
-    obj->set_id(node.attribute("id").as_int());
-    // load position and rotate
-    glm::vec3 pos(0.0f);
-    glm::mat4 rot(1.0f);
-    gl3d::xml::load_xml_to_mat(node.child("rotate_mat"), rot);
-    gl3d::xml::load_xml_to_vec(node.child("position"), pos);
-    obj->get_property()->position = pos;
-    obj->get_property()->rotate_mat = rot;
-    obj->get_property()->scale_unit = scale::length_unit::mm; // TODO : almost every model are unit of mm
-//    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
-    // laod code
-    obj->set_control_authority(node.attribute("control_code_low").as_uint() |
-                               (((GLuint64) node.attribute("control_code_high").as_uint()) << 32));
-    obj->set_render_authority(node.attribute("render_code_low").as_uint() |
-                              (((GLuint64) node.attribute("render_code_high").as_uint()) << 32));
-    // preprocess
-    obj->pre_scale();
-    obj->merge_meshes();
-    obj->recalculate_normals();
-    obj->convert_left_hand_to_right_hand();
-    return obj;
+    throw std::runtime_error("not xml");
+//    QString type(node.attribute("type").value());
+//    if (type != "gl3d_object") {
+//        return NULL;
+//    }
+//    // load resource
+//    QString resid(node.attribute("res_id").value());
+//    object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
+//            resid.toStdString())).c_str(), klm::resource::manager::get_base_path_by_resid(resid.toStdString()));
+//    obj->set_obj_type((abstract_object::tag_obj_type) node.attribute("obj_type").as_int());
+//    // abstract obj properties
+//    obj->set_id(node.attribute("id").as_int());
+//    // load position and rotate
+//    glm::vec3 pos(0.0f);
+//    glm::mat4 rot(1.0f);
+//    gl3d::xml::load_xml_to_mat(node.child("rotate_mat"), rot);
+//    gl3d::xml::load_xml_to_vec(node.child("position"), pos);
+//    obj->get_property()->position = pos;
+//    obj->get_property()->rotate_mat = rot;
+//    obj->get_property()->scale_unit = scale::length_unit::mm; // TODO : almost every model are unit of mm
+////    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
+//    // laod code
+//    obj->set_control_authority(node.attribute("control_code_low").as_uint() |
+//                               (((GLuint64) node.attribute("control_code_high").as_uint()) << 32));
+//    obj->set_render_authority(node.attribute("render_code_low").as_uint() |
+//                              (((GLuint64) node.attribute("render_code_high").as_uint()) << 32));
+//    // preprocess
+//    obj->pre_scale();
+//    obj->merge_meshes();
+//    obj->recalculate_normals();
+//    obj->convert_left_hand_to_right_hand();
+    return NULL;
 }
 
 bool object::scale_model(glm::vec3 xyz, bool keep_texture_ratio) {
