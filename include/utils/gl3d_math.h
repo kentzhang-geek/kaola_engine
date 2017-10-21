@@ -66,6 +66,7 @@ namespace gl3d {
 
             glm::vec3 get_normal() const;
 
+            static triangle_facet performTrans(glm::mat4 trans, triangle_facet facet);
         };
 
         bool get_cross(const line_2d &l1, const line_2d &l2, glm::vec2 &cross_point);
@@ -214,6 +215,18 @@ namespace gl3d {
 
         // note calculate angle only support when axis is (0.0f, 1.0f, 0.0f)
         float calculate_angle_by_mat(glm::mat4 & rot_mat);
+
+        // note all 6 facet should has normal point to iner space
+        bool pointInCube(glm::vec3 point, QList<math::triangle_facet> cube);
+
+        // note all point are in right hand coordination
+        QList<math::triangle_facet> cubeFromBoundry(glm::vec3 boundMin,
+                                                    glm::vec3 boundMax,
+                                                    glm::mat4 modelMat = glm::mat4(1.0f));
+
+        QList<glm::vec3> vertsFromBoundry(glm::vec3 boundMin,
+                                                    glm::vec3 boundMax,
+                                                    glm::mat4 modelMat = glm::mat4(1.0f));
     }
 }
 

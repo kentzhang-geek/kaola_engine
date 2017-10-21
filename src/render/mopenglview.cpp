@@ -218,18 +218,15 @@ void MOpenGLView::initializeGL() {
 
 void MOpenGLView::view_change() {
     if (this->key_press == Qt::Key_A) {
-        this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0));
-    }
-    if (this->key_press == Qt::Key_S) {
-        this->main_scene->watcher->change_position(glm::vec3(0.0, -1.0, 0.0));
-    }
-    if (this->key_press == Qt::Key_D) {
-        this->main_scene->watcher->change_position(glm::vec3(1.0, 0.0, 0.0));
-    }
-    if (this->key_press == Qt::Key_W) {
-        this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0));
+        this->main_scene->watcher->change_position(glm::vec3(-1.0, 0.0, 0.0) * 0.04);
+    } else if (this->key_press == Qt::Key_S) {
+        this->main_scene->watcher->change_position(glm::vec3(0.0, -1.0, 0.0) * 0.04);
+    } else if (this->key_press == Qt::Key_D) {
+        this->main_scene->watcher->change_position(glm::vec3(1.0, 0.0, 0.0) * 0.04);
+    } else if (this->key_press == Qt::Key_W) {
+        this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0) * 0.04);
     } else if (this->key_press == Qt::Key_Space) {
-        this->main_scene->watcher->change_position(glm::vec3(0.0, 0.0, 1.0));
+        this->main_scene->watcher->change_position(glm::vec3(0.0, 0.0, 1.0) * 0.04);
     }
 
     if (this->main_scene != NULL) {

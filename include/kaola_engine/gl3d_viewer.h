@@ -90,6 +90,12 @@ namespace gl3d {
         void updateArcballRotate(QPoint mousept);
         void endArcballRotate();
         GL3D_UTILS_PROPERTY(arc_ball_coord, ::glm::vec3);
+
+        // advanced : pointInFrustum
+        bool pointInFrustum(glm::vec3 pt);
+
+    private:
+        const float maxViewDistance = 1000.0f;
     };
 }
 

@@ -32,6 +32,19 @@ glm::vec3 triangle_facet::get_normal() const {
     return nor;
 }
 
+triangle_facet triangle_facet::performTrans(glm::mat4 trans, triangle_facet facet) {
+    glm::vec4 newa = trans * glm::vec4(facet.a, 1.0f);
+    glm::vec4 newb = trans * glm::vec4(facet.b, 1.0f);
+    glm::vec4 newc = trans * glm::vec4(facet.c, 1.0f);
+    newa = newa / newa.w;
+    newb = newb / newb.w;
+    newc = newc / newc.w;
+    return  triangle_facet(
+            glm::vec3(newa),
+            glm::vec3(newb),
+            glm::vec3(newc));
+}
+
 bool triangle_facet::is_point_in_facet(glm::vec3 pt) const {
     // TODO : this has bug!
     if (0.00001 < gl3d::math::point_distance_to_facet(*this, pt)) {
@@ -296,6 +309,87 @@ float math::calculate_angle_by_mat(glm::mat4 & rot_mat) {
         return 360.0f - glm::degrees(glm::acos(glm::dot(src, tgt)));
     }
 }
+
+bool math::pointInCube(glm::vec3 point, QList<math::triangle_facet> cube) {
+    for (auto facet : cube) {
+        if (glm::dot(
+                glm::normalize(point - facet.a),
+                facet.get_normal()
+        ) < 0)
+            return false;
+    }
+    return true;
+}
+
+QList<math::triangle_facet> math::cubeFromBoundry(glm::vec3 boundMin, glm::vec3 boundMax, glm::mat4 modelMat) {
+    glm::vec3 left_top_near = glm::vec3(boundMin.x, boundMax.y, boundMin.z);
+    glm::vec3 left_top_far = glm::vec3(boundMin.x, boundMax.y, boundMax.z);
+    glm::vec3 left_bottom_near = glm::vec3(boundMin.x, boundMin.y, boundMin.z);
+    glm::vec3 left_bottom_far = glm::vec3(boundMin.x, boundMin.y, boundMax.z);
+    glm::vec3 right_top_near = glm::vec3(boundMax.x, boundMax.y, boundMin.z);
+    glm::vec3 right_top_far = glm::vec3(boundMax.x, boundMax.y, boundMax.z);
+    glm::vec3 right_bottom_near = glm::vec3(boundMax.x, boundMin.y, boundMin.z);
+    glm::vec3 right_bottom_far = glm::vec3(boundMax.x, boundMin.y, boundMax.z);
+
+    // trans
+    QList<gl3d::math::triangle_facet> cube;
+    cube.append(gl3d::math::triangle_facet(
+            left_top_near,
+            left_bottom_near,
+            left_bottom_far
+    ));
+    cube.append(gl3d::math::triangle_facet(
+            left_top_far,
+            left_bottom_far,
+            right_bottom_far
+    ));
+    cube.append(gl3d::math::triangle_facet(
+            right_bottom_near,
+            left_bottom_near,
+            left_top_near
+    ));
+    cube.append(gl3d::math::triangle_facet(
+            right_bottom_near,
+            right_top_near,
+            right_top_far
+    ));
+    cube.append(gl3d::math::triangle_facet(
+            right_top_near,
+            left_top_near,
+            left_top_far
+    ));
+    cube.append(gl3d::math::triangle_facet(
+            left_bottom_near,
+            right_bottom_near,
+            right_bottom_far
+    ));
+
+    QList<triangle_facet> retcube;
+    for (auto facet : cube) {
+        retcube.append(triangle_facet::performTrans(modelMat, facet));
+    }
+    return retcube;
+}
+
+QList<glm::vec3> gl3d::math::vertsFromBoundry(glm::vec3 boundMin, glm::vec3 boundMax, glm::mat4 modelMat) {
+    QList<glm::vec3> pts;
+    pts.append(glm::vec3(boundMin.x, boundMax.y, boundMin.z));
+    pts.append(glm::vec3(boundMin.x, boundMax.y, boundMax.z));
+    pts.append(glm::vec3(boundMin.x, boundMin.y, boundMin.z));
+    pts.append(glm::vec3(boundMin.x, boundMin.y, boundMax.z));
+    pts.append(glm::vec3(boundMax.x, boundMax.y, boundMin.z));
+    pts.append(glm::vec3(boundMax.x, boundMax.y, boundMax.z));
+    pts.append(glm::vec3(boundMax.x, boundMin.y, boundMin.z));
+    pts.append(glm::vec3(boundMax.x, boundMin.y, boundMax.z));
+    QList<glm::vec3> retpts;
+    for (auto pt : pts) {
+        glm::vec4 tpt(modelMat * glm::vec4(pt, 1.0f));
+        tpt = tpt / tpt.w;
+        retpts.append(glm::vec3(tpt));
+    }
+    return retpts;
+}
+
 
 #if 0
 #include <QString>

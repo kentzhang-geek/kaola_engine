@@ -17,6 +17,7 @@
 #include "kaola_engine/gl3d_framebuffer.hpp"
 #include "utils/gl3d_lock.h"
 #include <QDateTime>
+#include <include/utils/gl3d_math.h>
 #include "utils/gl3d_path_config.h"
 
 std::string gl3d_sandbox_path;
@@ -335,7 +336,6 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     // TODO : temporary bug fix, intend to stop wall blink
     if (obj->get_obj_type() != obj->type_wall)
         obj->buffer_data();
-
 
     // TODO : set matrix
     // set MVP
