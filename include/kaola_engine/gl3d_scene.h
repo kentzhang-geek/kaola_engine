@@ -274,6 +274,10 @@ namespace gl3d {
 
         // image for draw assistant lines
     GL3D_UTILS_PROPERTY(assistant_image, QImage *);
+        // objects in sketch
+    GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
+        // light source in sketch
+    GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 //    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
     private:

@@ -49,6 +49,10 @@ public:
     GL3D_UTILS_PROPERTY(pick_flag, bool );
     GL3D_UTILS_PROPERTY(control_authority, GLuint64 ); //64种控制权限，在gl3d_obj_authority.h中查看
     GL3D_UTILS_PROPERTY(render_authority, GLuint64 ); // 64种绘制权限，在gl3d_obj_authority.h中查看
+    enum tag_coordinate_system {
+        left_hand = 0,
+        right_hand
+    } coordinate_system;
     virtual void buffer_data();
 };
 }

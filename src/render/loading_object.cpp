@@ -1,5 +1,4 @@
 #include "kaola_engine/loading_object.h"
-#include "editor/surface.h"
 
 using namespace gl3d;
 using namespace klm;

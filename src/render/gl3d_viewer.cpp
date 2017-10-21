@@ -88,10 +88,11 @@ bool viewer::position(::glm::vec3 position) {
 bool viewer::change_position(::glm::vec3 val) {
     if (this->view_mode == viewer::normal_view) {
         // 前进值
-        ::glm::vec3 f = val.y * ::glm::normalize(::glm::vec3(this->look_direction.x, 0.0, this->look_direction.z));
+        ::glm::vec3 f = val.y * ::glm::normalize(this->look_direction);
         // 平移值
         ::glm::vec3 r = glm::normalize(::glm::cross(::glm::vec3(this->look_direction.x, 0.0, this->look_direction.z), glm::vec3(0.0, 1.0, 0.0))) * val.x;
         this->current_position += (f + r);
+        this->current_position += glm::vec3(0, val.z, 0);
     }
     if (this->view_mode == viewer::top_view) {
         val.x = -val.x;
@@ -228,4 +229,44 @@ void viewer::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hig
     else {
         this->coord_ground_project(coord_in, coord_out, hight);
     }
+}
+
+void viewer::startArcballRotate(QPoint mousept) {
+    glm::vec2 scrPt(
+            mousept.x() / this->width * 2.0f - 1.0f,
+            1.0f - mousept.y() / this->height * 2.0f
+    );
+    qDebug() << scrPt.x;
+    qDebug() << scrPt.y;
+    scrPt = scrPt / glm::sqrt(2.0f);
+    this->arc_ball_coord = glm::vec3(
+            scrPt.x,
+            scrPt.y,
+            glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
+    );
+}
+
+void viewer::updateArcballRotate(QPoint mousept) {
+    glm::vec2 scrPt(
+            mousept.x() / this->width * 2.0f - 1.0f,
+            1.0f - mousept.y() / this->height * 2.0f
+    );
+    scrPt = scrPt / glm::sqrt(2.0f);
+    glm::vec3 newArcPt(
+            scrPt.x,
+            scrPt.y,
+            glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
+    );
+    glm::vec3 axis = glm::cross(newArcPt, this->arc_ball_coord);
+    float angle = glm::dot(newArcPt, this->arc_ball_coord);
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
+    glm::vec4 newDir = glm::vec4(look_direction, 1.0f) * rot;
+    newDir = newDir / newDir.w;
+    look_direction = glm::vec3(newDir);
+    arc_ball_coord = newArcPt;
+    this->calculate_mat();
+}
+
+void viewer::endArcballRotate() {
+    this->arc_ball_coord = glm::vec3(-1.0f);
 }

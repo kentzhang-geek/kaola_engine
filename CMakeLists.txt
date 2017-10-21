@@ -1,4 +1,4 @@
-project(qttest)
+project(qttest C CXX)
 cmake_minimum_required(VERSION 2.8.11)
 
 # root of your msvc14 x64 prebuild, there should be a `/lib/cmake` dir
@@ -7,6 +7,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.8.0/5.8/mingw53_32") # rem
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(SRCS
+        src/editor/klm_surface.cpp
         demomainwindow.cpp
         src/Qt_tests/main.cpp
         src/Qt_tests/mainwindow.cpp
@@ -53,7 +54,6 @@ set(SRCS
         src/render/gl3d_abstract_object.cpp
         src/editor/surface.cpp
         src/editor/merchandise.cpp
-        src/resource_and_network/klm_resource_manager.cpp
         src/utils/io_utility.cpp
         src/resource_and_network/global_material.cpp
         src/editor/design_scheme.cpp
@@ -62,7 +62,6 @@ set(SRCS
         src/editor/gl3d_door.cpp
         src/editor/gl3d_window.cpp
         src/editor/style_package.cpp
-        src/resource_and_network/network_tool.cpp
         src/resource_and_network/pack_tool.cpp
         )
 
@@ -115,7 +114,6 @@ set(qttest_MOCS
         include/kaola_engine/gl3d_abstract_object.h
         include/editor/surface.h
         include/editor/merchandise.h
-        include/resource_and_network/klm_resource_manager.h
         include/utils/io_utility.h
         include/resource_and_network/global_material.h
         include/editor/design_scheme.h
@@ -125,25 +123,24 @@ set(qttest_MOCS
         include/editor/gl3d_window.h
         include/editor/sign_config.h
         include/editor/style_package.h
-        include/resource_and_network/network_tool.h
         include/resource_and_network/pack_tool.h
         include/resource_and_network/global_info.h
         )
 
+include_directories(../build-qttest-Desktop_Qt_5_8_0_MinGW_32bit-Release)
 include_directories(LIBS/glm_build)
 include_directories(include)
 include_directories(LIBS/assimp-3.2/include)
-include_directories(LIBS/pugixml-1.7/pugixml-1.7/src)
-#include_directories()
+include_directories(LIBS/pugixml-1.7/install/include)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
-qt5_wrap_ui(UI_HEADERS
-        demomainwindow.ui
-        src/utils/qui/frmmessagebox.ui
-        ui/window_or_door_selected.ui
-        ui/furniture_selected.ui
-        )
+#qt5_wrap_ui(UI_HEADERS
+#        demomainwindow.ui
+#        src/utils/qui/frmmessagebox.ui
+#        ui/window_or_door_selected.ui
+#        ui/furniture_selected.ui
+#        )
 
 qt5_add_resources(QRCS res.qrc)
 add_executable(${PROJECT_NAME} ${SRCS} ${UI_HEADERS} ${QRCS})

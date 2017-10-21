@@ -29,10 +29,9 @@ int main(int argc, char *argv[])
 //    myHelper::SetStyle("navy");//天蓝色风格
     myHelper::SetChinese();
 
-    DemoMainWindow w;
-    w.show();
-
     try {
+        DemoMainWindow w;
+        w.show();
         return a.exec();
     }
     catch (QString err) {

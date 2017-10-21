@@ -2,7 +2,6 @@
 #include "pickupdig.h"
 #include "ui_window_or_door_selected.h"
 #include "ui_furniture_selected.h"
-#include "editor/surface.h"
 
 PickupDig::PickupDig(QWidget *parent, int x, int y, int pickUpObjID, gl3d::scene *sc, klm::design::scheme *sch,
                      glm::vec2 cd_scr) {

@@ -36,25 +36,27 @@ void model_manager::release_loaders() {
 }
 
 void model_manager::init_objs(gl3d::scene *main_scene) {
-    GL3D_UTILS_THROW("deprecated class model_manager");
-    auto iter = this->models.begin();
     this->available_id = 0;
     gl3d::object * obj_tmp;
-    for (; iter != this->models.end(); iter++) {
-//        obj_tmp = new gl3d::object((char *)(gl3d_sandbox_path + GL3D_PATH_SEPRATOR + (*iter)->file_name).c_str());
-        (*iter)->obj = obj_tmp;
+    for (auto param : this->models) {
+        obj_tmp = new gl3d::object((char *)(QString(GL3D_PATH_MODELS) + GL3D_PATH_SEPRATOR + param->file_name.c_str()).toStdString().c_str(), GL3D_PATH_MODELS);
+        param->obj = obj_tmp;
         // 默认参数
         ::gl3d::obj_property * obj_pro = obj_tmp->get_property();
         obj_pro->scale_unit = gl3d::scale::mm;
-        (*iter)->set_param();
+        obj_tmp->coordinate_system = abstract_object::left_hand;
+        param->set_param();
         // 合并顶点重算法向量
         obj_tmp->merge_meshes();
         obj_tmp->recalculate_normals();
-        obj_tmp->convert_left_hand_to_right_hand();
+        if (obj_tmp->coordinate_system == abstract_object::left_hand) {
+            obj_tmp->convert_left_hand_to_right_hand();
+            obj_tmp->coordinate_system = abstract_object::right_hand;
+        }
         this->available_id =
-        ((*iter)->id > this->available_id) ?
-        ((*iter)->id) : this->available_id;
-        main_scene->add_obj((*iter)->id, obj_tmp);
+                (param->id > this->available_id) ?
+                (param->id) : this->available_id;
+        main_scene->add_obj(param->id, obj_tmp);
     }
 }
 
@@ -73,9 +75,8 @@ model_param::model_param() : id(-1), file_name(string("")), obj(NULL) {
 }
 
 void model_manager::add_obj_to_scene(gl3d::scene *scene, char *obj_filename, glm::vec2 coord) {
-    GL3D_UTILS_THROW("deprecated class");
     // 新建obj
-    gl3d::object * obj = NULL; //new object((char *)( GL3D_PATH_SEPRATOR + obj_filename).c_str());
+    gl3d::object * obj = new object(GL3D_PATH_MODELS, obj_filename);new gl3d::object((char *)(QString(GL3D_PATH_MODELS) + GL3D_PATH_SEPRATOR + obj_filename).toStdString().c_str(), GL3D_PATH_MODELS);
     // 默认参数
     ::gl3d::obj_property * obj_pro = obj->get_property();
     obj_pro->scale_unit = gl3d::scale::mm;

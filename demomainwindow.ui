@@ -58,7 +58,7 @@
      </layout>
     </item>
     <item>
-     <widget class="MOpenGLView" name="openGLWidget">
+     <widget class="MOpenGLView" name="glview">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>

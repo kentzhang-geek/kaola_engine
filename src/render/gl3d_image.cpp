@@ -34,9 +34,18 @@ gl3d_image::~gl3d_image() {
 gl3d_image::gl3d_image(char * f) {
     this->init();
     this->name = std::string(f);
-    
+
+    if (QString(f).endsWith(".tga")) {
+        this->load_tga(f);
+    } else {
+        this->load_jpg(f);
+    }
+}
+
+void gl3d_image::load_tga(char *f) {
     QString filename(f);
-    QImage img(filename);
+    qDebug() << QPixmap(f).size();
+    QImage img = QPixmap(filename).toImage();
 
     QString log("Load Image : ");
     log.append(filename);
@@ -46,10 +55,10 @@ gl3d_image::gl3d_image(char * f) {
         throw std::runtime_error("Load image");
         return;
     }
-    
+
     this->width = img.width();
     this->height = img.height();
-    
+
     // 调整下大小
     this->width = resize_pixel(this->width);
     this->height = resize_pixel(this->height);
@@ -63,7 +72,44 @@ gl3d_image::gl3d_image(char * f) {
     }
 
     this->data = (GLubyte *) calloc(width*height*4, sizeof(GLubyte));
-            
+
+    // Color space
+    this->color_property = gl3d_image::color_space::CS_RGBA8888;
+
+    // copy data
+    memcpy(this->data, img.bits(), width*height*4);
+}
+
+void gl3d_image::load_jpg(char *f) {
+    QString filename(f);
+    QImage img(filename);
+
+    QString log("Load Image : ");
+    log.append(filename);
+
+    if (img.isNull()) {
+        log_c("Failed to load image %s", f);
+        throw std::runtime_error("Load image");
+        return;
+    }
+
+    this->width = img.width();
+    this->height = img.height();
+
+    // 调整下大小
+    this->width = resize_pixel(this->width);
+    this->height = resize_pixel(this->height);
+
+    img = img.scaled(QSize(this->width, this->height), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    img = img.convertToFormat(QImage::Format_RGBA8888);
+    if (QImage::Format_RGBA8888 != img.format()) {
+        log_c("Image %s format is not rgba8888", f);
+        throw std::runtime_error("Load Image format");
+        return ;
+    }
+
+    this->data = (GLubyte *) calloc(width*height*4, sizeof(GLubyte));
+
     // Color space
     this->color_property = gl3d_image::color_space::CS_RGBA8888;
 

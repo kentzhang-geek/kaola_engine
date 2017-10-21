@@ -84,6 +84,12 @@ namespace gl3d {
         void coord_ground_ortho(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
         void coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hight);
         void calculate_mat();
+
+        // arc ball
+        void startArcballRotate(QPoint mousept);
+        void updateArcballRotate(QPoint mousept);
+        void endArcballRotate();
+        GL3D_UTILS_PROPERTY(arc_ball_coord, ::glm::vec3);
     };
 }
 

@@ -41,7 +41,7 @@ SOURCES += \
     src/render/render_addons/gl3d_post_process_template.cpp \
     src/render/gl3d_general_light_source.cpp \
     src/render/light_system/simple_directional_light.cpp \
-    src/Qt_tests/ui/pickupdig.cpp \
+#    src/Qt_tests/ui/pickupdig.cpp \
     src/editor/bounding_box.cpp \
     src/editor/vertex.cpp \
     src/editor/gl_utility.cpp \
@@ -51,16 +51,16 @@ SOURCES += \
     src/Qt_tests/ui/drawoption.cpp \
     src/utils/qui/frmmessagebox.cpp \
     src/utils/qui/iconhelper.cpp \
-    src/editor/gl3d_surface_object.cpp \
+#    src/editor/gl3d_surface_object.cpp \
     src/render/gl3d_abstract_object.cpp \
-    src/editor/surface.cpp \
+#    src/editor/surface.cpp \
     src/editor/merchandise.cpp \
     src/utils/io_utility.cpp \
-    src/resource_and_network/global_material.cpp \
-    src/render/loading_object.cpp \
-    src/editor/gl3d_door.cpp \
-    src/editor/gl3d_window.cpp \
-    src/editor/style_package.cpp \
+#    src/resource_and_network/global_material.cpp \
+#    src/render/loading_object.cpp \
+#    src/editor/gl3d_door.cpp \
+#    src/editor/gl3d_window.cpp \
+#    src/editor/style_package.cpp \
     demomainwindow.cpp
 
 HEADERS  += \
@@ -93,10 +93,10 @@ HEADERS  += \
     include/utils/gl3d_post_process_template.h \
     include/kaola_engine/gl3d_general_light_source.h \
     include/editor/bounding_box.h \
-    src/Qt_tests/drawhomewin.h \
+#    src/Qt_tests/drawhomewin.h \
     include/editor/vertex.h \
     include/utils/gl3d_path_config.h \
-    src/Qt_tests/ui/pickupdig.h \
+#    src/Qt_tests/ui/pickupdig.h \
     include/editor/gl_utility.h \
     include/utils/gl3d_lock.h \
     include/utils/gl3d_math.h \
@@ -104,24 +104,23 @@ HEADERS  += \
     src/utils/qui/frmmessagebox.h \
     src/utils/qui/iconhelper.h \
     src/utils/qui/myhelper.h \
-    include/editor/gl3d_surface_object.h \
+#    include/editor/gl3d_surface_object.h \
     include/kaola_engine/gl3d_abstract_object.h \
-    include/editor/surface.h \
+#    include/editor/surface.h \
     include/editor/merchandise.h \
     include/utils/io_utility.h \
-    include/resource_and_network/global_material.h \
-    include/kaola_engine/loading_object.h \
-    include/editor/gl3d_door.h \
-    include/editor/gl3d_window.h \
+#    include/resource_and_network/global_material.h \
+#    include/kaola_engine/loading_object.h \
+#    include/editor/gl3d_door.h \
+#    include/editor/gl3d_window.h \
     include/editor/sign_config.h \
-    include/editor/style_package.h \
+#    include/editor/style_package.h \
     include/resource_and_network/network_tool.h \
-    include/resource_and_network/pack_tool.h \
+#    include/resource_and_network/pack_tool.h \
     include/resource_and_network/global_info.h \
     demomainwindow.h
 
 FORMS    += \
-    src/Qt_tests/mainwindow.ui \
     src/utils/qui/frmmessagebox.ui \
     ui/window_or_door_selected.ui \
     ui/furniture_selected.ui \

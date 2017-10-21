@@ -17,6 +17,7 @@
 #include "kaola_engine/gl3d_framebuffer.hpp"
 #include "utils/gl3d_lock.h"
 #include <QDateTime>
+#include "utils/gl3d_path_config.h"
 
 std::string gl3d_sandbox_path;
 
@@ -94,26 +95,26 @@ bool scene::init(scene_property * property) {
 bool scene::add_obj(int key, abstract_object * obj) {
     obj->set_id(key);
     obj->buffer_data();
-    return this->attached_sketch->add_obj(key, obj);
+    this->objects.insert(key, obj);
+    return true;
 }
 
 bool scene::delete_obj(int key) {
-    return this->attached_sketch->del_obj(key);
+    this->objects.remove(key);
+    return true;
 }
 
 gl3d::abstract_object * scene::get_obj(int key) {
-    return this->attached_sketch->get_obj(key);
+    if (this->objects.contains(key)) {
+        return this->objects.value(key);
+    }
+    return NULL;
 }
 
 bool scene::prepare_buffer() {
-    auto itera = this->attached_sketch->get_objects()->begin();
-    gl3d::abstract_object * obj = NULL;
-    for (; itera != this->attached_sketch->get_objects()->end(); itera++) {
-        obj = itera.value();
-        // buffer data
-        obj->buffer_data();
+    for (auto objit : this->objects.values()) {
+        objit->buffer_data();
     }
-    
     return true;
 }
 
@@ -204,8 +205,8 @@ bool scene::draw(bool use_global_shader) {
     shader_param * param;
     
     // 遍历object去渲染物体
-    auto iter_objs = this->attached_sketch->get_objects()->begin();     // 遍历所有object
-    while (iter_objs != this->attached_sketch->get_objects()->end()) {
+    auto iter_objs = this->objects.begin();     // 遍历所有object
+    while (iter_objs != this->objects.end()) {
         current_obj = iter_objs.value();
         int cuid_tmp = iter_objs.key();
         //        cout << "current obj id " << (*iter_objs).first << endl;
@@ -232,7 +233,7 @@ bool scene::draw(bool use_global_shader) {
         else {
             GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), this->this_property.global_shader.toUtf8().data());
             // TODO : 这里删除的话会报错
-            iter_objs = this->attached_sketch->get_objects()->erase(iter_objs);  // 不再绘制当前未找到shader的物件
+            iter_objs = this->objects.erase(iter_objs);  // 不再绘制当前未找到shader的物件
         }
     }
     GL3D_GL()->glBindVertexArray(0);
@@ -496,8 +497,8 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (this->attached_sketch->get_objects()->contains(obj_id)) {
-            if (!(this->attached_sketch->get_obj(obj_id)->get_control_authority() & GL3D_OBJ_ENABLE_PICKING)) {
+        if (this->objects.contains(obj_id)) {
+            if (!(this->get_obj(obj_id)->get_control_authority() & GL3D_OBJ_ENABLE_PICKING)) {
                 obj_id = -1;
             }
         }
@@ -703,7 +704,11 @@ QImage* scene::draw_screenshot() {
     this->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NET;
     this->prepare_canvas(false);
     object *oo = draw_coord();
-    int id = this->attached_sketch->find_available_id();
+    int id = 1;
+    for (auto objkeyit : this->objects.keys()) {
+        id = glm::max(id, objkeyit);
+    }
+    id++;
     this->add_obj(23332, oo);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     GL3D_GL()->glViewport(0, 0, _width, _height);

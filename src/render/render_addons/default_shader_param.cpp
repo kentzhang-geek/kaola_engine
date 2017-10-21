@@ -264,6 +264,11 @@ GL3D_SHADER_PARAM(multiple_text_vector_shadow) {
 
     GL3D_SET_VEC3(shadow_center_input, shadow_center, pro);
     GL3D_SET_MAT4(transmtx, trans, pro);
+
+    if (obj->get_pick_flag()) {
+        GLfloat pickParam = 0.3f * (glm::sin(QDateTime::currentDateTime().toTime_t())) + 0.7;
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "param_x"), pickParam);
+    }
     
     return true;
 }

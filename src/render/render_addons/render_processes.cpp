@@ -39,12 +39,12 @@ private:
 GL3D_ADD_RENDER_PROCESS(normal);
 
 void normal::invoke() {
-    has_drawed = false;
+//    has_drawed = false;
 }
 
 void normal::pre_render() {
-    if (has_drawed)
-        return;
+//    if (has_drawed)
+//        return;
     // 先绘制阴影贴图，给阴影贴图shader添加一下参数
     gl3d::scene *one_scene = this->get_attached_scene();
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("shadow_mask");
@@ -230,7 +230,7 @@ public:
 
     void render() {
         gl3d::scene *one_scene = this->get_attached_scene();
-        one_scene->get_attached_sketch()->draw_assistant_image(one_scene->get_assistant_image());
+//        one_scene->get_attached_sketch()->draw_assistant_image(one_scene->get_assistant_image());
         GL3D_GL()->glViewport(0, 0, one_scene->get_width(), one_scene->get_height());
 
         // 选择全局渲染器渲染地面网格

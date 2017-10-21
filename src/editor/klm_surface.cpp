@@ -1,629 +1,605 @@
-#include "editor/klm_surface.h"
-#include <QMutex>
-#include <iostream>
+#include "include/kaola_engine/glheaders.h"
 
-using namespace klm;
-using namespace std;
+#ifndef _ArcBall_h
+#define _ArcBall_h
 
-static QMutex tess_mutex;
+#include <stdlib.h>
 
-Surface::Surface(const QVector<glm::vec3> &points) throw(SurfaceException) :
-    visible(true), parent(nullptr), subSurfaces(new QVector<Surface*>),
-    renderVertices(nullptr), renderIndicies(nullptr),
-    translateFromParent(nullptr), debug(false),
-    connectiveVerticies(nullptr), connectiveIndicies(nullptr){
-    if(points.size() < 3){
-        throw SurfaceException("can not create Surface using less then three points");
-    }
-    glm::vec3 planNormal = GLUtility::getPlaneNormal(points);
-    if(planNormal == GLUtility::NON_NORMAL){
-        throw SurfaceException("can not create Surface with points not in same plane");
-    }
+// 仅在Debug模式下，启用断言
+#ifdef _DEBUG
+# include "assert.h"
+#else
+# define assert(x) { }
+#endif
 
-    localVertices = new QVector<Vertex*>();
-//    verticesToParent = new QVector<Vertex*>();
 
-    collisionTester = new bg_Polygon();
-
-    boundingBox = new BoundingBox(points);    
-    glm::vec3 center = boundingBox->getCenter();
-    glm::mat4 rotation;
-    initNormal = planNormal;
-    GLUtility::getRotation(planNormal, GLUtility::Z_AXIS, rotation);    
-
-    for(QVector<glm::vec3>::const_iterator point = points.begin();
-        point != points.end(); ++point){
-
-        Vertex* vertex = new Vertex(*point);
-//        verticesToParent->push_back(vertex);
-
-        vertex = new Vertex(*point);
-        vertex->setX(vertex->getX() - center.x);
-        vertex->setY(vertex->getY() - center.y);
-        vertex->setZ(vertex->getZ() - center.z);
-
-        GLUtility::positionTransform(*vertex, rotation);
-
-        localVertices->push_back(vertex);        
-        collisionTester->outer().push_back(bg_Point((*point).x, (*point).y));        
-    }    
-
-    delete boundingBox;
-
-    boundingBox = new BoundingBox(*localVertices);
-    boundingBox->genTexture(*localVertices);   
-
-
-    rotation = glm::inverse(rotation);
-    transFromParent = new glm::mat4(glm::translate(center) * rotation);
-    updateVertices();
-}
-
-Surface::~Surface(){
-    if(transFromParent != nullptr){
-        delete transFromParent;
-    }
-    if(translateFromParent != nullptr){
-        delete translateFromParent;
-    }
-    deleteVertices(localVertices);
-//    deleteVertices(verticesToParent);
-}
-
-void Surface::getSurfaceVertices(QVector<Vertex*> &localVertices) const{
-    for(QVector<Vertex*>::iterator vertex = this->localVertices->begin();
-        vertex != this->localVertices->end(); ++vertex){
-        localVertices.push_back(new Vertex(**vertex));
-    }
-}
-
-void Surface::getVerticiesToParent(QVector<Vertex*> &vertices) const{
-    glm::mat4* overAllTransform;
-    if(translateFromParent == nullptr){
-        overAllTransform = new glm::mat4(*transFromParent);
-    } else {
-        overAllTransform = new glm::mat4(glm::translate(*translateFromParent) *
-                                         (*transFromParent));
-    }
-    for(QVector<Vertex*>::iterator vertex = localVertices->begin();
-        vertex != localVertices->end(); ++vertex){
-        Vertex* transformedVertex = new Vertex(**vertex);
-        GLUtility::positionTransform(*transformedVertex, *overAllTransform);
-        vertices.push_back(transformedVertex);
-    }
-    delete overAllTransform;
-}
-
-void Surface::getVerticiesOnParent(QVector<Vertex *> &vertices) const{
-    for(QVector<Vertex*>::iterator vertex = localVertices->begin();
-        vertex != localVertices->end(); ++vertex){
-        Vertex* transformedVertex = new Vertex(**vertex);
-        GLUtility::positionTransform(*transformedVertex, *transFromParent);
-        vertices.push_back(transformedVertex);
-    }
-}
-
-void Surface::getTransFromParent(glm::mat4 &transform) const{
-    if(parent == nullptr){
-        if(translateFromParent != nullptr){
-            transform = glm::translate(*translateFromParent) * (*(this->transFromParent));
-        } else {
-            transform = *(this->transFromParent);
-        }
-    } else {
-        glm::mat4 inheritedTransform;
-        parent->getTransFromParent(inheritedTransform);
-        if(translateFromParent != nullptr){
-            transform = inheritedTransform * glm::translate(*translateFromParent) * (*(this->transFromParent));
-        } else {
-            transform = inheritedTransform * (*(this->transFromParent)) ;
-        }
-    }
-}
-
-/**
- * TO DO: implement connective surface here
- * @brief Surface::updateVertices
- */
-void Surface::updateVertices(){    
-    Surface::updateRenderingData(this);
-}
-
-Surface * Surface::getParent() const{
-    return parent;
-}
-
-bool Surface::getRenderingVertices(GLfloat *&data, int &len) const{
-    if(renderVertices == nullptr || renderVertices->size() == 0){
-        return false;
-    }
-
-    if(data != nullptr){
-        delete data;
-    }
-
-    len = renderVertices->size() * Vertex::VERTEX_SIZE;
-    data = new GLfloat[len];
-
-    int index = 0;
-    for(QVector<Vertex*>::iterator vertex = renderVertices->begin();
-        vertex != renderVertices->end(); ++vertex){
-        const GLdouble* vertexData = (*vertex)->getData();
-        data[index++] = (GLfloat)vertexData[Vertex::X];
-        data[index++] = (GLfloat)vertexData[Vertex::Y];
-        data[index++] = (GLfloat)vertexData[Vertex::Z];
-        data[index++] = (GLfloat)vertexData[Vertex::W];
-        data[index++] = (GLfloat)vertexData[Vertex::H];
-    }
-    return true;
-}
-
-bool Surface::getRenderingIndicies(GLushort *&indecies, int &len) const{
-    if(renderIndicies == nullptr || renderIndicies->size() == 0){
-        return false;
-    }
-
-    if(indecies != nullptr){
-        delete indecies;
-    }
-
-    len = renderIndicies->size();
-    indecies = new GLushort[len];
-    int i = 0;
-
-    for(QVector<GLushort>::iterator index = renderIndicies->begin();
-        index != renderIndicies->end(); ++index){
-        indecies[i++] = (*index);
-    }
-    return true;
-}
-
-bool Surface::addSubSurface(const QVector<glm::vec3> &points){
-    Surface* newSubSurface;
-    try{
-        newSubSurface = new Surface(points);
-    } catch (SurfaceException &ex){        
-        return false;
-    }
-
-    QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-    bool collisionFound = false;
-    while(subSurface != subSurfaces->end() && !collisionFound){
-        collisionFound = bg::intersects(
-                    *(newSubSurface->collisionTester),
-                    *((*subSurface)->collisionTester));
-        if(collisionFound){
-            cout<<"the following polygons have collison"<<endl;
-            bg::wkt<bg_Polygon>(*collisionTester);
-            cout<<"and "<<endl;
-            bg::wkt<bg_Polygon>(*((*subSurface)->collisionTester));
-        }
-        subSurface++;
-    }
-
-    if(collisionFound){
-        delete newSubSurface;
-        return false;
-    } else {
-        newSubSurface->parent = this;
-        subSurfaces->push_back(newSubSurface);
-        updateVertices();
-        return true;
-    }
-
-}
-
-bool Surface::isRoot() const{
-    return parent == nullptr;
-}
-
-int Surface::getSubSurfaceCnt() const{
-    return subSurfaces->size();
-}
-
-Surface* Surface::getSubSurface(const int index) const{
-    if(index < 0 || index >= subSurfaces->size()){
-        return nullptr;
-    } else {
-        return subSurfaces->at(index);
-    }
-}
-
-void Surface::setHeightToParent(const GLfloat &height){
-    glm::vec3 translate(0.0f, 0.0f, height);
-    setTranslateToParent(translate);
-    updateConnectivedData();
-}
-
-void Surface::setTranslateToParent(const glm::vec3 &translate){
-    std::cout<<"Hello World"<<std::endl;
-    if(translateFromParent != nullptr){
-        delete translateFromParent;
-    }
-    translateFromParent = new glm::vec3(translate);
-    if(parent != nullptr){
-        Surface::updateRenderingData(this->parent);
-    }
-}
-
-GLfloat Surface::getHeightToParent() const{
-    return translateFromParent == nullptr ? 0.0f :
-           translateFromParent->z;
-}
-
-bool Surface::isConnectedToParent() const{
-    return translateFromParent != nullptr;
-}
-
-bool Surface::getConnectiveVerticies(QVector<Vertex *> &connectiveVertices) const{
-    if(isConnectedToParent()){
-        for(QVector<Vertex*>::iterator vertex = this->connectiveVerticies->begin();
-            vertex != this->connectiveVerticies->end(); ++vertex){
-            connectiveVertices.push_back(new Vertex(**vertex));
-        }
-        return true;
-    }
-    return false;
-}
-
-bool Surface::getConnectiveIndicies(QVector<GLushort> &connectiveIndicies) const{
-    if(isConnectedToParent()){
-        for(QVector<GLushort>::iterator index = this->connectiveIndicies->begin();
-            index != this->connectiveIndicies->end(); ++index){
-            connectiveIndicies.push_back(*index);
-        }
-        return true;
-    }
-    return false;
-}
-
-void Surface::updateConnectivedData(){
-    if(connectiveIndicies != nullptr){
-        connectiveIndicies->clear();
-        delete connectiveIndicies;
-    }
-    connectiveIndicies = new QVector<GLushort>();
-
-    if(connectiveVerticies != nullptr){
-        for(QVector<Vertex*>::iterator vertex = connectiveVerticies->begin();
-            vertex != connectiveVerticies->end(); ++vertex){
-            delete *vertex;
-        }
-        connectiveVerticies->clear();
-        delete connectiveVerticies;
-    }
-    connectiveVerticies = new QVector<Vertex*>();
-
-    QVector<Vertex*> base;
-    QVector<Vertex*> derived;
-    getVerticiesToParent(base);
-    getVerticiesOnParent(derived);
-
-
-    Vertex* baseVertex = new Vertex(*base[0]);
-    Vertex* derivedVertex = new Vertex(*derived[0]);
-
-    baseVertex->setW(0.0);
-    baseVertex->setH(0.0);
-    derivedVertex->setW(0.0);
-    derivedVertex->setH(derivedVertex->distance(*baseVertex));
-
-    connectiveVerticies->push_back(baseVertex);
-    connectiveVerticies->push_back(derivedVertex);
-
-    for(int index = 1; index != base.size(); ++index){
-        Vertex* v1 = new Vertex(*base[index]);
-        Vertex* v2 = new Vertex(*derived[index]);
-
-        v1->setW(baseVertex->distance(*v1) + baseVertex->getW());
-        v1->setH(0.0);
-        v2->setW(derivedVertex->distance(*v2) + derivedVertex->getW());
-        v2->setH(v2->distance(*v1));
-
-        connectiveVerticies->push_back(v1);
-        connectiveVerticies->push_back(v2);
-
-        baseVertex = v1;
-        derivedVertex = v2;
-    }
-
-    int modeBase = connectiveVerticies->size();
-
-    for(int index = 0; index < modeBase-2; index+=2){
-        connectiveIndicies->push_back(index);
-        connectiveIndicies->push_back((index + 3) % modeBase);
-        connectiveIndicies->push_back((index + 2) % modeBase);
-        connectiveIndicies->push_back(index);
-        connectiveIndicies->push_back((index + 1) % modeBase);
-        connectiveIndicies->push_back((index + 3) % modeBase);
-    }
-
-    Vertex* endingBase = new Vertex(*(connectiveVerticies->operator [](0)));
-    Vertex* endingDerived = new Vertex(*(connectiveVerticies->operator [](1)));
-    endingBase->setW(baseVertex->distance(*endingBase) + baseVertex->getW());
-    endingBase->setH(0.0);
-    endingDerived->setW(derivedVertex->distance(*endingDerived) + derivedVertex->getW());
-    endingDerived->setH(endingDerived->distance(*endingBase));
-
-    int i = connectiveVerticies->size();
-
-    connectiveVerticies->push_back(endingBase);
-    connectiveVerticies->push_back(endingDerived);
-
-    connectiveIndicies->push_back(i-2);
-    connectiveIndicies->push_back((i + 1));
-    connectiveIndicies->push_back((i));
-    connectiveIndicies->push_back(i-2);
-    connectiveIndicies->push_back((i - 1));
-    connectiveIndicies->push_back((i + 1));
-
-    if(debug){
-        int index = 0;
-        for(QVector<Vertex*>::iterator it = connectiveVerticies->begin();
-            it != connectiveVerticies->end(); ++it){
-            std::cout<<"Vertex["<<index++<<"] = ("<<(*it)->getX()<<","<<(*it)->getY()<<","<<(*it)->getZ()<<"\t-"<<(*it)->getW()<<","<<(*it)->getH()<<")"<<std::endl;
-        }
-
-        index = 0;
-        for(QVector<GLushort>::iterator it = connectiveIndicies->begin();
-            it != connectiveIndicies->end(); ++it){
-            std::cout<<"indicies["<<index++<<"] = "<<*it<<std::endl;
-        }
-    }
-
-}
-
-void Surface::updateRenderingData(Surface *surface){
-    tess_mutex.lock();
-
-    if(tess == nullptr){
-        tess = gluNewTess();
-
-        gluTessCallback(tess, GLU_TESS_BEGIN,
-                        (void (__stdcall*)(void)) tessBegin);
-        gluTessCallback(tess, GLU_TESS_END,
-                        (void (__stdcall*)(void)) tessEnd);
-        gluTessCallback(tess, GLU_TESS_VERTEX,
-                        (void (__stdcall*)())     tessVertex);
-        gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA,
-                        (void (__stdcall*)(void)) tessEdge);
-        gluTessCallback(tess, GLU_TESS_ERROR,
-                        (void (__stdcall*)(void)) tessError);
-        gluTessCallback(tess, GLU_TESS_COMBINE,
-                        (void (__stdcall*)(void)) tessCombine);
-    }
-
-    targetSurface = surface;
-    //clean up possible remaining rendering
-    //data from last time
-    deleteVertices(targetSurface->renderVertices);
-    targetSurface->renderVertices = nullptr;
-    targetSurface->renderVertices = new QVector<Vertex*>;
-
-    if(targetSurface->renderIndicies != nullptr){
-        targetSurface->renderIndicies->clear();
-    } else {
-        targetSurface->renderIndicies = new QVector<GLushort>;
-    }
-
-    gluTessBeginPolygon(tess, 0);
-    if(targetSurface->isDebug()){
-        cout<<"gluTessBeginPolygon(tess, 0);"<<endl;
-    }
+//2维点
+typedef union Tuple2f_t
+{
+    struct
     {
-        gluTessBeginContour(tess);
-        if(targetSurface->isDebug()){
-            cout<<"\tgluTessBeginContour(tess);"<<endl;
+        GLfloat X, Y;
+    } s;
+
+    GLfloat T[2];
+} Tuple2fT;
+
+//3维点
+typedef union Tuple3f_t
+{
+    struct
+    {
+        GLfloat X, Y, Z;
+    } s;
+
+    GLfloat T[3];
+} Tuple3fT;
+
+//4维点
+typedef union Tuple4f_t
+{
+    struct
+    {
+        GLfloat X, Y, Z, W;
+    } s;
+
+    GLfloat T[4];
+} Tuple4fT;
+
+
+//3x3矩阵
+typedef union Matrix3f_t
+{
+    struct
+    {
+        //column major
+        union { GLfloat M00; GLfloat XX; GLfloat SX; };
+        union { GLfloat M10; GLfloat XY;             };
+        union { GLfloat M20; GLfloat XZ;             };
+        union { GLfloat M01; GLfloat YX;             };
+        union { GLfloat M11; GLfloat YY; GLfloat SY; };
+        union { GLfloat M21; GLfloat YZ;             };
+        union { GLfloat M02; GLfloat ZX;             };
+        union { GLfloat M12; GLfloat ZY;             };
+        union { GLfloat M22; GLfloat ZZ; GLfloat SZ; };
+    } s;
+    GLfloat M[9];
+} Matrix3fT;
+
+//4x4矩阵
+typedef union Matrix4f_t
+{
+    struct
+    {
+        //column major
+        union { GLfloat M00; GLfloat XX; GLfloat SX; };
+        union { GLfloat M10; GLfloat XY;             };
+        union { GLfloat M20; GLfloat XZ;             };
+        union { GLfloat M30; GLfloat XW;             };
+        union { GLfloat M01; GLfloat YX;             };
+        union { GLfloat M11; GLfloat YY; GLfloat SY; };
+        union { GLfloat M21; GLfloat YZ;             };
+        union { GLfloat M31; GLfloat YW;             };
+        union { GLfloat M02; GLfloat ZX;             };
+        union { GLfloat M12; GLfloat ZY;             };
+        union { GLfloat M22; GLfloat ZZ; GLfloat SZ; };
+        union { GLfloat M32; GLfloat ZW;             };
+        union { GLfloat M03; GLfloat TX;             };
+        union { GLfloat M13; GLfloat TY;             };
+        union { GLfloat M23; GLfloat TZ;             };
+        union { GLfloat M33; GLfloat TW; GLfloat SW; };
+    } s;
+    GLfloat M[16];
+} Matrix4fT;
+
+
+//定义类型的别名
+#define Point2fT    Tuple2fT
+#define Quat4fT     Tuple4fT
+#define Vector2fT   Tuple2fT
+#define Vector3fT   Tuple3fT
+#define FuncSqrt    sqrtf
+# define Epsilon 1.0e-5
+
+//2维点相加
+inline
+static void Point2fAdd(Point2fT* NewObj, const Tuple2fT* t1)
+{
+    assert(NewObj && t1);
+
+    NewObj->s.X += t1->s.X;
+    NewObj->s.Y += t1->s.Y;
+}
+
+//2维点相减
+inline
+static void Point2fSub(Point2fT* NewObj, const Tuple2fT* t1)
+{
+    assert(NewObj && t1);
+
+    NewObj->s.X -= t1->s.X;
+    NewObj->s.Y -= t1->s.Y;
+}
+
+//3维点矢积
+inline
+static void Vector3fCross(Vector3fT* NewObj, const Vector3fT* v1, const Vector3fT* v2)
+{
+    Vector3fT Result;
+
+    assert(NewObj && v1 && v2);
+
+    Result.s.X = (v1->s.Y * v2->s.Z) - (v1->s.Z * v2->s.Y);
+    Result.s.Y = (v1->s.Z * v2->s.X) - (v1->s.X * v2->s.Z);
+    Result.s.Z = (v1->s.X * v2->s.Y) - (v1->s.Y * v2->s.X);
+
+    *NewObj = Result;
+}
+
+//3维点点积
+inline
+static GLfloat Vector3fDot(const Vector3fT* NewObj, const Vector3fT* v1)
+{
+    assert(NewObj && v1);
+
+    return  (NewObj->s.X * v1->s.X) +
+            (NewObj->s.Y * v1->s.Y) +
+            (NewObj->s.Z * v1->s.Z);
+}
+
+//3维点的长度的平方
+inline
+static GLfloat Vector3fLengthSquared(const Vector3fT* NewObj)
+{
+    assert(NewObj);
+
+    return  (NewObj->s.X * NewObj->s.X) +
+            (NewObj->s.Y * NewObj->s.Y) +
+            (NewObj->s.Z * NewObj->s.Z);
+}
+
+//3维点的长度
+inline
+static GLfloat Vector3fLength(const Vector3fT* NewObj)
+{
+    assert(NewObj);
+
+    return FuncSqrt(Vector3fLengthSquared(NewObj));
+}
+
+//设置3x3矩阵为0矩阵
+inline
+static void Matrix3fSetZero(Matrix3fT* NewObj)
+{
+    NewObj->s.M00 = NewObj->s.M01 = NewObj->s.M02 =
+    NewObj->s.M10 = NewObj->s.M11 = NewObj->s.M12 =
+    NewObj->s.M20 = NewObj->s.M21 = NewObj->s.M22 = 0.0f;
+}
+
+//设置4x4矩阵为0矩阵
+inline
+static void Matrix4fSetZero(Matrix4fT* NewObj)
+{
+    NewObj->s.M00 = NewObj->s.M01 = NewObj->s.M02 =
+    NewObj->s.M10 = NewObj->s.M11 = NewObj->s.M12 =
+    NewObj->s.M20 = NewObj->s.M21 = NewObj->s.M22 =
+    NewObj->s.M30 = NewObj->s.M31 = NewObj->s.M32 = 0.0f;
+}
+
+//设置3x3矩阵为单位矩阵
+inline
+static void Matrix3fSetIdentity(Matrix3fT* NewObj)
+{
+    Matrix3fSetZero(NewObj);
+
+    NewObj->s.M00 =
+    NewObj->s.M11 =
+    NewObj->s.M22 = 1.0f;
+}
+
+//设置4x4矩阵为单位矩阵
+inline
+static void Matrix4fSetIdentity(Matrix4fT* NewObj)
+{
+    Matrix4fSetZero(NewObj);
+
+    NewObj->s.M00 = 1.0f;
+    NewObj->s.M11 = 1.0f;
+    NewObj->s.M22 = 1.0f;
+    NewObj->s.M33=1.0f;
+}
+
+//从四元数设置旋转矩阵
+inline
+static void Matrix3fSetRotationFromQuat4f(Matrix3fT* NewObj, const Quat4fT* q1)
+{
+    GLfloat n, s;
+    GLfloat xs, ys, zs;
+    GLfloat wx, wy, wz;
+    GLfloat xx, xy, xz;
+    GLfloat yy, yz, zz;
+
+    assert(NewObj && q1);
+
+    n = (q1->s.X * q1->s.X) + (q1->s.Y * q1->s.Y) + (q1->s.Z * q1->s.Z) + (q1->s.W * q1->s.W);
+    s = (n > 0.0f) ? (2.0f / n) : 0.0f;
+
+    xs = q1->s.X * s;  ys = q1->s.Y * s;  zs = q1->s.Z * s;
+    wx = q1->s.W * xs; wy = q1->s.W * ys; wz = q1->s.W * zs;
+    xx = q1->s.X * xs; xy = q1->s.X * ys; xz = q1->s.X * zs;
+    yy = q1->s.Y * ys; yz = q1->s.Y * zs; zz = q1->s.Z * zs;
+
+    NewObj->s.XX = 1.0f - (yy + zz); NewObj->s.YX =         xy - wz;  NewObj->s.ZX =         xz + wy;
+    NewObj->s.XY =         xy + wz;  NewObj->s.YY = 1.0f - (xx + zz); NewObj->s.ZY =         yz - wx;
+    NewObj->s.XZ =         xz - wy;  NewObj->s.YZ =         yz + wx;  NewObj->s.ZZ = 1.0f - (xx + yy);
+}
+
+//3x3矩阵相乘
+inline
+static void Matrix3fMulMatrix3f(Matrix3fT* NewObj, const Matrix3fT* m1)
+{
+    Matrix3fT Result;
+
+    assert(NewObj && m1);
+
+    Result.s.M00 = (NewObj->s.M00 * m1->s.M00) + (NewObj->s.M01 * m1->s.M10) + (NewObj->s.M02 * m1->s.M20);
+    Result.s.M01 = (NewObj->s.M00 * m1->s.M01) + (NewObj->s.M01 * m1->s.M11) + (NewObj->s.M02 * m1->s.M21);
+    Result.s.M02 = (NewObj->s.M00 * m1->s.M02) + (NewObj->s.M01 * m1->s.M12) + (NewObj->s.M02 * m1->s.M22);
+
+    Result.s.M10 = (NewObj->s.M10 * m1->s.M00) + (NewObj->s.M11 * m1->s.M10) + (NewObj->s.M12 * m1->s.M20);
+    Result.s.M11 = (NewObj->s.M10 * m1->s.M01) + (NewObj->s.M11 * m1->s.M11) + (NewObj->s.M12 * m1->s.M21);
+    Result.s.M12 = (NewObj->s.M10 * m1->s.M02) + (NewObj->s.M11 * m1->s.M12) + (NewObj->s.M12 * m1->s.M22);
+
+    Result.s.M20 = (NewObj->s.M20 * m1->s.M00) + (NewObj->s.M21 * m1->s.M10) + (NewObj->s.M22 * m1->s.M20);
+    Result.s.M21 = (NewObj->s.M20 * m1->s.M01) + (NewObj->s.M21 * m1->s.M11) + (NewObj->s.M22 * m1->s.M21);
+    Result.s.M22 = (NewObj->s.M20 * m1->s.M02) + (NewObj->s.M21 * m1->s.M12) + (NewObj->s.M22 * m1->s.M22);
+
+    *NewObj = Result;
+}
+
+//4x4矩阵相乘
+inline
+static void Matrix4fSetRotationScaleFromMatrix4f(Matrix4fT* NewObj, const Matrix4fT* m1)
+{
+    assert(NewObj && m1);
+
+    NewObj->s.XX = m1->s.XX; NewObj->s.YX = m1->s.YX; NewObj->s.ZX = m1->s.ZX;
+    NewObj->s.XY = m1->s.XY; NewObj->s.YY = m1->s.YY; NewObj->s.ZY = m1->s.ZY;
+    NewObj->s.XZ = m1->s.XZ; NewObj->s.YZ = m1->s.YZ; NewObj->s.ZZ = m1->s.ZZ;
+}
+
+//进行矩阵的奇异值分解，旋转矩阵被保存到rot3和rot4中，返回矩阵的缩放因子
+inline
+static GLfloat Matrix4fSVD(const Matrix4fT* NewObj, Matrix3fT* rot3, Matrix4fT* rot4)
+{
+    GLfloat s, n;
+
+    assert(NewObj);
+
+    s = FuncSqrt(
+            ( (NewObj->s.XX * NewObj->s.XX) + (NewObj->s.XY * NewObj->s.XY) + (NewObj->s.XZ * NewObj->s.XZ) +
+              (NewObj->s.YX * NewObj->s.YX) + (NewObj->s.YY * NewObj->s.YY) + (NewObj->s.YZ * NewObj->s.YZ) +
+              (NewObj->s.ZX * NewObj->s.ZX) + (NewObj->s.ZY * NewObj->s.ZY) + (NewObj->s.ZZ * NewObj->s.ZZ) ) / 3.0f );
+
+    if (rot3)
+    {
+        rot3->s.XX = NewObj->s.XX; rot3->s.XY = NewObj->s.XY; rot3->s.XZ = NewObj->s.XZ;
+        rot3->s.YX = NewObj->s.YX; rot3->s.YY = NewObj->s.YY; rot3->s.YZ = NewObj->s.YZ;
+        rot3->s.ZX = NewObj->s.ZX; rot3->s.ZY = NewObj->s.ZY; rot3->s.ZZ = NewObj->s.ZZ;
+
+        n = 1.0f / FuncSqrt( (NewObj->s.XX * NewObj->s.XX) +
+                             (NewObj->s.XY * NewObj->s.XY) +
+                             (NewObj->s.XZ * NewObj->s.XZ) );
+        rot3->s.XX *= n;
+        rot3->s.XY *= n;
+        rot3->s.XZ *= n;
+
+        n = 1.0f / FuncSqrt( (NewObj->s.YX * NewObj->s.YX) +
+                             (NewObj->s.YY * NewObj->s.YY) +
+                             (NewObj->s.YZ * NewObj->s.YZ) );
+        rot3->s.YX *= n;
+        rot3->s.YY *= n;
+        rot3->s.YZ *= n;
+
+        n = 1.0f / FuncSqrt( (NewObj->s.ZX * NewObj->s.ZX) +
+                             (NewObj->s.ZY * NewObj->s.ZY) +
+                             (NewObj->s.ZZ * NewObj->s.ZZ) );
+        rot3->s.ZX *= n;
+        rot3->s.ZY *= n;
+        rot3->s.ZZ *= n;
+    }
+
+    if (rot4)
+    {
+        if (rot4 != NewObj)
+        {
+            Matrix4fSetRotationScaleFromMatrix4f(rot4, NewObj);
         }
-        for(QVector<Vertex*>::iterator vertex = targetSurface->localVertices->begin();
-            vertex != targetSurface->localVertices->end(); ++vertex){
-            Vertex *newVertex = new Vertex(**vertex);
-            GLdouble *vertexData = newVertex->getData();
-            gluTessVertex(tess, vertexData, vertexData);
-            if(targetSurface->isDebug()){
-                cout<<"\t\tgluTessVertex(tess, vertexData,vertexData);"<<endl;
-                cout<<"\t\t{"<<vertexData[0]<<","<<vertexData[1]<<
-                     ","<<vertexData[2]<<","<<vertexData[3]<<","<<
-                        vertexData[4]<<"}"<<endl;
-            }
+
+
+        n = 1.0f / FuncSqrt( (NewObj->s.XX * NewObj->s.XX) +
+                             (NewObj->s.XY * NewObj->s.XY) +
+                             (NewObj->s.XZ * NewObj->s.XZ) );
+        rot4->s.XX *= n;
+        rot4->s.XY *= n;
+        rot4->s.XZ *= n;
+
+        n = 1.0f / FuncSqrt( (NewObj->s.YX * NewObj->s.YX) +
+                             (NewObj->s.YY * NewObj->s.YY) +
+                             (NewObj->s.YZ * NewObj->s.YZ) );
+        rot4->s.YX *= n;
+        rot4->s.YY *= n;
+        rot4->s.YZ *= n;
+
+        n = 1.0f / FuncSqrt( (NewObj->s.ZX * NewObj->s.ZX) +
+                             (NewObj->s.ZY * NewObj->s.ZY) +
+                             (NewObj->s.ZZ * NewObj->s.ZZ) );
+        rot4->s.ZX *= n;
+        rot4->s.ZY *= n;
+        rot4->s.ZZ *= n;
+    }
+
+    return s;
+}
+
+//从3x3矩阵变为4x4的旋转矩阵
+inline
+static void Matrix4fSetRotationScaleFromMatrix3f(Matrix4fT* NewObj, const Matrix3fT* m1)
+{
+    assert(NewObj && m1);
+
+    NewObj->s.XX = m1->s.XX; NewObj->s.YX = m1->s.YX; NewObj->s.ZX = m1->s.ZX;
+    NewObj->s.XY = m1->s.XY; NewObj->s.YY = m1->s.YY; NewObj->s.ZY = m1->s.ZY;
+    NewObj->s.XZ = m1->s.XZ; NewObj->s.YZ = m1->s.YZ; NewObj->s.ZZ = m1->s.ZZ;
+}
+
+//4x4矩阵的与标量的乘积
+inline
+static void Matrix4fMulRotationScale(Matrix4fT* NewObj, GLfloat scale)
+{
+    assert(NewObj);
+
+    NewObj->s.XX *= scale; NewObj->s.YX *= scale; NewObj->s.ZX *= scale;
+    NewObj->s.XY *= scale; NewObj->s.YY *= scale; NewObj->s.ZY *= scale;
+    NewObj->s.XZ *= scale; NewObj->s.YZ *= scale; NewObj->s.ZZ *= scale;
+}
+
+//设置旋转矩阵
+inline
+static void Matrix4fSetRotationFromMatrix3f(Matrix4fT* NewObj, const Matrix3fT* m1)
+{
+    GLfloat scale;
+
+    assert(NewObj && m1);
+
+    scale = Matrix4fSVD(NewObj, NULL, NULL);
+
+    Matrix4fSetRotationScaleFromMatrix3f(NewObj, m1);
+    Matrix4fMulRotationScale(NewObj, scale);
+}
+
+
+
+typedef class ArcBall_t
+{
+protected:
+    //把二维点映射到三维点
+    inline
+    void _mapToSphere(const Point2fT* NewPt, Vector3fT* NewVec) const;
+
+public:
+    //构造/析构函数
+    ArcBall_t(GLfloat NewWidth, GLfloat NewHeight);
+    ~ArcBall_t() { };
+
+    //设置边界
+    inline
+    void    setBounds(GLfloat NewWidth, GLfloat NewHeight)
+    {
+        assert((NewWidth > 1.0f) && (NewHeight > 1.0f));
+
+        //设置长宽的调整因子
+        this->AdjustWidth  = 1.0f / ((NewWidth  - 1.0f) * 0.5f);
+        this->AdjustHeight = 1.0f / ((NewHeight - 1.0f) * 0.5f);
+    }
+
+    //鼠标点击
+    void    click(const Point2fT* NewPt);
+
+    //鼠标拖动计算旋转
+    void    drag(const Point2fT* NewPt, Quat4fT* NewRot);
+
+    //更新鼠标状态
+    void    upstate();
+    //void    mousemove(WPARAM wParam,LPARAM lParam);
+
+protected:
+    Vector3fT   StVec;          //保存鼠标点击的坐标
+    Vector3fT   EnVec;          //保存鼠标拖动的坐标
+    GLfloat     AdjustWidth;    //宽度的调整因子
+    GLfloat     AdjustHeight;   //长度的调整因子
+public:
+    Matrix4fT   Transform;      //计算变换
+    Matrix3fT   LastRot;        //上一次的旋转
+    Matrix3fT   ThisRot;        //这次的旋转
+    float zoomRate;
+    float lastZoomRate;
+
+    bool        isDragging;     // 是否拖动
+    bool        isRClicked;     // 是否右击鼠标
+    bool        isClicked;      // 是否点击鼠标
+    bool        isZooming;    //是否正在缩放
+    Point2fT    LastPt;
+    Matrix4fT origTransform;
+    Point2fT    MousePt;        // 当前的鼠标位置
+
+} ArcBallT;
+
+#endif
+
+
+/** KempoApi: The Turloc Toolkit *****************************/
+/** *    *                                                  **/
+/** **  **  Filename: ArcBall.cpp                           **/
+/**   **    Version:  Common                                **/
+/**   **                                                    **/
+/**                                                         **/
+/**  Arcball class for mouse manipulation.                  **/
+/**                                                         **/
+/**                                                         **/
+/**                                                         **/
+/**                                                         **/
+/**                              (C) 1999-2003 Tatewake.com **/
+/**   History:                                              **/
+/**   08/17/2003 - (TJG) - Creation                         **/
+/**   09/23/2003 - (TJG) - Bug fix and optimization         **/
+/**   09/25/2003 - (TJG) - Version for NeHe Basecode users  **/
+/**                                                         **/
+/*************************************************************/
+//
+#include <math.h>
+
+//轨迹球参数:
+//直径                    2.0f
+//半径                    1.0f
+//半径平方                1.0f
+
+
+void ArcBall_t::_mapToSphere(const Point2fT* NewPt, Vector3fT* NewVec) const
+{
+    Point2fT TempPt;
+    GLfloat length;
+
+    //复制到临时变量
+    TempPt = *NewPt;
+
+    //把长宽调整到[-1 ... 1]区间
+    TempPt.s.X  =        (TempPt.s.X * this->AdjustWidth)  - 1.0f;
+    TempPt.s.Y  = 1.0f - (TempPt.s.Y * this->AdjustHeight);
+
+    //计算长度的平方
+    length      = (TempPt.s.X * TempPt.s.X) + (TempPt.s.Y * TempPt.s.Y);
+
+    //如果点映射到球的外面
+    if (length > 1.0f)
+    {
+        GLfloat norm;
+
+        //缩放到球上
+        norm    = 1.0f / FuncSqrt(length);
+
+        //设置z坐标为0
+        NewVec->s.X = TempPt.s.X * norm;
+        NewVec->s.Y = TempPt.s.Y * norm;
+        NewVec->s.Z = 0.0f;
+    }
+        //如果在球内
+    else
+    {
+        //利用半径的平方为1,求出z坐标
+        NewVec->s.X = TempPt.s.X;
+        NewVec->s.Y = TempPt.s.Y;
+        NewVec->s.Z = FuncSqrt(1.0f - length);
+    }
+}
+
+ArcBall_t::ArcBall_t(GLfloat NewWidth, GLfloat NewHeight)
+{
+    this->StVec.s.X     = 0.0f;
+    this->StVec.s.Y     = 0.0f;
+    this->StVec.s.Z     = 0.0f;
+
+    this->EnVec.s.X     = 0.0f;
+    this->EnVec.s.Y     = 0.0f;
+    this->EnVec.s.Z     = 0.0f;
+
+
+    Matrix4fSetIdentity(&Transform);
+    Matrix3fSetIdentity(&LastRot);
+    Matrix3fSetIdentity(&ThisRot);
+
+    this->isDragging=false;
+    this->isClicked= false;
+    this->isRClicked = false;
+    this->isZooming = false;
+    this->zoomRate = 1;
+    this->setBounds(NewWidth, NewHeight);
+}
+
+void ArcBall_t::upstate()
+{
+    if(!this->isZooming && this->isRClicked){                    // 开始拖动
+        this->isZooming = true;                                        // 设置拖动为变量为true
+        this->LastPt = this->MousePt;
+        this->lastZoomRate = this->zoomRate;
+    }
+    else if(this->isZooming)
+    {//正在拖动
+        if(this->isRClicked)
+        {  //拖动
+            Point2fSub(&this->MousePt, &this->LastPt);
+            this->zoomRate = this->lastZoomRate + this->MousePt.s.X * this->AdjustWidth * 2;
         }
-        gluTessEndContour(tess);
-        if(targetSurface->isDebug()){
-            cout<<"\tgluTessEndContour(tess);"<<endl;
+        else{                                            //停止拖动
+            this->isZooming = false;
         }
+    }
+    else if (!this->isDragging && this->isClicked){                                                // 如果没有拖动
+        this->isDragging = true;                                        // 设置拖动为变量为true
+        this->LastRot = this->ThisRot;
+        this->click(&this->MousePt);
+    }
+    else if(this->isDragging){
+        if (this->isClicked){                                            //如果按住拖动
+            Quat4fT     ThisQuat;
 
-        QVector<Vertex*> surfaceCoords;
-        for(QVector<Surface*>::iterator subSurface = targetSurface->subSurfaces->begin();
-            subSurface != targetSurface->subSurfaces->end(); ++subSurface){
-            (*subSurface)->getVerticiesOnParent(surfaceCoords);
-            gluTessBeginContour(tess);
-            if(targetSurface->isDebug()){
-                cout<<"\tgluTessBeginContour(tess);"<<endl;
-            }
-
-            for(QVector<Vertex*>::iterator vertex = surfaceCoords.begin();
-                vertex != surfaceCoords.end(); ++vertex){
-                Vertex *newVertex = new Vertex(**vertex);
-                targetSurface->boundingBox->genTexture(*newVertex);
-                GLdouble* vertexData = newVertex->getData();
-                gluTessVertex(tess, vertexData, vertexData);
-                if(targetSurface->isDebug()){
-                    cout<<"\t\tgluTessVertex(tess, vertexData,vertexData);"<<endl;
-                    cout<<"\t\t{"<<vertexData[0]<<","<<vertexData[1]<<
-                         ","<<vertexData[2]<<","<<vertexData[3]<<","<<
-                            vertexData[4]<<"}"<<endl;
-                }
-            }
-            gluTessEndContour(tess);
-            if(targetSurface->isDebug()){
-                cout<<"\tgluTessEndContour(tess);"<<endl;
-            }
-
-            for(QVector<Vertex*>::iterator surfaceCoord = surfaceCoords.begin();
-                surfaceCoord != surfaceCoords.end(); ++surfaceCoord){
-                delete *surfaceCoord;
-            }
-            surfaceCoords.clear();
+            this->drag(&this->MousePt, &ThisQuat);                        // 更新轨迹球的变量
+            Matrix3fSetRotationFromQuat4f(&this->ThisRot, &ThisQuat);        // 计算旋转量
+            Matrix3fMulMatrix3f(&this->ThisRot, &this->LastRot);
+            Matrix4fSetRotationFromMatrix3f(&this->Transform, &this->ThisRot);
         }
-
+        else                                                        // 如果放开鼠标，设置拖动为false
+            this->isDragging = false;
     }
-    gluTessEndPolygon(tess);
-    if(targetSurface->isDebug()){
-        cout<<"gluTessEndPolygon(tess);"<<endl;
-    }
-
-    tess_mutex.unlock();
 }
 
-GLushort Surface::addRenderingVertex(const Vertex* vertex){
-    if(vertex == nullptr || renderVertices == nullptr){
-        return -2;
-    }
-    GLushort index =0;
-    for(QVector<Vertex*>::iterator rVertex = renderVertices->begin();
-        rVertex != renderVertices->end(); ++rVertex){
-        if(vertex->equals(**rVertex)){
-            return index;
+//按下鼠标,记录当前对应的轨迹球的位置
+void    ArcBall_t::click(const Point2fT* NewPt)
+{
+    this->_mapToSphere(NewPt, &this->StVec);
+}
+
+//鼠标拖动,计算旋转四元数
+void    ArcBall_t::drag(const Point2fT* NewPt, Quat4fT* NewRot)
+{
+    //新的位置
+    this->_mapToSphere(NewPt, &this->EnVec);
+
+    //计算旋转
+    if (NewRot)
+    {
+        Vector3fT  Perp;
+
+        //计算旋转轴
+        Vector3fCross(&Perp, &this->StVec, &this->EnVec);
+
+        //如果不为0
+        if (Vector3fLength(&Perp) > Epsilon)
+        {
+            //记录旋转轴
+            NewRot->s.X = Perp.s.X;
+            NewRot->s.Y = Perp.s.Y;
+            NewRot->s.Z = Perp.s.Z;
+            //在四元数中,w=cos(a/2)，a为旋转的角度
+            NewRot->s.W= Vector3fDot(&this->StVec, &this->EnVec);
         }
-        ++index;
-    }
-
-    //not found after loop is checked
-//    renderVertices->push_back(vertex);
-//    renderVertices->push_back(&*vertex);
-    return -1;
-}
-
-float Surface::getRoughArea() const{
-    if(localVertices == nullptr || localVertices->size() == 0){
-        return 0.0f;
-    }
-
-    float ret = 0.0;
-    for(int index = 0; index < (localVertices->size() -1); ++ index){
-        Vertex* v1 = localVertices->operator[](index);
-        Vertex* v2 = localVertices->operator[](index + 1);
-        ret += ((v1->getX() * v2->getX()) - (v1->getY() * v2->getY()));
-    }
-    Vertex* v1 = localVertices->last();
-    Vertex* v2 = localVertices->first();
-    ret += ((v1->getX() * v2->getX()) - (v1->getY() * v2->getY()));
-    return ret;
-}
-
-float Surface::getExactArea() const{
-    float ret = getRoughArea();
-    for(QVector<Surface*>::iterator subSurface = subSurfaces->begin();
-        subSurface != subSurfaces->end(); ++subSurface){
-        ret -= (*subSurface)->getRoughArea();
-    }
-    return ret;
-}
-
-void Surface::setDebug(){
-    debug = true;
-}
-
-bool Surface::isDebug() const{
-    return debug;
-}
-
-void Surface::tessBegin(GLenum type){return;}
-
-void Surface::tessEnd(){
-    if(targetSurface->isDebug()){
-        cout<<"Surface : "<<targetSurface<<" tesselation finished;"<<endl;
-        for(QVector<Vertex*>::iterator it = targetSurface->renderVertices->begin();
-            it != targetSurface->renderVertices->end(); ++it){
-            GLdouble* vd = (*it)->getData();
-            cout<<"tessVertex : ("<<vd[0]<<",\t\t"<<vd[1]<<",\t\t"<<vd[2]<<",\t\t"<<vd[3]<<",\t\t"<<vd[4]<<")"<<endl;
-            cout<<"{"<<vd[0]<<","<<vd[1]<<","<<vd[2]<<","<<vd[3]<<","<<vd[4]<<"},"<<endl;
+            //是0，说明没有旋转
+        else
+        {
+            NewRot->s.X =
+            NewRot->s.Y =
+            NewRot->s.Z =
+            NewRot->s.W = 0.0f;
         }
-        cout<<"indicies : (";
-        for(QVector<GLushort>::iterator it = targetSurface->renderIndicies->begin();
-            it != targetSurface->renderIndicies->end(); ++it){
-            cout<<*it<<",";
-        }
-        cout<<")"<<endl<<endl;
     }
-    return;
-}
-void Surface::tessEdge(){return;}
-
-void Surface::tessVertex(const GLvoid *data){
-    const GLdouble *vertexData = (const GLdouble*) data;
-
-    Vertex* callbackVertex = new Vertex(vertexData[0], vertexData[1], vertexData[2], vertexData[3], vertexData[4]);
-
-    bool found = false;
-    int index = 0;
-
-    for(QVector<Vertex*>::iterator vertex = targetSurface->renderVertices->begin();
-        vertex != targetSurface->renderVertices->end(); ++vertex){
-        if(callbackVertex->equals(**vertex)){
-            targetSurface->renderIndicies->push_back(index);
-            found = true;
-            return;
-        }
-        index++;
-    }
-    if(!found){
-        targetSurface->renderVertices->push_back(callbackVertex);
-        targetSurface->renderIndicies->push_back(targetSurface->renderVertices->size() -1);
-    }
-}
-
-void Surface::deleteVertices(QVector<Vertex*> *vertices) {
-    if(vertices != nullptr){        
-        for(QVector<Vertex*>::iterator vertex = vertices->begin();
-            vertex != vertices->end(); ++vertex){
-            delete *vertex;
-        }
-
-        vertices->empty();
-        delete vertices;
-    }    
-}
-
-void Surface::tessCombine(GLdouble coords[3],
-                          GLdouble *vertex_data[4],
-                          GLfloat weight[4], GLdouble **dataOut){
-    GLdouble *vertex;
-    int i;
-
-    vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
-    vertex[0] = coords[0];
-    vertex[1] = coords[1];
-    vertex[2] = coords[2];
-    for (i = 3; i < 5; i++) {
-        vertex[i] =  weight[0] * vertex_data[0][i];
-        if  (weight[1] > 0)
-            vertex[i] += weight[1] * vertex_data[1][i];
-        if  (weight[2] > 0)
-            vertex[i] += weight[2] * vertex_data[2][i];
-        if  (weight[3] > 0)
-            vertex[i] += weight[3] * vertex_data[3][i];
-    }
-
-    *dataOut = vertex;
-}
-
-void Surface::tessError(GLenum type){
-    cout<<"Tessellation Error has been called"<<endl;
-    const GLubyte *errStr;
-    errStr = gluErrorString(type);
-    cout<<"[ERROR] : "<<errStr<<endl;
-}
-
-GLUtesselator* Surface::tess = nullptr;
-Surface* Surface::targetSurface = nullptr;
-
-void Surface::deleteTessellator(){
-    gluDeleteTess(tess);
-}
-
-SurfaceException::SurfaceException(const string &message) : message(message){}
-
-string SurfaceException::what() const{
-    return message;
 }

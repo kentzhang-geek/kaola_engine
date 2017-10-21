@@ -13,6 +13,11 @@ class DemoMainWindow : public QMainWindow
 
 public:
     explicit DemoMainWindow(QWidget *parent = 0);
+
+protected:
+    void showEvent(QShowEvent *event) override;
+
+public:
     ~DemoMainWindow();
 
 private:

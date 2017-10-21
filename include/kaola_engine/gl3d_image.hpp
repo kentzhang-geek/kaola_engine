@@ -30,6 +30,8 @@ namespace gl3d {
         gl3d_image(char * filename);
         ~gl3d_image();
     private:
+        void load_jpg(char * filename);
+        void load_tga(char * filename);
         void init();
     };
 }

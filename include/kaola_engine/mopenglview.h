@@ -27,9 +27,6 @@
 #include "kaola_engine/gl3d_render_process.hpp"
 #include "utils/gl3d_global_param.h"
 
-#include "../src/Qt_tests/drawhomewin.h"
-#include "../src/Qt_tests/ui/pickupdig.h"
-
 // OpenGL in Win
 #include "glheaders.h"
 
@@ -44,8 +41,6 @@
 #include "utils/gl3d_path_config.h"
 #include "utils/gl3d_lock.h"
 #include "utils/gl3d_math.h"
-#include "editor/design_scheme.h"
-#include "resource_and_network/klm_resource_manager.h"
 
 //yananli includes ----------------------------------------
 #include <QWheelEvent>
@@ -62,7 +57,6 @@ class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
 public:
     gl3d::scene * main_scene;
     QMap<QString, void *> user_data;
-    klm::design::scheme * sketch;
     void do_init();
     void create_scene();
     MOpenGLView();
@@ -97,10 +91,9 @@ private:
     string res_path;
     QTimer * timer;
     QTimer * keyTimer;
-    char key_press;
+    int key_press;
     int tmp_point_x, tmp_point_y;
     int wall_temp_id;
-    PickupDig *puDig;
     int pickUpObjID;
     typedef QPair<glm::vec2, gl3d_wall *> point_wall_pair;
     QVector<point_wall_pair> *wallsPoints;
@@ -123,9 +116,6 @@ private:
 
     glm::vec2 draw_start_dot;
 
-    void openglDrawWall(const int x, const int y);
-    void getWallsPoint();
-
     QVector<QLabel> *doorsWindowsImages;
 
     glm::vec2 wallLineAdsorption(glm::vec2 pt, float dis_com);
@@ -134,9 +124,10 @@ private:
 
     gl3d::gl3d_wall * move_change_wall;
     bool move_change_is_start_or_end;
-
-    bool move_vision;
     glm::vec2 mouse_move_vision;
+
+    // advanced
+    bool leftMousePressed;
 };
 
 #endif // MOPENGLVIEW_H
