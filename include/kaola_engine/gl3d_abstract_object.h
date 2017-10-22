@@ -27,6 +27,8 @@ public:
     // public interfaces
     virtual bool is_data_changed() = 0;
     virtual bool is_visible() = 0;
+    virtual glm::vec3 getMaxBoundry() = 0;
+    virtual glm::vec3 getMinBoundry() = 0;
     virtual glm::mat4 get_translation_mat() = 0;
     virtual glm::mat4 get_rotation_mat() = 0;
     virtual glm::mat4 get_scale_mat() = 0;

@@ -217,7 +217,8 @@ namespace gl3d {
         virtual void set_translation_mat(const glm::mat4 & trans);
         virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms);
         virtual void clear_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt);
-
+        virtual glm::vec3 getMaxBoundry() ;
+        virtual glm::vec3 getMinBoundry() ;
         // save or load with xml
         virtual bool save_to_xml(pugi::xml_node &node);
         static object * load_from_xml(pugi::xml_node node);

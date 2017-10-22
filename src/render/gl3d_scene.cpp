@@ -227,8 +227,11 @@ bool scene::draw(bool use_global_shader) {
                     // then delete param
                     param->user_data.erase(param->user_data.find(string("object")));
                 }
-                if (watcher->pointInFrustum(current_obj->get_abs_position()))
+                if (isObjectNotCulled(current_obj) || (current_obj->get_obj_type() != abstract_object::type_default))
                     this->draw_object(current_obj, use_shader->getProgramID());
+                else {
+                    qDebug() << "Culled";
+                }
             }
             iter_objs++;
         }
@@ -737,4 +740,15 @@ QImage* scene::draw_screenshot() {
     mat.scale(1, -1);
     *img = img->transformed(mat, Qt::FastTransformation);
     return img;
+}
+
+bool scene::isObjectNotCulled(abstract_object *obj) {
+    auto cube_vts = math::cubeVertexsFromBoundry(obj->getMinBoundry(), obj->getMaxBoundry(), obj->get_translation_mat());
+    for (auto pt : cube_vts) {
+        if (watcher->pointInFrustum(pt)) {
+            return true;
+        }
+    }
+
+    return false;
 }

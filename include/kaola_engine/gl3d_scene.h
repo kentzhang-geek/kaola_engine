@@ -272,6 +272,9 @@ namespace gl3d {
         glm::vec2 project_point_to_screen(glm::vec3 point_on_world);
         glm::vec2 project_point_to_screen(glm::vec2 point_on_world_ground);
 
+        // cull object
+        bool isObjectNotCulled(abstract_object *obj);
+
         // image for draw assistant lines
     GL3D_UTILS_PROPERTY(assistant_image, QImage *);
         // objects in sketch

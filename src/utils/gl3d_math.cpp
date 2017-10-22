@@ -321,6 +321,34 @@ bool math::pointInCube(glm::vec3 point, QList<math::triangle_facet> cube) {
     return true;
 }
 
+QList<glm::vec3> math::cubeVertexsFromBoundry(glm::vec3 boundMin, glm::vec3 boundMax, glm::mat4 modelMat) {
+    glm::vec3 left_top_near = glm::vec3(boundMin.x, boundMax.y, boundMin.z);
+    glm::vec3 left_top_far = glm::vec3(boundMin.x, boundMax.y, boundMax.z);
+    glm::vec3 left_bottom_near = glm::vec3(boundMin.x, boundMin.y, boundMin.z);
+    glm::vec3 left_bottom_far = glm::vec3(boundMin.x, boundMin.y, boundMax.z);
+    glm::vec3 right_top_near = glm::vec3(boundMax.x, boundMax.y, boundMin.z);
+    glm::vec3 right_top_far = glm::vec3(boundMax.x, boundMax.y, boundMax.z);
+    glm::vec3 right_bottom_near = glm::vec3(boundMax.x, boundMin.y, boundMin.z);
+    glm::vec3 right_bottom_far = glm::vec3(boundMax.x, boundMin.y, boundMax.z);
+
+    QList<glm::vec3> tmpvts;
+    tmpvts.append(left_top_near);
+    tmpvts.append(left_top_far);
+    tmpvts.append(right_top_near);
+    tmpvts.append(right_top_far);
+    tmpvts.append(left_bottom_near);
+    tmpvts.append(left_bottom_far);
+    tmpvts.append(right_bottom_near);
+    tmpvts.append(right_bottom_far);
+    QList<glm::vec3> retvts;
+    for (auto pt : tmpvts) {
+        glm::vec4 tmp = modelMat * glm::vec4(pt, 1.0f);
+        tmp = tmp/tmp.w;
+        retvts.append(glm::vec3(tmp));
+    }
+    return retvts;
+}
+
 QList<math::triangle_facet> math::cubeFromBoundry(glm::vec3 boundMin, glm::vec3 boundMax, glm::mat4 modelMat) {
     glm::vec3 left_top_near = glm::vec3(boundMin.x, boundMax.y, boundMin.z);
     glm::vec3 left_top_far = glm::vec3(boundMin.x, boundMax.y, boundMax.z);

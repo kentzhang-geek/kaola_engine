@@ -224,9 +224,15 @@ namespace gl3d {
                                                     glm::vec3 boundMax,
                                                     glm::mat4 modelMat = glm::mat4(1.0f));
 
+        // cube vertexs from boundry
+        QList<glm::vec3> cubeVertexsFromBoundry(glm::vec3 boundMin,
+                                                glm::vec3 boundMax,
+                                                glm::mat4 modelMat = glm::mat4(1.0f));
+
+        // cube vertexs not in order
         QList<glm::vec3> vertsFromBoundry(glm::vec3 boundMin,
-                                                    glm::vec3 boundMax,
-                                                    glm::mat4 modelMat = glm::mat4(1.0f));
+                                          glm::vec3 boundMax,
+                                          glm::mat4 modelMat = glm::mat4(1.0f));
     }
 }
 

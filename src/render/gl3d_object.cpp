@@ -450,36 +450,6 @@ bool object::save_to_xml(pugi::xml_node &node) {
 
 object *object::load_from_xml(pugi::xml_node node) {
     throw std::runtime_error("not xml");
-//    QString type(node.attribute("type").value());
-//    if (type != "gl3d_object") {
-//        return NULL;
-//    }
-//    // load resource
-//    QString resid(node.attribute("res_id").value());
-//    object *obj = new object((char *) (klm::resource::manager::shared_instance()->get_res_item(
-//            resid.toStdString())).c_str(), klm::resource::manager::get_base_path_by_resid(resid.toStdString()));
-//    obj->set_obj_type((abstract_object::tag_obj_type) node.attribute("obj_type").as_int());
-//    // abstract obj properties
-//    obj->set_id(node.attribute("id").as_int());
-//    // load position and rotate
-//    glm::vec3 pos(0.0f);
-//    glm::mat4 rot(1.0f);
-//    gl3d::xml::load_xml_to_mat(node.child("rotate_mat"), rot);
-//    gl3d::xml::load_xml_to_vec(node.child("position"), pos);
-//    obj->get_property()->position = pos;
-//    obj->get_property()->rotate_mat = rot;
-//    obj->get_property()->scale_unit = scale::length_unit::mm; // TODO : almost every model are unit of mm
-////    obj->get_property()->scale_unit = (scale::length_unit) node.attribute("scale_unit").as_int();
-//    // laod code
-//    obj->set_control_authority(node.attribute("control_code_low").as_uint() |
-//                               (((GLuint64) node.attribute("control_code_high").as_uint()) << 32));
-//    obj->set_render_authority(node.attribute("render_code_low").as_uint() |
-//                              (((GLuint64) node.attribute("render_code_high").as_uint()) << 32));
-//    // preprocess
-//    obj->pre_scale();
-//    obj->merge_meshes();
-//    obj->recalculate_normals();
-//    obj->convert_left_hand_to_right_hand();
     return NULL;
 }
 
@@ -515,44 +485,10 @@ bool object::recalculate_boundings() {
     return true;
 }
 
-#if 0
-using namespace pugi;
-
-int main() {
-    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
-    xml_document doc;
-    xml_node nd = doc.root();
-    nd = nd.append_child("fur1");
-    object *obj = new object(
-            (char *) klm::resource::manager::shared_instance()->get_res_item("000001").c_str());
-    obj->get_property()->position = glm::vec3(1.2f);
-    obj->get_property()->rotate_mat = glm::mat4(2.2f);
-    obj->set_render_authority(1204);
-    obj->set_control_authority(1203);
-    obj->set_obj_type(obj->type_furniture);
-    // preprocess
-    obj->pre_scale();
-    obj->merge_meshes();
-    obj->recalculate_normals();
-    obj->convert_left_hand_to_right_hand();
-    obj->set_res_id("000001");
-
-    obj->save_to_xml(nd);
-    doc.save_file("test_obj.xml");
-    return 0;
+glm::vec3 object::getMaxBoundry() {
+    return this->get_property()->bounding_value_max;
 }
 
-#endif
-
-#if 0
-using namespace pugi;
-int main() {
-    GL3D_INIT_SANDBOX_PATH(GL3D_PATH_MODELS);
-    xml_document doc;
-    doc.load_file("test_obj.xml");
-    xml_node nd = doc.root();
-    object * obj = object::load_from_xml(nd.child("fur1"));
-
-    return 0;
+glm::vec3 object::getMinBoundry() {
+    return this->get_property()->bounding_value_min;
 }
-#endif

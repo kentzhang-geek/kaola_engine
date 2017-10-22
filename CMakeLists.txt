@@ -7,6 +7,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "D:/Qt/Qt5.8.0/5.8/mingw53_32") # rem
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(SRCS
+        src/render/spacemanager.cpp
         src/editor/klm_surface.cpp
         demomainwindow.cpp
         src/Qt_tests/main.cpp
@@ -66,6 +67,7 @@ set(SRCS
         )
 
 set(qttest_MOCS
+        include/kaola_engine/spacemanager.h
         demomainwindow.h
         include/kaola_engine/gl3d.hpp
         include/kaola_engine/gl3d_framebuffer.hpp

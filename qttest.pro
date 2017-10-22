@@ -61,7 +61,8 @@ SOURCES += \
 #    src/editor/gl3d_door.cpp \
 #    src/editor/gl3d_window.cpp \
 #    src/editor/style_package.cpp \
-    demomainwindow.cpp
+    demomainwindow.cpp \
+    src/render/spacemanager.cpp
 
 HEADERS  += \
     include/kaola_engine/gl3d.hpp \
@@ -118,7 +119,8 @@ HEADERS  += \
     include/resource_and_network/network_tool.h \
 #    include/resource_and_network/pack_tool.h \
     include/resource_and_network/global_info.h \
-    demomainwindow.h
+    demomainwindow.h \
+    include/kaola_engine/spacemanager.h
 
 FORMS    += \
     src/utils/qui/frmmessagebox.ui \
