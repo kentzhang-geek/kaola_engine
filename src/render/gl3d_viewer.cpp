@@ -241,7 +241,7 @@ void viewer::startArcballRotate(QPoint mousept) {
     scrPt = scrPt / glm::sqrt(2.0f);
     this->arc_ball_coord = glm::vec3(
             scrPt.x,
-            scrPt.y,
+            -scrPt.y,
             glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
     );
 }
@@ -254,7 +254,7 @@ void viewer::updateArcballRotate(QPoint mousept) {
     scrPt = scrPt / glm::sqrt(2.0f);
     glm::vec3 newArcPt(
             scrPt.x,
-            scrPt.y,
+            -scrPt.y,
             glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
     );
     glm::vec3 axis = glm::cross(newArcPt, this->arc_ball_coord);
@@ -275,23 +275,28 @@ bool viewer::pointInFrustum(glm::vec3 pt) {
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
             gl3d::gl3d_global_param::shared_instance()->canvas_width);
     glm::mat4 unpromat = this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range));
-    glm::vec3 left_top_near = glm::unProject(glm::vec3(0.0, 0.0, 1.0),
+    glm::vec3 left_top_near = glm::unProject(glm::vec3(0.0, this->height, 0.0),
                                     glm::mat4(1.0), unpromat,
                                     glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 left_top_far = (left_top_near - this->current_position) * maxViewDistance + left_top_near;
-    glm::vec3 left_bottom_near = glm::unProject(glm::vec3(0.0, this->height, 1.0),
+    glm::vec3 left_top_far = (left_top_near - this->current_position) * maxViewDistance + current_position;
+    glm::vec3 left_bottom_near = glm::unProject(glm::vec3(0.0, 0.0, 0.0),
                                              glm::mat4(1.0), unpromat,
                                              glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 left_bottom_far = (left_bottom_near - this->current_position) * maxViewDistance + left_bottom_near;
-    glm::vec3 right_top_near = glm::unProject(glm::vec3(this->width, 0.0, 1.0),
+    glm::vec3 left_bottom_far = (left_bottom_near - this->current_position) * maxViewDistance + current_position;
+    glm::vec3 right_top_near = glm::unProject(glm::vec3(this->width, this->height, 0.0),
                                              glm::mat4(1.0), unpromat,
                                              glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 right_top_far = (right_top_near - this->current_position) * maxViewDistance + right_top_near;
-    glm::vec3 right_bottom_near = glm::unProject(glm::vec3(this->width, this->height, 1.0),
+    glm::vec3 right_top_far = (right_top_near - this->current_position) * maxViewDistance + current_position;
+    glm::vec3 right_bottom_near = glm::unProject(glm::vec3(this->width, 0.0, 0.0),
                                                 glm::mat4(1.0), unpromat,
                                                 glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 right_bottom_far = (right_bottom_near - this->current_position) * maxViewDistance + right_bottom_near;
+    glm::vec3 right_bottom_far = (right_bottom_near - this->current_position) * maxViewDistance + current_position;
     QList<gl3d::math::triangle_facet> cube;
+    cube.append(gl3d::math::triangle_facet(
+            right_bottom_near,
+            left_bottom_near,
+            left_top_near
+    ));
     cube.append(gl3d::math::triangle_facet(
             left_top_near,
             left_bottom_near,
@@ -301,11 +306,6 @@ bool viewer::pointInFrustum(glm::vec3 pt) {
             left_top_far,
             left_bottom_far,
             right_bottom_far
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            right_bottom_near,
-            left_bottom_near,
-            left_top_near
     ));
     cube.append(gl3d::math::triangle_facet(
             right_bottom_near,

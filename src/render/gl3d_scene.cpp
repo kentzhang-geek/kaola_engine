@@ -227,7 +227,8 @@ bool scene::draw(bool use_global_shader) {
                     // then delete param
                     param->user_data.erase(param->user_data.find(string("object")));
                 }
-                this->draw_object(current_obj, use_shader->getProgramID());
+                if (watcher->pointInFrustum(current_obj->get_abs_position()))
+                    this->draw_object(current_obj, use_shader->getProgramID());
             }
             iter_objs++;
         }
