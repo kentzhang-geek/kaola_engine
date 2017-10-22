@@ -19,6 +19,7 @@
 // utils
 #include "utils/gl3d_utils.h"
 #include "kaola_engine/gl3d_general_light_source.h"
+#include "kaola_engine/spacemanager.h"
 
 // framebuffers
 #include "kaola_engine/gl3d_framebuffer.hpp"
@@ -271,6 +272,9 @@ namespace gl3d {
         // project point to screen
         glm::vec2 project_point_to_screen(glm::vec3 point_on_world);
         glm::vec2 project_point_to_screen(glm::vec2 point_on_world_ground);
+
+        // advanced : space manger
+        SpaceManager * spaceManager;
 
         // cull object
         bool isObjectNotCulled(abstract_object *obj);

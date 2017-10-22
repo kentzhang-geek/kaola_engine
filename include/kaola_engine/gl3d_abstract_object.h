@@ -56,6 +56,7 @@ public:
         right_hand
     } coordinate_system;
     virtual void buffer_data();
+    QMap<QString, void *> userData;
 };
 }
 

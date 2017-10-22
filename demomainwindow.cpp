@@ -53,4 +53,21 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     this->ui->glview->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
+
+    // test
+    ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(2,
+    glm::vec3(10.0f), glm::vec3(-10.0f));
+    auto spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(3.0f, 3.0, 3.0));
+    qDebug() << spc;
+    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, 6.0, 6.0));
+    qDebug() << spc;
+    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, -6.0, 6.0));
+    qDebug() << spc;
+    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, 6.0, -6.0));
+    qDebug() << spc;
+    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(-6.0f, 6.0, 3.0));
+    qDebug() << spc;
+    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(-6.0f, -6.0, 6.0));
+    qDebug() << spc;
 }

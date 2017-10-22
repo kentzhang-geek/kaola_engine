@@ -89,6 +89,7 @@ scene::~scene() {
 
 bool scene::init(scene_property * property) {
     memcpy(&this->this_property, property, sizeof(scene_property));
+    this->spaceManager = nullptr;
     
     return true;
 }
@@ -229,9 +230,6 @@ bool scene::draw(bool use_global_shader) {
                 }
                 if (isObjectNotCulled(current_obj) || (current_obj->get_obj_type() != abstract_object::type_default))
                     this->draw_object(current_obj, use_shader->getProgramID());
-                else {
-                    qDebug() << "Culled";
-                }
             }
             iter_objs++;
         }
