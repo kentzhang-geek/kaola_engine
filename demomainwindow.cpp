@@ -43,7 +43,6 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     // add a light
     general_light_source *light_1 = new general_light_source();
     glm::vec3 lightp(0.0, 1.8, 0.0);
-    //    lightp += glm::vec3(2.0, -1.2, 4.0);
     lightp.y = 2.0f;
     light_1->set_location(lightp);
     light_1->set_direction(glm::vec3(0.0, -1.0, 0.0));
@@ -56,18 +55,5 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     // test
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(2,
-    glm::vec3(10.0f), glm::vec3(-10.0f));
-    auto spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(3.0f, 3.0, 3.0));
-    qDebug() << spc;
-    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, 6.0, 6.0));
-    qDebug() << spc;
-    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, -6.0, 6.0));
-    qDebug() << spc;
-    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(6.0f, 6.0, -6.0));
-    qDebug() << spc;
-    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(-6.0f, 6.0, 3.0));
-    qDebug() << spc;
-    spc = ui->glview->main_scene->spaceManager->getSpace(glm::vec3(-6.0f, -6.0, 6.0));
-    qDebug() << spc;
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(100.0f), glm::vec3(-100.0f));
 }

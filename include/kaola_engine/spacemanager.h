@@ -29,6 +29,8 @@ namespace gl3d {
                   SpaceType inType);
             Space * searchLeafSpace(glm::vec3 point);
             ~Space();
+            void cullLeafSpace(gl3d::viewer *watcher, QList<Space *> *spaces);
+            glm::vec3 getCenterPointInWorldCoord();
 
             // values:
             SpaceType type; // type of this space
@@ -54,7 +56,7 @@ namespace gl3d {
         void destroy();
         bool insertObject(gl3d::abstract_object * obj);
         bool removeObject(gl3d::abstract_object * obj);
-        void cullObjects(gl3d::viewer * watcher);
+        void cullObjects(gl3d::viewer *watcher, int maxCulledNumber);
         QList<gl3d::abstract_object *> getCulledObjects();
         Space * getSpace(glm::vec3 point);
 

@@ -191,6 +191,108 @@ SpaceManager::Space * SpaceManager::Space::searchLeafSpace(glm::vec3 point) {
     }
 }
 
+void SpaceManager::Space::cullLeafSpace(gl3d::viewer *watcher, QList<Space *> *spaces) {
+    if (LEAF == this->type) {
+        spaces->append(this);
+        return;
+    }
+    bool add_left_top_near = false;
+    bool add_left_top_far = false;
+    bool add_left_bottom_near = false;
+    bool add_left_bottom_far = false;
+    bool add_right_top_near = false;
+    bool add_right_top_far = false;
+    bool add_right_bottom_near = false;
+    bool add_right_bottom_far = false;
+    if (gl3d::math::point_in_range(watcher->get_current_position(), this->minBoundary, this->maxBoundary)) {
+        glm::vec3 point = watcher->get_current_position();
+        glm::vec3 midVec = (minBoundary + maxBoundary) / 2.0f;
+        bool inright = (point.x > midVec.x);
+        bool intop = (point.y > midVec.y);
+        bool innear = (point.z > midVec.z);
+        if (innear) {
+            if (intop) {
+                if (inright)
+                    add_right_top_near = true;
+                else
+                    add_left_top_near = true;
+            } else {
+                if (inright)
+                    add_right_bottom_near = true;
+                else
+                    add_left_bottom_near = true;
+            }
+        } else {
+            if (intop) {
+                if (inright)
+                    add_right_top_far = true;
+                else
+                    add_left_top_far = true;
+            } else {
+                if (inright)
+                    add_right_bottom_far = true;
+                else
+                    add_left_bottom_far = true;
+            }
+        }
+    }
+    if (watcher->pointInFrustum(glm::vec3(
+            minBoundary.x, minBoundary.y, minBoundary.z
+    )))
+        add_left_bottom_far = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            minBoundary.x, minBoundary.y, maxBoundary.z
+    )))
+        add_left_bottom_near = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            minBoundary.x, maxBoundary.y, minBoundary.z
+    )))
+        add_left_top_far = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            minBoundary.x, maxBoundary.y, maxBoundary.z
+    )))
+        add_left_top_near = true;
+
+    if (watcher->pointInFrustum(glm::vec3(
+            maxBoundary.x, minBoundary.y, minBoundary.z
+    )))
+        add_right_bottom_far = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            maxBoundary.x, minBoundary.y, maxBoundary.z
+    )))
+        add_right_bottom_near = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            maxBoundary.x, maxBoundary.y, minBoundary.z
+    )))
+        add_right_top_far = true;
+    if (watcher->pointInFrustum(glm::vec3(
+            maxBoundary.x, maxBoundary.y, maxBoundary.z
+    )))
+        add_right_top_near = true;
+
+    if (add_left_bottom_far)
+        left_bottom_far->cullLeafSpace(watcher, spaces);
+    if (add_left_bottom_near)
+        left_bottom_near->cullLeafSpace(watcher, spaces);
+    if (add_left_top_far)
+        left_top_far->cullLeafSpace(watcher, spaces);
+    if (add_left_top_near)
+        left_top_near->cullLeafSpace(watcher, spaces);
+    if (add_right_bottom_far)
+        right_bottom_far->cullLeafSpace(watcher, spaces);
+    if (add_right_bottom_near)
+        right_bottom_near->cullLeafSpace(watcher, spaces);
+    if (add_right_top_far)
+        right_top_far->cullLeafSpace(watcher, spaces);
+    if (add_right_top_near)
+        right_top_near->cullLeafSpace(watcher, spaces);
+    return;
+}
+
+glm::vec3 SpaceManager::Space::getCenterPointInWorldCoord() {
+    return (this->minBoundary + this->maxBoundary) / 2.0f;
+}
+
 void SpaceManager::initWithDepthAndSize(int maxDepth, glm::vec3 maxBoundary, glm::vec3 minBoundary) {
     if (nullptr != this->rootSpace) {
         delete this->rootSpace;
@@ -206,7 +308,7 @@ void SpaceManager::destroy() {
 
 bool SpaceManager::insertObject(gl3d::abstract_object *obj) {
     if (rootSpace) {
-        glm::vec4 pos = obj->get_translation_mat() * glm::vec4((obj->getMaxBoundry() + obj->getMinBoundry()) / 2.0f, 1.0f);
+        glm::vec4 pos = obj->getModelMat() * glm::vec4((obj->getMaxBoundry() + obj->getMinBoundry()) / 2.0f, 1.0f);
         pos = pos / pos.w;
         Space * spc = rootSpace->searchLeafSpace(glm::vec3(pos));
         if (spc) {
@@ -241,6 +343,39 @@ SpaceManager::Space * SpaceManager::getSpace(glm::vec3 point) {
     }
 }
 
-void SpaceManager::cullObjects(gl3d::viewer *watcher) {
+static glm::vec3 __sort_center;
+static bool __sortSpaceByPoint(SpaceManager::Space * s1, SpaceManager::Space * s2) {
+    return glm::length(s1->getCenterPointInWorldCoord() - __sort_center)
+           < glm::length(s2->getCenterPointInWorldCoord() - __sort_center);
+}
+static bool __sortObjectByPoint(gl3d::abstract_object *o1, gl3d::abstract_object *o2) {
+    return glm::length(o1->getCenterPointInWorldCoord() - __sort_center) < glm::length(o2->getCenterPointInWorldCoord() - __sort_center);
+}
 
+// TODO: 要考虑模型矩阵对模型中心点的影响
+void SpaceManager::cullObjects(gl3d::viewer *watcher, int maxCulledNumber) {
+    QList<Space *> spaces;
+    if (!this->rootSpace)
+        return;
+    this->culledObjects.clear();
+    int containedObjNum = 0;
+    this->rootSpace->cullLeafSpace(watcher, &spaces);
+
+    __sort_center = watcher->get_current_position();
+    qSort(spaces.begin(), spaces.end(), __sortSpaceByPoint);
+
+    for (auto spaceit : spaces) {
+        if (containedObjNum >= maxCulledNumber)     // check max cut number
+            return;
+        auto objs = spaceit->containObjects.toList();
+        qSort(objs.begin(), objs.end(), __sortObjectByPoint);     // sort obj by distance to watcher
+        for (auto objit : objs) {
+            if (containedObjNum >= maxCulledNumber)
+                return;
+            if (watcher->pointInFrustum(objit->getCenterPointInWorldCoord())) {
+                containedObjNum++;
+                this->culledObjects.append(objit);
+            }
+        }
+    }
 }

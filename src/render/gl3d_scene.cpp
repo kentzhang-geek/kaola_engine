@@ -741,7 +741,7 @@ QImage* scene::draw_screenshot() {
 }
 
 bool scene::isObjectNotCulled(abstract_object *obj) {
-    auto cube_vts = math::cubeVertexsFromBoundry(obj->getMinBoundry(), obj->getMaxBoundry(), obj->get_translation_mat());
+    auto cube_vts = math::cubeVertexsFromBoundry(obj->getMinBoundry(), obj->getMaxBoundry(), obj->getModelMat());
     for (auto pt : cube_vts) {
         if (watcher->pointInFrustum(pt)) {
             return true;

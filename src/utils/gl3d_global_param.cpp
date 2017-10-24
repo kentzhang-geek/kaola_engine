@@ -18,4 +18,5 @@ gl3d_global_param::gl3d_global_param(){
     this->password = new QString();
     this->username = new QString();
     this->room_height = 2.8f;
+    this->maxCulledObjNum = 1000;
 }

@@ -64,7 +64,7 @@ set(SRCS
         src/editor/gl3d_window.cpp
         src/editor/style_package.cpp
         src/resource_and_network/pack_tool.cpp
-        )
+        src/render/SharedObject.cpp include/kaola_engine/SharedObject.h)
 
 set(qttest_MOCS
         include/kaola_engine/spacemanager.h

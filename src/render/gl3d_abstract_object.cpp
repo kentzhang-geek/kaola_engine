@@ -61,3 +61,14 @@ glm::mat4 abstract_object::get_abs_rotation() {
     pt = pt / pt.w;
     return glm::inverse(glm::translate(glm::mat4(1.0f), glm::vec3(pt))) * this->get_translation_mat();
 }
+
+glm::mat4 abstract_object::getModelMat() {
+    return this->get_translation_mat() * this->get_rotation_mat() * this->get_scale_mat();
+}
+
+glm::vec3 abstract_object::getCenterPointInWorldCoord() {
+    glm::vec4 pt = this->getModelMat() *
+            glm::vec4((this->getMinBoundry() + this->getMaxBoundry()) / 2.0f, 1.0f);
+    pt = pt / pt.w;
+    return glm::vec3(pt);
+}
