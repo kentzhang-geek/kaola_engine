@@ -6,6 +6,7 @@
 //  Copyright © 2016年 Kent. All rights reserved.
 //
 
+#include <include/kaola_engine/SharedObject.h>
 #include "kaola_engine/model_manager.hpp"
 #include "utils/gl3d_path_config.h"
 
@@ -56,7 +57,32 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
         this->available_id =
                 (param->id > this->available_id) ?
                 (param->id) : this->available_id;
-        main_scene->add_obj(param->id, obj_tmp);
+//        main_scene->add_obj(param->id, obj_tmp);
+        // now is test
+        int count = 0;
+        const float size_step = 2.0f;
+        // TODO : this place should change to 100
+        const int maxPow = 10;
+        for (int i = 0; i < maxPow; i++) {
+            for (int j = 0; j < maxPow; j++) {
+                for (int k = 0; k < maxPow; k++) {
+                    count++;
+                    main_scene->add_obj(
+                            i * maxPow * maxPow + j * maxPow + k,
+                            gl3d::SharedObject::fork(
+                                    obj_tmp,
+                                    glm::translate(glm::mat4(1.0f),
+                                                   glm::vec3(
+                                                       (float)(i * size_step - (float)maxPow * size_step / 2.0f),(float)
+                                                       (float)(j * size_step - (float)maxPow * size_step / 2.0f),
+                                                       (float)(k * size_step - (float)maxPow * size_step / 2.0f))),
+                                    glm::mat4(1.0f),
+                                    glm::mat4(1.0f)
+                            ));
+                }
+            }
+        }
+        qDebug() << count;
     }
 }
 

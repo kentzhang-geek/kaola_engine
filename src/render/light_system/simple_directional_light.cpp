@@ -92,12 +92,10 @@ gl3d_general_texture * simple_directional_light::compose_pic(
     current_shader_param->user_data.insert(string("scene"), scene);
     scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL;
     scene->get_property()->global_shader = "light_compose";
-    scene->add_obj(2333, sobj);
     scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
-    scene->draw(true);
+    scene->drawSpecialObject(sobj, true);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-    scene->delete_obj(2333);
 
     // tear down render env
     fb.attach_color_text(0);

@@ -117,6 +117,11 @@ namespace gl3d {
          */
         bool draw(bool use_global_shader);
 
+        /** @author Kent
+         * @brief 渲染特殊object
+         */
+        bool drawSpecialObject(abstract_object * obj, bool useGlobalShader);
+
         /**
          *  @author Kent, 16-02-17 21:02:29
          *
@@ -281,12 +286,11 @@ namespace gl3d {
 
         // image for draw assistant lines
     GL3D_UTILS_PROPERTY(assistant_image, QImage *);
-        // objects in sketch
-    GL3D_UTILS_PROPERTY_GET_POINTER(objects, QMap<int, gl3d::abstract_object *> );
         // light source in sketch
     GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 //    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
+        QMap<int, abstract_object *> objMaps;
     private:
         void init();
         shader_manager * shaders;

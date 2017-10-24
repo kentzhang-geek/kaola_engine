@@ -21,6 +21,7 @@ namespace gl3d {
     // 一个场景会有一个观察者
     class viewer {
     public:
+        bool viewerChanged;
         enum _view_mode {
             normal_view = 0,
             top_view

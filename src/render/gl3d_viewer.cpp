@@ -28,6 +28,7 @@ viewer::viewer(GLfloat h, GLfloat w) {
     this->width = w;
     this->view_mode = viewer::normal_view;
     this->top_view_size = 10.0;
+    this->viewerChanged = false;
 }
 
 viewer::~viewer() {
@@ -45,6 +46,7 @@ viewer::viewer(const viewer &src) {
     this->translationMatrix = src.translationMatrix;
     this->top_view_size = src.top_view_size;
     this->view_mode = src.view_mode;
+    this->viewerChanged = false;
 }
 
 viewer& viewer::operator=(const viewer &src) {
@@ -58,6 +60,7 @@ viewer& viewer::operator=(const viewer &src) {
     this->translationMatrix = src.translationMatrix;
     this->top_view_size = src.top_view_size;
     this->view_mode = src.view_mode;
+    this->viewerChanged = false;
     return *this;
 }
 
@@ -137,6 +140,7 @@ bool viewer::go_rotate(GLfloat angle) {
  *  通过向量计算出矩阵
  */
 void viewer::calculate_mat() {
+    this->viewerChanged = true;
     glm::vec3 location =
             this->get_current_position(); // *
 //            gl3d::scale::shared_instance()->get_global_scale();

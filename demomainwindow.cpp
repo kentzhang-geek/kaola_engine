@@ -20,7 +20,6 @@ DemoMainWindow::~DemoMainWindow()
 
 void DemoMainWindow::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
-    // for test
     gl3d::scene::scene_property config;
     config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
     // 绑定画布的参数
@@ -37,8 +36,17 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
             this->ui->glview->size().width());
     this->ui->glview->main_scene->set_height(
             this->ui->glview->size().height());
+
+    // create space manager with 4096 cubes
+    ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(10.0f), glm::vec3(-10.0f));
+    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
+
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(ui->glview->main_scene);
+    // first cull models
+    ui->glview->main_scene->spaceManager->cullObjects(ui->glview->main_scene->watcher,
+                                                      gl3d_global_param::shared_instance()->maxCulledObjNum);
 
     // add a light
     general_light_source *light_1 = new general_light_source();
@@ -52,8 +60,4 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     this->ui->glview->main_scene->get_light_srcs()->insert(1, light_1);
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
-
-    // test
-    ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(100.0f), glm::vec3(-100.0f));
 }

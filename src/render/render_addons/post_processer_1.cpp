@@ -45,12 +45,10 @@ public:
         current_shader_param->user_data.insert(string("scene"), one_scene);
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SPECIAL;
         one_scene->get_property()->global_shader = "hdr_test";
-        one_scene->add_obj(2333, sobj);
         one_scene->prepare_canvas(true);
         GL3D_GL()->glDisable(GL_CULL_FACE);
-        one_scene->draw(true);
+        one_scene->drawSpecialObject(sobj, true);
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-        one_scene->delete_obj(2333);
         delete sobj;
         return dst;
     } ;

@@ -165,6 +165,10 @@ void MOpenGLView::paintGL() {
         return;
     }
     this->view_change();
+    if (this->main_scene->watcher->viewerChanged) {
+        main_scene->spaceManager->cullObjects(main_scene->watcher,
+                                              gl3d_global_param::shared_instance()->maxCulledObjNum);
+    }
 
     // 设置场景
     GL3D_GET_CURRENT_RENDER_PROCESS()->add_user_object("scene", this->main_scene);
@@ -182,6 +186,12 @@ void MOpenGLView::paintGL() {
                this->main_scene->get_height());
 
     GL3D_GET_CURRENT_RENDER_PROCESS()->render();
+//    gl3d_framebuffer fb(gl3d_global_param::shared_instance()->framebuffer,
+//                        glm::vec2(
+//                            this->main_scene->get_width(),
+//                            this->main_scene->get_height()
+//                            ));
+//    fb.save_to_file("test2.jpg");
 
     // 后渲染
     GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();

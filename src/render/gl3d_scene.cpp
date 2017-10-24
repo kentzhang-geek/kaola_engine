@@ -56,6 +56,7 @@ using namespace gl3d;
 void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
     this->this_property.global_shader.clear();
+    this->objMaps.clear();
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
     //    using namespace Assimp;
@@ -97,24 +98,29 @@ bool scene::init(scene_property * property) {
 bool scene::add_obj(int key, abstract_object * obj) {
     obj->set_id(key);
     obj->buffer_data();
-    this->objects.insert(key, obj);
+    spaceManager->insertObject(obj);
+    objMaps.insert(key, obj);
     return true;
 }
 
 bool scene::delete_obj(int key) {
-    this->objects.remove(key);
+    if (objMaps.contains(key)) {
+        spaceManager->removeObject(objMaps.value(key));
+        delete objMaps.value(key);
+        objMaps.remove(key);
+    }
     return true;
 }
 
 gl3d::abstract_object * scene::get_obj(int key) {
-    if (this->objects.contains(key)) {
-        return this->objects.value(key);
+    if (objMaps.contains(key)) {
+        return objMaps.value(key);
     }
     return NULL;
 }
 
 bool scene::prepare_buffer() {
-    for (auto objit : this->objects.values()) {
+    for (auto objit : objMaps.values()) {
         objit->buffer_data();
     }
     return true;
@@ -197,46 +203,69 @@ void scene::set_attribute(GLuint pro) {
              (GLvoid *) &((gl3d::obj_points *)NULL)->texture_x);
 }
 
-bool scene::draw(bool use_global_shader) {
-    GLuint pro = 0;
+bool scene::drawSpecialObject(abstract_object *obj, bool useGlobalShader) {
     if (this->shaders->shaders.size() == 0) {
         return false;
     }
     Program * use_shader = NULL;
-    abstract_object * current_obj = NULL;
+    shader_param * param;
+
+    // 渲染特殊物体
+    use_shader = GL3D_GET_SHADER(this->this_property.global_shader.toUtf8().data());
+    if (NULL != use_shader) {
+        GL3D_GL()->glUseProgram(use_shader->getProgramID());
+        // globla shader only, do not support specific shader now
+        param = GL3D_GET_PARAM(this->this_property.global_shader.toUtf8().data());
+        if (NULL != param) {
+            // set object to user data before set param
+            param->user_data.insert(string("object"), (void *)obj);
+            param->set_param();
+            // then delete param
+            param->user_data.erase(param->user_data.find(string("object")));
+        }
+        this->draw_object(obj, use_shader->getProgramID());
+    }
+    else {
+        GL3D_UTILS_THROW("object id shader %s not found\n", this->this_property.global_shader.toUtf8().data());
+    }
+    GL3D_GL()->glBindVertexArray(0);
+
+    return true;
+}
+
+bool scene::draw(bool use_global_shader) {
+    if (this->shaders->shaders.size() == 0) {
+        return false;
+    }
+    Program * use_shader = NULL;
     shader_param * param;
     
     // 遍历object去渲染物体
-    auto iter_objs = this->objects.begin();     // 遍历所有object
-    while (iter_objs != this->objects.end()) {
-        current_obj = iter_objs.value();
-        int cuid_tmp = iter_objs.key();
+    auto culled = spaceManager->getCulledObjects();
+    for (auto objit : culled) {
         //        cout << "current obj id " << (*iter_objs).first << endl;
         // do not support specify shader now, global shader only
         use_shader = GL3D_GET_SHADER(this->this_property.global_shader.toUtf8().data());
         if (NULL != use_shader) {
             GL3D_GL()->glUseProgram(use_shader->getProgramID());
-
             // globla shader only, do not support specific shader now
             param = GL3D_GET_PARAM(this->this_property.global_shader.toUtf8().data());
-
-            if (current_obj->get_render_authority() & this->this_property.current_draw_authority) {
+            if (objit->get_render_authority() & this->this_property.current_draw_authority) {
                 if (NULL != param) {
                     // set object to user data before set param
-                    param->user_data.insert(string("object"), (void *)current_obj);
+                    param->user_data.insert(string("object"), (void *)objit);
                     param->set_param();
                     // then delete param
                     param->user_data.erase(param->user_data.find(string("object")));
                 }
-                if (isObjectNotCulled(current_obj) || (current_obj->get_obj_type() != abstract_object::type_default))
-                    this->draw_object(current_obj, use_shader->getProgramID());
+                this->draw_object(objit, use_shader->getProgramID());
             }
-            iter_objs++;
         }
         else {
-            GL3D_UTILS_WARN("object id %d use shader %s not found\n", iter_objs.key(), this->this_property.global_shader.toUtf8().data());
+            GL3D_UTILS_WARN("object id shader %s not found\n", this->this_property.global_shader.toUtf8().data());
             // TODO : 这里删除的话会报错
-            iter_objs = this->objects.erase(iter_objs);  // 不再绘制当前未找到shader的物件
+            spaceManager->removeObject(objit);
+            spaceManager->cullObjects(this->watcher, gl3d_global_param::shared_instance()->maxCulledObjNum);
         }
     }
     GL3D_GL()->glBindVertexArray(0);
@@ -332,12 +361,10 @@ static inline bool check_bouding(glm::vec3 xyzmax, glm::vec3 xyzmin, glm::mat4 &
 }
 
 void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
+    obj->buffer_data();
     // set vao
     GL3D_GL()->glBindVertexArray(obj->get_vao());
     this->set_attribute(pro);
-    // TODO : temporary bug fix, intend to stop wall blink
-    if (obj->get_obj_type() != obj->type_wall)
-        obj->buffer_data();
 
     // TODO : set matrix
     // set MVP
@@ -384,10 +411,7 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     QMap<unsigned int, gl3d_material *>  mts;
     mts.clear();
     obj->get_abstract_mtls(mts);
-    auto iter = mss.begin();
-    gl3d::mesh *p_mesh;
-    while (iter != mss.end()) {
-        p_mesh = *iter;
+    for (auto p_mesh : mss) {
         if (!p_mesh->data_buffered) {
             p_mesh->buffer_data();
         }
@@ -395,7 +419,7 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
         GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
         GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
 
-        if (p_mesh->get_is_blink()) {  // obj 拾取要做的一些事
+        if (obj->get_pick_flag()) {  // obj 拾取要做的一些事
             float xtmp = QDateTime::currentDateTime().time().msecsSinceStartOfDay();
             GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
                     (pro, "param_x"), 0.75 + 0.25 * sin(xtmp / 200.0f));
@@ -410,14 +434,13 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
             mts.value(p_mesh->material_index)->use_this(pro);
             gl3d_texture::set_parami(p_mesh->texture_repeat);
         } catch (std::out_of_range & not_used_smth) {
-            //log_c("material_index is %d and out of range", p_mesh->material_index);
+            log_c("material_index is %d and out of range", p_mesh->material_index);
         }
         this->set_attribute(pro);
         GL3D_GL()->glDrawElements(GL_TRIANGLES,
                                   p_mesh->num_idx,
                                   GL_UNSIGNED_SHORT,
                                   (GLvoid *)NULL);
-        iter++;
     }
     obj->clear_abstract_meshes(mss);
     obj->clear_abstract_mtls(mts);
@@ -499,7 +522,7 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (this->objects.contains(obj_id)) {
+        if (this->objMaps.contains(obj_id)) {
             if (!(this->get_obj(obj_id)->get_control_authority() & GL3D_OBJ_ENABLE_PICKING)) {
                 obj_id = -1;
             }
@@ -693,6 +716,7 @@ static object *draw_coord() {
 }
 
 QImage* scene::draw_screenshot() {
+    throw QString("should not call this");
     QImage * img = new QImage;
     int _width = this->get_width();
     int _height = this->get_height();
@@ -707,7 +731,7 @@ QImage* scene::draw_screenshot() {
     this->prepare_canvas(false);
     object *oo = draw_coord();
     int id = 1;
-    for (auto objkeyit : this->objects.keys()) {
+    for (auto objkeyit : this->objMaps.keys()) {
         id = glm::max(id, objkeyit);
     }
     id++;
