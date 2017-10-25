@@ -39,8 +39,8 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     // create space manager with 4096 cubes
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(10.0f), glm::vec3(-10.0f));
-    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(160.0f), glm::vec3(-160.0f));
+    gl3d_global_param::shared_instance()->maxCulledObjNum = 400;   // 1000 models in screen
 
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(ui->glview->main_scene);

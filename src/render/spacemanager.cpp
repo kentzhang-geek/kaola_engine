@@ -191,101 +191,22 @@ SpaceManager::Space * SpaceManager::Space::searchLeafSpace(glm::vec3 point) {
     }
 }
 
+#define CULL(x) { \
+    if (watcher->cubeSpaceInFrustum(x->maxBoundary, x->minBoundary)) \
+x->cullLeafSpace(watcher, spaces); }
 void SpaceManager::Space::cullLeafSpace(gl3d::viewer *watcher, QList<Space *> *spaces) {
     if (LEAF == this->type) {
         spaces->append(this);
         return;
     }
-    bool add_left_top_near = false;
-    bool add_left_top_far = false;
-    bool add_left_bottom_near = false;
-    bool add_left_bottom_far = false;
-    bool add_right_top_near = false;
-    bool add_right_top_far = false;
-    bool add_right_bottom_near = false;
-    bool add_right_bottom_far = false;
-    if (gl3d::math::point_in_range(watcher->get_current_position(), this->minBoundary, this->maxBoundary)) {
-        glm::vec3 point = watcher->get_current_position();
-        glm::vec3 midVec = (minBoundary + maxBoundary) / 2.0f;
-        bool inright = (point.x > midVec.x);
-        bool intop = (point.y > midVec.y);
-        bool innear = (point.z > midVec.z);
-        if (innear) {
-            if (intop) {
-                if (inright)
-                    add_right_top_near = true;
-                else
-                    add_left_top_near = true;
-            } else {
-                if (inright)
-                    add_right_bottom_near = true;
-                else
-                    add_left_bottom_near = true;
-            }
-        } else {
-            if (intop) {
-                if (inright)
-                    add_right_top_far = true;
-                else
-                    add_left_top_far = true;
-            } else {
-                if (inright)
-                    add_right_bottom_far = true;
-                else
-                    add_left_bottom_far = true;
-            }
-        }
-    }
-    if (watcher->pointInFrustum(glm::vec3(
-            minBoundary.x, minBoundary.y, minBoundary.z
-    )))
-        add_left_bottom_far = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            minBoundary.x, minBoundary.y, maxBoundary.z
-    )))
-        add_left_bottom_near = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            minBoundary.x, maxBoundary.y, minBoundary.z
-    )))
-        add_left_top_far = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            minBoundary.x, maxBoundary.y, maxBoundary.z
-    )))
-        add_left_top_near = true;
-
-    if (watcher->pointInFrustum(glm::vec3(
-            maxBoundary.x, minBoundary.y, minBoundary.z
-    )))
-        add_right_bottom_far = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            maxBoundary.x, minBoundary.y, maxBoundary.z
-    )))
-        add_right_bottom_near = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            maxBoundary.x, maxBoundary.y, minBoundary.z
-    )))
-        add_right_top_far = true;
-    if (watcher->pointInFrustum(glm::vec3(
-            maxBoundary.x, maxBoundary.y, maxBoundary.z
-    )))
-        add_right_top_near = true;
-
-    if (add_left_bottom_far)
-        left_bottom_far->cullLeafSpace(watcher, spaces);
-    if (add_left_bottom_near)
-        left_bottom_near->cullLeafSpace(watcher, spaces);
-    if (add_left_top_far)
-        left_top_far->cullLeafSpace(watcher, spaces);
-    if (add_left_top_near)
-        left_top_near->cullLeafSpace(watcher, spaces);
-    if (add_right_bottom_far)
-        right_bottom_far->cullLeafSpace(watcher, spaces);
-    if (add_right_bottom_near)
-        right_bottom_near->cullLeafSpace(watcher, spaces);
-    if (add_right_top_far)
-        right_top_far->cullLeafSpace(watcher, spaces);
-    if (add_right_top_near)
-        right_top_near->cullLeafSpace(watcher, spaces);
+    CULL(left_top_far);
+    CULL(left_top_near);
+    CULL(left_bottom_far);
+    CULL(left_bottom_near);
+    CULL(right_top_far);
+    CULL(right_top_near);
+    CULL(right_bottom_far);
+    CULL(right_bottom_near);
     return;
 }
 
@@ -372,7 +293,7 @@ void SpaceManager::cullObjects(gl3d::viewer *watcher, int maxCulledNumber) {
         for (auto objit : objs) {
             if (containedObjNum >= maxCulledNumber)
                 return;
-            if (watcher->pointInFrustum(objit->getCenterPointInWorldCoord())) {
+            if (watcher->objectInFrustum(objit)) {
                 containedObjNum++;
                 this->culledObjects.append(objit);
             }

@@ -18,6 +18,7 @@
 #include "utils/gl3d_global_param.h"
 
 namespace gl3d {
+    class abstract_object;
     // 一个场景会有一个观察者
     class viewer {
     public:
@@ -94,6 +95,9 @@ namespace gl3d {
 
         // advanced : pointInFrustum
         bool pointInFrustum(glm::vec3 pt);
+        // object in frustum
+        bool objectInFrustum(gl3d::abstract_object *obj);
+        bool cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary);
 
     private:
         const float maxViewDistance = 1000.0f;

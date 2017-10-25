@@ -275,56 +275,92 @@ void viewer::endArcballRotate() {
     this->arc_ball_coord = glm::vec3(-1.0f);
 }
 
+bool viewer::cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary) {
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    glm::mat4 pvm = this->get_projection_matrix() * this->get_viewing_matrix() *
+                    glm::scale(glm::mat4(1.0f), glm::vec3(s_range));
+    for (auto pit : gl3d::math::cubeVertexsFromBoundry(minBoundary, maxBoundary)) {
+        if (this->pointInFrustum(pit))
+            return true;
+    }
+    return false;
+}
+
+bool viewer::objectInFrustum(gl3d::abstract_object *obj) {
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    glm::mat4 pvm = this->get_projection_matrix() * this->get_viewing_matrix() *
+            glm::scale(glm::mat4(1.0f), glm::vec3(s_range));
+    for (auto pit : gl3d::math::cubeVertexsFromBoundry(obj->getMinBoundry(), obj->getMaxBoundry(), obj->getModelMat())) {
+        if (this->pointInFrustum(pit))
+            return true;
+    }
+    return false;
+}
+
 bool viewer::pointInFrustum(glm::vec3 pt) {
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
             gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    glm::mat4 unpromat = this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range));
-    glm::vec3 left_top_near = glm::unProject(glm::vec3(0.0, this->height, 0.0),
-                                    glm::mat4(1.0), unpromat,
-                                    glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 left_top_far = (left_top_near - this->current_position) * maxViewDistance + current_position;
-    glm::vec3 left_bottom_near = glm::unProject(glm::vec3(0.0, 0.0, 0.0),
-                                             glm::mat4(1.0), unpromat,
-                                             glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 left_bottom_far = (left_bottom_near - this->current_position) * maxViewDistance + current_position;
-    glm::vec3 right_top_near = glm::unProject(glm::vec3(this->width, this->height, 0.0),
-                                             glm::mat4(1.0), unpromat,
-                                             glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 right_top_far = (right_top_near - this->current_position) * maxViewDistance + current_position;
-    glm::vec3 right_bottom_near = glm::unProject(glm::vec3(this->width, 0.0, 0.0),
-                                                glm::mat4(1.0), unpromat,
-                                                glm::vec4(0.0, 0.0, this->width, this->height));
-    glm::vec3 right_bottom_far = (right_bottom_near - this->current_position) * maxViewDistance + current_position;
-    QList<gl3d::math::triangle_facet> cube;
-    cube.append(gl3d::math::triangle_facet(
-            right_bottom_near,
-            left_bottom_near,
-            left_top_near
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            left_top_near,
-            left_bottom_near,
-            left_bottom_far
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            left_top_far,
-            left_bottom_far,
-            right_bottom_far
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            right_bottom_near,
-            right_top_near,
-            right_top_far
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            right_top_near,
-            left_top_near,
-            left_top_far
-    ));
-    cube.append(gl3d::math::triangle_facet(
-            left_bottom_near,
-            right_bottom_near,
-            right_bottom_far
-    ));
-    return gl3d::math::pointInCube(pt, cube);
+    glm::mat4 pvm = this->get_projection_matrix() * this->get_viewing_matrix() *
+                    glm::scale(glm::mat4(1.0f), glm::vec3(s_range));
+
+    glm::vec4 pt_on_scr = pvm * glm::vec4(pt, 1.0f);
+    pt_on_scr = pt_on_scr / pt_on_scr.w;
+    if ((pt_on_scr.z >= 0.0f) && gl3d::math::point_in_range(glm::vec2(pt_on_scr.x, pt_on_scr.y), glm::vec2(-1.0f), glm::vec2(1.0f)))
+        return true;
+    else
+        return false;
+
+//    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+//            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+//    glm::mat4 unpromat = this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range));
+//    glm::vec3 left_top_near = glm::unProject(glm::vec3(0.0, this->height, 0.0),
+//                                    glm::mat4(1.0), unpromat,
+//                                    glm::vec4(0.0, 0.0, this->width, this->height));
+//    glm::vec3 left_top_far = (left_top_near - this->current_position) * maxViewDistance + current_position;
+//    glm::vec3 left_bottom_near = glm::unProject(glm::vec3(0.0, 0.0, 0.0),
+//                                             glm::mat4(1.0), unpromat,
+//                                             glm::vec4(0.0, 0.0, this->width, this->height));
+//    glm::vec3 left_bottom_far = (left_bottom_near - this->current_position) * maxViewDistance + current_position;
+//    glm::vec3 right_top_near = glm::unProject(glm::vec3(this->width, this->height, 0.0),
+//                                             glm::mat4(1.0), unpromat,
+//                                             glm::vec4(0.0, 0.0, this->width, this->height));
+//    glm::vec3 right_top_far = (right_top_near - this->current_position) * maxViewDistance + current_position;
+//    glm::vec3 right_bottom_near = glm::unProject(glm::vec3(this->width, 0.0, 0.0),
+//                                                glm::mat4(1.0), unpromat,
+//                                                glm::vec4(0.0, 0.0, this->width, this->height));
+//    glm::vec3 right_bottom_far = (right_bottom_near - this->current_position) * maxViewDistance + current_position;
+//    QList<gl3d::math::triangle_facet> cube;
+//    cube.append(gl3d::math::triangle_facet(
+//            right_bottom_near,
+//            left_bottom_near,
+//            left_top_near
+//    ));
+//    cube.append(gl3d::math::triangle_facet(
+//            left_top_near,
+//            left_bottom_near,
+//            left_bottom_far
+//    ));
+//    cube.append(gl3d::math::triangle_facet(
+//            left_top_far,
+//            left_bottom_far,
+//            right_bottom_far
+//    ));
+//    cube.append(gl3d::math::triangle_facet(
+//            right_bottom_near,
+//            right_top_near,
+//            right_top_far
+//    ));
+//    cube.append(gl3d::math::triangle_facet(
+//            right_top_near,
+//            left_top_near,
+//            left_top_far
+//    ));
+//    cube.append(gl3d::math::triangle_facet(
+//            left_bottom_near,
+//            right_bottom_near,
+//            right_bottom_far
+//    ));
+//    return gl3d::math::pointInCube(pt, cube);
 }
