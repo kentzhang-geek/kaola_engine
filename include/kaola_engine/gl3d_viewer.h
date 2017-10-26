@@ -91,7 +91,8 @@ namespace gl3d {
         void startArcballRotate(QPoint mousept);
         void updateArcballRotate(QPoint mousept);
         void endArcballRotate();
-        GL3D_UTILS_PROPERTY(arc_ball_coord, ::glm::vec3);
+        glm::vec3 rotateCenterPoint;
+        glm::vec2 oriMousePoint;
 
         // advanced : pointInFrustum
         bool pointInFrustum(glm::vec3 pt);

@@ -233,6 +233,10 @@ namespace gl3d {
         QList<glm::vec3> vertsFromBoundry(glm::vec3 boundMin,
                                           glm::vec3 boundMax,
                                           glm::mat4 modelMat = glm::mat4(1.0f));
+
+        // spheric coord and rectangular coord
+        glm::vec3 rectCoordToSphericCoord(glm::vec3 pt);
+        glm::vec3 sphericCoordToRectCoord(glm::vec3 pt);
     }
 }
 

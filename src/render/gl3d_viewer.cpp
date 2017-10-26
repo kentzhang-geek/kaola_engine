@@ -236,43 +236,52 @@ void viewer::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hig
 }
 
 void viewer::startArcballRotate(QPoint mousept) {
-    glm::vec2 scrPt(
-            mousept.x() / this->width * 2.0f - 1.0f,
-            1.0f - mousept.y() / this->height * 2.0f
-    );
-    qDebug() << scrPt.x;
-    qDebug() << scrPt.y;
-    scrPt = scrPt / glm::sqrt(2.0f);
-    this->arc_ball_coord = glm::vec3(
-            scrPt.x,
-            -scrPt.y,
-            glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
-    );
+    glm::vec2 coord_input(mousept.x(), mousept.y());
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    coord_input.x *= this->get_width();
+    coord_input.y *= this->get_height();
+    coord_input.y = this->get_height() - coord_input.y;
+    glm::vec3 coord_in = glm::vec3(coord_input.x, coord_input.y, 0.0);
+    coord_in.z = 1.0;
+    glm::vec3 txxx = glm::unProject(coord_in,
+                                    glm::mat4(1.0),
+                                    this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                    glm::vec4(0.0, 0.0, this->width,
+                                              this->height));
+    coord_in.z = 0.1;
+    txxx = txxx - glm::unProject(coord_in,
+                                 glm::mat4(1.0),
+                                 this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
+                                 glm::vec4(0.0, 0.0, this->width, this->height));
+    glm::vec3 reallazer = glm::normalize(txxx);  // 真实射线向量计算OK
+
+    this->rotateCenterPoint = this->get_current_position() + reallazer * 1.0f;
+    this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
 }
 
 void viewer::updateArcballRotate(QPoint mousept) {
-    glm::vec2 scrPt(
-            mousept.x() / this->width * 2.0f - 1.0f,
-            1.0f - mousept.y() / this->height * 2.0f
-    );
-    scrPt = scrPt / glm::sqrt(2.0f);
-    glm::vec3 newArcPt(
-            scrPt.x,
-            -scrPt.y,
-            glm::sqrt(1.0f - scrPt.x * scrPt.x - scrPt.y * scrPt.y)
-    );
-    glm::vec3 axis = glm::cross(newArcPt, this->arc_ball_coord);
-    float angle = glm::dot(newArcPt, this->arc_ball_coord);
-    glm::mat4 rot = glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis);
-    glm::vec4 newDir = glm::vec4(look_direction, 1.0f) * rot;
-    newDir = newDir / newDir.w;
-    look_direction = glm::vec3(newDir);
-    arc_ball_coord = newArcPt;
+    glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y()) - oriMousePoint;
+    oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
+    glm::vec3 pos = this->get_current_position() - rotateCenterPoint;
+    glm::vec3 lookated = this->get_current_position() + glm::normalize(this->get_look_direction()) - this->rotateCenterPoint;
+    // rotate pos
+    pos = math::rectCoordToSphericCoord(pos);
+    pos.x += updateval.x / this->width;
+    pos.y += updateval.y / this->height;
+    this->set_current_position(math::sphericCoordToRectCoord(pos) + this->rotateCenterPoint);
+    // rotate lookated
+    lookated = math::rectCoordToSphericCoord(lookated);
+    lookated.x += updateval.x / this->width;
+    lookated.y += updateval.y / this->height;
+    lookated = math::sphericCoordToRectCoord(lookated) + this->rotateCenterPoint;
+    this->set_look_direction(glm::normalize(lookated - this->get_current_position()));
     this->calculate_mat();
 }
 
 void viewer::endArcballRotate() {
-    this->arc_ball_coord = glm::vec3(-1.0f);
+    this->rotateCenterPoint = glm::vec3(-1.0f);
+    this->oriMousePoint = glm::vec2(-1.0f);
 }
 
 bool viewer::cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary) {

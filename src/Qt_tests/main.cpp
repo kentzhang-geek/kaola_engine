@@ -6,6 +6,7 @@
 #include "utils/gl3d_utils.h"
 #include "utils/gl3d_path_config.h"
 #include "demomainwindow.h"
+#include "utils/gl3d_math.h"
 
 using namespace std;
 
@@ -28,6 +29,13 @@ int main(int argc, char *argv[])
 //    myHelper::SetStyle("gray");//灰色风格
 //    myHelper::SetStyle("navy");//天蓝色风格
     myHelper::SetChinese();
+
+    // test:
+    for (auto pit : gl3d::math::cubeVertexsFromBoundry(glm::vec3(-0.5f), glm::vec3(0.5f))) {
+        glm::vec3 spheric = gl3d::math::rectCoordToSphericCoord(pit);
+        glm::vec3 rect = gl3d::math::sphericCoordToRectCoord(spheric);
+        rect.x = 0.0f;
+    }
 
     try {
         DemoMainWindow w;

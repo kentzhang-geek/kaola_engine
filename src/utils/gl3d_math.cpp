@@ -418,6 +418,25 @@ QList<glm::vec3> gl3d::math::vertsFromBoundry(glm::vec3 boundMin, glm::vec3 boun
     return retpts;
 }
 
+glm::vec3 math::rectCoordToSphericCoord(glm::vec3 pt) {
+    glm::vec3 ret;
+    ret.z = glm::length(pt);
+    glm::vec2 dir = glm::normalize(glm::vec2(pt));
+    ret.x = glm::acos(dir.x);
+    //+ (dir.y > 0)?0:glm::radians(180.0f);
+    if (dir.y < 0)
+        ret.x = glm::two_pi<float>() - ret.x;
+    ret.y = glm::asin(pt.z / ret.z);
+    return ret;
+}
+
+glm::vec3 math::sphericCoordToRectCoord(glm::vec3 pt) {
+    glm::vec3 ret;
+    ret.x = glm::cos(pt.x) * glm::cos(pt.y) * pt.z;
+    ret.y = glm::sin(pt.x) * glm::cos(pt.y) * pt.z;
+    ret.z = glm::sin(pt.y) * pt.z;
+    return ret;
+}
 
 #if 0
 #include <QString>
