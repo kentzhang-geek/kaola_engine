@@ -72,10 +72,11 @@ void MOpenGLView::do_init() {
     this->old_wall = NULL;
     this->connect_wall = NULL;
     this->start_connect_wall = NULL;
+    this->pickUpObjID = -1;
 
     // set OPENGL context
     timer = new QTimer(this);
-    timer->start(60);
+    timer->start(15);
 
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
@@ -202,6 +203,7 @@ void MOpenGLView::paintGL() {
 
     // unlock render
     gl3d_lock::shared_instance()->render_lock.unlock();
+    this->fps += 1;
 }
 
 void MOpenGLView::initializeGL() {
@@ -220,7 +222,11 @@ void MOpenGLView::initializeGL() {
 
     this->setFocusPolicy(Qt::StrongFocus);
     this->keyTimer = new QTimer();
-    this->keyTimer->start(50);
+    this->keyTimer->start(1000);
+    connect(keyTimer, &QTimer::timeout, this, [&](){
+        qDebug() << this->fps;
+        this->fps = 0;
+    });
 
     this->connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
 //    this->connect(keyTimer, SIGNAL(timeout()), this, SLOT(view_change()));
@@ -411,14 +417,13 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
             need_capture = true;
             int pobjid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
             qDebug() << pobjid;
+            if (pickUpObjID > 0) {
+                this->main_scene->get_obj(pickUpObjID)->set_pick_flag(false);
+                pickUpObjID = -1;
+            }
             if (pobjid > 0) {
                 pickUpObjID = pobjid;
                 this->main_scene->get_obj(pickUpObjID)->set_pick_flag(true);
-            } else {
-                if (pickUpObjID > 0) {
-                    this->main_scene->get_obj(pickUpObjID)->set_pick_flag(false);
-                    pickUpObjID = -1;
-                }
             }
         }
         // start arc ball rotate

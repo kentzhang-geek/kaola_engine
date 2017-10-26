@@ -128,6 +128,7 @@ private:
 
     // advanced
     bool leftMousePressed;
+    int fps;
 };
 
 #endif // MOPENGLVIEW_H
