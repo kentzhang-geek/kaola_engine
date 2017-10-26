@@ -7,7 +7,7 @@
 //#include "GL/glew.h"
 
 #include <QtOpenGL>
-#include <QOpenGLFunctions_4_1_Core>
+#include <QOpenGLFunctions_3_3_Core>
 
 #ifdef _WIN32
 #include <gl/GLU.h>
@@ -17,7 +17,7 @@
 #include <OpenGL/gl3ext.h>
 #endif
 
-extern QOpenGLFunctions_4_1_Core * gl3d_win_gl_functions;
+extern QOpenGLFunctions_3_3_Core * gl3d_win_gl_functions;
 
 #define GL3D_GL() gl3d_win_gl_functions
 

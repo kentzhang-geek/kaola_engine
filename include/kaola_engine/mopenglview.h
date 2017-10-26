@@ -17,7 +17,7 @@
 #include <queue>
 #include <QOpenGLContext>
 #include <QTimer>
-#include <QOpenGLFunctions_4_1_Core>
+#include <QOpenGLFunctions_3_3_Core>
 #include <QGLWidget>
 #include <QResource>
 #include <QFile>
@@ -50,7 +50,7 @@
 
 using namespace std;
 
-class MOpenGLView : public QGLWidget, QOpenGLFunctions_4_1_Core
+class MOpenGLView : public QGLWidget, QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
 

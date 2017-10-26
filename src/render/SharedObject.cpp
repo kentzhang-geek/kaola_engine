@@ -56,13 +56,21 @@ void SharedObject::set_translation_mat(const glm::mat4 &trans) {
 }
 
 SharedObject::SharedObject(gl3d::object *srcObj, glm::mat4 trans, glm::mat4 rotation, glm::mat4 scale) {
+    srcObj->buffer_data();
     this->sharedModel = srcObj;
+    this->set_control_authority(sharedModel->get_control_authority());
+    this->set_render_authority(sharedModel->get_render_authority());
+    this->set_vao(sharedModel->get_vao());
+    this->set_obj_type(sharedModel->get_obj_type());
+    this->coordinate_system = sharedModel->coordinate_system;
     this->transMat = trans;
     this->rotationMat = rotation;
     this->scaleMat = scale;
+    this->set_data_buffered(true);
     return;
 }
 
 SharedObject* SharedObject::fork(gl3d::object *srcObj, glm::mat4 trans, glm::mat4 rotation, glm::mat4 scale) {
     return new SharedObject(srcObj, trans, rotation, scale);
 }
+

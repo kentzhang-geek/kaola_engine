@@ -6,8 +6,10 @@
 #include "utils/gl3d_math.h"
 #include "gl3d_viewer.h"
 
+#include <QThread>
+
 namespace gl3d {
-    class SpaceManager {
+    class SpaceManager : public QThread {
     public:
         class Space {
         public:
@@ -61,8 +63,12 @@ namespace gl3d {
         Space * getSpace(glm::vec3 point);
 
     private:
+        virtual void run();
+        std::function<void(void)> cullFunction;
+        bool pendingCull;
         QList<gl3d::abstract_object *> culledObjects;
         Space * rootSpace;
+        QMutex culledLock;
     };
 }
 

@@ -28,7 +28,7 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     cout << this->ui->glview->width() << "vs scene" << this->ui->glview->main_scene->get_width() << endl;
     cout << this->ui->glview->height() << "vs scene" << this->ui->glview->main_scene->get_height() << endl;
     this->ui->glview->main_scene->init(&config);
-    this->ui->glview->main_scene->watcher->position(glm::vec3(0,0,-3));
+    this->ui->glview->main_scene->watcher->position(glm::vec3(0,0,-150.0));
     this->ui->glview->main_scene->watcher->lookat(glm::vec3(0,0,1));
     this->ui->glview->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
@@ -39,8 +39,8 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     // create space manager with 4096 cubes
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(4, glm::vec3(160.0f), glm::vec3(-160.0f));
-    gl3d_global_param::shared_instance()->maxCulledObjNum = 400;   // 1000 models in screen
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(5, glm::vec3(160.0f), glm::vec3(-160.0f));
+    gl3d_global_param::shared_instance()->maxCulledObjNum = 500;   // 1000 models in screen
 
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(ui->glview->main_scene);

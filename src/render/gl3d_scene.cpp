@@ -56,7 +56,9 @@ using namespace gl3d;
 void scene::init() {
     this->watcher = new gl3d::viewer(this->height, this->width);
     this->this_property.global_shader.clear();
-    this->objMaps.clear();
+    this->objHash = (abstract_object **)malloc(sizeof(abstract_object *) * MAX_OBJ_COUNT);
+    for (int i = 0; i < MAX_OBJ_COUNT; i++)
+        objHash[i] = nullptr;
     this->shaders = ::shader_manager::sharedInstance();
     this->this_property.current_draw_authority = GL3D_SCENE_DRAW_ALL;
     //    using namespace Assimp;
@@ -83,6 +85,7 @@ scene::scene(GLfloat h, GLfloat w, scene_property * property) {
 scene::~scene() {
     this->this_property.global_shader.clear();
     delete this->watcher;
+    free(this->objHash);
     this->watcher = NULL;
 //    Assimp::DefaultLogger::kill();
     return;
@@ -99,29 +102,30 @@ bool scene::add_obj(int key, abstract_object * obj) {
     obj->set_id(key);
     obj->buffer_data();
     spaceManager->insertObject(obj);
-    objMaps.insert(key, obj);
+    objHash[key] = obj;
     return true;
 }
 
 bool scene::delete_obj(int key) {
-    if (objMaps.contains(key)) {
-        spaceManager->removeObject(objMaps.value(key));
-        delete objMaps.value(key);
-        objMaps.remove(key);
+    if (nullptr != objHash[key]) {
+        spaceManager->removeObject(objHash[key]);
+        delete objHash[key];
+        objHash[key] = nullptr;
     }
     return true;
 }
 
 gl3d::abstract_object * scene::get_obj(int key) {
-    if (objMaps.contains(key)) {
-        return objMaps.value(key);
+    if (nullptr != objHash[key]) {
+        return objHash[key];
     }
     return NULL;
 }
 
 bool scene::prepare_buffer() {
-    for (auto objit : objMaps.values()) {
-        objit->buffer_data();
+    for (int i = 0; i < MAX_OBJ_COUNT; i++) {
+        if (nullptr != objHash[i])
+            objHash[i]->buffer_data();
     }
     return true;
 }
@@ -143,7 +147,7 @@ bool scene::prepare_canvas(bool use_global_shader) {
     GL3D_GL()->glEnable(GL_DEPTH_TEST);
     GL3D_GL()->glDepthMask(GL_TRUE);
     GL3D_GL()->glDepthFunc(GL_LEQUAL);
-    GL3D_GL()->glClearDepthf(1.0);
+    GL3D_GL()->glClearDepth(1.0f);
     GL3D_GL()->glCullFace(GL_BACK);
     GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     GL3D_GL()->glEnable(GL_BLEND);
@@ -522,7 +526,7 @@ int scene::get_object_id_by_coordination(int x, int y) {
     
     // 检测是否可拾取
     if (obj_id > 0) {
-        if (this->objMaps.contains(obj_id)) {
+        if (nullptr != objHash[obj_id]) {
             if (!(this->get_obj(obj_id)->get_control_authority() & GL3D_OBJ_ENABLE_PICKING)) {
                 obj_id = -1;
             }
@@ -731,8 +735,10 @@ QImage* scene::draw_screenshot() {
     this->prepare_canvas(false);
     object *oo = draw_coord();
     int id = 1;
-    for (auto objkeyit : this->objMaps.keys()) {
-        id = glm::max(id, objkeyit);
+    for (int i = 0; i < MAX_OBJ_COUNT; i++) {
+        if (nullptr != objHash[i]) {
+            id = i+1;
+        }
     }
     id++;
     this->add_obj(23332, oo);

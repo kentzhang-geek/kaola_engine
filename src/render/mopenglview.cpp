@@ -4,7 +4,7 @@
 using namespace std;
 
 // 全局OpenGL Functions
-QOpenGLFunctions_4_1_Core *gl3d_win_gl_functions = NULL;
+QOpenGLFunctions_3_3_Core *gl3d_win_gl_functions = NULL;
 
 void MOpenGLView::draw_image(QString img, float x, float y, int w, int h) {
     QPainter pter(this->main_scene->get_assistant_image());

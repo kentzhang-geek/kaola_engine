@@ -6,7 +6,14 @@ static const QString OBJ_DATA_KEY_SPACE = "space";
 
 SpaceManager::SpaceManager() {
     this->rootSpace = nullptr;
+    this->pendingCull = false;
     this->culledObjects.clear();
+    QObject::connect(this, &QThread::finished, this, [=](){
+        if (pendingCull) {
+            pendingCull = false;
+            this->start();
+        }
+    });
 }
 
 SpaceManager::Space::Space(Space *p,
@@ -218,6 +225,7 @@ void SpaceManager::initWithDepthAndSize(int maxDepth, glm::vec3 maxBoundary, glm
     if (nullptr != this->rootSpace) {
         delete this->rootSpace;
     }
+    this->pendingCull = false;
     this->rootSpace = new Space(nullptr, 0, maxDepth, maxBoundary, minBoundary, Space::ROOT);
 }
 
@@ -275,28 +283,44 @@ static bool __sortObjectByPoint(gl3d::abstract_object *o1, gl3d::abstract_object
 
 // TODO: 要考虑模型矩阵对模型中心点的影响
 void SpaceManager::cullObjects(gl3d::viewer *watcher, int maxCulledNumber) {
-    QList<Space *> spaces;
     if (!this->rootSpace)
         return;
-    this->culledObjects.clear();
-    int containedObjNum = 0;
-    this->rootSpace->cullLeafSpace(watcher, &spaces);
+    if (this->isRunning()) {
+        pendingCull = true;
+    } else {
+        this->cullFunction = [=](){
+            QList<Space *> spaces;
+            viewer observer(*watcher);
+            QList<abstract_object *> objList;
+            int containedObjNum = 0;
+            this->rootSpace->cullLeafSpace(&observer, &spaces);
 
-    __sort_center = watcher->get_current_position();
-    qSort(spaces.begin(), spaces.end(), __sortSpaceByPoint);
+            __sort_center = observer.get_current_position();
+            qSort(spaces.begin(), spaces.end(), __sortSpaceByPoint);
 
-    for (auto spaceit : spaces) {
-        if (containedObjNum >= maxCulledNumber)     // check max cut number
-            return;
-        auto objs = spaceit->containObjects.toList();
-        qSort(objs.begin(), objs.end(), __sortObjectByPoint);     // sort obj by distance to watcher
-        for (auto objit : objs) {
-            if (containedObjNum >= maxCulledNumber)
-                return;
-            if (watcher->objectInFrustum(objit)) {
-                containedObjNum++;
-                this->culledObjects.append(objit);
+            for (auto spaceit : spaces) {
+                if (containedObjNum >= maxCulledNumber)     // check max cut number
+                    break;
+                auto objs = spaceit->containObjects.toList();
+                qSort(objs.begin(), objs.end(), __sortObjectByPoint);     // sort obj by distance to watcher
+                for (auto objit : objs) {
+                    if (containedObjNum >= maxCulledNumber)
+                        break;
+                    if (observer.objectInFrustum(objit)) {
+                        containedObjNum++;
+                        objList.append(objit);
+                    }
+                }
             }
-        }
+            this->culledLock.lock();        // set culled objects
+            this->culledObjects.clear();
+            this->culledObjects = objList;
+            this->culledLock.unlock();
+        };
+        this->start();
     }
+}
+
+void SpaceManager::run() {
+    this->cullFunction();
 }
