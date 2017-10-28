@@ -61,7 +61,8 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
         // now is test
         int count = 0;
         const float size_step = 3.0f;
-        const int maxPow = 100;
+        // TODO : this should change to 100
+        const int maxPow = 10;
         for (int i = 0; i < maxPow; i++) {
             qDebug() << i;
             for (int j = 0; j < maxPow; j++) {

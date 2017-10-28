@@ -428,6 +428,9 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         }
         // start arc ball rotate
         main_scene->watcher->startArcballRotate(event->pos());
+        if (pickUpObjID > 0) {
+            main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+        }
         leftMousePressed = true;
     } else if (event->button() == Qt::RightButton) {
         //右键按下事件

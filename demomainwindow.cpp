@@ -28,7 +28,8 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     cout << this->ui->glview->width() << "vs scene" << this->ui->glview->main_scene->get_width() << endl;
     cout << this->ui->glview->height() << "vs scene" << this->ui->glview->main_scene->get_height() << endl;
     this->ui->glview->main_scene->init(&config);
-    this->ui->glview->main_scene->watcher->position(glm::vec3(0,0,-150.0));
+//    this->ui->glview->main_scene->watcher->position(glm::vec3(0,0,-150.0));
+    this->ui->glview->main_scene->watcher->position(glm::vec3(0,0,0.0));
     this->ui->glview->main_scene->watcher->lookat(glm::vec3(0,0,1));
     this->ui->glview->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
 
