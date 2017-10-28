@@ -169,6 +169,7 @@ void MOpenGLView::paintGL() {
     if (this->main_scene->watcher->viewerChanged) {
         main_scene->spaceManager->cullObjects(main_scene->watcher,
                                               gl3d_global_param::shared_instance()->maxCulledObjNum);
+        this->main_scene->watcher->viewerChanged = false;
     }
 
     // 设置场景
@@ -245,7 +246,8 @@ void MOpenGLView::view_change() {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 0.0, 1.0) * 0.04);
     }
 
-    if (this->main_scene != NULL) {
+    if ((this->main_scene != NULL) &&
+            (this->main_scene->watcher->viewerChanged)) {
         this->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
         this->key_press = -1;
         GL3D_GET_CURRENT_RENDER_PROCESS()->invoke();

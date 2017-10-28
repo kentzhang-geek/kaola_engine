@@ -283,6 +283,7 @@ static bool __sortObjectByPoint(gl3d::abstract_object *o1, gl3d::abstract_object
 
 // TODO: 要考虑模型矩阵对模型中心点的影响
 void SpaceManager::cullObjects(gl3d::viewer *watcher, int maxCulledNumber) {
+    qDebug() << "call cull";
     if (!this->rootSpace)
         return;
     if (this->isRunning()) {
