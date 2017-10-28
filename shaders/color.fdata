@@ -21,10 +21,17 @@ in float downParam;
 uniform float alpha;
 
 // out color
-out vec4 out_color;
+layout (location = 0) out vec4 gColor;
+layout (location = 1) out vec3 gPos;
+layout (location = 2) out vec3 gNormal;
+
+// gbuffer
+in vec3 iPos;
+in vec3 iNormal;
 
 void main() {
     // 计算自然色
+    vec4 out_color = vec4(0.0);
     vec4 ambclr = texture2D(gl3d_texture_ambient, text_coord) + mtlAmbientColor;
     out_color = ambclr;
 
@@ -47,4 +54,8 @@ void main() {
     // clamp values
     out_color = clamp(out_color, 0.0, 1.0);
     out_color.w = alpha;
+
+    gColor = (out_color);
+    gPos = iPos;
+    gNormal = normalize(iNormal);
 }

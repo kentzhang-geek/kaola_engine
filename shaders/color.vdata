@@ -27,6 +27,10 @@ uniform int selectedID;
 uniform float param_x;
 out float downParam;
 
+// gbuffer
+out vec3 iPos;
+out vec3 iNormal;
+
 void main() {
     vec4 vPos = vec4(vertex_pos, 1.0);
     vPos = vPos / vPos.w;
@@ -37,4 +41,9 @@ void main() {
         downParam = 1.0;
     }
     gl_Position = pvMatrix * modelMat[gl_InstanceID] * vPos;
+    // pos
+    vec4 tmp = modelMat[gl_InstanceID] * vPos;
+    tmp = tmp / tmp.w;
+    iPos = vec3(tmp);
+    iNormal = normalMtx * vertex_normal;
 }

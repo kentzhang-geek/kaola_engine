@@ -329,7 +329,7 @@ public:
     // internel calls
     void rend_shadow();
 
-    void rend_color();
+    void rend_main();
 
     // result
     void rend_result();
@@ -346,16 +346,53 @@ GL3D_ADD_RENDER_PROCESS(has_post);
 void has_post::pre_render() {
     this->rend_shadow();
     // render g-buffer
+    int gbufWidth = 2 * (int)this->get_attached_scene()->get_width();
+    int gbufHeight = 2 * (int)this->get_attached_scene()->get_height();
+
+    gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
+                        gbufWidth, gbufHeight);
+    GLuint gBuffer = fb.get_frame_obj();
+    GLuint gPosition, gNormal, gColorSpec;
+
+// - 颜色缓冲
     this->canvas = new gl3d::gl3d_general_texture(
             gl3d_general_texture::GL3D_RGBA,
             2.0 * this->get_attached_scene()->get_width(),
             2.0 * this->get_attached_scene()->get_height());
-    gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
-                        2.0 * this->get_attached_scene()->get_width(),
-                        2.0 * this->get_attached_scene()->get_height());
     fb.attach_color_text(this->canvas->get_text_obj());
+
+    // 位置缓冲
+    GL3D_GL()->glGenTextures(1, &gPosition);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
+    GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, gbufWidth, gbufHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER,
+                                      GL_COLOR_ATTACHMENT1,
+                                      GL_TEXTURE_2D, gPosition, 0);
+
+    // - 法线颜色缓冲
+    GL3D_GL()->glGenTextures(1, &gNormal);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
+    GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, gbufWidth, gbufHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gNormal, 0);
+
+//// - 漫反射 + Specular颜色缓冲
+//    glGenTextures(1, &gAlbedoSpec);
+//    glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+
+// - 告诉OpenGL我们要使用哪个颜色附件来渲染
     fb.use_this_frame();
-    this->rend_color();
+    GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    GL3D_GL()->glDrawBuffers(3, attachments);
+    this->rend_main();
+    fb.save_to_file("test.jpg");
 
     QVector<string> cmd;
     cmd.clear();
@@ -364,6 +401,31 @@ void has_post::pre_render() {
     this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
                                                                            this->get_attached_scene(),
                                                                            this->canvas);
+    float * output_image = new float[gbufHeight * gbufWidth * 3];
+    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
+    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+        image[i * 4 + 3] = 0xff;
+    }
+    QImage img((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+    img.save("test_pos.jpg");
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
+    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+        image[i * 4 + 3] = 0xff;
+    }
+    QImage img2((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+    img2.save("test_normal.jpg");
+    // delete
+    GL3D_GL()->glDeleteTextures(1, &gPosition);
+    GL3D_GL()->glDeleteTextures(1, &gNormal);
 }
 
 void has_post::render() {
@@ -384,7 +446,7 @@ void has_post::rend_shadow() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
 
-void has_post::rend_color() {
+void has_post::rend_main() {
     gl3d::scene *one_scene = this->get_attached_scene();
     // rend color
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
