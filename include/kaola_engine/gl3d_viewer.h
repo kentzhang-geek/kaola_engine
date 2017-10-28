@@ -101,6 +101,7 @@ namespace gl3d {
         bool cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary);
 
     private:
+        const float visionAngle = 40.0f;
         const float maxViewDistance = 1000.0f;
     };
 }

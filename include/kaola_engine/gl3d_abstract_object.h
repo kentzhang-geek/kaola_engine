@@ -34,6 +34,7 @@ public:
     virtual glm::mat4 get_scale_mat() = 0;
     glm::mat4 getModelMat();
     glm::vec3 getCenterPointInWorldCoord();
+    float getContainBallRadius();
     virtual void get_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
     virtual void clear_abstract_meshes(QVector<gl3d::mesh *> & ms) = 0;
     virtual void get_abstract_mtls(QMap<unsigned int, gl3d_material *> & mt) = 0;

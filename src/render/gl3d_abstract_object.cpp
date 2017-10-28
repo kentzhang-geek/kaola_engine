@@ -1,3 +1,4 @@
+#include <include/utils/gl3d_math.h>
 #include "kaola_engine/gl3d_abstract_object.h"
 #include "kaola_engine/gl3d_obj_authority.h"
 
@@ -71,4 +72,12 @@ glm::vec3 abstract_object::getCenterPointInWorldCoord() {
             glm::vec4((this->getMinBoundry() + this->getMaxBoundry()) / 2.0f, 1.0f);
     pt = pt / pt.w;
     return glm::vec3(pt);
+}
+
+float abstract_object::getContainBallRadius() {
+    float ret = 0.0f;
+    for (auto pit : math::cubeVertexsFromBoundry(this->getMinBoundry(), this->getMaxBoundry())) {
+        ret = glm::max(ret, glm::length(pit));
+    }
+    return ret;
 }

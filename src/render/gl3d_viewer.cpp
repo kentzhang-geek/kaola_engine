@@ -146,7 +146,7 @@ void viewer::calculate_mat() {
 //            gl3d::scale::shared_instance()->get_global_scale();
     if (this->view_mode == viewer::normal_view) {
         this->viewing_matrix = ::glm::lookAt(location, location + this->look_direction, this->head_direction);
-        this->projection_matrix = glm::perspective(glm::radians(40.0f), (float)(this->width/this->height), 1.0f, maxViewDistance);
+        this->projection_matrix = glm::perspective(glm::radians(visionAngle), (float)(this->width/this->height), 1.0f, maxViewDistance);
     }
     if (this->view_mode == viewer::top_view) {
         ::glm::vec3 cp = location;
@@ -300,27 +300,29 @@ void viewer::endArcballRotate() {
 }
 
 bool viewer::cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary) {
-    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-            gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    glm::mat4 pvm = this->get_projection_matrix() * this->get_viewing_matrix() *
-                    glm::scale(glm::mat4(1.0f), glm::vec3(s_range));
-    for (auto pit : gl3d::math::cubeVertexsFromBoundry(minBoundary, maxBoundary)) {
-        if (this->pointInFrustum(pit))
-            return true;
-    }
-    return false;
+    glm::vec3 centerPt = (maxBoundary + minBoundary) / 2.0f;
+    float cRadius = glm::length(maxBoundary - centerPt);
+    float totalAngle = glm::dot(glm::normalize(centerPt - this->get_current_position()),
+                                glm::normalize(this->look_direction));
+    totalAngle = glm::acos(glm::abs(totalAngle));
+    float cAngle = glm::atan(cRadius / glm::length(centerPt - this->get_current_position()));
+    if ((totalAngle - cAngle) <= glm::radians(this->visionAngle))
+        return true;
+    else
+        return false;
 }
 
 bool viewer::objectInFrustum(gl3d::abstract_object *obj) {
-    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
-            gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    glm::mat4 pvm = this->get_projection_matrix() * this->get_viewing_matrix() *
-            glm::scale(glm::mat4(1.0f), glm::vec3(s_range));
-    for (auto pit : gl3d::math::cubeVertexsFromBoundry(obj->getMinBoundry(), obj->getMaxBoundry(), obj->getModelMat())) {
-        if (this->pointInFrustum(pit))
-            return true;
-    }
-    return false;
+    glm::vec3 centerPt = obj->getCenterPointInWorldCoord();
+    float cRadius = obj->getContainBallRadius();
+    float totalAngle = glm::dot(glm::normalize(centerPt - this->get_current_position()),
+                                glm::normalize(this->look_direction));
+    totalAngle = glm::acos(glm::abs(totalAngle));
+    float cAngle = glm::atan(cRadius / glm::length(centerPt - this->get_current_position()));
+    if ((totalAngle - cAngle) <= glm::radians(this->visionAngle))
+        return true;
+    else
+        return false;
 }
 
 bool viewer::pointInFrustum(glm::vec3 pt) {
