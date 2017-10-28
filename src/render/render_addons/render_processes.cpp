@@ -401,28 +401,29 @@ void has_post::pre_render() {
     this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
                                                                            this->get_attached_scene(),
                                                                            this->canvas);
-    float * output_image = new float[gbufHeight * gbufWidth * 3];
-    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];
-    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
-    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
-    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
-        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
-        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
-        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
-        image[i * 4 + 3] = 0xff;
-    }
-    QImage img((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
-    img.save("test_pos.jpg");
-    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
-    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
-    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
-        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
-        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
-        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
-        image[i * 4 + 3] = 0xff;
-    }
-    QImage img2((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
-    img2.save("test_normal.jpg");
+    // save g buffer to file
+//    float * output_image = new float[gbufHeight * gbufWidth * 3];
+//    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];
+//    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
+//    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+//    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+//        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+//        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+//        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+//        image[i * 4 + 3] = 0xff;
+//    }
+//    QImage img((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+//    img.save("test_pos.jpg");
+//    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
+//    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+//    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+//        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+//        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+//        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+//        image[i * 4 + 3] = 0xff;
+//    }
+//    QImage img2((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+//    img2.save("test_normal.jpg");
     // delete
     GL3D_GL()->glDeleteTextures(1, &gPosition);
     GL3D_GL()->glDeleteTextures(1, &gNormal);
