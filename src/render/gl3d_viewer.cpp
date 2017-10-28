@@ -265,16 +265,17 @@ void viewer::updateArcballRotate(QPoint mousept) {
     glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y()) - oriMousePoint;
     glm::vec2 updateAngle = glm::vec2(updateval.x / this->width * glm::two_pi<float>(),
                                       -updateval.y / this->height * glm::two_pi<float>());
+    updateAngle.x = -updateAngle.x;
     oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
     glm::vec3 pos = this->get_current_position() - rotateCenterPoint;
     glm::vec3 lookated = this->get_current_position() + glm::normalize(this->get_look_direction()) - this->rotateCenterPoint;
-//    pos = math::rectCoordToSphericCoord(pos);
-//    pos.x += updateAngle.x;
-//    pos = math::sphericCoordToRectCoord(pos);
+    pos = math::rectCoordToSphericCoord(pos);
+    pos.x += updateAngle.x;
+    pos = math::sphericCoordToRectCoord(pos);
 //    pos = pos + rotateCenterPoint;
-//    lookated = math::rectCoordToSphericCoord(lookated);
-//    lookated.x += updateAngle.x;
-//    lookated = math::sphericCoordToRectCoord(lookated);
+    lookated = math::rectCoordToSphericCoord(lookated);
+    lookated.x += updateAngle.x;
+    lookated = math::sphericCoordToRectCoord(lookated);
 //    lookated = lookated + rotateCenterPoint - pos;
 //    lookated = glm::normalize(lookated);
     glm::vec3  axis = glm::cross(glm::vec3(0.0, 1.0, 0.0), lookated - pos);
