@@ -256,26 +256,34 @@ void viewer::startArcballRotate(QPoint mousept) {
                                  glm::vec4(0.0, 0.0, this->width, this->height));
     glm::vec3 reallazer = glm::normalize(txxx);  // 真实射线向量计算OK
 
-    this->rotateCenterPoint = this->get_current_position() + reallazer * 1.0f;
+    this->rotateCenterPoint = this->get_current_position() + reallazer * 5.0f;
+//    this->rotateCenterPoint = this->get_current_position() + this->get_look_direction() * 5.0f;
     this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
 }
 
 void viewer::updateArcballRotate(QPoint mousept) {
     glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y()) - oriMousePoint;
+    glm::vec2 updateAngle = glm::vec2(updateval.x / this->width * glm::two_pi<float>(),
+                                      -updateval.y / this->height * glm::two_pi<float>());
     oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
     glm::vec3 pos = this->get_current_position() - rotateCenterPoint;
     glm::vec3 lookated = this->get_current_position() + glm::normalize(this->get_look_direction()) - this->rotateCenterPoint;
     // rotate pos
     pos = math::rectCoordToSphericCoord(pos);
-    pos.x += updateval.x / this->width;
-    pos.y += updateval.y / this->height;
+    pos.x += updateval.x / this->width * glm::two_pi<float>();
+    pos.y += -updateval.y / this->height * glm::two_pi<float>();
     this->set_current_position(math::sphericCoordToRectCoord(pos) + this->rotateCenterPoint);
     // rotate lookated
     lookated = math::rectCoordToSphericCoord(lookated);
-    lookated.x += updateval.x / this->width;
-    lookated.y += updateval.y / this->height;
+    lookated.x += updateval.x / this->width * glm::two_pi<float>();
+    lookated.y += -updateval.y / this->height * glm::two_pi<float>();
     lookated = math::sphericCoordToRectCoord(lookated) + this->rotateCenterPoint;
     this->set_look_direction(glm::normalize(lookated - this->get_current_position()));
+// rotate method 2
+//    glm::vec3 rot = gl3d::math::rectCoordToSphericCoord(this->get_look_direction());
+//    rot.x += updateval.x / this->width * glm::two_pi<float>();
+//    rot.y += updateval.y / this->height * glm::two_pi<float>();
+//    this->set_look_direction(glm::normalize(math::sphericCoordToRectCoord(rot)));
     this->calculate_mat();
 }
 

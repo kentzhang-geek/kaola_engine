@@ -8,7 +8,7 @@ SpaceManager::SpaceManager() {
     this->rootSpace = nullptr;
     this->pendingCull = false;
     this->culledObjects.clear();
-    QObject::connect(this, &QThread::finished, this, [=](){
+    QObject::connect(this, &QThread::finished, this, [&](){
         if (pendingCull) {
             pendingCull = false;
             this->start();

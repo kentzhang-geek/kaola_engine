@@ -418,15 +418,29 @@ QList<glm::vec3> gl3d::math::vertsFromBoundry(glm::vec3 boundMin, glm::vec3 boun
     return retpts;
 }
 
-glm::vec3 math::rectCoordToSphericCoord(glm::vec3 pt) {
+glm::vec3 math::rectCoordToSphericCoord(glm::vec3 p_right) {
     glm::vec3 ret;
+    glm::vec3 pt(p_right.x, -p_right.z, p_right.y);
     ret.z = glm::length(pt);
-    glm::vec2 dir = glm::normalize(glm::vec2(pt));
-    ret.x = glm::acos(dir.x);
-    //+ (dir.y > 0)?0:glm::radians(180.0f);
-    if (dir.y < 0)
-        ret.x = glm::two_pi<float>() - ret.x;
     ret.y = glm::asin(pt.z / ret.z);
+    if ((pt.y / pt.x) != (pt.y / pt.x)) {
+        if (pt.y > 0) {
+            ret.x = glm::pi<float>() / 2.0f;
+        } else if (pt.y == 0) {
+            ret.x = 0.0f;
+        } else {
+            ret.x = glm::pi<float>() * 3.0f / 2.0f;
+        }
+    } else {
+        ret.x = glm::atan(pt.y / pt.x);
+        if ((ret.x > 0.0f) && (pt.x < 0.0f)) {
+            ret.x += glm::pi<float>();
+        } else if ((ret.x < 0.0f) && (pt.x < 0.0f)) {
+            ret.x += glm::pi<float>();
+        } else if (ret.x < 0.0f) {
+            ret.x += glm::two_pi<float>();
+        }
+    }
     return ret;
 }
 
@@ -435,6 +449,7 @@ glm::vec3 math::sphericCoordToRectCoord(glm::vec3 pt) {
     ret.x = glm::cos(pt.x) * glm::cos(pt.y) * pt.z;
     ret.y = glm::sin(pt.x) * glm::cos(pt.y) * pt.z;
     ret.z = glm::sin(pt.y) * pt.z;
+    ret = glm::vec3(ret.x, ret.z, -ret.y);
     return ret;
 }
 
