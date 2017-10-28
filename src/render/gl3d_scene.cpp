@@ -237,6 +237,164 @@ bool scene::drawSpecialObject(abstract_object *obj, bool useGlobalShader) {
     return true;
 }
 
+bool scene::drawInstanced(bool useGlobalShader, int instanceNum) {
+    if (this->shaders->shaders.size() == 0) {
+        return false;
+    }
+    Program * use_shader = NULL;
+    shader_param * param;
+
+    // 遍历object，准备模型矩阵
+    auto culled = spaceManager->getCulledObjects();
+    if (culled.isEmpty())
+        return true;
+    int i = 0;
+    use_shader = GL3D_GET_SHADER(this->this_property.global_shader.toUtf8().data());
+    auto objlist = spaceManager->getCulledObjects();
+    if (NULL != use_shader) {
+        GL3D_GL()->glUseProgram(use_shader->getProgramID());
+        // globla shader only, do not support specific shader now
+        param = GL3D_GET_PARAM(this->this_property.global_shader.toUtf8().data());
+        if (NULL != param) {
+            // set object to user data before set param
+            param->user_data.insert(string("object"), (void *)objlist.first());
+            param->set_param();
+            // then delete param
+            param->user_data.erase(param->user_data.find(string("object")));
+        }
+        // for selection
+        float xtmp = QDateTime::currentDateTime().time().msecsSinceStartOfDay();
+        GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation
+                (use_shader->getProgramID(), "param_x"), 0.75 + 0.25 * sin(xtmp / 200.0f));
+        GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(use_shader->getProgramID(),
+                                                               "selectedID"), -1);
+        // prepare model mat
+        for (auto objit : culled) {
+            QString matName = QString::asprintf("modelMat[%d]", i);
+            auto location = GL3D_GL()->glGetUniformLocation(use_shader->getProgramID(), matName.toStdString().c_str());
+            glm::mat4 vp = objit->getModelMat();
+            GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(vp));
+            if (objit->get_pick_flag()) {
+                GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(use_shader->getProgramID(),
+                                                                       "selectedID"),
+                                       i);
+            }
+            i++;
+            if (i >= gl3d_global_param::shared_instance()->maxInsPerDraw) {
+                // draw now
+                this->drawObjectInstanced(use_shader->getProgramID(),
+                                          useGlobalShader,
+                                          i,
+                                          objlist.first());
+                i = 0;
+                GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(use_shader->getProgramID(),
+                                                                       "selectedID"), -1);
+            }
+        }
+        // now draw
+        if (i != 0)
+            this->drawObjectInstanced(use_shader->getProgramID(),
+                                      useGlobalShader,
+                                      i,
+                                      objlist.first());
+        GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(use_shader->getProgramID(),
+                                                               "selectedID"), -1);
+    }
+    else {
+        GL3D_UTILS_WARN("object id shader %s not found\n", this->this_property.global_shader.toUtf8().data());
+    }
+    GL3D_GL()->glBindVertexArray(0);
+
+    return true;
+}
+
+bool scene::drawObjectInstanced(GLuint pro, bool useGlobalShader, int instanceNum, abstract_object *obj) {
+    obj->buffer_data();
+    // set vao
+    GL3D_GL()->glBindVertexArray(obj->get_vao());
+    this->set_attribute(pro);
+
+    // pv mat
+    ::glm::mat4 pvMat = this->watcher->projection_matrix *
+                      this->watcher->viewing_matrix;
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "pvMatrix"),
+             1, GL_FALSE, glm::value_ptr(pvMat));
+    // set MVP
+    ::glm::mat4 pvm = this->watcher->projection_matrix *
+                      this->watcher->viewing_matrix;
+
+    // set model matrix
+    ::glm::mat4 trans = obj->get_translation_mat() * obj->get_rotation_mat() * obj->get_scale_mat();
+    // set norMtx
+    ::glm::mat4 norMtx = obj->get_rotation_mat();
+    GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
+            gl3d::gl3d_global_param::shared_instance()->canvas_width);
+    trans = ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)) * trans;
+    pvm *= trans;    // final MVP
+    glm::mat4 unpvm = glm::inverse(pvm);
+
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "unpvm"),
+             1, GL_FALSE, glm::value_ptr(unpvm));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "pvmMatrix"),
+             1, GL_FALSE, glm::value_ptr(pvm));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "translationMatrix"),
+             1, GL_FALSE, glm::value_ptr(trans));
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "viewingMatrix"),
+             1, GL_FALSE, glm::value_ptr(this->watcher->viewing_matrix));
+    GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_pos"), 1, glm::value_ptr(this->watcher->current_position));
+    GL3D_GL()->glUniform3fv(GL3D_GL()->glGetUniformLocation(pro, "eye_look_at"), 1, glm::value_ptr(this->watcher->look_direction));
+    GL3D_GL()->glUniformMatrix3fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "normalMtx"),
+             1, GL_FALSE, glm::value_ptr(glm::mat3(norMtx)));
+
+    QVector<mesh *> mss;
+    mss.clear();
+    obj->get_abstract_meshes(mss);
+    QMap<unsigned int, gl3d_material *>  mts;
+    mts.clear();
+    obj->get_abstract_mtls(mts);
+    for (auto p_mesh : mss) {
+        if (!p_mesh->data_buffered) {
+            p_mesh->buffer_data();
+        }
+        // set buffers
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, p_mesh->vbo);
+        GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p_mesh->idx);
+
+
+        // 多重纹理的绑定与绘制
+        try {
+            mts.value(p_mesh->material_index)->use_this(pro);
+            gl3d_texture::set_parami(p_mesh->texture_repeat);
+        } catch (std::out_of_range & not_used_smth) {
+            log_c("material_index is %d and out of range", p_mesh->material_index);
+        }
+        this->set_attribute(pro);
+        GL3D_GL()->glDrawElementsInstanced(GL_TRIANGLES,
+                                           p_mesh->num_idx,
+                                           GL_UNSIGNED_SHORT,
+                                           (GLvoid *)nullptr,
+                                           instanceNum);
+    }
+    obj->clear_abstract_meshes(mss);
+    obj->clear_abstract_mtls(mts);
+
+    GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL3D_GL()->glBindVertexArray(0);
+}
+
 bool scene::draw(bool use_global_shader) {
     if (this->shaders->shaders.size() == 0) {
         return false;

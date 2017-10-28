@@ -24,6 +24,7 @@ public:
     float wall_thick;
     float room_height;
     int maxCulledObjNum;
+    int maxInsPerDraw;
     unsigned int framebuffer;
     void *old_sketch_test;
     void * main_scene;

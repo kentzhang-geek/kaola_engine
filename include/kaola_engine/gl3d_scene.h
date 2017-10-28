@@ -116,6 +116,21 @@ namespace gl3d {
          *  @return 是否渲染成功
          */
         bool draw(bool use_global_shader);
+        /**
+         * @author Kent
+         * @brief 实例化渲染，同时渲染多个物体
+         * @param useGlobalShader
+         * @param instanceNum
+         * @return
+         */
+        bool drawInstanced(bool useGlobalShader, int instanceNum);
+        /**
+         * @brief 实例化渲染某个物体
+         * @param useGlobalShader
+         * @param instanceNum
+         * @return
+         */
+        bool drawObjectInstanced(GLuint pro, bool useGlobalShader, int instanceNum, abstract_object *obj);
 
         /** @author Kent
          * @brief 渲染特殊object

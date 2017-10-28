@@ -393,9 +393,8 @@ void has_post::rend_color() {
     one_scene->get_property()->global_shader = QString("color");
     one_scene->prepare_canvas(false);
     GL3D_GL()->glDisable(GL_CULL_FACE);
-    one_scene->draw(false);
+    one_scene->drawInstanced(false, 100);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-
 }
 
 void has_post::rend_result() {

@@ -19,4 +19,5 @@ gl3d_global_param::gl3d_global_param(){
     this->username = new QString();
     this->room_height = 2.8f;
     this->maxCulledObjNum = 1000;
+    this->maxInsPerDraw = 200;
 }
