@@ -301,12 +301,17 @@ void viewer::endArcballRotate() {
 
 bool viewer::cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary) {
     glm::vec3 centerPt = (maxBoundary + minBoundary) / 2.0f;
-    float cRadius = glm::length(maxBoundary - centerPt);
+    float cRadius = 0.0f;
+    for (auto pit : math::cubeVertexsFromBoundry(minBoundary, maxBoundary)) {
+        cRadius = glm::max(cRadius, glm::length(pit - centerPt));
+    }
     float totalAngle = glm::dot(glm::normalize(centerPt - this->get_current_position()),
                                 glm::normalize(this->look_direction));
     totalAngle = glm::acos(glm::abs(totalAngle));
     float cAngle = glm::atan(cRadius / glm::length(centerPt - this->get_current_position()));
-    if ((totalAngle - cAngle) <= glm::radians(this->visionAngle))
+    if (math::point_in_range(this->get_current_position(), minBoundary, maxBoundary))
+        return true;
+    if (totalAngle <= (cAngle + glm::radians(this->visionAngle)))
         return true;
     else
         return false;
@@ -319,7 +324,7 @@ bool viewer::objectInFrustum(gl3d::abstract_object *obj) {
                                 glm::normalize(this->look_direction));
     totalAngle = glm::acos(glm::abs(totalAngle));
     float cAngle = glm::atan(cRadius / glm::length(centerPt - this->get_current_position()));
-    if ((totalAngle - cAngle) <= glm::radians(this->visionAngle))
+    if (totalAngle <= (cAngle + glm::radians(this->visionAngle)))
         return true;
     else
         return false;
