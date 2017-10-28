@@ -493,3 +493,23 @@ GL3D_SHADER_PARAM(lines) {
     return true;
 }
 
+GL3D_SHADER_PARAM(color) {
+    GLuint pro = GL3D_GET_SHADER("color")->getProgramID();
+    gl3d::abstract_object * obj = GL3D_GET_OBJ();
+
+    // 设置材质贴图矩阵
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 1.0);
+
+    // 原色，散射与镜面分别是0，1，2
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_ambient"), 0);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_diffuse"), 1);
+    GL3D_GL()->glUniform1i(GL3D_GL()->glGetUniformLocation(pro, "gl3d_texture_specular"), 2);
+
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
+
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+    GL3D_GL()->glDepthMask(GL_TRUE);
+
+    return true;
+}

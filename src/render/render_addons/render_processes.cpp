@@ -329,7 +329,7 @@ public:
     // internel calls
     void rend_shadow();
 
-    void rend_main_scene();
+    void rend_color();
 
     // result
     void rend_result();
@@ -345,7 +345,7 @@ GL3D_ADD_RENDER_PROCESS(has_post);
 
 void has_post::pre_render() {
     this->rend_shadow();
-    // create color framebuffer
+    // render g-buffer
     this->canvas = new gl3d::gl3d_general_texture(
             gl3d_general_texture::GL3D_RGBA,
             2.0 * this->get_attached_scene()->get_width(),
@@ -355,7 +355,7 @@ void has_post::pre_render() {
                         2.0 * this->get_attached_scene()->get_height());
     fb.attach_color_text(this->canvas->get_text_obj());
     fb.use_this_frame();
-    this->rend_main_scene();
+    this->rend_color();
 
     QVector<string> cmd;
     cmd.clear();
@@ -384,55 +384,18 @@ void has_post::rend_shadow() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
 
-void has_post::rend_main_scene() {
+void has_post::rend_color() {
     gl3d::scene *one_scene = this->get_attached_scene();
-    // 输入阴影贴图的参数，然后绘制主图像
-    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("multiple_text_vector_shadow");
+    // rend color
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    one_scene->get_property()->global_shader = QString("multiple_text_vector_shadow");
+    one_scene->get_property()->global_shader = QString("color");
     one_scene->prepare_canvas(false);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     one_scene->draw(false);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
-//    // 绘制地面蒙版
-//    current_shader_param = GL3D_GET_PARAM("multiple_text");
-//    current_shader_param->user_data.insert(string("scene"), one_scene);
-//    GL3D_GL()->glDisable(GL_CULL_FACE);
-//    one_scene->draw_stencil();
-//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-
-//    // 在有模板的情况下绘制地面倒影
-//    GL3D_GL()->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-//    GL3D_GL()->glEnable(GL_DEPTH_TEST);
-//    GL3D_GL()->glEnable(GL_STENCIL_TEST);
-//    GL3D_GL()->glStencilFunc(GL_EQUAL, 1, 0xffffffff);
-//    GL3D_GL()->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-//    current_shader_param = GL3D_GET_PARAM("image");
-//    current_shader_param->user_data.insert(string("scene"), one_scene);
-//    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_IMAGE;
-//    one_scene->get_property()->global_shader = QString("image");
-//    one_scene->draw(true);
-//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-//    GL3D_GL()->glDisable(GL_STENCIL_TEST);
-
-//    // 绘制地面
-//    current_shader_param = GL3D_GET_PARAM("dm");
-//    current_shader_param->user_data.insert(string("scene"), one_scene);
-//    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_GROUND;
-//    one_scene->get_property()->global_shader = QString("dm");
-//    GL3D_GL()->glDisable(GL_CULL_FACE);
-//    one_scene->draw(true);
-//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
-
-//    // 最后绘制天空盒
-//    current_shader_param = GL3D_GET_PARAM("skybox");
-//    current_shader_param->user_data.insert(string("scene"), one_scene);
-//    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_SKYBOX;
-//    one_scene->get_property()->global_shader = QString("skybox");
-//    one_scene->draw(true);
-//    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
 
 void has_post::rend_result() {
