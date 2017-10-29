@@ -42,8 +42,8 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     // create space manager with 4096 cubes
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
     ui->glview->main_scene->spaceManager->initWithDepthAndSize(5, glm::vec3(160.0f), glm::vec3(-160.0f));
-    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
-    gl3d_global_param::shared_instance()->maxInsPerDraw = 200;      // 200 models per draw
+//    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
+//    gl3d_global_param::shared_instance()->maxInsPerDraw = 200;      // 200 models per draw
 
     // 加载所有要加载的模型
     gl3d::model_manager::shared_instance()->init_objs(ui->glview->main_scene);
@@ -54,12 +54,12 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     qrand();
     qrand();
     // add lights
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 100; i++) {
         general_light_source *light = new general_light_source();
         glm::vec3 pos;
-        pos.x = (qrand() % 200) / 10.0f;
-        pos.y = (qrand() % 200) / 10.0f;
-        pos.z = (qrand() % 200) / 10.0f;
+        pos.x = (qrand() % 100) / 10.0f;
+        pos.y = (qrand() % 100) / 10.0f;
+        pos.z = (qrand() % 100) / 10.0f;
         light->set_location(pos);
         light->set_direction(glm::vec3(0.0, -1.0, 0.0));
         light->set_light_type(light->point_light);

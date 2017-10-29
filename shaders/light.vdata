@@ -14,7 +14,6 @@ in float vertex_tex_id;
 uniform mat4 translationMatrix;
 uniform mat4 viewingMatrix;
 uniform mat4 pvmMatrix;
-uniform mat4 pvMatrix;
 uniform mat3 normalMtx;
 
 uniform int maxPow;
@@ -22,6 +21,7 @@ uniform float stepSize;
 
 out vec2 text_coord;
 out vec3 lightPos;
+out vec3 scrPos;
 
 uniform int selectedID;
 uniform float param_x;
@@ -29,5 +29,6 @@ uniform float param_x;
 void main() {
     gl_Position = vec4(vertex_pos, 1.0);
     text_coord = vertex_tex_coord;
+    scrPos = vertex_pos;
 //    lightPos = light[gl_InstanceID];
 }

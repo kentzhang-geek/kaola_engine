@@ -14,11 +14,13 @@ in vec2 text_coord;
 uniform sampler2D colorText;
 uniform sampler2D posText;
 uniform sampler2D normalText;
-uniform vec3 light[MAX_MODEL_PER_DRAW];
+uniform vec3 light[100];
 uniform int lightNum;
+uniform mat4 pvMatrix;
 
 // for selection
 in float downParam;
+in vec3 scrPos;
 
 // reflection
 uniform float alpha;
@@ -31,25 +33,40 @@ out vec4 oColor;
 
 void main() {
     // 获取颜色
-    const float visionDepth = 5.0;
+    const float visionDepth = 2.0;
+    const float lightDotSize = 0.01;
     vec4 color = texture2D(colorText, text_coord) * 2;
     vec3 pos = vec3(texture2D(posText, text_coord)).rgb;
     vec3 normal = vec3(texture2D(normalText, text_coord)).rgb;
 //    vec4 color = vec4(normal, 1.0);
 
     float factor = 0.0f;
+    vec3 lightColor = vec3(0.0);
     for (int i = 0; i < MAX_MODEL_PER_DRAW; i++) {
         if (i > lightNum)
             break;
-        float lightDis = length(light[i] - pos);
+        vec3 lightPos = light[i];
+        float lightDis = length(lightPos - pos);
         float decay;
-    if (lightDis > visionDepth)
-        decay = 0.0f;
-    else
-        decay = 1.0 - lightDis /visionDepth;
+        if (lightDis > visionDepth)
+            decay = 0.0f;
+        else
+            decay = 1.0 - lightDis /visionDepth;
+        vec3 lightDir = normalize(lightPos - pos);
+        decay = decay * max(dot(normalize(normal), lightDir), 0.0);
+        lightColor += normalize(lightPos) * decay * decay;
         factor = factor + decay;
+
+        vec4 lightScr = pvMatrix * vec4(lightPos, 1.0);
+        lightScr = lightScr / lightScr.w;
+        if (lightScr.z > pos.z)
+        if (length(lightScr.xy - scrPos.xy) < lightDotSize) {
+            color = vec4(normalize(lightPos), 1.0);
+            factor = length(vec3(lightScr) - scrPos) / lightDotSize;
+        }
     }
     oColor = color * clamp(factor, 0.0, 1.0);
+    oColor += vec4(lightColor, 0.0);
 //    oColor = oColor / 200.0;
 //    oColor = color;
     oColor.w = factor;

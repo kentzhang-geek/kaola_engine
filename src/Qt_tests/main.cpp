@@ -7,12 +7,21 @@
 #include "utils/gl3d_path_config.h"
 #include "demomainwindow.h"
 #include "utils/gl3d_math.h"
+#include "utils/gl3d_global_param.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+    if (argc != 1) {
+        printf("usage : gltest.exe [maxCulledObjects] [maxInstanceNumPerDraw]\n");
+        QString num = argv[1];
+        gl3d::gl3d_global_param::shared_instance()->maxCulledObjNum = num.toInt();
+        num = argv[2];
+        gl3d::gl3d_global_param::shared_instance()->maxInsPerDraw = num.toInt();
+    }
     QApplication a(argc, argv);
+
 
 //    QTranslator *translator = new QTranslator;
 //    translator->load(":/translator/zh.qm");

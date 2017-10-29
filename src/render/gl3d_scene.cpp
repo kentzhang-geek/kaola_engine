@@ -533,7 +533,11 @@ void scene::draw_object(gl3d::abstract_object *obj, GLuint pro) {
     ::glm::mat4 pvm =
             this->watcher->projection_matrix *
             this->watcher->viewing_matrix;
-    
+    GL3D_GL()->glUniformMatrix4fv
+            (GL3D_GL()->glGetUniformLocation
+                     (pro, "pvMatrix"),
+             1, GL_FALSE, glm::value_ptr(pvm));
+
     // set model matrix
     ::glm::mat4 trans = obj->get_translation_mat() * obj->get_rotation_mat() * obj->get_scale_mat();
     // set norMtx
