@@ -21,6 +21,9 @@ protected:
 public:
     ~DemoMainWindow();
 
+private slots:
+    void on_confirm_clicked();
+
 private:
     Ui::DemoMainWindow *ui;
 };

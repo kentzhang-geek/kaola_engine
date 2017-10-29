@@ -405,8 +405,8 @@ void has_post::pre_render() {
 
     gl3d::scene *one_scene = this->get_attached_scene();
     // set g buffer and its texture
-    Program * lightShader = GL3D_GET_SHADER("light");
-    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("light");
+    Program * lightShader = GL3D_GET_SHADER("day");
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("day");
     GL3D_GL()->glUseProgram(lightShader->getProgramID());
     auto posText = new gl3d_general_texture(gPosition, gbufWidth, gbufHeight);
     auto normalText = new gl3d_general_texture(gNormal, gbufWidth, gbufHeight);
@@ -415,40 +415,44 @@ void has_post::pre_render() {
     // set shader
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    one_scene->get_property()->global_shader = QString("light");
+    one_scene->get_property()->global_shader = QString("day");
     current_shader_param->set_param();
-    one_scene->prepare_canvas(true);
+//    one_scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     GL3D_GL()->glDrawBuffers(1, attachments);
+    glm::vec3 sunPos(300.0f, 300.0f, 300.0f);
+    glm::vec3 lookdir = one_scene->watcher->get_look_direction();
+    glm::vec3 backClr = glm::vec3(one_scene->get_property()->background_color);
+    auto location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "sunPos");
+    GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(sunPos));
+    location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "lookto");
+    GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(lookdir));
+    location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "backColor");
+    GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(backClr));
+    location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "drawSun");
+    GL3D_GL()->glUniform1i(location, 0);
 //    GL3D_GL()->glEnable(GL_BLEND);
 //    GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    int i = 0;
-    for (auto lightit : one_scene->get_light_srcs()->values()) {
-        // set light position
-        QString lightname = QString::asprintf("light[%d]", i);
-        auto location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), lightname.toStdString().c_str());
-        glm::vec3 lpos = lightit->get_location();
-        GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(lpos));
-        i++;
-        if (i >= gl3d_global_param::shared_instance()->maxInsPerDraw) {
-//            i = 0;
-            break;
-        }
-    }
-    auto lnum = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "lightNum");
-    GL3D_GL()->glUniform1i(lnum, i);
-    if (i > 0)
-        one_scene->drawSpecialObject(rect, true);
+    // set stencil
+    GL3D_GL()->glEnable(GL_STENCIL_TEST);
+    GL3D_GL()->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    GL3D_GL()->glStencilFunc(GL_NOTEQUAL, 0, 0xffff);
+    GL3D_GL()->glClear(GL_COLOR_BUFFER_BIT);
+    one_scene->drawSpecialObject(rect, true);       // draw peoples
+    GL3D_GL()->glUniform1i(location, 1);
+    GL3D_GL()->glStencilFunc(GL_EQUAL, 0, 0xffff);        // draw sun
+    one_scene->drawSpecialObject(rect, true);
+    GL3D_GL()->glDisable(GL_STENCIL_TEST);
 //        one_scene->drawObjectInstanced(lightShader->getProgramID(), true, i, rect);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     delete rect;
 
-    QVector<string> cmd;
-    cmd.clear();
-    cmd.push_back(string("hdr_test"));
-    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
-                                                                           this->get_attached_scene(),
-                                                                           this->canvas);
+//    QVector<string> cmd;
+//    cmd.clear();
+//    cmd.push_back(string("hdr_test"));
+//    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
+//                                                                           this->get_attached_scene(),
+//                                                                           this->canvas);
     // save g buffer to file
 //    float * output_image = new float[gbufHeight * gbufWidth * 3];
 //    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];
@@ -507,6 +511,11 @@ void has_post::rend_main() {
     GL3D_GL()->glDisable(GL_CULL_FACE);
     GL3D_GL()->glDisable(GL_BLEND);
     GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    GL3D_GL()->glEnable(GL_STENCIL_TEST);
+    GL3D_GL()->glStencilFunc(GL_ALWAYS, 1, 0xffff);
+    GL3D_GL()->glClearStencil(0);
+    GL3D_GL()->glClear(GL_STENCIL_BUFFER_BIT);
+    GL3D_GL()->glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
     one_scene->drawInstanced(false, 100);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }

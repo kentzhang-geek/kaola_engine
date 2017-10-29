@@ -129,7 +129,7 @@ set(qttest_MOCS
         include/resource_and_network/global_info.h
         )
 
-include_directories(../build-qttest-Desktop_Qt_5_8_0_MinGW_32bit-Release)
+include_directories(../build-qttest-Desktop_Qt_5_8_0_MinGW_32bit-Debug)
 include_directories(LIBS/glm_build)
 include_directories(include)
 include_directories(LIBS/assimp-3.2/include)

@@ -21,8 +21,8 @@ DemoMainWindow::~DemoMainWindow()
 void DemoMainWindow::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
     gl3d::scene::scene_property config;
-//    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
-    config.background_color = glm::vec4(0.0f);
+    config.background_color = glm::vec4(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0, 1.0f);
+//    config.background_color = glm::vec4(0.0f);
     // 绑定画布的参数
     cout << this->ui->glview->size().width() << endl;
     cout << this->ui->glview->size().height() << endl;
@@ -68,4 +68,15 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     }
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
+}
+
+void DemoMainWindow::on_confirm_clicked()
+{
+    glm::vec3 newpos(
+            ui->lin_x->text().toFloat(),
+            ui->lin_y->text().toFloat(),
+            ui->lin_z->text().toFloat()
+    );
+    ui->glview->main_scene->watcher->set_current_position(newpos);
+    ui->glview->main_scene->watcher->calculate_mat();
 }
