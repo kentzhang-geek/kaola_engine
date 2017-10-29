@@ -239,8 +239,8 @@ void viewer::startArcballRotate(QPoint mousept) {
     glm::vec2 coord_input(mousept.x(), mousept.y());
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
             gl3d::gl3d_global_param::shared_instance()->canvas_width);
-    coord_input.x *= this->get_width();
-    coord_input.y *= this->get_height();
+//    coord_input.x *= this->get_width();
+//    coord_input.y *= this->get_height();
     coord_input.y = this->get_height() - coord_input.y;
     glm::vec3 coord_in = glm::vec3(coord_input.x, coord_input.y, 0.0);
     coord_in.z = 1.0;
@@ -256,7 +256,7 @@ void viewer::startArcballRotate(QPoint mousept) {
                                  glm::vec4(0.0, 0.0, this->width, this->height));
     glm::vec3 reallazer = glm::normalize(txxx);  // 真实射线向量计算OK
 
-    this->rotateCenterPoint = this->get_current_position() + reallazer * 3.0f;
+    this->rotateCenterPoint = this->get_current_position() + reallazer * 10.0f;
 //    this->rotateCenterPoint = this->get_current_position() + this->get_look_direction() * 3.0f;
     this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
 }
