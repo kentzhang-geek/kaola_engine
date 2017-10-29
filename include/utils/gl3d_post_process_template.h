@@ -10,6 +10,7 @@ using namespace gl3d;
 class special_obj : public gl3d::object {
 public:
     special_obj(gl3d_general_texture * p_tex);
+    special_obj(gl3d_general_texture * text0, gl3d_general_texture *text1, gl3d_general_texture *text2);
 };
 
 

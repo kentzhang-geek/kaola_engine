@@ -30,7 +30,7 @@ namespace gl3d {
     class scene : public utils::noncopyable {
     public:
         typedef struct scene_property {
-            glm::vec3 background_color;
+            glm::vec4 background_color;
             QString global_shader;
             GLuint64 current_draw_authority; // 当前绘制哪些obj，见gl3d_obj_authority.h
             //还有其他属性待加入

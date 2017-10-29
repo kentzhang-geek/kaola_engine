@@ -133,14 +133,14 @@ bool scene::prepare_buffer() {
 bool scene::prepare_canvas(bool use_global_shader) {
     // clear and set scene
     if (use_global_shader) {
-        GL3D_GL()->glClearColor(0.0, 0.0, 0.0, 1.0);
+        GL3D_GL()->glClearColor(0.0, 0.0, 0.0, 0.0);
     }
     else {
         GL3D_GL()->glClearColor
                 (this->this_property.background_color.x,
                  this->this_property.background_color.y,
                  this->this_property.background_color.z,
-                 1.0);
+                 this->this_property.background_color.w);
     }
     GL3D_GL()->glEnable(GL_CULL_FACE);
     GL3D_GL()->glCullFace(GL_BACK);

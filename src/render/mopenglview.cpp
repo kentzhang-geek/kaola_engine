@@ -1,5 +1,6 @@
 #include "kaola_engine/mopenglview.h"
 #include "editor/sign_config.h"
+#include <gl/glext.h>
 
 using namespace std;
 
@@ -231,6 +232,7 @@ void MOpenGLView::initializeGL() {
 
     this->connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
 //    this->connect(keyTimer, SIGNAL(timeout()), this, SLOT(view_change()));
+    this->glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 }
 
 void MOpenGLView::view_change() {

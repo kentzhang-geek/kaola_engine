@@ -88,7 +88,7 @@ void drawhomewin::showEvent(QShowEvent *ev) {
 
     // for test
     gl3d::scene::scene_property config;
-    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
+//    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
     // 绑定画布的参数
     cout << this->ui->OpenGLCanvas->size().width() << endl;
     cout << this->ui->OpenGLCanvas->size().height() << endl;

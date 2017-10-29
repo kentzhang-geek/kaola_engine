@@ -11,6 +11,14 @@
 void gl3d_general_texture::init() {
 }
 
+gl3d_general_texture::gl3d_general_texture(GLuint obj, GLuint width, GLuint height) {
+    this->init();
+    this->set_text_obj(obj);
+    this->set_size_x(width);
+    this->set_size_y(height);
+    this->type = GL3D_DATA;
+}
+
 gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type set_type, GLuint x, GLuint y) {
     this->init();
     
@@ -52,7 +60,7 @@ gl3d_general_texture::gl3d_general_texture(gl3d_general_texture::texture_type se
 //            glTexStorage2DEXT(GL_TEXTURE_2D, 0, GL_RGBA8_OES, x, y);
             break;
         default:
-            throw std::invalid_argument("invalid general texture type");
+//            throw std::invalid_argument("invalid general texture type");
             break;
     }
     
@@ -89,7 +97,7 @@ void gl3d_general_texture::clean_data() {
             GL3D_GL()->glBindTexture(GL_TEXTURE_2D, 0);
             break;
         default:
-            throw std::invalid_argument("invalid general texture type");
+//            throw std::invalid_argument("invalid general texture type");
             break;
     }
 }
@@ -107,7 +115,7 @@ void gl3d_general_texture::bind(GLenum text_unit) {
             this->set_parami(true);
             break;
         default:
-            throw std::invalid_argument("invalid general texture type");
+//            throw std::invalid_argument("invalid general texture type");
             break;
     }
 
@@ -142,7 +150,7 @@ void gl3d_general_texture::buffer_data(GLvoid *data) {
                          data);
             break;
         default:
-            throw std::invalid_argument("invalid general texture type");
+//            throw std::invalid_argument("invalid general texture type");
             break;
     }
 }

@@ -178,6 +178,17 @@ gl3d_material::gl3d_material(gl3d_general_texture * gtext) {
     this->colors.insert(specular, glm::vec3(0.0));
 }
 
+gl3d_material::gl3d_material(gl3d_general_texture *text0, gl3d_general_texture *text1, gl3d_general_texture *text2) {
+    this->init();
+
+    this->textures.insert(ambient, text0);
+    this->textures.insert(diffuse, text1);
+    this->textures.insert(specular, text2);
+    this->colors.insert(ambient, glm::vec3(0.0));
+    this->colors.insert(diffuse, glm::vec3(0.0));
+    this->colors.insert(specular, glm::vec3(0.0));
+}
+
 gl3d_material::gl3d_material() {
     this->init();
     this->is_empty = true;

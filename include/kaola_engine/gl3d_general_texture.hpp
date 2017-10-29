@@ -24,9 +24,11 @@ namespace gl3d {
             GL3D_RGB,
             GL3D_RGBA,
             GL3D_LUMINANCE,
-            GL3D_LUMINANCE_ALPHA
+            GL3D_LUMINANCE_ALPHA,
+            GL3D_DATA
         };
         gl3d_general_texture() {};
+        gl3d_general_texture(GLuint obj, GLuint width, GLuint height);
         gl3d_general_texture(texture_type type, GLuint x, GLuint y);
         ~gl3d_general_texture();
         void bind(GLenum text_unit);

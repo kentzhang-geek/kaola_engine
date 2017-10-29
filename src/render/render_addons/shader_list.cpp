@@ -44,3 +44,4 @@ GL3D_LOAD_SHADER(post_process_result,
                  post_process_result.fdata);
 
 GL3D_LOAD_SHADER(color, color.vdata, color.fdata);
+GL3D_LOAD_SHADER(light, light.vdata, light.fdata);

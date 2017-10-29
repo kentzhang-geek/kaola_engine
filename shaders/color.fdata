@@ -37,7 +37,7 @@ void main() {
 
     // 计算散射色
     vec4 difclr = (texture2D(gl3d_texture_diffuse, text_coord) + mtlDiffuseColor);
-    out_color += (difclr * 0.4);
+    out_color += (difclr * 0.5);
 
     // 计算镜面色
     vec4 spcclr = (texture2D(gl3d_texture_specular, text_coord) + mtlSpecularColor);

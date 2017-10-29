@@ -21,7 +21,8 @@ DemoMainWindow::~DemoMainWindow()
 void DemoMainWindow::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
     gl3d::scene::scene_property config;
-    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
+//    config.background_color = glm::vec3(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0);
+    config.background_color = glm::vec4(0.0f);
     // 绑定画布的参数
     cout << this->ui->glview->size().width() << endl;
     cout << this->ui->glview->size().height() << endl;
@@ -50,16 +51,21 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
     ui->glview->main_scene->spaceManager->cullObjects(ui->glview->main_scene->watcher,
                                                       gl3d_global_param::shared_instance()->maxCulledObjNum);
 
-    // add a light
-    general_light_source *light_1 = new general_light_source();
-    glm::vec3 lightp(0.0, 1.8, 0.0);
-    lightp.y = 2.0f;
-    light_1->set_location(lightp);
-    light_1->set_direction(glm::vec3(0.0, -1.0, 0.0));
-    light_1->set_light_type(light_1->directional_point_light);
-    light_1->set_light_angle(30.0);
-
-    this->ui->glview->main_scene->get_light_srcs()->insert(1, light_1);
+    qrand();
+    qrand();
+    // add lights
+    for (int i = 0; i < 50; i++) {
+        general_light_source *light = new general_light_source();
+        glm::vec3 pos;
+        pos.x = (qrand() % 200) / 10.0f;
+        pos.y = (qrand() % 200) / 10.0f;
+        pos.z = (qrand() % 200) / 10.0f;
+        light->set_location(pos);
+        light->set_direction(glm::vec3(0.0, -1.0, 0.0));
+        light->set_light_type(light->point_light);
+        light->set_light_angle(30.0);
+        this->ui->glview->main_scene->get_light_srcs()->insert(i, light);
+    }
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
 }

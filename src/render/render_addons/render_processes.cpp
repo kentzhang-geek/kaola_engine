@@ -355,11 +355,11 @@ void has_post::pre_render() {
     GLuint gPosition, gNormal, gColorSpec;
 
 // - 颜色缓冲
-    this->canvas = new gl3d::gl3d_general_texture(
+    gl3d_general_texture * gColor = new gl3d::gl3d_general_texture(
             gl3d_general_texture::GL3D_RGBA,
             2.0 * this->get_attached_scene()->get_width(),
             2.0 * this->get_attached_scene()->get_height());
-    fb.attach_color_text(this->canvas->get_text_obj());
+    fb.attach_color_text(gColor->get_text_obj());
 
     // 位置缓冲
     GL3D_GL()->glGenTextures(1, &gPosition);
@@ -392,11 +392,59 @@ void has_post::pre_render() {
     GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     GL3D_GL()->glDrawBuffers(3, attachments);
     this->rend_main();
-    fb.save_to_file("test.jpg");
+
+    // now render with light
+    this->canvas = new gl3d::gl3d_general_texture(
+            gl3d_general_texture::GL3D_RGBA,
+            2.0 * this->get_attached_scene()->get_width(),
+            2.0 * this->get_attached_scene()->get_height());
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0); // detach
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0); // detach
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, 0, 0); // detach
+    fb.attach_color_text(this->canvas->get_text_obj());
+
+    gl3d::scene *one_scene = this->get_attached_scene();
+    // set g buffer and its texture
+    Program * lightShader = GL3D_GET_SHADER("light");
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("light");
+    GL3D_GL()->glUseProgram(lightShader->getProgramID());
+    auto posText = new gl3d_general_texture(gPosition, gbufWidth, gbufHeight);
+    auto normalText = new gl3d_general_texture(gNormal, gbufWidth, gbufHeight);
+    special_obj *rect = new special_obj(gColor, posText, normalText);
+    rect->buffer_data();
+    // set shader
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    one_scene->get_property()->global_shader = QString("light");
+    current_shader_param->set_param();
+    one_scene->prepare_canvas(true);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDrawBuffers(1, attachments);
+//    GL3D_GL()->glEnable(GL_BLEND);
+//    GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    int i = 0;
+    for (auto lightit : one_scene->get_light_srcs()->values()) {
+        // set light position
+        QString lightname = QString::asprintf("light[%d]", i);
+        auto location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), lightname.toStdString().c_str());
+        glm::vec3 lpos = lightit->get_location();
+        GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(lpos));
+        i++;
+        if (i >= gl3d_global_param::shared_instance()->maxInsPerDraw) {
+//            i = 0;
+            break;
+        }
+    }
+    auto lnum = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "lightNum");
+    GL3D_GL()->glUniform1i(lnum, i);
+    if (i > 0)
+        one_scene->drawSpecialObject(rect, true);
+//        one_scene->drawObjectInstanced(lightShader->getProgramID(), true, i, rect);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    delete rect;
 
     QVector<string> cmd;
     cmd.clear();
-//    cmd.push_back(string("simple_directional_light")); // no light for now
     cmd.push_back(string("hdr_test"));
     this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
                                                                            this->get_attached_scene(),
@@ -425,8 +473,9 @@ void has_post::pre_render() {
 //    QImage img2((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
 //    img2.save("test_normal.jpg");
     // delete
-    GL3D_GL()->glDeleteTextures(1, &gPosition);
-    GL3D_GL()->glDeleteTextures(1, &gNormal);
+//    delete posText;
+//    delete normalText;
+//    delete gColor;
 }
 
 void has_post::render() {
@@ -456,6 +505,8 @@ void has_post::rend_main() {
     one_scene->get_property()->global_shader = QString("color");
     one_scene->prepare_canvas(false);
     GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_BLEND);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
     one_scene->drawInstanced(false, 100);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
