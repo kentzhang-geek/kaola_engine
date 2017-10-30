@@ -129,6 +129,8 @@ private:
     // advanced
     bool leftMousePressed;
     bool midMousePressed;
+    bool rightMousePressed;
+    QPoint flyMousePt;
     int fps;
 };
 

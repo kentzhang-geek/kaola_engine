@@ -65,7 +65,7 @@ void main() {
             factor = length(vec3(lightScr) - scrPos) / lightDotSize;
         }
     }
-    oColor = color * clamp(factor, 0.0, 1.0);
+    oColor = color * (0.15 + 0.85 * clamp(factor, 0.0, 1.0));
     oColor += vec4(lightColor, 0.0);
 //    oColor = oColor / 200.0;
 //    oColor = color;

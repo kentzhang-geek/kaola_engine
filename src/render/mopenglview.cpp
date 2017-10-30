@@ -77,7 +77,7 @@ void MOpenGLView::do_init() {
 
     // set OPENGL context
     timer = new QTimer(this);
-    timer->start(15);
+    timer->start(60);
 
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
@@ -102,6 +102,7 @@ void MOpenGLView::do_init() {
     // advanced
     leftMousePressed = false;
     midMousePressed = false;
+    rightMousePressed = false;
 }
 
 #define MAX_FILE_SIZE 10000
@@ -247,6 +248,10 @@ void MOpenGLView::view_change() {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 1.0, 0.0) * 0.1);
     } else if (this->key_press == Qt::Key_Space) {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 0.0, 1.0) * 0.1);
+    }
+
+    if (this->rightMousePressed) {
+        this->main_scene->watcher->flyArcballMove(this->flyMousePt, 0.4);
     }
 
     if ((this->main_scene != NULL) &&
@@ -458,6 +463,9 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         leftMousePressed = true;
     } else if (event->button() == Qt::MidButton) {
         midMousePressed = true;
+    } else if (event->button() == Qt::RightButton) {
+        this->flyMousePt = event->pos();
+        rightMousePressed = true;
     }
 }
 
@@ -466,10 +474,12 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     this->draw_assistant_img();
 
-    if (leftMousePressed) {
+    if (leftMousePressed) {         // rotate angel
         main_scene->watcher->updateArcballRotate(event->pos());
-    } else if (midMousePressed) {
+    } else if (midMousePressed) {   // flat move
         main_scene->watcher->updateArcballFlatMove(event->pos());
+    } else if (rightMousePressed) { // fly move
+        this->flyMousePt = event->pos();
     }
 }
 
@@ -479,9 +489,10 @@ void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
     if (leftMousePressed || midMousePressed) {
         main_scene->watcher->endArcballRotate();
-        leftMousePressed = false;
-        midMousePressed = false;
     }
+    leftMousePressed = false;
+    midMousePressed = false;
+    rightMousePressed = false;
 }
 
 void MOpenGLView::draw_assistant_img() {

@@ -264,6 +264,21 @@ void viewer::startArcballRotate(QPoint mousept) {
     this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
 }
 
+void viewer::flyArcballMove(QPoint mousept, float moveFactor) {
+    glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y());
+    const float stepSize = 0.1f;
+    const float stepAngle = 0.01f;
+    updateval.x = updateval.x / this->width;
+    updateval.y = updateval.y / this->height;
+    updateval = updateval - 0.5f;
+    if (glm::length(updateval) > 1.0f)
+        updateval = glm::normalize(updateval);
+    float z = glm::sqrt(1.0 - updateval.x * updateval.x - updateval.y * updateval.y);
+    this->change_position(glm::vec3(0.0, 1.0, 0.0) * z * stepSize * moveFactor);
+    this->go_raise(updateval.y * 360.0 * stepAngle * moveFactor);
+    this->go_rotate(updateval.x * 360.0 * stepAngle * moveFactor);
+}
+
 void viewer::updateArcballFlatMove(QPoint mousept) {
     glm::vec3 reallazer = this->getRay(mousept);  // 真实射线向量计算OK
 
