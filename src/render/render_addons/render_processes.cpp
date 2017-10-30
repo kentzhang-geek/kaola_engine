@@ -410,7 +410,7 @@ void has_post::pre_render() {
             if ((sunTan.y > 0.0) &&
                 (glm::abs(sunTan.x) > 0.05f) &&
                 (angleTmp > (glm::pi<float>() / 12.0)) &&
-                (angleTmp < (glm::pi<float>() / 3.0))) {
+                (angleTmp < (glm::pi<float>() / 4.0))) {
                 GLubyte tmpdata[4];
                 // get pixel
                 GL3D_GL()->glReadPixels(sunpt.x, sunpt.y, 1, 1, GL_RGBA,  GL_UNSIGNED_BYTE, tmpdata);
