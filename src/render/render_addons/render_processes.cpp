@@ -404,13 +404,20 @@ void has_post::pre_render() {
         glm::vec2 sunpt = one_scene->project_point_to_screen(glm::vec3(300.0f));
         sunpt = sunpt * 2.0f;
         sunpt.y = gbufHeight - sunpt.y;
+        glm::vec2 sunTan(sunpt.x - gbufWidth / 2.0, sunpt.y - gbufHeight / 2.0f);
+        float angleTmp = glm::atan(glm::abs(sunTan.y) / glm::abs(sunTan.x));
         if (math::point_in_range(sunpt, glm::vec2(0.0), glm::vec2(gbufWidth, gbufHeight))) {
-            GLubyte tmpdata[4];
-            // get pixel
-            GL3D_GL()->glReadPixels(sunpt.x, sunpt.y, 1, 1, GL_RGBA,  GL_UNSIGNED_BYTE, tmpdata);
-            // now can check if sunshine should draw
-            if ((tmpdata[0] || tmpdata[1] || tmpdata[2] || tmpdata[3]) == 0) {
-                drawSunshine = true;
+            if ((sunTan.y > 0.0) &&
+                (glm::abs(sunTan.x) > 0.05f) &&
+                (angleTmp > (glm::pi<float>() / 6.0)) &&
+                (angleTmp < (glm::pi<float>() / 3.0))) {
+                GLubyte tmpdata[4];
+                // get pixel
+                GL3D_GL()->glReadPixels(sunpt.x, sunpt.y, 1, 1, GL_RGBA,  GL_UNSIGNED_BYTE, tmpdata);
+                // now can check if sunshine should draw
+                if ((tmpdata[0] || tmpdata[1] || tmpdata[2] || tmpdata[3]) == 0) {
+                    drawSunshine = true;
+                }
             }
         }
     }
@@ -458,6 +465,8 @@ void has_post::pre_render() {
     GL3D_GL()->glClear(GL_COLOR_BUFFER_BIT);
     one_scene->drawSpecialObject(rect, true);       // draw peoples
     GL3D_GL()->glUniform1i(location, 1);
+    location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "backColor");
+    GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(backClr));
     GL3D_GL()->glStencilFunc(GL_EQUAL, 0, 0xffff);        // draw sun
     one_scene->drawSpecialObject(rect, true);
     GL3D_GL()->glDisable(GL_STENCIL_TEST);
@@ -483,17 +492,8 @@ void has_post::pre_render() {
 
         glm::vec4 shineColor;
         // shine pot 1
-        shineColor = glm::vec4(255.0f, 215.0f, 0.0f, 1.0f);
+        shineColor = glm::vec4(255.0f/255.0f, 215.0f/255.0f, 0.0f, 1.0f);
         shineColor.w = 0.4;
-        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
-        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
-        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
-        GL3D_GL()->glUniform1f(location, 0.08);
-        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, 0.9);
-        one_scene->drawSpecialObject(rect, true);
-
-        // shine pot 2
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
@@ -502,15 +502,41 @@ void has_post::pre_render() {
         GL3D_GL()->glUniform1f(location, 0.72);
         one_scene->drawSpecialObject(rect, true);
 
+        // shine pot 2
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.1);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, 0.6);
+        one_scene->drawSpecialObject(rect, true);
+
         // shine pot 3
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
-        GL3D_GL()->glUniform1f(location, 0.12);
+        GL3D_GL()->glUniform1f(location, 0.1);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, 0.5);
+        GL3D_GL()->glUniform1f(location, 0.32);
         one_scene->drawSpecialObject(rect, true);
 
+        // shine pot 4
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.1);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, 0.2);
+        one_scene->drawSpecialObject(rect, true);
+
+        // shine pot 5
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.2);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, -1.6);
+        one_scene->drawSpecialObject(rect, true);
 
         GL3D_GL()->glDisable(GL_BLEND);
         GL3D_GL()->glEnable(GL_DEPTH_TEST);
@@ -519,12 +545,12 @@ void has_post::pre_render() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     delete rect;
 
-//    QVector<string> cmd;
-//    cmd.clear();
-//    cmd.push_back(string("hdr_test"));
-//    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
-//                                                                           this->get_attached_scene(),
-//                                                                           this->canvas);
+    QVector<string> cmd;
+    cmd.clear();
+    cmd.push_back(string("hdr_test"));
+    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
+                                                                           this->get_attached_scene(),
+                                                                           this->canvas);
     // save g buffer to file
 //    float * output_image = new float[gbufHeight * gbufWidth * 3];
 //    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];

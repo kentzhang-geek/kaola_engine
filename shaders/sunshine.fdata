@@ -42,7 +42,8 @@ void main() {
         if (length(lightScr.xy * shineFac - scrPos.xy) < shineSize) {
             float factor = (shineSize - length(vec2(lightScr.xy * shineFac) - scrPos.xy)) / shineSize;
 //            oColor = shineColor * 1.0 * pow(factor / 2.0, 6.0);
-            oColor = shineColor * 0.2 * pow(factor, 3.0);
+            oColor = shineColor;
+            oColor.w = 0.2 * pow(factor, 4.0);
     } else {
         oColor = vec4(0.0);
     }

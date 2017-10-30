@@ -36,7 +36,7 @@ out vec4 oColor;
 
 void main() {
     // 获取颜色
-    const float lightDotSize = 0.04;
+    const float lightDotSize = 0.5;
     vec4 color = texture2D(colorText, text_coord) * 2;
     vec3 pos = vec3(texture2D(posText, text_coord)).rgb;
     vec3 normal = vec3(texture2D(normalText, text_coord)).rgb;
@@ -52,8 +52,12 @@ void main() {
     if (drawSun > 0) {
         oColor = vec4(backColor, 1.0);
         if ((lookto.y > 0.0) && (length(lightScr.xy - scrPos.xy) < lightDotSize)) {
-            factor = length(vec3(lightScr) - scrPos) / lightDotSize;
-            oColor = vec4(1.0);
+            factor = (lightDotSize - length(lightScr.xy - scrPos.xy)) / lightDotSize;
+            float alphax = pow(factor, 6.0);
+            oColor = (1.2 * vec4(1.0, 225.0f/255.0f, 0.65f, 1.0f)) * alphax + oColor * (1.0 - alphax);
+//            oColor = min(oColor, vec4(1.0, 215.0f/255.0f, 1.0f, 1.0f));
+            oColor = clamp(oColor, 0.0, 1.0);
+            oColor.w = 1.0;
         }
     } else {
         oColor = color * 0.3 + (color * clamp(factor, 0.0, 0.5));
