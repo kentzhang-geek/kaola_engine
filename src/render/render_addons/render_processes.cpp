@@ -409,7 +409,7 @@ void has_post::pre_render() {
         if (math::point_in_range(sunpt, glm::vec2(0.0), glm::vec2(gbufWidth, gbufHeight))) {
             if ((sunTan.y > 0.0) &&
                 (glm::abs(sunTan.x) > 0.05f) &&
-                (angleTmp > (glm::pi<float>() / 6.0)) &&
+                (angleTmp > (glm::pi<float>() / 12.0)) &&
                 (angleTmp < (glm::pi<float>() / 3.0))) {
                 GLubyte tmpdata[4];
                 // get pixel
@@ -492,50 +492,53 @@ void has_post::pre_render() {
 
         glm::vec4 shineColor;
         // shine pot 1
-        shineColor = glm::vec4(255.0f/255.0f, 215.0f/255.0f, 0.0f, 1.0f);
-        shineColor.w = 0.4;
+        shineColor = glm::vec4(255.0f/255.0f, 225.0f/255.0f, 125.0f/255.0, 0.4f);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
-        GL3D_GL()->glUniform1f(location, 0.1);
+        GL3D_GL()->glUniform1f(location, 0.3);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
         GL3D_GL()->glUniform1f(location, 0.72);
         one_scene->drawSpecialObject(rect, true);
 
         // shine pot 2
+        shineColor = glm::vec4(255.0f/255.0f, 225.0f/255.0f, 175.0f/255.0, 0.4f);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
         GL3D_GL()->glUniform1f(location, 0.1);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, 0.6);
+        GL3D_GL()->glUniform1f(location, 0.4);
         one_scene->drawSpecialObject(rect, true);
 
         // shine pot 3
+        shineColor = glm::vec4(255.0f/255.0f, 225.0f/255.0f, 175.0f/255.0, 0.4f);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
         GL3D_GL()->glUniform1f(location, 0.1);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, 0.32);
+        GL3D_GL()->glUniform1f(location, 0.1);
         one_scene->drawSpecialObject(rect, true);
 
         // shine pot 4
+        shineColor = glm::vec4(125.0f/255.0f, 215.0f/255.0f, 125.0f/255.0, 0.4f);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
-        GL3D_GL()->glUniform1f(location, 0.1);
+        GL3D_GL()->glUniform1f(location, 0.3);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, 0.2);
+        GL3D_GL()->glUniform1f(location, -0.4);
         one_scene->drawSpecialObject(rect, true);
 
         // shine pot 5
+        shineColor = glm::vec4(175.0f/255.0f, 215.0f/255.0f, 175.0f/255.0, 0.4f);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
         GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
-        GL3D_GL()->glUniform1f(location, 0.2);
+        GL3D_GL()->glUniform1f(location, 0.5);
         location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
-        GL3D_GL()->glUniform1f(location, -1.6);
+        GL3D_GL()->glUniform1f(location, -1.0);
         one_scene->drawSpecialObject(rect, true);
 
         GL3D_GL()->glDisable(GL_BLEND);
