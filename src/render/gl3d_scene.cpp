@@ -827,6 +827,7 @@ glm::vec2 scene::project_point_to_screen(glm::vec3 point_on_world) {
 
     glm::vec4 coord_out;
     coord_out = pvm * glm::vec4(point_on_world.x, point_on_world.y, point_on_world.z, 1.0f);
+    coord_out = coord_out / coord_out.w;
     coord_out = (coord_out + 1.0f)/2.0f;
     glm::vec2 output;
     output = glm::vec2(coord_out.x, coord_out.y);

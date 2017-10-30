@@ -77,7 +77,7 @@ void MOpenGLView::do_init() {
 
     // set OPENGL context
     timer = new QTimer(this);
-    timer->start(15);
+    timer->start(60);
 
     // init path KENT TODO : shader目录设置要调整
     this->res_path = GL3D_PATH_SHADER;
@@ -101,6 +101,8 @@ void MOpenGLView::do_init() {
 
     // advanced
     leftMousePressed = false;
+    midMousePressed = false;
+    rightMousePressed = false;
 }
 
 #define MAX_FILE_SIZE 10000
@@ -248,6 +250,10 @@ void MOpenGLView::view_change() {
         this->main_scene->watcher->change_position(glm::vec3(0.0, 0.0, 1.0) * 0.1);
     }
 
+    if (this->rightMousePressed) {
+        this->main_scene->watcher->flyArcballMove(this->flyMousePt, 0.4);
+    }
+
     if ((this->main_scene != NULL) &&
             (this->main_scene->watcher->viewerChanged)) {
         this->main_scene->watcher->headto(glm::vec3(0.0, 1.0, 0.0));
@@ -299,15 +305,31 @@ void MOpenGLView::resizeGL(int width, int height) {
 
 //滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
-    this->main_scene->get_assistant_image()->fill(0);
+    event->accept();      //接收该事件
     auto tmp_viewer = this->main_scene->watcher;
 
-    //滚动的角度，*8就是鼠标滚动的距离
-    int numDegrees = event->delta() / 8;
-    //滚动的步数，*15就是鼠标滚动的角度
-    int numSteps = tmp_viewer->get_top_view_size() - (numDegrees / 15);
+    //拾取obj
+    int pobjid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+    qDebug() << pobjid;
+    if (pickUpObjID > 0) {
+        this->main_scene->get_obj(pickUpObjID)->set_pick_flag(false);
+        pickUpObjID = -1;
+    }
+    if (pobjid > 0) {
+        pickUpObjID = pobjid;
+        this->main_scene->get_obj(pickUpObjID)->set_pick_flag(true);
+    }
+    // start arc ball rotate
+    main_scene->watcher->startArcballRotate(event->pos());
+    if (pickUpObjID > 0) {
+        main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+    }
 
-    event->accept();      //接收该事件
+    float distance = 1.0;
+    distance *= event->delta() / 128.0;
+    main_scene->watcher->pullPushArcBall(distance);
+    main_scene->watcher->endArcballRotate();
+    main_scene->watcher->calculate_mat();
 }
 
 extern bool need_capture;
@@ -415,7 +437,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //左键按下事件
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton || event->button() == Qt::MidButton) {
         //拾取并新建选项框
         if (now_state == gl3d::gl3d_global_param::normal) {
             need_capture = true;
@@ -435,10 +457,15 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if (pickUpObjID > 0) {
             main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
         }
+    }
+
+    if (event->button() == Qt::LeftButton) {
         leftMousePressed = true;
-    } else if (event->button() == Qt::RightButton) {
-        //右键按下事件
     } else if (event->button() == Qt::MidButton) {
+        midMousePressed = true;
+    } else if (event->button() == Qt::RightButton) {
+        this->flyMousePt = event->pos();
+        rightMousePressed = true;
     }
 }
 
@@ -447,8 +474,12 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     this->draw_assistant_img();
 
-    if (leftMousePressed) {
+    if (leftMousePressed) {         // rotate angel
         main_scene->watcher->updateArcballRotate(event->pos());
+    } else if (midMousePressed) {   // flat move
+        main_scene->watcher->updateArcballFlatMove(event->pos());
+    } else if (rightMousePressed) { // fly move
+        this->flyMousePt = event->pos();
     }
 }
 
@@ -456,10 +487,12 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
-    if (leftMousePressed) {
+    if (leftMousePressed || midMousePressed) {
         main_scene->watcher->endArcballRotate();
-        leftMousePressed = false;
     }
+    leftMousePressed = false;
+    midMousePressed = false;
+    rightMousePressed = false;
 }
 
 void MOpenGLView::draw_assistant_img() {

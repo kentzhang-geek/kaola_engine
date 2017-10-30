@@ -235,12 +235,10 @@ void viewer::coord_ground(glm::vec2 coord_in, glm::vec2 & coord_out, GLfloat hig
     }
 }
 
-void viewer::startArcballRotate(QPoint mousept) {
+glm::vec3 viewer::getRay(QPoint mousept) {
     glm::vec2 coord_input(mousept.x(), mousept.y());
     GLfloat s_range = gl3d::scale::shared_instance()->get_scale_factor(
             gl3d::gl3d_global_param::shared_instance()->canvas_width);
-//    coord_input.x *= this->get_width();
-//    coord_input.y *= this->get_height();
     coord_input.y = this->get_height() - coord_input.y;
     glm::vec3 coord_in = glm::vec3(coord_input.x, coord_input.y, 0.0);
     coord_in.z = 1.0;
@@ -255,10 +253,62 @@ void viewer::startArcballRotate(QPoint mousept) {
                                  this->projection_matrix * this->viewing_matrix * ::glm::scale(glm::mat4(1.0), glm::vec3(s_range)),
                                  glm::vec4(0.0, 0.0, this->width, this->height));
     glm::vec3 reallazer = glm::normalize(txxx);  // 真实射线向量计算OK
+    return reallazer;
+}
+
+void viewer::startArcballRotate(QPoint mousept) {
+    glm::vec3 reallazer = this->getRay(mousept);  // 真实射线向量计算OK
 
     this->rotateCenterPoint = this->get_current_position() + reallazer * 10.0f;
 //    this->rotateCenterPoint = this->get_current_position() + this->get_look_direction() * 3.0f;
     this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
+}
+
+void viewer::flyArcballMove(QPoint mousept, float moveFactor) {
+    glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y());
+    const float stepSize = 0.1f;
+    const float stepAngle = 0.01f;
+    updateval.x = updateval.x / this->width;
+    updateval.y = updateval.y / this->height;
+    updateval = updateval - 0.5f;
+    if (glm::length(updateval) > 1.0f)
+        updateval = glm::normalize(updateval);
+    float z = glm::sqrt(1.0 - updateval.x * updateval.x - updateval.y * updateval.y);
+    this->change_position(glm::vec3(0.0, 1.0, 0.0) * z * stepSize * moveFactor);
+    this->go_raise(updateval.y * 360.0 * stepAngle * moveFactor);
+    this->go_rotate(updateval.x * 360.0 * stepAngle * moveFactor);
+}
+
+void viewer::updateArcballFlatMove(QPoint mousept) {
+    glm::vec3 reallazer = this->getRay(mousept);  // 真实射线向量计算OK
+
+    glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y()) - oriMousePoint;
+    oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
+
+    glm::vec3 xAxis = glm::cross(rotateCenterPoint - this->get_current_position(), glm::vec3(0.0, 1.0, 0.0));
+    xAxis = glm::normalize(xAxis);
+    glm::vec3 yAxis = glm::cross(xAxis, rotateCenterPoint - this->get_current_position());
+    yAxis = glm::normalize(yAxis);
+    glm::vec3 newPt(0.0);
+    bool ok = math::line_cross_facet(
+            math::triangle_facet(
+                    rotateCenterPoint,
+                    rotateCenterPoint + yAxis,
+                    rotateCenterPoint + xAxis),
+            math::line_3d(this->get_current_position(), this->get_current_position() + reallazer),
+            newPt
+    );
+    if (!ok)
+        return;
+    this->set_current_position(this->get_current_position() +
+                               rotateCenterPoint - newPt);
+    this->calculate_mat();
+}
+
+void viewer::pullPushArcBall(float distance) {
+    glm::vec3 movDir = rotateCenterPoint - this->get_current_position();
+    movDir = glm::normalize(movDir);
+    this->set_current_position(this->get_current_position() + movDir * distance);
 }
 
 void viewer::updateArcballRotate(QPoint mousept) {

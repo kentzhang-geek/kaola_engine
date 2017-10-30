@@ -344,11 +344,16 @@ public:
 GL3D_ADD_RENDER_PROCESS(has_post);
 
 void has_post::pre_render() {
-    this->rend_shadow();
+//    this->rend_shadow();
     // render g-buffer
     int gbufWidth = 2 * (int)this->get_attached_scene()->get_width();
     int gbufHeight = 2 * (int)this->get_attached_scene()->get_height();
 
+    gl3d::scene *one_scene = this->get_attached_scene();
+    bool drawSunshine = false;
+    glm::vec3 sunPos(300.0f, 300.0f, 300.0f);
+    glm::vec3 lookdir = one_scene->watcher->get_look_direction();
+    glm::vec3 backClr = glm::vec3(one_scene->get_property()->background_color);
     gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
                         gbufWidth, gbufHeight);
     GLuint gBuffer = fb.get_frame_obj();
@@ -393,6 +398,23 @@ void has_post::pre_render() {
     GL3D_GL()->glDrawBuffers(3, attachments);
     this->rend_main();
 
+    // checkwith stencil
+    if (lookdir.y > 0) {
+        fb.use_this_frame();
+        glm::vec2 sunpt = one_scene->project_point_to_screen(glm::vec3(300.0f));
+        sunpt = sunpt * 2.0f;
+        sunpt.y = gbufHeight - sunpt.y;
+        if (math::point_in_range(sunpt, glm::vec2(0.0), glm::vec2(gbufWidth, gbufHeight))) {
+            GLubyte tmpdata[4];
+            // get pixel
+            GL3D_GL()->glReadPixels(sunpt.x, sunpt.y, 1, 1, GL_RGBA,  GL_UNSIGNED_BYTE, tmpdata);
+            // now can check if sunshine should draw
+            if ((tmpdata[0] || tmpdata[1] || tmpdata[2] || tmpdata[3]) == 0) {
+                drawSunshine = true;
+            }
+        }
+    }
+
     // now render with light
     this->canvas = new gl3d::gl3d_general_texture(
             gl3d_general_texture::GL3D_RGBA,
@@ -403,7 +425,6 @@ void has_post::pre_render() {
     GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, 0, 0); // detach
     fb.attach_color_text(this->canvas->get_text_obj());
 
-    gl3d::scene *one_scene = this->get_attached_scene();
     // set g buffer and its texture
     Program * lightShader = GL3D_GET_SHADER("day");
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("day");
@@ -420,9 +441,6 @@ void has_post::pre_render() {
 //    one_scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     GL3D_GL()->glDrawBuffers(1, attachments);
-    glm::vec3 sunPos(300.0f, 300.0f, 300.0f);
-    glm::vec3 lookdir = one_scene->watcher->get_look_direction();
-    glm::vec3 backClr = glm::vec3(one_scene->get_property()->background_color);
     auto location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "sunPos");
     GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(sunPos));
     location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "lookto");
@@ -444,6 +462,60 @@ void has_post::pre_render() {
     one_scene->drawSpecialObject(rect, true);
     GL3D_GL()->glDisable(GL_STENCIL_TEST);
 //        one_scene->drawObjectInstanced(lightShader->getProgramID(), true, i, rect);
+    // draw sun shine
+    if (drawSunshine) {
+        Program * shineShader = GL3D_GET_SHADER("sunshine");
+        current_shader_param = GL3D_GET_PARAM("sunshine");
+        GL3D_GL()->glUseProgram(shineShader->getProgramID());
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+        one_scene->get_property()->global_shader = QString("sunshine");
+        current_shader_param->set_param();
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDrawBuffers(1, attachments);
+        GL3D_GL()->glDisable(GL_DEPTH_TEST);
+        GL3D_GL()->glDisable(GL_STENCIL_TEST);
+        GL3D_GL()->glEnable(GL_BLEND);
+        GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//        glm::vec3 sunRay = one_scene->watcher->get_current_position() + one_scene->watcher->get_look_direction() - sunPos;
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shinePoint");
+        GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(sunPos));
+
+        glm::vec4 shineColor;
+        // shine pot 1
+        shineColor = glm::vec4(255.0f, 215.0f, 0.0f, 1.0f);
+        shineColor.w = 0.4;
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.08);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, 0.9);
+        one_scene->drawSpecialObject(rect, true);
+
+        // shine pot 2
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.1);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, 0.72);
+        one_scene->drawSpecialObject(rect, true);
+
+        // shine pot 3
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineColor");
+        GL3D_GL()->glUniform4fv(location, 1, glm::value_ptr(shineColor));
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineSize");
+        GL3D_GL()->glUniform1f(location, 0.12);
+        location = GL3D_GL()->glGetUniformLocation(shineShader->getProgramID(), "shineFac");
+        GL3D_GL()->glUniform1f(location, 0.5);
+        one_scene->drawSpecialObject(rect, true);
+
+
+        GL3D_GL()->glDisable(GL_BLEND);
+        GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    }
+
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     delete rect;
 
@@ -507,7 +579,7 @@ void has_post::rend_main() {
     current_shader_param->user_data.insert(string("scene"), one_scene);
     one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
     one_scene->get_property()->global_shader = QString("color");
-    one_scene->prepare_canvas(false);
+    one_scene->prepare_canvas(true);
     GL3D_GL()->glDisable(GL_CULL_FACE);
     GL3D_GL()->glDisable(GL_BLEND);
     GL3D_GL()->glEnable(GL_DEPTH_TEST);

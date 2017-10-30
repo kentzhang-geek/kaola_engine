@@ -46,3 +46,4 @@ GL3D_LOAD_SHADER(post_process_result,
 GL3D_LOAD_SHADER(color, color.vdata, color.fdata);
 GL3D_LOAD_SHADER(light, light.vdata, light.fdata);
 GL3D_LOAD_SHADER(day, day.vdata, day.fdata);
+GL3D_LOAD_SHADER(sunshine, sunshine.vdata, sunshine.fdata);
