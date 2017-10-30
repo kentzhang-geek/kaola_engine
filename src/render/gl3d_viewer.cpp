@@ -261,6 +261,12 @@ void viewer::startArcballRotate(QPoint mousept) {
     this->oriMousePoint = glm::vec2(mousept.x(), this->height - mousept.y());
 }
 
+void viewer::pullPushArcBall(float distance) {
+    glm::vec3 movDir = rotateCenterPoint - this->get_current_position();
+    movDir = glm::normalize(movDir);
+    this->set_current_position(this->get_current_position() + movDir * distance);
+}
+
 void viewer::updateArcballRotate(QPoint mousept) {
     glm::vec2 updateval = glm::vec2(mousept.x(), this->height - mousept.y()) - oriMousePoint;
     glm::vec2 updateAngle = glm::vec2(updateval.x / this->width * glm::two_pi<float>(),

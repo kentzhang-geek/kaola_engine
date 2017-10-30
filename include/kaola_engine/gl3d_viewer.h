@@ -89,6 +89,7 @@ namespace gl3d {
 
         // arc ball
         void startArcballRotate(QPoint mousept);
+        void pullPushArcBall(float distance);
         void updateArcballRotate(QPoint mousept);
         void endArcballRotate();
         glm::vec3 rotateCenterPoint;

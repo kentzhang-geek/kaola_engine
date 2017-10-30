@@ -299,15 +299,31 @@ void MOpenGLView::resizeGL(int width, int height) {
 
 //滚轮滑动事件
 void MOpenGLView::wheelEvent(QWheelEvent *event) {
-    this->main_scene->get_assistant_image()->fill(0);
+    event->accept();      //接收该事件
     auto tmp_viewer = this->main_scene->watcher;
 
-    //滚动的角度，*8就是鼠标滚动的距离
-    int numDegrees = event->delta() / 8;
-    //滚动的步数，*15就是鼠标滚动的角度
-    int numSteps = tmp_viewer->get_top_view_size() - (numDegrees / 15);
+    //拾取obj
+    int pobjid = this->main_scene->get_object_id_by_coordination(event->x(), event->y());
+    qDebug() << pobjid;
+    if (pickUpObjID > 0) {
+        this->main_scene->get_obj(pickUpObjID)->set_pick_flag(false);
+        pickUpObjID = -1;
+    }
+    if (pobjid > 0) {
+        pickUpObjID = pobjid;
+        this->main_scene->get_obj(pickUpObjID)->set_pick_flag(true);
+    }
+    // start arc ball rotate
+    main_scene->watcher->startArcballRotate(event->pos());
+    if (pickUpObjID > 0) {
+        main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+    }
 
-    event->accept();      //接收该事件
+    float distance = 1.0;
+    distance *= event->delta() / 128.0;
+    main_scene->watcher->pullPushArcBall(distance);
+    main_scene->watcher->endArcballRotate();
+    main_scene->watcher->calculate_mat();
 }
 
 extern bool need_capture;
