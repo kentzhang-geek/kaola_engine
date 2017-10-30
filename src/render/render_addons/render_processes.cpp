@@ -443,12 +443,12 @@ void has_post::pre_render() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     delete rect;
 
-    QVector<string> cmd;
-    cmd.clear();
-    cmd.push_back(string("hdr_test"));
-    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
-                                                                           this->get_attached_scene(),
-                                                                           this->canvas);
+//    QVector<string> cmd;
+//    cmd.clear();
+//    cmd.push_back(string("hdr_test"));
+//    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
+//                                                                           this->get_attached_scene(),
+//                                                                           this->canvas);
     // save g buffer to file
 //    float * output_image = new float[gbufHeight * gbufWidth * 3];
 //    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];

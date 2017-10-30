@@ -69,3 +69,14 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
 }
+
+void DemoMainWindow::on_confirm_clicked()
+{
+    glm::vec3 newpos(
+            ui->lin_x->text().toFloat(),
+            ui->lin_y->text().toFloat(),
+            ui->lin_z->text().toFloat()
+    );
+    ui->glview->main_scene->watcher->set_current_position(newpos);
+    ui->glview->main_scene->watcher->calculate_mat();
+}

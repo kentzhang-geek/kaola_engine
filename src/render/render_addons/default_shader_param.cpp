@@ -536,3 +536,26 @@ GL3D_SHADER_PARAM(light) {
 
     return true;
 }
+
+GL3D_SHADER_PARAM(day) {
+    GLuint pro = GL3D_GET_SHADER("day")->getProgramID();
+
+    // 设置材质贴图矩阵
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "mtlSpecularExponent"), 0.3);
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "shininess"), 1.0);
+
+    // set text ids
+    auto tmp = GL3D_GL()->glGetUniformLocation(pro, "colorText");
+    GL3D_GL()->glUniform1i(tmp, 0);
+    tmp = GL3D_GL()->glGetUniformLocation(pro, "posText");
+    GL3D_GL()->glUniform1i(tmp, 1);
+    tmp = GL3D_GL()->glGetUniformLocation(pro, "normalText");
+    GL3D_GL()->glUniform1i(tmp, 2);
+
+    GL3D_GL()->glCullFace(GL_BACK);  // 显示正面不显示背面
+
+    GL3D_GL()->glUniform1f(GL3D_GL()->glGetUniformLocation(pro, "alpha"), 1.0);
+    GL3D_GL()->glDepthMask(GL_TRUE);
+
+    return true;
+}
