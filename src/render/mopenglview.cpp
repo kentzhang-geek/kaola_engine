@@ -101,6 +101,7 @@ void MOpenGLView::do_init() {
 
     // advanced
     leftMousePressed = false;
+    midMousePressed = false;
 }
 
 #define MAX_FILE_SIZE 10000
@@ -431,7 +432,7 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
 
     //左键按下事件
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton || event->button() == Qt::MidButton) {
         //拾取并新建选项框
         if (now_state == gl3d::gl3d_global_param::normal) {
             need_capture = true;
@@ -451,10 +452,12 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         if (pickUpObjID > 0) {
             main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
         }
+    }
+
+    if (event->button() == Qt::LeftButton) {
         leftMousePressed = true;
-    } else if (event->button() == Qt::RightButton) {
-        //右键按下事件
     } else if (event->button() == Qt::MidButton) {
+        midMousePressed = true;
     }
 }
 
@@ -465,6 +468,8 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 
     if (leftMousePressed) {
         main_scene->watcher->updateArcballRotate(event->pos());
+    } else if (midMousePressed) {
+        main_scene->watcher->updateArcballFlatMove(event->pos());
     }
 }
 
@@ -472,9 +477,10 @@ void MOpenGLView::mouseMoveEvent(QMouseEvent *event) {
 void MOpenGLView::mouseReleaseEvent(QMouseEvent *event) {
     this->main_scene->get_assistant_image()->fill(0);
     auto now_state = gl3d::gl3d_global_param::shared_instance()->current_work_state;
-    if (leftMousePressed) {
+    if (leftMousePressed || midMousePressed) {
         main_scene->watcher->endArcballRotate();
         leftMousePressed = false;
+        midMousePressed = false;
     }
 }
 

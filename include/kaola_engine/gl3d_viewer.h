@@ -91,6 +91,7 @@ namespace gl3d {
         void startArcballRotate(QPoint mousept);
         void pullPushArcBall(float distance);
         void updateArcballRotate(QPoint mousept);
+        void updateArcballFlatMove(QPoint mousept);
         void endArcballRotate();
         glm::vec3 rotateCenterPoint;
         glm::vec2 oriMousePoint;
@@ -100,6 +101,8 @@ namespace gl3d {
         // object in frustum
         bool objectInFrustum(gl3d::abstract_object *obj);
         bool cubeSpaceInFrustum(glm::vec3 maxBoundary, glm::vec3 minBoundary);
+        // advanced : get ray
+        glm::vec3 getRay(QPoint mousept);
 
     private:
         const float visionAngle = 40.0f;

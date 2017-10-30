@@ -128,6 +128,7 @@ private:
 
     // advanced
     bool leftMousePressed;
+    bool midMousePressed;
     int fps;
 };
 
