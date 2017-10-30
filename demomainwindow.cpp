@@ -41,7 +41,8 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     // create space manager with 4096 cubes
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(5, glm::vec3(160.0f), glm::vec3(-160.0f));
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(3, glm::vec3(50.0f), glm::vec3(-10.0f));
+    ui->glview->main_scene->spaceManager->bufferData();
 //    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
 //    gl3d_global_param::shared_instance()->maxInsPerDraw = 200;      // 200 models per draw
 
@@ -79,4 +80,16 @@ void DemoMainWindow::on_confirm_clicked()
     );
     ui->glview->main_scene->watcher->set_current_position(newpos);
     ui->glview->main_scene->watcher->calculate_mat();
+}
+
+void DemoMainWindow::on_checkBox_clicked() {
+}
+
+void DemoMainWindow::on_ck_net_clicked()
+{
+    if (ui->ck_net->checkState() == Qt::Checked) {
+        GL3D_SET_CURRENT_RENDER_PROCESS(geo, this->ui->glview->main_scene);
+    } else if (ui->ck_net->checkState() == Qt::Unchecked) {
+        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
+    }
 }

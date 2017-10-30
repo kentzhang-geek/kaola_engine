@@ -1,0 +1,29 @@
+#version 330 core
+
+#define MAX_MODEL_PER_DRAW 200
+precision highp float;
+precision highp int;
+
+in vec3 vertex_pos;
+in vec3 vertex_normal;
+in vec4 vertex_color;
+in vec2 vertex_tex_coord;
+in float vertex_tex_id;
+
+// mvp matrix
+uniform mat4 translationMatrix;
+uniform mat4 viewingMatrix;
+uniform mat4 pvmMatrix;
+uniform mat4 pvMatrix;
+uniform mat3 normalMtx;
+
+uniform int maxPow;
+uniform float stepSize;
+uniform mat4 modelMat[MAX_MODEL_PER_DRAW];
+
+uniform float param_x;
+
+void main() {
+    vec4 vPos = vec4(vertex_pos, 1.0);
+    gl_Position = pvMatrix * modelMat[gl_InstanceID] * vPos;
+}

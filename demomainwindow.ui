@@ -118,6 +118,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="ck_net">
+        <property name="text">
+         <string>Net</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

@@ -30,6 +30,7 @@ namespace gl3d {
             Space(Space *parent, int currentDepth, int maxDepth, glm::vec3 maxBd, glm::vec3 minBd,
                   SpaceType inType);
             Space * searchLeafSpace(glm::vec3 point);
+            void bufferData(QList<glm::vec3> &lines);
             ~Space();
             void cullLeafSpace(gl3d::viewer *watcher, QList<Space *> *spaces);
             glm::vec3 getCenterPointInWorldCoord();
@@ -59,6 +60,10 @@ namespace gl3d {
         bool insertObject(gl3d::abstract_object * obj);
         bool removeObject(gl3d::abstract_object * obj);
         void cullObjects(gl3d::viewer *watcher, int maxCulledNumber);
+        void bufferData();
+        GLuint vbo;
+        GLuint vao;
+        int numVts;
         QList<gl3d::abstract_object *> getCulledObjects();
         Space * getSpace(glm::vec3 point);
 

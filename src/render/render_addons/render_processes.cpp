@@ -166,7 +166,6 @@ public:
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     }
 };
-
 GL3D_ADD_RENDER_PROCESS(test);
 
 using namespace gl3d;
@@ -646,3 +645,46 @@ gl3d_material *has_post::build_material() {
     gl3d_material *ret = new gl3d_material(this->canvas);
     return ret;
 }
+
+class geo : public render_process {
+public:
+    void render() {
+        gl3d::scene *one_scene = this->get_attached_scene();
+        // 输入阴影贴图的参数，然后绘制主图像
+        gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("geo");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        // 选择全局渲染器
+        GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        GL3D_GL()->glDrawBuffers(1, attachments);
+        one_scene->get_property()->global_shader = QString("geo");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
+        one_scene->prepare_canvas(true);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_BLEND);
+        GL3D_GL()->glDisable(GL_STENCIL_TEST);
+        GL3D_GL()->glEnable(GL_DEPTH_TEST);
+//    GL3D_GL()->glEnable(GL_BLEND);
+//    GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        one_scene->drawInstanced(false, 100);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+        // draw spaces
+        one_scene->get_property()->global_shader = QString("lines");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
+        Program * lShader = GL3D_GET_SHADER("lines");
+        GL3D_GL()->glUseProgram(lShader->getProgramID());
+        GL3D_GL()->glBindVertexArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, one_scene->spaceManager->vbo);
+        auto location = GL3D_GL()->glGetAttribLocation(lShader->programID, "vertex_pos");
+        GL3D_GL()->glEnableVertexAttribArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glEnableVertexAttribArray(location);
+        GL3D_GL()->glVertexAttribPointer(location,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(GLvoid*)0);
+        location = GL3D_GL()->glGetUniformLocation(lShader->programID, "pvMatrix");
+        glm::mat4 pvMat = one_scene->watcher->get_projection_matrix() * one_scene->watcher->get_viewing_matrix();
+        GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(pvMat));
+        GL3D_GL()->glDrawArrays(GL_LINES, 0, one_scene->spaceManager->numVts);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GL3D_GL()->glBindVertexArray(0);
+    }
+};
+GL3D_ADD_RENDER_PROCESS(geo);

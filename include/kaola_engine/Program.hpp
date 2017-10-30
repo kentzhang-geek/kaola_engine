@@ -17,7 +17,7 @@
 
 namespace gl3d {
     class Program{
-    private:
+    public:
         GLuint programID;
         gl3d::Shader *vertexShader;
         gl3d::Shader *fragmentShader;

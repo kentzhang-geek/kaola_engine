@@ -152,6 +152,60 @@ void MOpenGLView::create_scene() {
         prog = new Program(tmp_vert, tmp_frag);
         shader_mgr->shaders.insert(load_iter.key(), prog);
     }
+    // test geoshader
+    Program *geo = shader_mgr->shaders.value("geo");
+    delete geo->vertexShader;
+    delete geo->fragmentShader;
+    GL3D_GL()->glDeleteProgram(geo->getProgramID());
+    geo->programID = GL3D_GL()->glCreateProgram();
+    string vert = this->res_path + GL3D_PATH_SEPRATOR + "geo.vdata";
+    string geop = this->res_path + GL3D_PATH_SEPRATOR + "geo.gdata";
+    string frag = this->res_path + GL3D_PATH_SEPRATOR + "geo.fdata";
+    // read vert
+    QFile res_v(QString(vert.c_str()));
+    if (!res_v.open(QFile::ReadOnly)) {
+        cout << res_v.errorString().toStdString() << endl;
+        throw std::runtime_error("Load shader " + vert + res_v.errorString().toStdString());
+    }
+    auto tmp_v = res_v.readAll();
+    string tmp_vert((char *) tmp_v.data(), res_v.size());
+    // read geo
+    QFile res_g(QString(geop.c_str()));
+    if (!res_g.open(QFile::ReadOnly)) {
+        cout << res_g.errorString().toStdString() << endl;
+        throw std::runtime_error("Load shader " + geop + res_g.errorString().toStdString());
+    }
+    auto tmp_g = res_g.readAll();
+    string tmp_geop((char *) tmp_g.data(), res_g.size());
+    // read frag
+    QFile res_f(QString(frag.c_str()));
+    if (!res_f.open(QFile::ReadOnly)) {
+        cout << res_f.errorString().toStdString() << endl;
+        throw std::runtime_error("Load shader " + vert + res_f.errorString().toStdString());
+    }
+    auto tmp_f = res_f.readAll();
+    string tmp_frag((char *) tmp_f.data(), res_f.size());
+    geo->vertexShader = new gl3d::Shader(tmp_vert, GL_VERTEX_SHADER);
+    GL3D_GL()->glAttachShader(geo->getProgramID(), geo->vertexShader->getShaderID());
+    geo->fragmentShader = new gl3d::Shader(tmp_frag, GL_FRAGMENT_SHADER);
+    GL3D_GL()->glAttachShader(geo->getProgramID(), geo->fragmentShader->getShaderID());
+    auto gshader = new gl3d::Shader(tmp_geop, GL_GEOMETRY_SHADER);
+    GL3D_GL()->glAttachShader(geo->getProgramID(), gshader->getShaderID());
+    GL3D_GL()->glLinkProgram(geo->programID);
+    GLint status;
+    GL3D_GL()->glGetProgramiv(geo->programID, GL_LINK_STATUS, &status);
+    if(status == GL_FALSE){
+        std::string msg("Failed to link progra : ");
+        GLint infoLen;
+        GL3D_GL()->glGetProgramiv(geo->programID, GL_INFO_LOG_LENGTH, &infoLen);
+        char* info = new char[infoLen + 1];
+        GL3D_GL()->glGetProgramInfoLog(geo->programID, infoLen, nullptr, info);
+        msg += info;
+        delete [] info;
+        GL3D_GL()->glDeleteProgram(geo->programID);
+        cout << msg << endl;
+        throw std::runtime_error(msg);
+    }
 
     return;
 }
@@ -176,10 +230,11 @@ void MOpenGLView::paintGL() {
     }
 
     // 设置场景
-    GL3D_GET_CURRENT_RENDER_PROCESS()->add_user_object("scene", this->main_scene);
+    auto renderProcess = GL3D_GET_CURRENT_RENDER_PROCESS();
+    renderProcess->add_user_object("scene", this->main_scene);
 
     // 预渲染
-    GL3D_GET_CURRENT_RENDER_PROCESS()->pre_render();
+    renderProcess->pre_render();
 
     // KENT HINT : 用这个接口重新绑定默认渲染目标等等
     // bind drawable KENT TODO : 应该给FBO加一个封装，由FBO句柄生成
@@ -190,7 +245,7 @@ void MOpenGLView::paintGL() {
                this->main_scene->get_width(),
                this->main_scene->get_height());
 
-    GL3D_GET_CURRENT_RENDER_PROCESS()->render();
+    renderProcess->render();
 //    gl3d_framebuffer fb(gl3d_global_param::shared_instance()->framebuffer,
 //                        glm::vec2(
 //                            this->main_scene->get_width(),
@@ -199,7 +254,7 @@ void MOpenGLView::paintGL() {
 //    fb.save_to_file("test2.jpg");
 
     // 后渲染
-    GL3D_GET_CURRENT_RENDER_PROCESS()->after_render();
+    renderProcess->after_render();
 
     // release default fbo
     GL3D_GL()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

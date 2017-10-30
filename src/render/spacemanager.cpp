@@ -324,3 +324,49 @@ void SpaceManager::cullObjects(gl3d::viewer *watcher, int maxCulledNumber) {
 void SpaceManager::run() {
     this->cullFunction();
 }
+
+void SpaceManager::bufferData() {
+    QList<glm::vec3> * lines = new QList<glm::vec3>();
+    this->rootSpace->bufferData(*lines);
+    this->numVts = lines->size();
+    int i = 0;
+    float * data = (float *) malloc(sizeof(float) *this->numVts * 3);
+    for (auto pit : *lines) {
+        data[i++] = pit.x;
+        data[i++] = pit.y;
+        data[i++] = pit.z;
+    }
+    GL3D_GL()->glGenBuffers(1, &this->vbo);
+    GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+    GL3D_GL()->glBufferData(GL_ARRAY_BUFFER, sizeof(float) * this->numVts * 3, data, GL_STATIC_DRAW);
+    GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    free(data);
+    GL3D_GL()->glGenVertexArrays(1, &this->vao);
+}
+
+void SpaceManager::Space::bufferData(QList<glm::vec3> &lines) {
+    if (this->type == LEAF) {
+        auto vts = math::cubeVertexsFromBoundry(minBoundary, maxBoundary);
+        auto vts2 = vts;
+        for (auto vit1 : vts) {
+            for (auto vit2 : vts2) {
+                int match = ((vit1.x == vit2.x) + (vit1.y == vit2.y) + (vit1.z == vit2.z));
+                if (match == 2){
+                    lines.append(vit1);
+                    lines.append(vit2);
+                }
+            }
+        }
+    }
+
+    if (this->type != LEAF) {
+        left_bottom_near->bufferData(lines);
+        left_bottom_far->bufferData(lines);
+        left_top_near->bufferData(lines);
+        left_top_far->bufferData(lines);
+        right_bottom_near->bufferData(lines);
+        right_bottom_far->bufferData(lines);
+        right_top_near->bufferData(lines);
+        right_top_far->bufferData(lines);
+    }
+}
