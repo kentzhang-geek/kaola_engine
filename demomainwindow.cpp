@@ -41,7 +41,7 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
 
     // create space manager with 4096 cubes
     ui->glview->main_scene->spaceManager = new gl3d::SpaceManager();
-    ui->glview->main_scene->spaceManager->initWithDepthAndSize(3, glm::vec3(50.0f), glm::vec3(-10.0f));
+    ui->glview->main_scene->spaceManager->initWithDepthAndSize(5, glm::vec3(160.0f), glm::vec3(-160.0f));
     ui->glview->main_scene->spaceManager->bufferData();
 //    gl3d_global_param::shared_instance()->maxCulledObjNum = 1000;   // 1000 models in screen
 //    gl3d_global_param::shared_instance()->maxInsPerDraw = 200;      // 200 models per draw
@@ -68,7 +68,7 @@ void DemoMainWindow::showEvent(QShowEvent *event) {
         this->ui->glview->main_scene->get_light_srcs()->insert(i, light);
     }
 
-    GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
+    GL3D_SET_CURRENT_RENDER_PROCESS(day, this->ui->glview->main_scene);
 }
 
 void DemoMainWindow::on_confirm_clicked()
@@ -82,14 +82,21 @@ void DemoMainWindow::on_confirm_clicked()
     ui->glview->main_scene->watcher->calculate_mat();
 }
 
-void DemoMainWindow::on_checkBox_clicked() {
+
+void DemoMainWindow::on_btn_day_clicked()
+{
+    this->ui->glview->main_scene->get_property()->background_color= glm::vec4(101.0f / 255.0, 157.0f / 255.0f, 244.0f / 255.0, 1.0f);
+    GL3D_SET_CURRENT_RENDER_PROCESS(day, this->ui->glview->main_scene);
 }
 
-void DemoMainWindow::on_ck_net_clicked()
+void DemoMainWindow::on_btn_night_clicked()
 {
-    if (ui->ck_net->checkState() == Qt::Checked) {
-        GL3D_SET_CURRENT_RENDER_PROCESS(geo, this->ui->glview->main_scene);
-    } else if (ui->ck_net->checkState() == Qt::Unchecked) {
-        GL3D_SET_CURRENT_RENDER_PROCESS(has_post, this->ui->glview->main_scene);
-    }
+    this->ui->glview->main_scene->get_property()->background_color = glm::vec4(0.0f);
+    GL3D_SET_CURRENT_RENDER_PROCESS(night, this->ui->glview->main_scene);
+}
+
+void DemoMainWindow::on_btn_net_clicked()
+{
+    this->ui->glview->main_scene->get_property()->background_color = glm::vec4(0.0f);
+    GL3D_SET_CURRENT_RENDER_PROCESS(geo, this->ui->glview->main_scene);
 }

@@ -377,7 +377,14 @@ void MOpenGLView::wheelEvent(QWheelEvent *event) {
     // start arc ball rotate
     main_scene->watcher->startArcballRotate(event->pos());
     if (pickUpObjID > 0) {
-        main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+        auto pobj = main_scene->get_obj(pickUpObjID);
+        auto cast_ray = main_scene->watcher->getRay(event->pos());
+        glm::vec3 outpt;
+        if (pobj->searchCrossPoint(main_scene->watcher->get_current_position(), cast_ray, outpt)) {
+            main_scene->watcher->rotateCenterPoint = outpt;
+        } else {
+            main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+        }
     }
 
     float distance = 1.0;
@@ -510,7 +517,14 @@ void MOpenGLView::mousePressEvent(QMouseEvent *event) {
         // start arc ball rotate
         main_scene->watcher->startArcballRotate(event->pos());
         if (pickUpObjID > 0) {
-            main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+            auto pobj = main_scene->get_obj(pickUpObjID);
+            auto cast_ray = main_scene->watcher->getRay(event->pos());
+            glm::vec3 outpt;
+            if (pobj->searchCrossPoint(main_scene->watcher->get_current_position(), cast_ray, outpt)) {
+                main_scene->watcher->rotateCenterPoint = outpt;
+            } else {
+                main_scene->watcher->rotateCenterPoint = main_scene->get_obj(pickUpObjID)->getCenterPointInWorldCoord();
+            }
         }
     }
 

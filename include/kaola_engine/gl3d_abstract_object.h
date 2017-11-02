@@ -42,6 +42,7 @@ public:
     virtual void set_translation_mat(const glm::mat4 & trans) = 0;
     virtual glm::vec3 get_abs_position();
     virtual glm::mat4 get_abs_rotation();
+    bool searchCrossPoint(glm::vec3 oriPoint, glm::vec3 dir, glm::vec3 &outPoint);
 
     // constructor and destructor
     abstract_object();

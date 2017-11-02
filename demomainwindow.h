@@ -24,9 +24,11 @@ public:
 private slots:
     void on_confirm_clicked();
 
-    void on_checkBox_clicked();
+    void on_btn_day_clicked();
 
-    void on_ck_net_clicked();
+    void on_btn_night_clicked();
+
+    void on_btn_net_clicked();
 
 private:
     Ui::DemoMainWindow *ui;

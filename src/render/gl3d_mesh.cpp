@@ -165,11 +165,6 @@ void gl3d::mesh::buffer_data() {
     GL3D_GL()->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * this->num_idx, this->indecis, GL_STATIC_DRAW);
     GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
     GL3D_GL()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    
-    free(this->points_data);
-    this->points_data = NULL;
-    free(this->indecis);
-    this->indecis = NULL;
 
     this->data_buffered = true;
 }
@@ -371,4 +366,39 @@ bool mesh::recalculate_boundings() {
 
 glm::vec3 mesh::trans_point_vertex_to_vec3(obj_points pts) {
     return glm::vec3(pts.vertex_x, pts.vertex_y, pts.vertex_z);
+}
+
+bool mesh::castRay(glm::vec3 oriPoint, glm::vec3 dir, QList<glm::vec3> &outPoint, glm::mat4 modelMat) {
+    glm::vec3 pt;
+    bool ret = false;
+    math::line_3d ray(oriPoint, oriPoint + dir);
+    for (int i = 0; i < (this->num_idx / 3); i++) {
+        pt = glm::vec3(0.0f);
+        glm::vec3 p1,p2,p3;
+        glm::vec4 tmppt;
+        tmppt = modelMat *
+                glm::vec4(this->trans_point_vertex_to_vec3(this->points_data[this->indecis[i * 3 + 0]]),
+                          1.0f);
+        tmppt = tmppt / tmppt.w;
+        p1 = glm::vec3(tmppt);
+        tmppt = modelMat *
+                glm::vec4(this->trans_point_vertex_to_vec3(this->points_data[this->indecis[i * 3 + 1]]),
+                          1.0f);
+        tmppt = tmppt / tmppt.w;
+        p2 = glm::vec3(tmppt);
+        tmppt = modelMat *
+                glm::vec4(this->trans_point_vertex_to_vec3(this->points_data[this->indecis[i * 3 + 2]]),
+                          1.0f);
+        tmppt = tmppt / tmppt.w;
+        p3 = glm::vec3(tmppt);
+        auto facet = math::triangle_facet(p1, p2, p3);
+        if (math::line_cross_facet(facet, ray, pt)) {
+            if (facet.is_point_in_facet(pt)) {
+                ret = true;
+                outPoint.append(pt);
+            }
+        }
+    }
+
+    return ret;
 }

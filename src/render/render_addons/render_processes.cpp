@@ -317,7 +317,7 @@ public:
 
 GL3D_ADD_RENDER_PROCESS(editing);
 
-class has_post : public render_process {
+class day : public render_process {
 public:
     void pre_render();
 
@@ -340,9 +340,9 @@ public:
     gl3d_general_texture *canvas;
 };
 
-GL3D_ADD_RENDER_PROCESS(has_post);
+GL3D_ADD_RENDER_PROCESS(day);
 
-void has_post::pre_render() {
+void day::pre_render() {
 //    this->rend_shadow();
     // render g-buffer
     int gbufWidth = 2 * (int)this->get_attached_scene()->get_width();
@@ -582,16 +582,16 @@ void has_post::pre_render() {
 //    delete gColor;
 }
 
-void has_post::render() {
+void day::render() {
     this->rend_result();
 }
 
-void has_post::after_render() {
+void day::after_render() {
     test_flag_global = true;
     this->canvas = NULL;
 }
 
-void has_post::rend_shadow() {
+void day::rend_shadow() {
     // 先绘制阴影贴图，给阴影贴图shader添加一下参数
     gl3d::scene *one_scene = this->get_attached_scene();
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("shadow_mask");
@@ -600,7 +600,7 @@ void has_post::rend_shadow() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
 
-void has_post::rend_main() {
+void day::rend_main() {
     gl3d::scene *one_scene = this->get_attached_scene();
     // rend color
     gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
@@ -620,7 +620,7 @@ void has_post::rend_main() {
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 }
 
-void has_post::rend_result() {
+void day::rend_result() {
     gl3d::scene *one_scene = this->get_attached_scene();
     special_obj *rect = new special_obj(this->canvas);
 
@@ -641,7 +641,7 @@ void has_post::rend_result() {
     delete rect;
 }
 
-gl3d_material *has_post::build_material() {
+gl3d_material *day::build_material() {
     gl3d_material *ret = new gl3d_material(this->canvas);
     return ret;
 }
@@ -688,3 +688,222 @@ public:
     }
 };
 GL3D_ADD_RENDER_PROCESS(geo);
+
+class night : public render_process {
+public:
+    void pre_render();
+
+    void render();
+
+    void after_render();
+
+    // internel calls
+    void rend_shadow();
+
+    void rend_main();
+
+    // result
+    void rend_result();
+
+    // set a material
+    gl3d_material *build_material();
+
+    // color canvas to present
+    gl3d_general_texture *canvas;
+};
+
+GL3D_ADD_RENDER_PROCESS(night);
+
+void night::pre_render() {
+    this->rend_shadow();
+    // render g-buffer
+    int gbufWidth = 2 * (int)this->get_attached_scene()->get_width();
+    int gbufHeight = 2 * (int)this->get_attached_scene()->get_height();
+
+    gl3d_framebuffer fb(GL3D_FRAME_HAS_DEPTH_BUF | GL3D_FRAME_HAS_STENCIL_BUF,
+                        gbufWidth, gbufHeight);
+    GLuint gBuffer = fb.get_frame_obj();
+    GLuint gPosition, gNormal, gColorSpec;
+
+// - 颜色缓冲
+    gl3d_general_texture * gColor = new gl3d::gl3d_general_texture(
+            gl3d_general_texture::GL3D_RGBA,
+            2.0 * this->get_attached_scene()->get_width(),
+            2.0 * this->get_attached_scene()->get_height());
+    fb.attach_color_text(gColor->get_text_obj());
+
+    // 位置缓冲
+    GL3D_GL()->glGenTextures(1, &gPosition);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
+    GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, gbufWidth, gbufHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER,
+                                      GL_COLOR_ATTACHMENT1,
+                                      GL_TEXTURE_2D, gPosition, 0);
+
+    // - 法线颜色缓冲
+    GL3D_GL()->glGenTextures(1, &gNormal);
+    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
+    GL3D_GL()->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, gbufWidth, gbufHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GL3D_GL()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gNormal, 0);
+
+//// - 漫反射 + Specular颜色缓冲
+//    glGenTextures(1, &gAlbedoSpec);
+//    glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+
+// - 告诉OpenGL我们要使用哪个颜色附件来渲染
+    fb.use_this_frame();
+    GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    GL3D_GL()->glDrawBuffers(3, attachments);
+    this->rend_main();
+
+    // now render with light
+    this->canvas = new gl3d::gl3d_general_texture(
+            gl3d_general_texture::GL3D_RGBA,
+            2.0 * this->get_attached_scene()->get_width(),
+            2.0 * this->get_attached_scene()->get_height());
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0); // detach
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, 0, 0); // detach
+    GL3D_GL()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, 0, 0); // detach
+    fb.attach_color_text(this->canvas->get_text_obj());
+
+    gl3d::scene *one_scene = this->get_attached_scene();
+    // set g buffer and its texture
+    Program * lightShader = GL3D_GET_SHADER("light");
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("light");
+    GL3D_GL()->glUseProgram(lightShader->getProgramID());
+    auto posText = new gl3d_general_texture(gPosition, gbufWidth, gbufHeight);
+    auto normalText = new gl3d_general_texture(gNormal, gbufWidth, gbufHeight);
+    special_obj *rect = new special_obj(gColor, posText, normalText);
+    rect->buffer_data();
+    // set shader
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    one_scene->get_property()->global_shader = QString("light");
+    current_shader_param->set_param();
+    one_scene->prepare_canvas(true);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDrawBuffers(1, attachments);
+//    GL3D_GL()->glEnable(GL_BLEND);
+//    GL3D_GL()->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    int i = 0;
+    for (auto lightit : one_scene->get_light_srcs()->values()) {
+        // set light position
+        QString lightname = QString::asprintf("light[%d]", i);
+        auto location = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), lightname.toStdString().c_str());
+        glm::vec3 lpos = lightit->get_location();
+        GL3D_GL()->glUniform3fv(location, 1, glm::value_ptr(lpos));
+        i++;
+        if (i >= gl3d_global_param::shared_instance()->maxInsPerDraw) {
+//            i = 0;
+            break;
+        }
+    }
+    auto lnum = GL3D_GL()->glGetUniformLocation(lightShader->getProgramID(), "lightNum");
+    GL3D_GL()->glUniform1i(lnum, i);
+    if (i > 0)
+        one_scene->drawSpecialObject(rect, true);
+//        one_scene->drawObjectInstanced(lightShader->getProgramID(), true, i, rect);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    delete rect;
+
+//    QVector<string> cmd;
+//    cmd.clear();
+//    cmd.push_back(string("hdr_test"));
+//    this->canvas = gl3d::gl3d_post_process_set::shared_instance()->process(cmd,
+//                                                                           this->get_attached_scene(),
+//                                                                           this->canvas);
+    // save g buffer to file
+//    float * output_image = new float[gbufHeight * gbufWidth * 3];
+//    unsigned char * image = new unsigned char [gbufHeight * gbufWidth * 4];
+//    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gPosition);
+//    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+//    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+//        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+//        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+//        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+//        image[i * 4 + 3] = 0xff;
+//    }
+//    QImage img((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+//    img.save("test_pos.jpg");
+//    GL3D_GL()->glBindTexture(GL_TEXTURE_2D, gNormal);
+//    GL3D_GL()->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_FLOAT, output_image);
+//    for (int i = 0; i < (gbufHeight * gbufWidth); i++) {
+//        image[i * 4 + 0] = (unsigned char)(int)output_image[i * 3 + 0];
+//        image[i * 4 + 1] = (unsigned char)(int)output_image[i * 3 + 1];
+//        image[i * 4 + 2] = (unsigned char)(int)output_image[i * 3 + 2];
+//        image[i * 4 + 3] = 0xff;
+//    }
+//    QImage img2((uchar *)image, gbufWidth, gbufHeight, QImage::Format_RGBA8888);
+//    img2.save("test_normal.jpg");
+    // delete
+//    delete posText;
+//    delete normalText;
+//    delete gColor;
+}
+
+void night::render() {
+    this->rend_result();
+}
+
+void night::after_render() {
+    test_flag_global = true;
+    this->canvas = NULL;
+}
+
+void night::rend_shadow() {
+    // 先绘制阴影贴图，给阴影贴图shader添加一下参数
+    gl3d::scene *one_scene = this->get_attached_scene();
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("shadow_mask");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->draw_shadow_mask();
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+}
+
+void night::rend_main() {
+    gl3d::scene *one_scene = this->get_attached_scene();
+    // rend color
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+    one_scene->get_property()->global_shader = QString("color");
+    one_scene->prepare_canvas(false);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    GL3D_GL()->glDisable(GL_BLEND);
+    GL3D_GL()->glEnable(GL_DEPTH_TEST);
+    one_scene->drawInstanced(false, 100);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+}
+
+void night::rend_result() {
+    gl3d::scene *one_scene = this->get_attached_scene();
+    special_obj *rect = new special_obj(this->canvas);
+
+    rect->set_control_authority(GL3D_OBJ_ENABLE_DEL);
+    rect->set_render_authority(GL3D_SCENE_DRAW_RESULT);
+
+    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("post_process_result");
+    current_shader_param->user_data.insert(string("scene"), one_scene);
+    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_RESULT;
+    one_scene->get_property()->global_shader = QString("post_process_result");
+    GL3D_GL()->glViewport(0, 0,
+                          one_scene->get_width(), one_scene->get_height());
+    one_scene->prepare_canvas(true);
+    GL3D_GL()->glDisable(GL_CULL_FACE);
+    one_scene->drawSpecialObject(rect, true);
+    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    delete rect;
+}
+
+gl3d_material *night::build_material() {
+    gl3d_material *ret = new gl3d_material(this->canvas);
+    return ret;
+}

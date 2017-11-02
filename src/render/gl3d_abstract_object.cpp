@@ -81,3 +81,24 @@ float abstract_object::getContainBallRadius() {
     }
     return ret;
 }
+
+bool abstract_object::searchCrossPoint(glm::vec3 oriPoint, glm::vec3 dir, glm::vec3 &outPoint) {
+    QVector<mesh *> mss;
+    QList<glm::vec3> pts;
+    this->get_abstract_meshes(mss);
+    for (auto pmesh : mss) {
+        pmesh->castRay(oriPoint, dir, pts, this->getModelMat());
+    }
+    this->clear_abstract_meshes(mss);
+    if (pts.isEmpty())
+        return false;
+    glm::vec3 oPt = pts.first();
+    // get nearest point
+    for (auto pit : pts) {
+        if ((glm::length(pit - oriPoint) < glm::length(oPt - oriPoint))
+            && (glm::dot(pit - oriPoint, dir) > 0))
+            oPt = pit;
+    }
+    outPoint = oPt;
+    return true;
+}

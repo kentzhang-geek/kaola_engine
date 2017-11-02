@@ -305,9 +305,10 @@ namespace gl3d {
     GL3D_UTILS_PROPERTY_GET_POINTER(light_srcs, QMap<int, general_light_source *>);
 //    GL3D_UTILS_PROPERTY(assistant_drawer, QPainter *);
 
+    const int MAX_OBJ_COUNT = 1200000;
+    abstract_object ** objHash;
+
     private:
-        const int MAX_OBJ_COUNT = 1200000;
-        abstract_object ** objHash;
         void init();
         shader_manager * shaders;
         scene_property this_property;

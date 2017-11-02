@@ -70,6 +70,8 @@ namespace gl3d {
         // recalculate boundings
         bool recalculate_boundings();
 
+        bool castRay(glm::vec3 oriPoint, glm::vec3 dir, QList<glm::vec3> &outPoint, glm::mat4 modelMat);
+
         // 测试用的加mesh构造函数
         mesh(obj_points * pts, int number_of_points,
              unsigned short * idx_in, int num_of_indecis);

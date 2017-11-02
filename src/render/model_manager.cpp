@@ -62,7 +62,9 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
         int count = 0;
         const float size_step = 3.0f;
         // TODO : this should change to 100
-        const int maxPow = 10;
+        const int maxPow = 100;
+        glm::vec3 maxlimit = glm::vec3(0.0);
+        glm::vec3 minlimit = glm::vec3(0.0);
         for (int i = 0; i < maxPow; i++) {
             qDebug() << i;
             for (int j = 0; j < maxPow; j++) {
@@ -83,6 +85,15 @@ void model_manager::init_objs(gl3d::scene *main_scene) {
             }
         }
         QMessageBox::warning(nullptr, "ok", "1M inserted");
+//        for (int i = 0; i < main_scene->MAX_OBJ_COUNT; i++) {
+//            if (!main_scene->objHash[i])
+//                break;
+//            maxlimit = glm::max(main_scene->objHash[i]->getCenterPointInWorldCoord(),
+//                                maxlimit);
+//            minlimit = glm::min(main_scene->objHash[i]->getCenterPointInWorldCoord(),
+//                                minlimit);
+//        }
+        qDebug() << "emm";
     }
 }
 
