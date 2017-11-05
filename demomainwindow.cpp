@@ -95,16 +95,19 @@ void DemoMainWindow::on_btn_night_clicked()
     GL3D_SET_CURRENT_RENDER_PROCESS(night, this->ui->glview->main_scene);
 }
 
-void DemoMainWindow::on_btn_net_clicked()
-{
-    this->ui->glview->main_scene->get_property()->background_color = glm::vec4(0.0f);
-    GL3D_SET_CURRENT_RENDER_PROCESS(geo, this->ui->glview->main_scene);
-}
-
 void DemoMainWindow::on_cb_space_clicked() {
     if (ui->cb_space->checkState() == Qt::Checked) {
         gl3d_global_param::shared_instance()->drawSpace = true;
     } else if (ui->cb_space->checkState() == Qt::Unchecked) {
         gl3d_global_param::shared_instance()->drawSpace = false;
     }
+}
+
+void DemoMainWindow::on_cb_geo_clicked() {
+    if (ui->cb_geo->checkState() == Qt::Unchecked) {
+        gl3d_global_param::shared_instance()->drawGeo = false;
+    } else if (ui->cb_geo->checkState() == Qt::Checked) {
+        gl3d_global_param::shared_instance()->drawGeo = true;
+    }
+
 }

@@ -21,4 +21,5 @@ gl3d_global_param::gl3d_global_param(){
     this->maxCulledObjNum = 1000;
     this->maxInsPerDraw = 200;
     this->drawSpace = false;
+    this->drawGeo = false;
 }

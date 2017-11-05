@@ -543,9 +543,13 @@ void day::pre_render() {
         GL3D_GL()->glDisable(GL_BLEND);
         GL3D_GL()->glEnable(GL_DEPTH_TEST);
     }
-
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
     delete rect;
+
+    if (gl3d_global_param::shared_instance()->drawGeo) {
+        GL3D_GET_RENDER_PROCESS(geo)->attach_scene(one_scene);
+        GL3D_GET_RENDER_PROCESS(geo)->render();
+    }
 
     QVector<string> cmd;
     cmd.clear();
@@ -602,22 +606,27 @@ void day::rend_shadow() {
 
 void day::rend_main() {
     gl3d::scene *one_scene = this->get_attached_scene();
-    // rend color
-    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
-    current_shader_param->user_data.insert(string("scene"), one_scene);
-    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    one_scene->get_property()->global_shader = QString("color");
-    one_scene->prepare_canvas(true);
-    GL3D_GL()->glDisable(GL_CULL_FACE);
-    GL3D_GL()->glDisable(GL_BLEND);
-    GL3D_GL()->glEnable(GL_DEPTH_TEST);
-    GL3D_GL()->glEnable(GL_STENCIL_TEST);
-    GL3D_GL()->glStencilFunc(GL_ALWAYS, 1, 0xffff);
-    GL3D_GL()->glClearStencil(0);
-    GL3D_GL()->glClear(GL_STENCIL_BUFFER_BIT);
-    GL3D_GL()->glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    one_scene->drawInstanced(false, 100);
-    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    if (gl3d_global_param::shared_instance()->drawGeo) {
+        GL3D_GET_RENDER_PROCESS(geo)->attach_scene(one_scene);
+        GL3D_GET_RENDER_PROCESS(geo)->render();
+    } else {
+        // rend color
+        gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+        one_scene->get_property()->global_shader = QString("color");
+        one_scene->prepare_canvas(true);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_BLEND);
+        GL3D_GL()->glEnable(GL_DEPTH_TEST);
+        GL3D_GL()->glEnable(GL_STENCIL_TEST);
+        GL3D_GL()->glStencilFunc(GL_ALWAYS, 1, 0xffff);
+        GL3D_GL()->glClearStencil(0);
+        GL3D_GL()->glClear(GL_STENCIL_BUFFER_BIT);
+        GL3D_GL()->glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        one_scene->drawInstanced(false, 100);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    }
 
     // draw spaces
     if (gl3d_global_param::shared_instance()->drawSpace) {
@@ -675,10 +684,10 @@ public:
         current_shader_param->user_data.insert(string("scene"), one_scene);
         // 选择全局渲染器
         GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-        GL3D_GL()->glDrawBuffers(1, attachments);
+        GL3D_GL()->glDrawBuffers(3, attachments);
         one_scene->get_property()->global_shader = QString("geo");
         one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
-        one_scene->prepare_canvas(true);
+        one_scene->prepare_canvas(false);
         GL3D_GL()->glDisable(GL_CULL_FACE);
         GL3D_GL()->glDisable(GL_BLEND);
         GL3D_GL()->glDisable(GL_STENCIL_TEST);
@@ -891,17 +900,22 @@ void night::rend_shadow() {
 
 void night::rend_main() {
     gl3d::scene *one_scene = this->get_attached_scene();
-    // rend color
-    gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
-    current_shader_param->user_data.insert(string("scene"), one_scene);
-    one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
-    one_scene->get_property()->global_shader = QString("color");
-    one_scene->prepare_canvas(false);
-    GL3D_GL()->glDisable(GL_CULL_FACE);
-    GL3D_GL()->glDisable(GL_BLEND);
-    GL3D_GL()->glEnable(GL_DEPTH_TEST);
-    one_scene->drawInstanced(false, 100);
-    current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    if (gl3d_global_param::shared_instance()->drawGeo) {
+        GL3D_GET_RENDER_PROCESS(geo)->attach_scene(one_scene);
+        GL3D_GET_RENDER_PROCESS(geo)->render();
+    } else {
+        // rend color
+        gl3d::shader_param *current_shader_param = GL3D_GET_PARAM("color");
+        current_shader_param->user_data.insert(string("scene"), one_scene);
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_NORMAL;
+        one_scene->get_property()->global_shader = QString("color");
+        one_scene->prepare_canvas(false);
+        GL3D_GL()->glDisable(GL_CULL_FACE);
+        GL3D_GL()->glDisable(GL_BLEND);
+        GL3D_GL()->glEnable(GL_DEPTH_TEST);
+        one_scene->drawInstanced(false, 100);
+        current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    }
     // draw spaces
     if (gl3d_global_param::shared_instance()->drawSpace) {
         one_scene->get_property()->global_shader = QString("lines");

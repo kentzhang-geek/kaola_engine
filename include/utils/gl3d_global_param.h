@@ -26,6 +26,7 @@ public:
     int maxCulledObjNum;
     int maxInsPerDraw;
     bool drawSpace;
+    bool drawGeo;
     unsigned int framebuffer;
     void *old_sketch_test;
     void * main_scene;
