@@ -618,6 +618,26 @@ void day::rend_main() {
     GL3D_GL()->glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
     one_scene->drawInstanced(false, 100);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+
+    // draw spaces
+    if (gl3d_global_param::shared_instance()->drawSpace) {
+        one_scene->get_property()->global_shader = QString("lines");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
+        Program * lShader = GL3D_GET_SHADER("lines");
+        GL3D_GL()->glUseProgram(lShader->getProgramID());
+        GL3D_GL()->glBindVertexArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, one_scene->spaceManager->vbo);
+        auto location = GL3D_GL()->glGetAttribLocation(lShader->programID, "vertex_pos");
+        GL3D_GL()->glEnableVertexAttribArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glEnableVertexAttribArray(location);
+        GL3D_GL()->glVertexAttribPointer(location,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(GLvoid*)0);
+        location = GL3D_GL()->glGetUniformLocation(lShader->programID, "pvMatrix");
+        glm::mat4 pvMat = one_scene->watcher->get_projection_matrix() * one_scene->watcher->get_viewing_matrix();
+        GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(pvMat));
+        GL3D_GL()->glDrawArrays(GL_LINES, 0, one_scene->spaceManager->numVts);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GL3D_GL()->glBindVertexArray(0);
+    }
 }
 
 void day::rend_result() {
@@ -669,22 +689,24 @@ public:
         current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
 
         // draw spaces
-        one_scene->get_property()->global_shader = QString("lines");
-        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
-        Program * lShader = GL3D_GET_SHADER("lines");
-        GL3D_GL()->glUseProgram(lShader->getProgramID());
-        GL3D_GL()->glBindVertexArray(one_scene->spaceManager->vao);
-        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, one_scene->spaceManager->vbo);
-        auto location = GL3D_GL()->glGetAttribLocation(lShader->programID, "vertex_pos");
-        GL3D_GL()->glEnableVertexAttribArray(one_scene->spaceManager->vao);
-        GL3D_GL()->glEnableVertexAttribArray(location);
-        GL3D_GL()->glVertexAttribPointer(location,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(GLvoid*)0);
-        location = GL3D_GL()->glGetUniformLocation(lShader->programID, "pvMatrix");
-        glm::mat4 pvMat = one_scene->watcher->get_projection_matrix() * one_scene->watcher->get_viewing_matrix();
-        GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(pvMat));
-        GL3D_GL()->glDrawArrays(GL_LINES, 0, one_scene->spaceManager->numVts);
-        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
-        GL3D_GL()->glBindVertexArray(0);
+        if (gl3d_global_param::shared_instance()->drawSpace) {
+            one_scene->get_property()->global_shader = QString("lines");
+            one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
+            Program * lShader = GL3D_GET_SHADER("lines");
+            GL3D_GL()->glUseProgram(lShader->getProgramID());
+            GL3D_GL()->glBindVertexArray(one_scene->spaceManager->vao);
+            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, one_scene->spaceManager->vbo);
+            auto location = GL3D_GL()->glGetAttribLocation(lShader->programID, "vertex_pos");
+            GL3D_GL()->glEnableVertexAttribArray(one_scene->spaceManager->vao);
+            GL3D_GL()->glEnableVertexAttribArray(location);
+            GL3D_GL()->glVertexAttribPointer(location,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(GLvoid*)0);
+            location = GL3D_GL()->glGetUniformLocation(lShader->programID, "pvMatrix");
+            glm::mat4 pvMat = one_scene->watcher->get_projection_matrix() * one_scene->watcher->get_viewing_matrix();
+            GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(pvMat));
+            GL3D_GL()->glDrawArrays(GL_LINES, 0, one_scene->spaceManager->numVts);
+            GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+            GL3D_GL()->glBindVertexArray(0);
+        }
     }
 };
 GL3D_ADD_RENDER_PROCESS(geo);
@@ -880,6 +902,25 @@ void night::rend_main() {
     GL3D_GL()->glEnable(GL_DEPTH_TEST);
     one_scene->drawInstanced(false, 100);
     current_shader_param->user_data.erase(current_shader_param->user_data.find(string("scene")));
+    // draw spaces
+    if (gl3d_global_param::shared_instance()->drawSpace) {
+        one_scene->get_property()->global_shader = QString("lines");
+        one_scene->get_property()->current_draw_authority = GL3D_SCENE_DRAW_ALL;
+        Program * lShader = GL3D_GET_SHADER("lines");
+        GL3D_GL()->glUseProgram(lShader->getProgramID());
+        GL3D_GL()->glBindVertexArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, one_scene->spaceManager->vbo);
+        auto location = GL3D_GL()->glGetAttribLocation(lShader->programID, "vertex_pos");
+        GL3D_GL()->glEnableVertexAttribArray(one_scene->spaceManager->vao);
+        GL3D_GL()->glEnableVertexAttribArray(location);
+        GL3D_GL()->glVertexAttribPointer(location,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),(GLvoid*)0);
+        location = GL3D_GL()->glGetUniformLocation(lShader->programID, "pvMatrix");
+        glm::mat4 pvMat = one_scene->watcher->get_projection_matrix() * one_scene->watcher->get_viewing_matrix();
+        GL3D_GL()->glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(pvMat));
+        GL3D_GL()->glDrawArrays(GL_LINES, 0, one_scene->spaceManager->numVts);
+        GL3D_GL()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GL3D_GL()->glBindVertexArray(0);
+    }
 }
 
 void night::rend_result() {

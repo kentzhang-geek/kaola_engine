@@ -25,6 +25,7 @@ public:
     float room_height;
     int maxCulledObjNum;
     int maxInsPerDraw;
+    bool drawSpace;
     unsigned int framebuffer;
     void *old_sketch_test;
     void * main_scene;

@@ -30,6 +30,8 @@ private slots:
 
     void on_btn_net_clicked();
 
+    void on_cb_space_clicked();
+
 private:
     Ui::DemoMainWindow *ui;
 };
